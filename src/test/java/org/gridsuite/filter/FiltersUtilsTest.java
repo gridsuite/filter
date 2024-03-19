@@ -47,10 +47,8 @@ import org.gridsuite.filter.utils.RangeType;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 import java.util.List;
@@ -59,15 +57,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
-@RunWith(SpringRunner.class)
 public class FiltersUtilsTest {
     private Network network;
     private Network network2;
@@ -77,7 +74,7 @@ public class FiltersUtilsTest {
 
     FilterLoader filterLoader;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         network = EurostagTutorialExample1Factory.createWithMoreGenerators();
         network.getSubstation("P1").setProperty("region", "north");
@@ -888,7 +885,7 @@ public class FiltersUtilsTest {
             new IdentifiableAttributes("GEN", IdentifiableType.GENERATOR, 50.),
             new IdentifiableAttributes("GEN2", IdentifiableType.GENERATOR, 70.));
 
-        FilterEquipments filterEquipments = identifierListFilter.getFilterEquipments(identifiableAttributes);
+        FilterEquipments filterEquipments = identifierListFilter.toFilterEquipments(identifiableAttributes);
         assertTrue(CollectionUtils.isEqualCollection(filterEquipments.getNotFoundEquipments(), List.of("notFound1", "notFound2")));
 
         List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);

@@ -17,11 +17,12 @@ import org.hamcrest.Description;
 import org.hamcrest.StringDescription;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.text.MatchesPattern;
-import org.junit.Test;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.With;
+import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**

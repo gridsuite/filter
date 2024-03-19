@@ -14,13 +14,13 @@ import org.gridsuite.filter.utils.RangeType;
  */
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
 public class NumericalFilter {
-    RangeType type;
-    Double value1;
-    Double value2;
-
+    private RangeType type;
+    private Double value1;
+    private Double value2;
 }

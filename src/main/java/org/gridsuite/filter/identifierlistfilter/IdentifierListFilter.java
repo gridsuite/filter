@@ -9,7 +9,10 @@ package org.gridsuite.filter.identifierlistfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.utils.EquipmentType;
@@ -22,15 +25,15 @@ import java.util.*;
  * @author Seddik Yengui <seddik.yengui at rte-france.com>
  */
 
+@NoArgsConstructor
 @Getter
+@Setter
 @Schema(description = "Identifier list Filters", allOf = AbstractFilter.class)
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 public class IdentifierListFilter extends AbstractFilter {
 
     private List<IdentifierListFilterEquipmentAttributes> filterEquipmentsAttributes;
-
-    public IdentifierListFilter() {
-    }
 
     public IdentifierListFilter(UUID id,
                                 Date modificationDate,
@@ -55,7 +58,7 @@ public class IdentifierListFilter extends AbstractFilter {
     }
 
     @Override
-    public FilterEquipments getFilterEquipments(List<IdentifiableAttributes> identifiableAttributes) {
+    public FilterEquipments toFilterEquipments(List<IdentifiableAttributes> identifiableAttributes) {
         // we keep the same order of the equipments in the filter
         List<String> notFound = new ArrayList<>();
         List<IdentifiableAttributes> orderedIdentifiableAttributes = filterEquipmentsAttributes.stream()

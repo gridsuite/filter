@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.utils.EquipmentType;
@@ -18,6 +19,7 @@ import org.gridsuite.filter.utils.EquipmentType;
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder

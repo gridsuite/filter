@@ -10,6 +10,7 @@ package org.gridsuite.filter.criteriafilter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.SortedSet;
 
 @AllArgsConstructor
 @Getter
+@Setter
 public class InjectionFilterAttributes {
     @Schema(description = "Equipment ID")
     private String equipmentID;
@@ -25,7 +27,7 @@ public class InjectionFilterAttributes {
     private String equipmentName;
 
     @Schema(description = "SubstationName")
-    String substationName;
+    private String substationName;
 
     @Schema(description = "Countries")
     private SortedSet<String> countries;

@@ -8,8 +8,10 @@ package org.gridsuite.filter.scriptfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.utils.EquipmentType;
@@ -22,9 +24,11 @@ import java.util.UUID;
  * @author Jacques Borsenberger <jacques.borsenberger at rte-france.com>
  */
 @Getter
+@Setter
 @Schema(description = "Script Filters", allOf = AbstractFilter.class)
 @SuperBuilder
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ScriptFilter extends AbstractFilter {
 
     @Schema(description = "Script")

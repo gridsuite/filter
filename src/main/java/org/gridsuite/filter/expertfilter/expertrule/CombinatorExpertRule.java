@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
@@ -24,7 +23,6 @@ import java.util.UUID;
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
  */
 @AllArgsConstructor
-@Getter
 @SuperBuilder
 public class CombinatorExpertRule extends AbstractExpertRule {
     @Override

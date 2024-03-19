@@ -38,21 +38,19 @@ import java.util.UUID;
     @JsonSubTypes.Type(value = ExpertFilter.class, name = "EXPERT"),
     @JsonSubTypes.Type(value = ScriptFilter.class, name = "SCRIPT")
 })
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@ToString
 public abstract class AbstractFilter implements IFilterAttributes {
 
-    UUID id;
+    private UUID id;
 
-    Date modificationDate;
+    private Date modificationDate;
 
-    EquipmentType equipmentType;
+    private EquipmentType equipmentType;
 
-    public FilterEquipments getFilterEquipments(List<IdentifiableAttributes> identifiableAttributes) {
+    public FilterEquipments toFilterEquipments(List<IdentifiableAttributes> identifiableAttributes) {
         return FilterEquipments.builder()
                 .filterId(id)
                 .identifiableAttributes(identifiableAttributes)

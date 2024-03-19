@@ -9,6 +9,7 @@ package org.gridsuite.filter.expertfilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.iidm.network.TopologyKind;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,9 +26,11 @@ import java.util.UUID;
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
  */
 @Getter
+@Setter
 @Schema(description = "Expert Filters", allOf = AbstractFilter.class)
 @SuperBuilder
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ExpertFilter extends AbstractFilter {
 
     @Schema(description = "Rules")

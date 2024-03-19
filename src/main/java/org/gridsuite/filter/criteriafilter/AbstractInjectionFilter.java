@@ -30,7 +30,7 @@ import java.util.SortedSet;
 @Schema(description = "Injection Filters", allOf = CriteriaFilter.class)
 public abstract class AbstractInjectionFilter extends AbstractEquipmentFilterForm {
     @Schema(description = "SubstationName")
-    String substationName;
+    private String substationName;
 
     @Schema(description = "Countries")
     private SortedSet<String> countries;
@@ -47,7 +47,7 @@ public abstract class AbstractInjectionFilter extends AbstractEquipmentFilterFor
     @Schema(description = "Nominal voltage")
     private NumericalFilter nominalVoltage;
 
-    AbstractInjectionFilter(InjectionFilterAttributes injectionFilterAttributes) {
+    protected AbstractInjectionFilter(InjectionFilterAttributes injectionFilterAttributes) {
         super(injectionFilterAttributes.getEquipmentID(), injectionFilterAttributes.getEquipmentName());
         this.substationName = injectionFilterAttributes.getSubstationName();
         this.countries = injectionFilterAttributes.getCountries();

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import lombok.Setter;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.springframework.util.CollectionUtils;
 
@@ -24,6 +25,7 @@ import lombok.experimental.SuperBuilder;
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder

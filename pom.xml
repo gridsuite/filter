@@ -43,8 +43,7 @@
 
     <properties>
         <lombok.version>1.18.24</lombok.version>
-        <junit.version>4.13</junit.version>
-        <junit-vintage-engine.version>5.10.0</junit-vintage-engine.version>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <powsybl-dependencies.version>2023.4.1</powsybl-dependencies.version>
         <swagger-annotations.version>2.2.9</swagger-annotations.version>
         <spring-core.version>6.1.0</spring-core.version>
@@ -100,14 +99,9 @@
                 <version>${lombok.version}</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit-vintage-engine.version}</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -179,13 +173,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

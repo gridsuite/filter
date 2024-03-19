@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
@@ -24,6 +25,7 @@ import java.util.SortedSet;
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
  */
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
@@ -32,10 +34,10 @@ import java.util.SortedSet;
 public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
 
     @Schema(description = "SubstationName1")
-    String substationName1;
+    private String substationName1;
 
     @Schema(description = "SubstationName2")
-    String substationName2;
+    private String substationName2;
 
     @Schema(description = "Countries1")
     private SortedSet<String> countries1;

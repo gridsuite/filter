@@ -7,6 +7,7 @@
 package org.gridsuite.filter.criteriafilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 public class CriteriaFilter extends AbstractFilter {
 
     private AbstractEquipmentFilterForm equipmentFilterForm;

@@ -21,17 +21,16 @@ import java.util.SortedSet;
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
 @Schema(description = "Generator Filters", allOf = AbstractInjectionFilter.class)
 public class GeneratorFilter extends AbstractInjectionFilter {
 
     @Schema(description = "Energy source")
-    EnergySource energySource;
-
-    public GeneratorFilter() {
-    }
+    private EnergySource energySource;
 
     public GeneratorFilter(String equipmentID, String equipmentName, String substationName,
         SortedSet<String> countries, Map<String, List<String>> substationFreeProperties, Map<String, List<String>> freeProperties,
