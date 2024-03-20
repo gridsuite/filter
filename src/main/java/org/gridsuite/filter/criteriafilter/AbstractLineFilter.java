@@ -7,14 +7,10 @@
 package org.gridsuite.filter.criteriafilter;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,27 +26,19 @@ import java.util.SortedSet;
 @AllArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-@Schema(description = "Line Filters", allOf = CriteriaFilter.class)
 public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
-
-    @Schema(description = "SubstationName1")
     private String substationName1;
 
-    @Schema(description = "SubstationName2")
     private String substationName2;
 
-    @Schema(description = "Countries1")
     private SortedSet<String> countries1;
 
-    @Schema(description = "Countries2")
     private SortedSet<String> countries2;
 
-    @Schema(description = "Free properties 1")
     // LinkedHashMap to keep order too
     @JsonDeserialize(as = LinkedHashMap.class)
     private Map<String, List<String>> freeProperties1;
 
-    @Schema(description = "Free properties 2")
     // LinkedHashMap to keep order too
     @JsonDeserialize(as = LinkedHashMap.class)
     private Map<String, List<String>> freeProperties2;
@@ -62,7 +50,7 @@ public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
                 && substationName2 == null
                 && CollectionUtils.isEmpty(countries1)
                 && CollectionUtils.isEmpty(countries2)
-                && CollectionUtils.isEmpty(freeProperties1)
-                && CollectionUtils.isEmpty(freeProperties2);
+                && MapUtils.isEmpty(freeProperties1)
+                && MapUtils.isEmpty(freeProperties2);
     }
 }

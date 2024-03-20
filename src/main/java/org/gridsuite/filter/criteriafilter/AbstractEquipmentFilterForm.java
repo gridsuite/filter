@@ -9,7 +9,6 @@ package org.gridsuite.filter.criteriafilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,10 +47,8 @@ import org.gridsuite.filter.utils.EquipmentType;
 @SuperBuilder
 public abstract class AbstractEquipmentFilterForm {
 
-    @Schema(description = "Equipment ID")
     private String equipmentID;
 
-    @Schema(description = "Equipment name")
     private String equipmentName;
 
     public abstract EquipmentType getEquipmentType();

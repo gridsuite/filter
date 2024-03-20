@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.powsybl.iidm.network.Identifiable;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,16 +50,12 @@ import java.util.UUID;
 @SuperBuilder
 public abstract class AbstractExpertRule {
 
-    @Schema(description = "Combinator")
     private CombinatorType combinator;
 
-    @Schema(description = "Field")
     private FieldType field;
 
-    @Schema(description = "Operator")
     private OperatorType operator;
 
-    @Schema(description = "Rules")
     private List<AbstractExpertRule> rules;
 
     public abstract boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters);

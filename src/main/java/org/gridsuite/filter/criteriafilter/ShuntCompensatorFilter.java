@@ -6,7 +6,6 @@
  */
 package org.gridsuite.filter.criteriafilter;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -18,7 +17,6 @@ import org.gridsuite.filter.utils.EquipmentType;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-@Schema(description = "Shunt compensator Filters", allOf = AbstractInjectionFilter.class)
 public class ShuntCompensatorFilter extends AbstractInjectionFilter {
 
     public ShuntCompensatorFilter(InjectionFilterAttributes injectionFilterAttributes) {

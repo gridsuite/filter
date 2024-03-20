@@ -6,7 +6,6 @@
  */
 package org.gridsuite.filter.criteriafilter;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,17 +23,14 @@ import org.gridsuite.filter.utils.EquipmentType;
 @AllArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-@Schema(description = "Two windings transformer Filters", allOf = AbstractTransformerFilter.class)
 public class TwoWindingsTransformerFilter extends AbstractTransformerFilter {
     @Override
     public EquipmentType getEquipmentType() {
         return EquipmentType.TWO_WINDINGS_TRANSFORMER;
     }
 
-    @Schema(description = "Nominal voltage 1")
     private NumericalFilter nominalVoltage1;
 
-    @Schema(description = "Nominal voltage 2")
     private NumericalFilter nominalVoltage2;
 
     @Override

@@ -8,7 +8,6 @@
 package org.gridsuite.filter.identifierlistfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +27,6 @@ import java.util.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@Schema(description = "Identifier list Filters", allOf = AbstractFilter.class)
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class IdentifierListFilter extends AbstractFilter {

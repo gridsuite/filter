@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,10 +38,8 @@ import static org.gridsuite.filter.utils.expertfilter.OperatorType.isMultipleCri
 @Setter
 @SuperBuilder
 public class NumberExpertRule extends AbstractExpertRule {
-    @Schema(description = "Value")
     private Double value;
 
-    @Schema(description = "Values")
     @JsonDeserialize(as = HashSet.class)
     private Set<Double> values;
 

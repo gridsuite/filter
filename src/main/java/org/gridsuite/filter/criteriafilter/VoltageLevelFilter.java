@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.gridsuite.filter.utils.EquipmentType;
-import org.springframework.util.CollectionUtils;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,30 +30,25 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-@Schema(description = "Voltage level Filters", allOf = CriteriaFilter.class)
 public class VoltageLevelFilter extends AbstractEquipmentFilterForm {
     @Override
     public EquipmentType getEquipmentType() {
         return EquipmentType.VOLTAGE_LEVEL;
     }
 
-    @Schema(description = "Countries")
     private SortedSet<String> countries;
 
-    @Schema(description = "Substation free properties")
     private Map<String, List<String>> substationFreeProperties;
 
-    @Schema(description = "Free properties")
     private Map<String, List<String>> freeProperties;
 
-    @Schema(description = "Nominal voltage")
     private NumericalFilter nominalVoltage;
 
     @Override
     public boolean isEmpty() {
         return super.isEmpty()
             && CollectionUtils.isEmpty(countries)
-            && CollectionUtils.isEmpty(substationFreeProperties)
+            && MapUtils.isEmpty(substationFreeProperties)
             && nominalVoltage == null;
     }
 }

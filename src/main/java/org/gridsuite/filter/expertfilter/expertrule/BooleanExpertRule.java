@@ -9,7 +9,6 @@ package org.gridsuite.filter.expertfilter.expertrule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +32,6 @@ import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getField
 @Setter
 @SuperBuilder
 public class BooleanExpertRule extends AbstractExpertRule {
-    @Schema(description = "Value")
     private boolean value;
 
     @Override

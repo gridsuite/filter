@@ -7,53 +7,18 @@
 package org.gridsuite.filter.utils;
 
 import com.powsybl.commons.PowsyblException;
-import com.powsybl.iidm.network.Battery;
-import com.powsybl.iidm.network.Branch;
-import com.powsybl.iidm.network.BusbarSection;
-import com.powsybl.iidm.network.Country;
-import com.powsybl.iidm.network.DanglingLine;
-import com.powsybl.iidm.network.EnergySource;
-import com.powsybl.iidm.network.Generator;
-import com.powsybl.iidm.network.HvdcLine;
-import com.powsybl.iidm.network.Identifiable;
-import com.powsybl.iidm.network.Injection;
-import com.powsybl.iidm.network.LccConverterStation;
-import com.powsybl.iidm.network.Line;
-import com.powsybl.iidm.network.Load;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.ShuntCompensator;
-import com.powsybl.iidm.network.StaticVarCompensator;
-import com.powsybl.iidm.network.Substation;
-import com.powsybl.iidm.network.Terminal;
-import com.powsybl.iidm.network.ThreeWindingsTransformer;
-import com.powsybl.iidm.network.TwoWindingsTransformer;
-import com.powsybl.iidm.network.VoltageLevel;
-import com.powsybl.iidm.network.VscConverterStation;
-import org.gridsuite.filter.FilterLoader;
+import com.powsybl.iidm.network.*;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.gridsuite.filter.AbstractFilter;
-import org.gridsuite.filter.criteriafilter.AbstractInjectionFilter;
-import org.gridsuite.filter.criteriafilter.CriteriaFilter;
-import org.gridsuite.filter.criteriafilter.GeneratorFilter;
-import org.gridsuite.filter.criteriafilter.HvdcLineFilter;
-import org.gridsuite.filter.criteriafilter.LineFilter;
-import org.gridsuite.filter.criteriafilter.NumericalFilter;
-import org.gridsuite.filter.criteriafilter.SubstationFilter;
-import org.gridsuite.filter.criteriafilter.ThreeWindingsTransformerFilter;
-import org.gridsuite.filter.criteriafilter.TwoWindingsTransformerFilter;
-import org.gridsuite.filter.criteriafilter.VoltageLevelFilter;
+import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.criteriafilter.*;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -67,9 +32,9 @@ public final class FiltersUtils {
 
     public static boolean matchesFreeProps(Map<String, List<String>> freeProperties, Substation substation) {
         if (substation == null) {
-            return CollectionUtils.isEmpty(freeProperties);
+            return MapUtils.isEmpty(freeProperties);
         }
-        if (CollectionUtils.isEmpty(freeProperties)) {
+        if (MapUtils.isEmpty(freeProperties)) {
             return true;
         }
         return freeProperties.entrySet().stream().allMatch(p -> p.getValue().contains(substation.getProperty(p.getKey())));
@@ -77,9 +42,9 @@ public final class FiltersUtils {
 
     public static boolean matchesFreeProps(Map<String, List<String>> freeProperties, Identifiable<?> identifiable) {
         if (identifiable == null) {
-            return CollectionUtils.isEmpty(freeProperties);
+            return MapUtils.isEmpty(freeProperties);
         }
-        if (CollectionUtils.isEmpty(freeProperties)) {
+        if (MapUtils.isEmpty(freeProperties)) {
             return true;
         }
         return freeProperties.entrySet().stream().allMatch(p -> p.getValue().contains(identifiable.getProperty(p.getKey())));

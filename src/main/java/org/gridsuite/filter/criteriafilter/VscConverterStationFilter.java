@@ -6,7 +6,6 @@
  */
 package org.gridsuite.filter.criteriafilter;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -18,7 +17,6 @@ import org.gridsuite.filter.utils.EquipmentType;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-@Schema(description = "Vsc converter station Filters", allOf = AbstractInjectionFilter.class)
 public class VscConverterStationFilter extends AbstractInjectionFilter {
 
     public VscConverterStationFilter(InjectionFilterAttributes injectionFilterAttributes) {

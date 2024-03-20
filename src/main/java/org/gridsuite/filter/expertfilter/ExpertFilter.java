@@ -8,7 +8,6 @@ package org.gridsuite.filter.expertfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.iidm.network.TopologyKind;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,17 +26,14 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@Schema(description = "Expert Filters", allOf = AbstractFilter.class)
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ExpertFilter extends AbstractFilter {
 
-    @Schema(description = "Rules")
     private AbstractExpertRule rules;
 
     @Setter
-    @Schema(description = "TopologyKind is an optional information used when filtering bus")
     private TopologyKind topologyKind;
 
     public ExpertFilter(UUID id, Date modificationDate, EquipmentType equipmentType, AbstractExpertRule rules) {

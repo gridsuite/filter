@@ -7,7 +7,6 @@
 package org.gridsuite.filter.scriptfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +24,11 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@Schema(description = "Script Filters", allOf = AbstractFilter.class)
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ScriptFilter extends AbstractFilter {
 
-    @Schema(description = "Script")
     private String script;
 
     public ScriptFilter(UUID id, Date modificationDate, String script) {

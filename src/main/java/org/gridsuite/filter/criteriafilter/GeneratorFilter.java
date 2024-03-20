@@ -7,7 +7,6 @@
 package org.gridsuite.filter.criteriafilter;
 
 import com.powsybl.iidm.network.EnergySource;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -26,10 +25,8 @@ import java.util.SortedSet;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-@Schema(description = "Generator Filters", allOf = AbstractInjectionFilter.class)
 public class GeneratorFilter extends AbstractInjectionFilter {
 
-    @Schema(description = "Energy source")
     private EnergySource energySource;
 
     public GeneratorFilter(String equipmentID, String equipmentName, String substationName,

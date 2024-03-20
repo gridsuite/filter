@@ -6,7 +6,6 @@
  */
 package org.gridsuite.filter.criteriafilter;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.utils.EquipmentType;
@@ -20,17 +19,14 @@ import org.gridsuite.filter.utils.EquipmentType;
 @AllArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-@Schema(description = "Line Filters", allOf = AbstractLineFilter.class)
 public class LineFilter extends AbstractLineFilter {
     @Override
     public EquipmentType getEquipmentType() {
         return EquipmentType.LINE;
     }
 
-    @Schema(description = "Nominal voltage 1")
     private NumericalFilter nominalVoltage1;
 
-    @Schema(description = "Nominal voltage 2")
     private NumericalFilter nominalVoltage2;
 
     @Override
