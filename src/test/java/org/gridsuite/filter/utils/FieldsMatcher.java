@@ -25,6 +25,7 @@ import java.lang.reflect.Modifier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -41,14 +42,10 @@ import lombok.SneakyThrows;
 /**
  * @author Laurent Garnier <laurent.garnier at rte-france.com>
  */
-
+@RequiredArgsConstructor
 class EqualDiagnosingMatcher<U> extends TypeSafeDiagnosingMatcher<U> {
 
     private final U expected;
-
-    EqualDiagnosingMatcher(U expected) {
-        this.expected = expected;
-    }
 
     protected boolean matchesSafely(U actual, Description mismatchDescription) {
         boolean equals = Objects.equals(expected, actual);
@@ -71,7 +68,7 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         Integer.class, Float.class, Double.class, Long.class, Short.class,
         Enum.class);
 
-    T expected;
+    private final T expected;
     private Map<String, TypeSafeMatcher<?>> pathBasedMatchersMap;
     private Map<Class<?>, TypeSafeMatcher<?>> classBasedMatcherMap;
 

@@ -65,14 +65,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
-public class FiltersUtilsTest {
+class FiltersUtilsTest {
     private Network network;
     private Network network2;
     private Network network3;
     private Network network4;
     private Network network5;
 
-    FilterLoader filterLoader;
+    private FilterLoader filterLoader;
 
     @BeforeEach
     public void setUp() {
@@ -92,7 +92,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testSubstationFilter() {
+    void testSubstationFilter() {
         // criteria filter
         SubstationFilter substationFilter = SubstationFilter.builder()
             .countries(new TreeSet<>(Set.of("FR", "IT")))
@@ -141,7 +141,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testVoltageLevelFilter() {
+    void testVoltageLevelFilter() {
         // criteria filter
         VoltageLevelFilter voltageLevelFilter = VoltageLevelFilter.builder()
             .countries(new TreeSet<>(Set.of("FR", "IT")))
@@ -188,7 +188,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testLineFilter() {
+    void testLineFilter() {
         // criteria filter
         LineFilter lineFilter = LineFilter.builder()
             .substationName1("P1")
@@ -244,7 +244,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testTwoWindingsTransformerFilter() {
+    void testTwoWindingsTransformerFilter() {
         // criteria filter
         TwoWindingsTransformerFilter twoWindingsTransformerFilter = TwoWindingsTransformerFilter.builder()
             .substationName("P2")
@@ -294,7 +294,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testThreeWindingsTransformerFilter() {
+    void testThreeWindingsTransformerFilter() {
         // criteria filter
         ThreeWindingsTransformerFilter threeWindingsTransformerFilter = ThreeWindingsTransformerFilter.builder()
             .substationName("SUBSTATION")
@@ -357,7 +357,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testGeneratorFilter() {
+    void testGeneratorFilter() {
         // criteria filter
         GeneratorFilter generatorFilter = new GeneratorFilter(null, null, "P1", new TreeSet<>(Set.of("FR", "IT")),
             null, null, new NumericalFilter(RangeType.RANGE, 15., 30.), null);
@@ -426,7 +426,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testLoadFilter() {
+    void testLoadFilter() {
         // criteria filter
         LoadFilter loadFilter = LoadFilter.builder()
             .substationName("P2")
@@ -474,7 +474,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testBatteryFilter() {
+    void testBatteryFilter() {
         // criteria filter
         BatteryFilter batteryFilter = BatteryFilter.builder()
             .substationName("P2")
@@ -519,7 +519,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testShuntCompensatorFilter() {
+    void testShuntCompensatorFilter() {
         // criteria filter
         ShuntCompensatorFilter shuntCompensatorFilter = ShuntCompensatorFilter.builder()
             .substationName("S1")
@@ -567,7 +567,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testStaticVarCompensatorFilter() {
+    void testStaticVarCompensatorFilter() {
         // criteria filter
         StaticVarCompensatorFilter staticVarCompensatorFilter = StaticVarCompensatorFilter.builder()
             .substationName("S2")
@@ -619,7 +619,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testDanglingLineFilter() {
+    void testDanglingLineFilter() {
         // criteria filter
         DanglingLineFilter danglingLineFilter = DanglingLineFilter.builder()
             .substationName("S2")
@@ -664,7 +664,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testBusbarSectionFilter() {
+    void testBusbarSectionFilter() {
         // criteria filter
         BusBarSectionFilter busbarSectionFilter = BusBarSectionFilter.builder()
             .substationName("S1")
@@ -709,7 +709,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testBusFilter() {
+    void testBusFilter() {
         // expert filter only for bus
         ExpertFilter expertFilter = new ExpertFilter(
             UUID.randomUUID(),
@@ -723,7 +723,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testLccConverterStationFilter() {
+    void testLccConverterStationFilter() {
         // criteria filter
         LccConverterStationFilter lccConverterStationFilter = LccConverterStationFilter.builder()
             .substationName("S1")
@@ -768,7 +768,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testVscConverterStationFilter() {
+    void testVscConverterStationFilter() {
         // criteria filter
         VscConverterStationFilter vscConverterStationFilter = VscConverterStationFilter.builder()
             .substationName("S1")
@@ -816,7 +816,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testHvdcLineFilter() {
+    void testHvdcLineFilter() {
         // criteria filter
         HvdcLineFilter hvdcLineFilter = HvdcLineFilter.builder()
             .substationName1("S1")
@@ -865,7 +865,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testIdentifierListFilter() {
+    void testIdentifierListFilter() {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("GEN", 30.),
             new IdentifierListFilterEquipmentAttributes("notFound1", 50.),
@@ -895,7 +895,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testScriptFilter() {
+    void testScriptFilter() {
         ScriptFilter scriptFilter = new ScriptFilter(
             UUID.randomUUID(),
             new Date(),
@@ -905,7 +905,7 @@ public class FiltersUtilsTest {
     }
 
     @Test
-    public void testFilterLoader() {
+    void testFilterLoader() {
         // with identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("GEN", 30.),

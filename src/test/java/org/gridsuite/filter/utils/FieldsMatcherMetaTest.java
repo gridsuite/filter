@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @author Laurent Garnier <laurent.garnier at rte-france.com>
  */
 
-public class FieldsMatcherMetaTest {
+class FieldsMatcherMetaTest {
 
     public static final Top TOP_0 = Top.builder().str("une").i(1).bigint(BigInteger.TWO).bytes("3".getBytes(StandardCharsets.UTF_8))
         .orderedStrings(List.of("abc", "def"))
@@ -68,14 +68,14 @@ public class FieldsMatcherMetaTest {
     }
 
     @Test
-    public void unboxed() {
+    void unboxed() {
         testInts(Integer.MAX_VALUE, 0, "/ was not 0");
         testInts(0, Integer.MAX_VALUE, "/ was not 2147483647");
         testInts(0, 0, null);
     }
 
     @Test
-    public void basics() {
+    void basics() {
         testBasics(null, "Pas null", "/ was null");
         testBasics("Nicht null", null, "/ was not null");
         testBasics(null, null, null);
@@ -88,17 +88,17 @@ public class FieldsMatcherMetaTest {
     @Getter
     @With
     static class Deeper {
-        boolean up;
-        Float f;
+        private final boolean up;
+        private final Float f;
     }
 
     @Builder
     @Getter
     @With
     static class Deep {
-        Set<String> countries;
+        private final Set<String> countries;
 
-        Map<String, Set<Deeper>> deepers;
+        private final Map<String, Set<Deeper>> deepers;
     }
 
     @Builder
@@ -120,18 +120,18 @@ public class FieldsMatcherMetaTest {
     }
 
     @Test
-    public void selfIsSelf() {
+    void selfIsSelf() {
         testBasics(TOP_0, TOP_0, null);
     }
 
     @Test
-    public void shallowBasic() {
+    void shallowBasic() {
         testBasics(TOP_0.withI(2), TOP_0.withI(2), null);
         testBasics(TOP_0, TOP_0.withI(2), "/i/ was Integer <1>");
     }
 
     @Test
-    public void shallowMap() {
+    void shallowMap() {
         testBasics(TOP_0, TOP_0.withFamousNumbers(Map.of("e", Math.E, "pi", Math.PI)), null);
         testBasics(TOP_0, TOP_0.withFamousNumbers(Map.of("one", 1.0, "ZERO", 0.0)),
             "/famousNumbers/ unfullfilled<.*> unexpected<.*>");
@@ -139,7 +139,7 @@ public class FieldsMatcherMetaTest {
     }
 
     @Test
-    public void shallowOrderedMap() {
+    void shallowOrderedMap() {
         testBasics(TOP_0, TOP_0.withFamousNumbers(Map.of("e", Math.E, "pi", Math.PI)), null);
         testBasics(TOP_0, TOP_0.withFamousNumbers(Map.of("one", 1.0, "ZERO", 0.0)),
             "/famousNumbers/ unfullfilled<.*> unexpected<.*>");
@@ -147,7 +147,7 @@ public class FieldsMatcherMetaTest {
     }
 
     @Test
-    public void shallowSet() {
+    void shallowSet() {
         testBasics(TOP_0.withLoto(Set.of(7, 8)), TOP_0.withLoto(Set.of(7, 8)), null);
         testBasics(TOP_0, TOP_0.withLoto(Set.of(7, 8)), "/loto/ \\* unfulfilled<.*> unexpected<.*>");
         testBasics(TOP_0, TOP_0.withLoto(Set.of(7)), "/loto/ \\* difference in size .* unfulfilled<.*> unexpected<.*>");
@@ -155,7 +155,7 @@ public class FieldsMatcherMetaTest {
     }
 
     @Test
-    public void shallowList() {
+    void shallowList() {
         testBasics(TOP_0.withOrderedStrings(List.of("def", "abc")), TOP_0.withOrderedStrings(List.of("def", "abc")), null);
         testBasics(TOP_0, TOP_0.withOrderedStrings(List.of("def", "abc")), "/orderedStrings/ \\[0->1\\]\\[1->0\\]");
         testBasics(TOP_0, TOP_0.withOrderedStrings(List.of()), "/orderedStrings/ .*in size.* .!0..!1.");
@@ -167,7 +167,7 @@ public class FieldsMatcherMetaTest {
     }
 
     @Test
-    public void deepSet() {
+    void deepSet() {
         testBasics(TOP_0.withDeep(TOP_0.deep.withCountries(Set.of("ru", "uk"))),
             TOP_0.withDeep(TOP_0.deep.withCountries(Set.of("ru", "uk"))),
             null);
@@ -176,7 +176,7 @@ public class FieldsMatcherMetaTest {
     }
 
     @Test
-    public void deeper() {
+    void deeper() {
         testBasics(TOP_0.withDeep(TOP_0.deep.withDeepers(Map.of("what", Set.of()))),
             TOP_0.withDeep(TOP_0.deep.withDeepers(Map.of("what", Set.of()))),
             null);

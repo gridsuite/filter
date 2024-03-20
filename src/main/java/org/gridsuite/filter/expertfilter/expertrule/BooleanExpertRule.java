@@ -36,10 +36,6 @@ public class BooleanExpertRule extends AbstractExpertRule {
     @Schema(description = "Value")
     private boolean value;
 
-    private static boolean getBooleanValue(String value) {
-        return Boolean.parseBoolean(value);
-    }
-
     @Override
     public String getStringValue() {
         return String.valueOf(isValue());
@@ -57,7 +53,7 @@ public class BooleanExpertRule extends AbstractExpertRule {
         if (fieldValue == null) {
             return false;
         }
-        boolean identifiableValue = getBooleanValue(fieldValue);
+        boolean identifiableValue = Boolean.parseBoolean(fieldValue);
         boolean filterValue = this.isValue();
         return switch (this.getOperator()) {
             case EQUALS -> identifiableValue == filterValue;

@@ -23,7 +23,6 @@ import java.util.UUID;
 /**
  * @author Homer Etienne <etienne.homer at rte-france.com>
  */
-
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -49,9 +48,5 @@ public class CriteriaFilter extends AbstractFilter {
     @Override
     public EquipmentType getEquipmentType() {
         return equipmentFilterForm.getEquipmentType();
-    }
-
-    public AbstractEquipmentFilterForm getEquipmentFilterForm() {
-        return equipmentFilterForm;
     }
 }

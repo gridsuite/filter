@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EnumExpertRuleTest {
-    FilterLoader filterLoader;
+    private FilterLoader filterLoader;
 
     @BeforeEach
     public void setUp() {
@@ -281,7 +281,7 @@ class EnumExpertRuleTest {
 
             @Override
             public double getGPerSection() {
-                return 0;
+                return 0.;
             }
 
             @Override

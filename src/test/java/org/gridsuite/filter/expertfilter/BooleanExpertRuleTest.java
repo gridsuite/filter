@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BooleanExpertRuleTest {
-    FilterLoader filterLoader;
+    private FilterLoader filterLoader;
 
     @BeforeEach
     public void setUp() {

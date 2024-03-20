@@ -11,10 +11,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.utils.EquipmentType;
 
@@ -44,12 +42,10 @@ import org.gridsuite.filter.utils.EquipmentType;
     @JsonSubTypes.Type(value = VoltageLevelFilter.class, name = "VOLTAGE_LEVEL"),
     @JsonSubTypes.Type(value = SubstationFilter.class, name = "SUBSTATION"),
 })
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@ToString
 public abstract class AbstractEquipmentFilterForm {
 
     @Schema(description = "Equipment ID")

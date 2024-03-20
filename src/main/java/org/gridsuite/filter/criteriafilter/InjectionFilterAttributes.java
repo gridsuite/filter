@@ -9,16 +9,14 @@ package org.gridsuite.filter.criteriafilter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class InjectionFilterAttributes {
     @Schema(description = "Equipment ID")
     private String equipmentID;

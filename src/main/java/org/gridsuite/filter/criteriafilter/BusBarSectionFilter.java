@@ -7,7 +7,7 @@
 package org.gridsuite.filter.criteriafilter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.utils.EquipmentType;
@@ -15,7 +15,7 @@ import org.gridsuite.filter.utils.EquipmentType;
 /**
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
-@AllArgsConstructor
+@NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
 @Schema(description = "Busbar section Filters", allOf = AbstractInjectionFilter.class)

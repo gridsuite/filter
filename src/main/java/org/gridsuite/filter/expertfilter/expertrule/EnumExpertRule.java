@@ -9,7 +9,7 @@ package org.gridsuite.filter.expertfilter.expertrule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
@@ -23,7 +23,7 @@ import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getField
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
  */
-@AllArgsConstructor
+@NoArgsConstructor
 @SuperBuilder
 public class EnumExpertRule extends StringExpertRule {
     @Override

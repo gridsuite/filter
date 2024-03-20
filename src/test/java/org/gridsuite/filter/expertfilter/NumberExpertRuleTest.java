@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 class NumberExpertRuleTest {
-    FilterLoader filterLoader;
+    private FilterLoader filterLoader;
 
     @BeforeEach
     public void setUp() {
@@ -730,7 +730,7 @@ class NumberExpertRuleTest {
 
             @Override
             public double getGPerSection() {
-                return 0;
+                return 0.;
             }
 
             @Override

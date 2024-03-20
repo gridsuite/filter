@@ -13,12 +13,10 @@ import org.gridsuite.filter.utils.RangeType;
  * @author Jacques Borsenberger <jacques.borsenberger at rte-france.com>
  */
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class NumericalFilter {
     private RangeType type;
     private Double value1;
