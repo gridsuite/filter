@@ -39,27 +39,6 @@ import org.hamcrest.collection.IsIterableContainingInOrder;
 import static java.lang.String.format;
 import lombok.SneakyThrows;
 
-/**
- * @author Laurent Garnier <laurent.garnier at rte-france.com>
- */
-@RequiredArgsConstructor
-class EqualDiagnosingMatcher<U> extends TypeSafeDiagnosingMatcher<U> {
-
-    private final U expected;
-
-    protected boolean matchesSafely(U actual, Description mismatchDescription) {
-        boolean equals = Objects.equals(expected, actual);
-        if (!equals) {
-            mismatchDescription.appendText("was not " + expected);
-        }
-        return equals;
-    }
-
-    public void describeTo(Description description) {
-        description.appendText("Objects.equals");
-    }
-}
-
 public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
 
     private static final String SEP = "/";
@@ -71,6 +50,23 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     private final T expected;
     private Map<String, TypeSafeMatcher<?>> pathBasedMatchersMap;
     private Map<Class<?>, TypeSafeMatcher<?>> classBasedMatcherMap;
+
+    @RequiredArgsConstructor
+    private static class EqualDiagnosingMatcher<U> extends TypeSafeDiagnosingMatcher<U> {
+        private final U expected;
+
+        protected boolean matchesSafely(U actual, Description mismatchDescription) {
+            boolean equals = Objects.equals(expected, actual);
+            if (!equals) {
+                mismatchDescription.appendText("was not " + expected);
+            }
+            return equals;
+        }
+
+        public void describeTo(Description description) {
+            description.appendText("Objects.equals");
+        }
+    }
 
     public FieldsMatcher(T expected,
         Map<String, TypeSafeMatcher<?>> pathBasedMatchersMap,
