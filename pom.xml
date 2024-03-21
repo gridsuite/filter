@@ -47,7 +47,7 @@
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <org.hamcrest.version>2.2</org.hamcrest.version>
         <org.mockito.version>5.11.0</org.mockito.version>
-        <powsybl-dependencies.version>2023.4.1</powsybl-dependencies.version>
+        <powsybl-dependencies.version>2024.0.3</powsybl-dependencies.version>
     </properties>
 
     <build>
@@ -110,30 +110,20 @@
     <dependencies>
         <!-- Compilation dependencies -->
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>com.powsybl</groupId>
+            <artifactId>powsybl-iidm-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.powsybl</groupId>
-            <artifactId>powsybl-contingency-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.powsybl</groupId>
-            <artifactId>powsybl-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.powsybl</groupId>
-            <artifactId>powsybl-iidm-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <artifactId>powsybl-iidm-extensions</artifactId>
         </dependency>
 
         <!-- Runtime dependencies -->
@@ -156,12 +146,12 @@
         </dependency>
         <dependency>
             <groupId>com.powsybl</groupId>
-            <artifactId>powsybl-config-test</artifactId>
+            <artifactId>powsybl-iidm-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.powsybl</groupId>
-            <artifactId>powsybl-iidm-test</artifactId>
+            <artifactId>powsybl-iidm-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
