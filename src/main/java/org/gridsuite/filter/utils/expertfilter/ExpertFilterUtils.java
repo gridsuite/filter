@@ -101,8 +101,8 @@ public final class ExpertFilterUtils {
             case P0 -> String.valueOf(load.getP0());
             case Q0 -> String.valueOf(load.getQ0());
             case CONNECTED -> getTerminalFieldValue(field, load.getTerminal());
+            case LOAD_TYPE -> load.getLoadType().name();
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + load.getType() + "]");
-
         };
     }
 
@@ -236,7 +236,20 @@ public final class ExpertFilterUtils {
             case RATIO_REGULATING -> String.valueOf(ratioTapChanger.isRegulating());
             case RATIO_TARGET_V -> String.valueOf(ratioTapChanger.getTargetV());
             case LOAD_TAP_CHANGING_CAPABILITIES -> String.valueOf(ratioTapChanger.hasLoadTapChangingCapabilities());
+            case RATIO_REGULATION_MODE -> ratioTapChanger.getRegulationMode() != null ? ratioTapChanger.getRegulationMode().name() : null;
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",ratioTapChanger]");
+        };
+    }
+
+    private static String getPhaseTapChangerFieldValue(FieldType field, PhaseTapChanger phaseTapChanger) {
+        if (phaseTapChanger == null) {
+            return null;
+        }
+        return switch (field) {
+            case PHASE_REGULATING -> String.valueOf(phaseTapChanger.isRegulating());
+            case PHASE_REGULATION_VALUE -> String.valueOf(phaseTapChanger.getRegulationValue());
+            case PHASE_REGULATION_MODE -> phaseTapChanger.getRegulationMode() != null ? phaseTapChanger.getRegulationMode().name() : null;
+            default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",phaseTapChanger]");
         };
     }
 
@@ -247,6 +260,8 @@ public final class ExpertFilterUtils {
             case CONNECTED_2 -> String.valueOf(twoWindingsTransformer.getTerminal2().isConnected());
             case NOMINAL_VOLTAGE_1 -> String.valueOf(twoWindingsTransformer.getTerminal1().getVoltageLevel().getNominalV());
             case NOMINAL_VOLTAGE_2 -> String.valueOf(twoWindingsTransformer.getTerminal2().getVoltageLevel().getNominalV());
+            case RATED_VOLTAGE_1 -> String.valueOf(twoWindingsTransformer.getRatedU1());
+            case RATED_VOLTAGE_2 -> String.valueOf(twoWindingsTransformer.getRatedU2());
             case VOLTAGE_LEVEL_ID_1 -> twoWindingsTransformer.getTerminal1().getVoltageLevel().getId();
             case VOLTAGE_LEVEL_ID_2 -> twoWindingsTransformer.getTerminal2().getVoltageLevel().getId();
             case RATED_S -> String.valueOf(twoWindingsTransformer.getRatedS());
@@ -254,9 +269,15 @@ public final class ExpertFilterUtils {
             case SERIE_REACTANCE -> String.valueOf(twoWindingsTransformer.getX());
             case MAGNETIZING_CONDUCTANCE -> String.valueOf(twoWindingsTransformer.getG());
             case MAGNETIZING_SUSCEPTANCE -> String.valueOf(twoWindingsTransformer.getB());
+            case HAS_RATIO_TAP_CHANGER -> String.valueOf(twoWindingsTransformer.hasRatioTapChanger());
             case RATIO_REGULATING,
                 RATIO_TARGET_V,
-                LOAD_TAP_CHANGING_CAPABILITIES -> getRatioTapChangerFieldValue(field, twoWindingsTransformer.getRatioTapChanger());
+                LOAD_TAP_CHANGING_CAPABILITIES,
+                RATIO_REGULATION_MODE -> getRatioTapChangerFieldValue(field, twoWindingsTransformer.getRatioTapChanger());
+            case HAS_PHASE_TAP_CHANGER -> String.valueOf(twoWindingsTransformer.hasPhaseTapChanger());
+            case PHASE_REGULATING,
+                PHASE_REGULATION_MODE,
+                PHASE_REGULATION_VALUE -> getPhaseTapChangerFieldValue(field, twoWindingsTransformer.getPhaseTapChanger());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + twoWindingsTransformer.getType() + "]");
         };
     }
