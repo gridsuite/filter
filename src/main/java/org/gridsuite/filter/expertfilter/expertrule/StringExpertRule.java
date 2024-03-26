@@ -60,6 +60,9 @@ public class StringExpertRule extends AbstractExpertRule {
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
         String identifiableValue = getFieldValue(this.getField(), identifiable);
+        if (identifiableValue == null) {
+            return false;
+        }
         return switch (this.getOperator()) {
             case IS -> identifiableValue.equalsIgnoreCase(this.getValue());
             case CONTAINS -> StringUtils.containsIgnoreCase(identifiableValue, this.getValue());

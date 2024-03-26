@@ -1500,6 +1500,9 @@ class NumberExpertRuleTest {
         Mockito.when(twoWindingsTransformer.getG()).thenReturn(0.3);
         Mockito.when(twoWindingsTransformer.getB()).thenReturn(0.4);
         Mockito.when(twoWindingsTransformer.getRatedS()).thenReturn(100.0);
+        Mockito.when(twoWindingsTransformer.getRatedU1()).thenReturn(50.);
+        Mockito.when(twoWindingsTransformer.getRatedU2()).thenReturn(300.0);
+
         // Terminal fields
         Terminal terminal = Mockito.mock(Terminal.class);
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
@@ -1511,6 +1514,10 @@ class NumberExpertRuleTest {
         RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
         Mockito.when(ratioTapChanger.getTargetV()).thenReturn(13.0);
         Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        // PhaseTapChanger fields
+        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(200.);
+        Mockito.when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
 
         // for testing none EXISTS
         TwoWindingsTransformer twoWindingsTransformer1 = Mockito.mock(TwoWindingsTransformer.class);
@@ -1539,6 +1546,14 @@ class NumberExpertRuleTest {
         Mockito.when(twoWindingsTransformer2.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
         Mockito.when(twoWindingsTransformer2.getRatioTapChanger()).thenReturn(null);
 
+        // PhaseTapChanger fields
+        PhaseTapChanger phaseTapChanger1 = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger1.getRegulationValue()).thenReturn(Double.NaN);
+        Mockito.when(twoWindingsTransformer1.getPhaseTapChanger()).thenReturn(phaseTapChanger1);
+
+        // null PhaseTapChanger
+        Mockito.when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
+
         return Stream.of(
             // --- EQUALS --- //
             // Terminal fields
@@ -1549,6 +1564,9 @@ class NumberExpertRuleTest {
             // RatioTapChanger fields
             Arguments.of(EQUALS, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, false),
+            // PhaseTapChanger fields
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE, 200., null, twoWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE, 250., null, twoWindingsTransformer, false),
             // TwoWindingsTransformer fields
             Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.2, null, twoWindingsTransformer, false),
@@ -1560,6 +1578,10 @@ class NumberExpertRuleTest {
             Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.5, null, twoWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.RATED_S, 200.0, null, twoWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 300., null, twoWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, twoWindingsTransformer, false),
 
             // --- GREATER_OR_EQUALS --- //
             // Terminal
@@ -1589,6 +1611,12 @@ class NumberExpertRuleTest {
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, true),
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false),
 
             // --- GREATER --- //
             // Terminal
@@ -1618,6 +1646,12 @@ class NumberExpertRuleTest {
             Arguments.of(GREATER, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, true),
             Arguments.of(GREATER, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, false),
             Arguments.of(GREATER, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false),
 
             // --- LOWER_OR_EQUALS --- //
             // Terminal
@@ -1647,6 +1681,12 @@ class NumberExpertRuleTest {
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, true),
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false),
 
             // --- LOWER --- //
             // Terminal
@@ -1676,6 +1716,12 @@ class NumberExpertRuleTest {
             Arguments.of(LOWER, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, true),
             Arguments.of(LOWER, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, false),
             Arguments.of(LOWER, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false),
 
             // --- BETWEEN --- //
             // Terminal
@@ -1697,6 +1743,10 @@ class NumberExpertRuleTest {
             Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.45, 0.55), twoWindingsTransformer, false),
             Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, true),
             Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(150.0, 250.0), twoWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(48., 52.), twoWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(55., 70.), twoWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(295., 305.), twoWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(320., 350.), twoWindingsTransformer, false),
 
             // --- EXISTS --- //
             // Terminal
@@ -1718,6 +1768,10 @@ class NumberExpertRuleTest {
             Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer1, false),
             Arguments.of(EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer, true),
             Arguments.of(EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
 
             // --- IN --- //
             // Terminal
@@ -1739,6 +1793,10 @@ class NumberExpertRuleTest {
             Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, false),
             Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 100.0, 150.0), twoWindingsTransformer, true),
             Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 50.0, 51.0), twoWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 51.0), twoWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, false),
 
             // --- NOT_IN --- //
             // Terminal
@@ -1760,9 +1818,16 @@ class NumberExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.4, 0.45), twoWindingsTransformer, false),
             Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 100.0, 150.0), twoWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 51.), twoWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 50., 51.), twoWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, false),
 
             // null RatioTapChanger
-            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer2, false)
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer2, false),
+
+            // null PhaseTapChanger
+            Arguments.of(EXISTS, FieldType.PHASE_REGULATION_VALUE, null, null, twoWindingsTransformer2, false)
         );
     }
 

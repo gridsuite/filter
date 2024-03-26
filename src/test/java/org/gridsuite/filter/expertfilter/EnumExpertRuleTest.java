@@ -161,6 +161,8 @@ class EnumExpertRuleTest {
 
         Load load = Mockito.mock(Load.class);
         Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        Mockito.when(load.getLoadType()).thenReturn(LoadType.AUXILIARY);
+
         // VoltageLevel fields
         Substation substation = Mockito.mock(Substation.class);
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
@@ -175,21 +177,27 @@ class EnumExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, load, true),
                 Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, load, false),
+                Arguments.of(EQUALS, FieldType.LOAD_TYPE, LoadType.AUXILIARY.name(), null, load, true),
+                Arguments.of(EQUALS, FieldType.LOAD_TYPE, LoadType.UNDEFINED.name(), null, load, false),
 
                 // --- NOT_EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, load, true),
                 Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, load, false),
+                Arguments.of(NOT_EQUALS, FieldType.LOAD_TYPE, LoadType.AUXILIARY.name(), null, load, false),
+                Arguments.of(NOT_EQUALS, FieldType.LOAD_TYPE, LoadType.FICTITIOUS.name(), null, load, true),
 
                 // --- IN --- //
                  // VoltageLevel fields
                 Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), load, true),
                 Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), load, false),
+                Arguments.of(IN, FieldType.LOAD_TYPE, null, Set.of(LoadType.UNDEFINED.name(), LoadType.AUXILIARY.name()), load, true),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), load, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), load, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), load, false),
+                Arguments.of(NOT_IN, FieldType.LOAD_TYPE, null, Set.of(LoadType.UNDEFINED.name(), LoadType.FICTITIOUS.name()), load, true)
         );
     }
 
@@ -489,6 +497,20 @@ class EnumExpertRuleTest {
 
         TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+
+        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
+        Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        Mockito.when(ratioTapChanger.isRegulating()).thenReturn(true);
+        Mockito.when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
+        Mockito.when(ratioTapChanger.getRegulationMode()).thenReturn(RatioTapChanger.RegulationMode.VOLTAGE);
+        Mockito.when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
+
+        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        Mockito.when(phaseTapChanger.isRegulating()).thenReturn(false);
+        Mockito.when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(100.);
+
         Substation substation = Mockito.mock(Substation.class);
         Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
         Mockito.when(twoWindingsTransformer.getSubstation()).thenReturn(Optional.of(substation));
@@ -497,18 +519,26 @@ class EnumExpertRuleTest {
             // --- EQUALS --- //
             Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, twoWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, twoWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, RatioTapChanger.RegulationMode.VOLTAGE.name(), null, twoWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, twoWindingsTransformer, true),
 
             // --- NOT_EQUALS --- //
             Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, twoWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE, RatioTapChanger.RegulationMode.REACTIVE_POWER.name(), null, twoWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, twoWindingsTransformer, true),
 
             // --- IN --- //
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, true),
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioTapChanger.RegulationMode.VOLTAGE.name(), RatioTapChanger.RegulationMode.REACTIVE_POWER.name()), twoWindingsTransformer, true),
+            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, false),
 
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, false)
-        );
+            Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioTapChanger.RegulationMode.VOLTAGE.name()), twoWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true)
+            );
     }
 }
