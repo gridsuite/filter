@@ -230,11 +230,23 @@ class BooleanExpertRuleTest {
         Mockito.when(ratioTapChanger.isRegulating()).thenReturn(true);
         Mockito.when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(true);
         Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        Mockito.when(twoWindingsTransformer.hasRatioTapChanger()).thenReturn(true);
 
         // null RatioTapChanger
         TwoWindingsTransformer twoWindingsTransformer2 = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingsTransformer2.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
         Mockito.when(twoWindingsTransformer2.getRatioTapChanger()).thenReturn(null);
+        Mockito.when(twoWindingsTransformer2.hasRatioTapChanger()).thenReturn(false);
+
+        // PhaseTapChanger fields
+        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger.isRegulating()).thenReturn(false);
+        Mockito.when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        Mockito.when(twoWindingsTransformer.hasPhaseTapChanger()).thenReturn(true);
+
+        // null PhaseTapChanger
+        Mockito.when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
+        Mockito.when(twoWindingsTransformer2.hasPhaseTapChanger()).thenReturn(false);
 
         return Stream.of(
                 // --- EQUALS--- //
@@ -249,6 +261,12 @@ class BooleanExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATIO_REGULATING, false, twoWindingsTransformer, false),
                 Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES, true, twoWindingsTransformer, true),
                 Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES, false, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER, true, twoWindingsTransformer, true),
+
+                // PhaseTapChanger fields
+                Arguments.of(EQUALS, FieldType.PHASE_REGULATING, false, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.PHASE_REGULATING, true, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER, true, twoWindingsTransformer, true),
 
                 // --- NOT_EQUALS--- //
                 // Terminal fields
@@ -262,9 +280,20 @@ class BooleanExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATING, true, twoWindingsTransformer, false),
                 Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES, false, twoWindingsTransformer, true),
                 Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES, true, twoWindingsTransformer, false),
+                Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER, true, twoWindingsTransformer, false),
 
                 // null RatioTapChanger
-                Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATING, false, twoWindingsTransformer2, false)
+                Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATING, false, twoWindingsTransformer2, false),
+                Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER, false, twoWindingsTransformer2, false),
+
+                // PhaseTapChanger fields
+                Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATING, true, twoWindingsTransformer, true),
+                Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATING, false, twoWindingsTransformer, false),
+                Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER, true, twoWindingsTransformer, false),
+
+                // null PhaseTapChanger
+                Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATING, false, twoWindingsTransformer2, false),
+                Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER, false, twoWindingsTransformer2, false)
         );
     }
 }
