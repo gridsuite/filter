@@ -41,6 +41,8 @@ import java.util.UUID;
     @JsonSubTypes.Type(value = NumberExpertRule.class, name = "NUMBER"),
     @JsonSubTypes.Type(value = CombinatorExpertRule.class, name = "COMBINATOR"),
     @JsonSubTypes.Type(value = FilterUuidExpertRule.class, name = "FILTER_UUID"),
+    @JsonSubTypes.Type(value = PropertiesExpertRule.class, name = "PROPERTIES"),
+    @JsonSubTypes.Type(value = PropertiesExpertRule.class, name = "SUBSTATION_PROPERTIES"),
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor

@@ -19,11 +19,7 @@ import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.utils.expertfilter.DataType;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
@@ -55,7 +51,7 @@ public class NumberExpertRule extends AbstractExpertRule {
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
-        Double identifiableValue = getNumberValue(getFieldValue(this.getField(), identifiable));
+        Double identifiableValue = getNumberValue(getFieldValue(this.getField(), null, identifiable));
         if (Double.isNaN(identifiableValue)) {
             return false;
         }
