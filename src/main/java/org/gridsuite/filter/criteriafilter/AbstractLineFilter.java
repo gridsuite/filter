@@ -43,6 +43,10 @@ public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
     @JsonDeserialize(as = LinkedHashMap.class)
     private Map<String, List<String>> freeProperties2;
 
+    // LinkedHashMap to keep order too
+    @JsonDeserialize(as = LinkedHashMap.class)
+    private Map<String, List<String>> freeProperties;
+
     @Override
     public boolean isEmpty() {
         return super.isEmpty()
@@ -51,6 +55,7 @@ public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
                 && CollectionUtils.isEmpty(countries1)
                 && CollectionUtils.isEmpty(countries2)
                 && MapUtils.isEmpty(freeProperties1)
-                && MapUtils.isEmpty(freeProperties2);
+                && MapUtils.isEmpty(freeProperties2)
+                && MapUtils.isEmpty(freeProperties);
     }
 }

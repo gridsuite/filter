@@ -197,6 +197,7 @@ class FiltersUtilsTest {
             .countries2(new TreeSet<>(Set.of("FR")))
             .freeProperties1(Map.of("region", List.of("south")))
             .freeProperties2(Map.of("region", List.of("north")))
+            .freeProperties(Map.of("region", List.of("south")))
             .nominalVoltage1(new NumericalFilter(RangeType.RANGE, 360., 400.))
             .nominalVoltage2(new NumericalFilter(RangeType.RANGE, 356.25, 393.75))
             .build();
