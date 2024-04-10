@@ -90,6 +90,71 @@ class PropertiesExpertRuleTest {
         );
     }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTest() {
+
+        Generator generator = Mockito.mock(Generator.class);
+        Mockito.when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
+        Terminal terminal = Mockito.mock(Terminal.class);
+
+        Mockito.when(generator.getTerminal()).thenReturn(terminal);
+
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(voltageLevel.getProperty("CodeOI")).thenReturn("22");
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+
+        Substation substation = Mockito.mock(Substation.class);
+        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+
+        Mockito.when(substation.getProperty("regionCSV")).thenReturn("LILLE");
+        Mockito.when(generator.getTerminal().getVoltageLevel().getNullableSubstation().getProperty("cvgRegion")).thenReturn("LILLE");
+
+        return Stream.of(
+                // --- EQUALS --- //
+                Arguments.of(EQUALS, FieldType.FREE_PROPERTIES, "CodeOI", List.of("22"), voltageLevel, true),
+                Arguments.of(EQUALS, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("LILLE"), voltageLevel, true),
+                Arguments.of(EQUALS, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("PARIS"), voltageLevel, false)
+   );
+    }
+
+    private static Stream<Arguments> provideArgumentsForLineTest() {
+
+        Line line = Mockito.mock(Line.class);
+        Mockito.when(line.getType()).thenReturn(IdentifiableType.LINE);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Terminal terminal2 = Mockito.mock(Terminal.class);
+
+        Mockito.when(line.getTerminal1()).thenReturn(terminal1);
+        Mockito.when(line.getTerminal2()).thenReturn(terminal2);
+        Mockito.when(line.getProperty("region")).thenReturn("north");
+
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel1.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(voltageLevel1.getProperty("CodeOI")).thenReturn("22");
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+
+        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel2.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(voltageLevel2.getProperty("region")).thenReturn("east");
+        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+
+        Substation substation1 = Mockito.mock(Substation.class);
+        Substation substation2 = Mockito.mock(Substation.class);
+        Mockito.when(voltageLevel1.getNullableSubstation()).thenReturn(substation1);
+        Mockito.when(voltageLevel2.getNullableSubstation()).thenReturn(substation2);
+        Mockito.when(substation1.getProperty("regionCSV")).thenReturn("LILLE");
+        Mockito.when(substation2.getProperty("regionCSV")).thenReturn("PARIS");
+        Mockito.when(voltageLevel1.getNullableSubstation()).thenReturn(substation1);
+        Mockito.when(voltageLevel2.getNullableSubstation()).thenReturn(substation2);
+
+        return Stream.of(
+                // --- EQUALS --- //
+                Arguments.of(EQUALS, FieldType.FREE_PROPERTIES, "region", List.of("north"), line, true),
+                Arguments.of(EQUALS, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("LILLE"), line, true),
+                Arguments.of(EQUALS, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("PARIS"), line, true)
+   );
+    }
+
     @BeforeEach
     public void setUp() {
         filterLoader = uuids -> null;
@@ -104,10 +169,64 @@ class PropertiesExpertRuleTest {
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
+    private static Stream<Arguments> provideArgumentsForLoadTest() {
+
+        Load load = Mockito.mock(Load.class);
+        Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        Mockito.when(load.getProperty("propertyNameLoad")).thenReturn("propertyValueLoad");
+
+        Substation substation = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(load.getTerminal()).thenReturn(terminal);
+        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("propertyValueSubstation");
+
+        return Stream.of(
+                // --- EQUALS --- //
+                Arguments.of(EQUALS, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad"), load, true),
+                Arguments.of(EQUALS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), load, true)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTest() {
+
+        TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
+        Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        Mockito.when(twoWindingsTransformer.getProperty("propertyNameTWT")).thenReturn("propertyValueTWT");
+
+        Substation substation = Mockito.mock(Substation.class);
+
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(twoWindingsTransformer.getTerminal1()).thenReturn(terminal1);
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel1.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+
+        Mockito.when(voltageLevel1.getNullableSubstation()).thenReturn(substation);
+        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("propertyValueSubstation");
+
+        return Stream.of(
+                // --- EQUALS --- //
+                Arguments.of(EQUALS, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT", "propertyValueTWT"), twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValue"), twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation"), twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation1"), twoWindingsTransformer, false)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource({
-        "provideArgumentsForSubstationTest"
+        "provideArgumentsForSubstationTest",
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForLineTest",
+
     })
+
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
         assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));

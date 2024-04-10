@@ -41,12 +41,12 @@ public class PropertiesExpertRule extends AbstractExpertRule {
         if (propertyName == null) {
             return false;
         }
-        String propertyeValue = getFieldValue(this.getField(), propertyName, identifiable);
-        if (propertyeValue == null) {
+        String propertyValue = getFieldValue(this.getField(), propertyName, identifiable);
+        if (propertyValue == null) {
             return false;
         }
         return switch (this.getOperator()) {
-            case EQUALS -> this.getPropertyValues().contains(propertyeValue);
+            case EQUALS -> this.getPropertyValues().contains(propertyValue);
             default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
         };
     }
