@@ -224,7 +224,6 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForLoadTest",
         "provideArgumentsForLineTest",
-
     })
 
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
