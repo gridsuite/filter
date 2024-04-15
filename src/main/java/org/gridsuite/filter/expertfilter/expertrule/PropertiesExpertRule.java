@@ -46,7 +46,7 @@ public class PropertiesExpertRule extends AbstractExpertRule {
             return false;
         }
         return switch (this.getOperator()) {
-            case EQUALS -> this.getPropertyValues().contains(propertyValue);
+            case IN -> this.getPropertyValues().contains(propertyValue);
             default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
         };
     }
