@@ -55,7 +55,6 @@ public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
                 && CollectionUtils.isEmpty(countries1)
                 && CollectionUtils.isEmpty(countries2)
                 && MapUtils.isEmpty(freeProperties1)
-                && MapUtils.isEmpty(freeProperties2)
-                && MapUtils.isEmpty(freeProperties);
+                && MapUtils.isEmpty(freeProperties2);
     }
 }
