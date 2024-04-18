@@ -35,27 +35,28 @@ public final class ExpertFilterUtils {
 
     private ExpertFilterUtils() { }
 
-    public static <I extends Identifiable<I>> String getFieldValue(FieldType field, Identifiable<I> identifiable) {
+    public static <I extends Identifiable<I>> String getFieldValue(FieldType field, String propertyName, Identifiable<I> identifiable) {
         return switch (field) {
             case ID -> identifiable.getId();
             case NAME -> identifiable.getNameOrId();
+            case FREE_PROPERTIES -> identifiable.getProperty(propertyName);
             default -> switch (identifiable.getType()) {
-                case VOLTAGE_LEVEL -> getVoltageLevelFieldValue(field, (VoltageLevel) identifiable);
-                case LINE -> getLineFieldValue(field, (Line) identifiable);
-                case GENERATOR -> getGeneratorFieldValue(field, (Generator) identifiable);
-                case LOAD -> getLoadFieldValue(field, (Load) identifiable);
-                case SHUNT_COMPENSATOR -> getShuntCompensatorFieldValue(field, (ShuntCompensator) identifiable);
+                case VOLTAGE_LEVEL -> getVoltageLevelFieldValue(field, propertyName, (VoltageLevel) identifiable);
+                case LINE -> getLineFieldValue(field, propertyName, (Line) identifiable);
+                case GENERATOR -> getGeneratorFieldValue(field, propertyName, (Generator) identifiable);
+                case LOAD -> getLoadFieldValue(field, propertyName, (Load) identifiable);
+                case SHUNT_COMPENSATOR -> getShuntCompensatorFieldValue(field, propertyName, (ShuntCompensator) identifiable);
                 case BUS -> getBusFieldValue(field, (Bus) identifiable);
                 case BUSBAR_SECTION -> getBusBarSectionFieldValue(field, (BusbarSection) identifiable);
-                case BATTERY -> getBatteryFieldValue(field, (Battery) identifiable);
-                case SUBSTATION -> getSubstationFieldValue(field, (Substation) identifiable);
-                case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, (TwoWindingsTransformer) identifiable);
+                case BATTERY -> getBatteryFieldValue(field, propertyName, (Battery) identifiable);
+                case SUBSTATION -> getSubstationFieldValue(field, propertyName, (Substation) identifiable);
+                case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, propertyName, (TwoWindingsTransformer) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
         };
     }
 
-    private static String getVoltageLevelFieldValue(FieldType field, VoltageLevel voltageLevel) {
+    private static String getVoltageLevelFieldValue(FieldType field, String propertyName, VoltageLevel voltageLevel) {
         return switch (field) {
             case COUNTRY,
                 COUNTRY_1,
@@ -69,48 +70,52 @@ public final class ExpertFilterUtils {
                 VOLTAGE_LEVEL_ID_2 -> voltageLevel.getId();
             case LOW_VOLTAGE_LIMIT -> String.valueOf(voltageLevel.getLowVoltageLimit());
             case HIGH_VOLTAGE_LIMIT -> String.valueOf(voltageLevel.getHighVoltageLimit());
+            case SUBSTATION_PROPERTIES -> voltageLevel.getNullableSubstation().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + voltageLevel.getType() + "]");
         };
     }
 
-    private static String getLineFieldValue(FieldType field, Line line) {
+    private static String getLineFieldValue(FieldType field, String propertyName, Line line) {
         return switch (field) {
             case CONNECTED_1 -> getTerminalFieldValue(field, line.getTerminal(TwoSides.ONE));
             case CONNECTED_2 -> getTerminalFieldValue(field, line.getTerminal(TwoSides.TWO));
             case COUNTRY_1,
                 VOLTAGE_LEVEL_ID_1,
-                NOMINAL_VOLTAGE_1 -> getVoltageLevelFieldValue(field, line.getTerminal(TwoSides.ONE).getVoltageLevel());
+                NOMINAL_VOLTAGE_1 -> getVoltageLevelFieldValue(field, null, line.getTerminal(TwoSides.ONE).getVoltageLevel());
             case COUNTRY_2,
                 VOLTAGE_LEVEL_ID_2,
-                NOMINAL_VOLTAGE_2 -> getVoltageLevelFieldValue(field, line.getTerminal(TwoSides.TWO).getVoltageLevel());
+                NOMINAL_VOLTAGE_2 -> getVoltageLevelFieldValue(field, null, line.getTerminal(TwoSides.TWO).getVoltageLevel());
             case SERIE_RESISTANCE -> String.valueOf(line.getR());
             case SERIE_REACTANCE -> String.valueOf(line.getX());
             case SHUNT_CONDUCTANCE_1 -> String.valueOf(line.getG1());
             case SHUNT_CONDUCTANCE_2 -> String.valueOf(line.getG2());
             case SHUNT_SUSCEPTANCE_1 -> String.valueOf(line.getB1());
             case SHUNT_SUSCEPTANCE_2 -> String.valueOf(line.getB2());
+            case SUBSTATION_PROPERTIES_1 -> line.getTerminal1().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case SUBSTATION_PROPERTIES_2 -> line.getTerminal2().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + line.getType() + "]");
         };
     }
 
-    private static String getLoadFieldValue(FieldType field, Load load) {
+    private static String getLoadFieldValue(FieldType field, String propertyName, Load load) {
         return switch (field) {
             case COUNTRY,
                 NOMINAL_VOLTAGE,
-                VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, load.getTerminal().getVoltageLevel());
+                VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, null, load.getTerminal().getVoltageLevel());
             case P0 -> String.valueOf(load.getP0());
             case Q0 -> String.valueOf(load.getQ0());
             case CONNECTED -> getTerminalFieldValue(field, load.getTerminal());
             case LOAD_TYPE -> load.getLoadType().name();
+            case SUBSTATION_PROPERTIES -> load.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + load.getType() + "]");
         };
     }
 
-    private static String getShuntCompensatorFieldValue(FieldType field, ShuntCompensator shuntCompensator) {
+    private static String getShuntCompensatorFieldValue(FieldType field, String propertyName, ShuntCompensator shuntCompensator) {
         return switch (field) {
             case VOLTAGE_LEVEL_ID,
                 COUNTRY,
-                NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, shuntCompensator.getTerminal().getVoltageLevel());
+                NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, null, shuntCompensator.getTerminal().getVoltageLevel());
             case MAXIMUM_SECTION_COUNT -> String.valueOf(shuntCompensator.getMaximumSectionCount());
             case SECTION_COUNT -> String.valueOf(shuntCompensator.getSectionCount());
             case SHUNT_COMPENSATOR_TYPE,
@@ -119,11 +124,12 @@ public final class ExpertFilterUtils {
                 MAX_SUSCEPTANCE,
                 SWITCHED_ON_SUSCEPTANCE -> getSectionBasedFieldValue(field, shuntCompensator);
             case CONNECTED -> getTerminalFieldValue(field, shuntCompensator.getTerminal());
+            case SUBSTATION_PROPERTIES -> shuntCompensator.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + shuntCompensator.getType() + "]");
         };
     }
 
-    private static String getGeneratorFieldValue(FieldType field, Generator generator) {
+    private static String getGeneratorFieldValue(FieldType field, String propertyName, Generator generator) {
         return switch (field) {
             case ENERGY_SOURCE -> String.valueOf(generator.getEnergySource());
             case MIN_P -> String.valueOf(generator.getMinP());
@@ -140,8 +146,9 @@ public final class ExpertFilterUtils {
             case RATED_S -> String.valueOf(generator.getRatedS());
             case COUNTRY,
                 NOMINAL_VOLTAGE,
-                VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, generator.getTerminal().getVoltageLevel());
+                VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, null, generator.getTerminal().getVoltageLevel());
             case CONNECTED -> getTerminalFieldValue(field, generator.getTerminal());
+            case SUBSTATION_PROPERTIES -> generator.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + generator.getType() + "]");
         };
     }
@@ -167,7 +174,7 @@ public final class ExpertFilterUtils {
         return switch (field) {
             case COUNTRY,
                 NOMINAL_VOLTAGE,
-                VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, bus.getVoltageLevel());
+                VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, null, bus.getVoltageLevel());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + bus.getType() + "]");
         };
     }
@@ -176,7 +183,7 @@ public final class ExpertFilterUtils {
         return switch (field) {
             case COUNTRY,
                 NOMINAL_VOLTAGE,
-                VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, busbarSection.getTerminal().getVoltageLevel());
+                VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, null, busbarSection.getTerminal().getVoltageLevel());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + busbarSection.getType() + "]");
         };
     }
@@ -204,23 +211,24 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getBatteryFieldValue(FieldType field, Battery battery) {
+    private static String getBatteryFieldValue(FieldType field, String propertyName, Battery battery) {
         return switch (field) {
             case COUNTRY,
                     NOMINAL_VOLTAGE,
-                    VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, battery.getTerminal().getVoltageLevel());
+                    VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, null, battery.getTerminal().getVoltageLevel());
             case CONNECTED -> getTerminalFieldValue(field, battery.getTerminal());
             case MIN_P -> String.valueOf(battery.getMinP());
             case MAX_P -> String.valueOf(battery.getMaxP());
             case TARGET_P -> String.valueOf(battery.getTargetP());
             case TARGET_Q -> String.valueOf(battery.getTargetQ());
+            case SUBSTATION_PROPERTIES -> battery.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
 
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + battery.getType() + "]");
 
         };
     }
 
-    private static String getSubstationFieldValue(FieldType field, Substation substation) {
+    private static String getSubstationFieldValue(FieldType field, String propertyName, Substation substation) {
         return switch (field) {
             case COUNTRY -> String.valueOf(substation.getCountry().orElse(null));
             default ->
@@ -253,7 +261,7 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getTwoWindingsTransformerFieldValue(FieldType field, TwoWindingsTransformer twoWindingsTransformer) {
+    private static String getTwoWindingsTransformerFieldValue(FieldType field, String propertyName, TwoWindingsTransformer twoWindingsTransformer) {
         return switch (field) {
             case COUNTRY -> twoWindingsTransformer.getSubstation().flatMap(Substation::getCountry).map(String::valueOf).orElse(null);
             case CONNECTED_1 -> String.valueOf(twoWindingsTransformer.getTerminal1().isConnected());
@@ -278,6 +286,8 @@ public final class ExpertFilterUtils {
             case PHASE_REGULATING,
                 PHASE_REGULATION_MODE,
                 PHASE_REGULATION_VALUE -> getPhaseTapChangerFieldValue(field, twoWindingsTransformer.getPhaseTapChanger());
+            case SUBSTATION_PROPERTIES_1 -> twoWindingsTransformer.getTerminal1().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case SUBSTATION_PROPERTIES_2 -> twoWindingsTransformer.getTerminal2().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + twoWindingsTransformer.getType() + "]");
         };
     }
