@@ -26,6 +26,7 @@ import java.util.SortedSet;
 @AllArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
     private String substationName1;
 
@@ -42,6 +43,10 @@ public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
     // LinkedHashMap to keep order too
     @JsonDeserialize(as = LinkedHashMap.class)
     private Map<String, List<String>> freeProperties2;
+
+    // LinkedHashMap to keep order too
+    @JsonDeserialize(as = LinkedHashMap.class)
+    private Map<String, List<String>> freeProperties;
 
     @Override
     public boolean isEmpty() {

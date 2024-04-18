@@ -311,6 +311,7 @@ public final class FiltersUtils {
                 .filter(line -> filterByVoltages(line, lineFilter.getNominalVoltage1(), lineFilter.getNominalVoltage2()))
                 .filter(line -> filterByCountries(line, lineFilter))
                 .filter(line -> filterByProperties(line, lineFilter))
+                .filter(line -> freePropertiesFilter(line, lineFilter.getFreeProperties()))
                 .filter(line -> substationNameFilter(line.getTerminal1(), lineFilter.getSubstationName1()) &&
                     substationNameFilter(line.getTerminal2(), lineFilter.getSubstationName2()));
             return new ArrayList<>(stream.toList());
@@ -336,6 +337,7 @@ public final class FiltersUtils {
             Stream<TwoWindingsTransformer> stream = network.getTwoWindingsTransformerStream()
                 .filter(twoWindingsTransformer -> equipmentIdFilter(twoWindingsTransformer, twoWindingsTransformerFilter.getEquipmentID()))
                 .filter(twoWindingsTransformer -> equipmentNameFilter(twoWindingsTransformer, twoWindingsTransformerFilter.getEquipmentName()))
+                .filter(twoWindingsTransformer -> freePropertiesFilter(twoWindingsTransformer, twoWindingsTransformerFilter.getFreeProperties()))
                 .filter(twoWindingsTransformer -> filterByVoltages(twoWindingsTransformer, twoWindingsTransformerFilter.getNominalVoltage1(), twoWindingsTransformerFilter.getNominalVoltage2()))
                 .filter(twoWindingsTransformer -> countryFilter(twoWindingsTransformer.getTerminal1(), twoWindingsTransformerFilter.getCountries()) ||
                     countryFilter(twoWindingsTransformer.getTerminal2(), twoWindingsTransformerFilter.getCountries()))
@@ -417,6 +419,7 @@ public final class FiltersUtils {
                 .filter(voltageLevel -> equipmentNameFilter(voltageLevel, voltageLevelFilter.getEquipmentName()))
                 .filter(voltageLevel -> filterByVoltage(voltageLevel, voltageLevelFilter.getNominalVoltage()))
                 .filter(voltageLevel -> countryFilter(voltageLevel, voltageLevelFilter.getCountries()))
+                .filter(voltageLevel -> freePropertiesFilter(voltageLevel, voltageLevelFilter.getFreeProperties()))
                 .filter(voltageLevel -> freePropertiesFilter(voltageLevel.getNullableSubstation(), voltageLevelFilter.getSubstationFreeProperties()));
             return new ArrayList<>(stream.toList());
         } else if (filter instanceof IdentifierListFilter identifierListFilter) {

@@ -82,6 +82,10 @@ class FiltersUtilsTest {
         network.getGenerator("GEN").setProperty("region", "north");
         network.getGenerator("GEN2").setProperty("region", "south");
         network.getLoad("LOAD").setProperty("region", "north");
+        network.getTwoWindingsTransformer("NGEN_NHV1").setProperty("region", "south");
+        network.getTwoWindingsTransformer("NHV2_NLOAD").setProperty("region", "south");
+        network.getLine("NHV1_NHV2_1").setProperty("region", "south");
+        network.getLine("NHV1_NHV2_2").setProperty("region", "south");
 
         network2 = HvdcTestNetwork.createVsc();
         network2.getSubstation("S2").setProperty("region", "north");
@@ -197,6 +201,7 @@ class FiltersUtilsTest {
             .countries2(new TreeSet<>(Set.of("FR")))
             .freeProperties1(Map.of("region", List.of("south")))
             .freeProperties2(Map.of("region", List.of("north")))
+            .freeProperties(Map.of("region", List.of("south")))
             .nominalVoltage1(new NumericalFilter(RangeType.RANGE, 360., 400.))
             .nominalVoltage2(new NumericalFilter(RangeType.RANGE, 356.25, 393.75))
             .build();
