@@ -35,7 +35,7 @@ public class FilterUuidExpertRule extends StringExpertRule {
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
-        String identifiableValue = getFieldValue(this.getField(), identifiable);
+        String identifiableValue = getFieldValue(this.getField(), null, identifiable);
         return switch (this.getOperator()) {
             case IS_PART_OF -> ExpertFilterUtils.isPartOf(identifiable.getNetwork(), identifiableValue, this.getValues(), filterLoader, cachedUuidFilters);
             case IS_NOT_PART_OF -> !ExpertFilterUtils.isPartOf(identifiable.getNetwork(), identifiableValue, this.getValues(), filterLoader, cachedUuidFilters);
