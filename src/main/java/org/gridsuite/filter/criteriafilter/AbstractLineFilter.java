@@ -26,6 +26,7 @@ import java.util.SortedSet;
 @AllArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public abstract class AbstractLineFilter extends AbstractEquipmentFilterForm {
     private String substationName1;
 
