@@ -20,10 +20,7 @@ import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.utils.expertfilter.DataType;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
 import static org.gridsuite.filter.utils.expertfilter.OperatorType.isMultipleCriteriaOperator;
@@ -59,7 +56,7 @@ public class StringExpertRule extends AbstractExpertRule {
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
-        String identifiableValue = getFieldValue(this.getField(), identifiable);
+        String identifiableValue = getFieldValue(this.getField(), null, identifiable);
         if (identifiableValue == null) {
             return false;
         }

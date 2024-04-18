@@ -34,7 +34,7 @@ public class EnumExpertRule extends StringExpertRule {
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
-        String identifiableValue = getFieldValue(this.getField(), identifiable);
+        String identifiableValue = getFieldValue(this.getField(), null, identifiable);
         if (identifiableValue == null) {
             return false;
         }
