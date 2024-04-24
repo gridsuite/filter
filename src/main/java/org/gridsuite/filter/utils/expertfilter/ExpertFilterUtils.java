@@ -17,11 +17,7 @@ import org.gridsuite.filter.utils.FilterServiceUtils;
 import org.gridsuite.filter.utils.FilterType;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -51,8 +47,17 @@ public final class ExpertFilterUtils {
                 case BATTERY -> getBatteryFieldValue(field, propertyName, (Battery) identifiable);
                 case SUBSTATION -> getSubstationFieldValue(field, propertyName, (Substation) identifiable);
                 case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, propertyName, (TwoWindingsTransformer) identifiable);
+                case STATIC_VAR_COMPENSATOR -> getStaticVarCompensatorFieldValue(field, propertyName, (StaticVarCompensator) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
+        };
+    }
+
+    private static String getStaticVarCompensatorFieldValue(FieldType field, String propertyName, StaticVarCompensator svar) {
+        return switch (field) {
+            case COUNTRY,
+                NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, propertyName, svar.getTerminal().getVoltageLevel());
+            default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + svar.getType() + "]");
         };
     }
 
