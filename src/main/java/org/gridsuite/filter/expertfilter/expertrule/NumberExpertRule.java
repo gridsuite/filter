@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
+import static org.gridsuite.filter.utils.expertfilter.OperatorType.NOT_EXISTS;
 import static org.gridsuite.filter.utils.expertfilter.OperatorType.isMultipleCriteriaOperator;
 
 /**
@@ -53,7 +54,7 @@ public class NumberExpertRule extends AbstractExpertRule {
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
         Double identifiableValue = getNumberValue(getFieldValue(this.getField(), null, identifiable));
         if (Double.isNaN(identifiableValue)) {
-            return false;
+            return this.getOperator() == NOT_EXISTS;
         }
         Double filterValue = this.getValue();
         Set<Double> filterValues = this.getValues();
@@ -69,6 +70,7 @@ public class NumberExpertRule extends AbstractExpertRule {
             }
             case LOWER -> identifiableValue.compareTo(filterValue) < 0;
             case EXISTS -> true; // We return true here because we already test above if identifiableValue is NaN.
+            case NOT_EXISTS -> false; // if true, checked above
             case IN -> filterValues.contains(identifiableValue);
             case NOT_IN -> !filterValues.contains(identifiableValue);
             default ->

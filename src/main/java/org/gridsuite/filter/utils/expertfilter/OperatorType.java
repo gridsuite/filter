@@ -17,6 +17,7 @@ public enum OperatorType {
     NOT_IN,
     // Number and String
     EXISTS,
+    NOT_EXISTS,
     // Number
     LOWER,
     LOWER_OR_EQUALS,

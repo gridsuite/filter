@@ -184,6 +184,16 @@ class StringExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, gen, true),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, gen1, false),
 
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, gen1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, gen1, true),
+
                 // --- IN --- //
                 // Common fields
                 Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), gen, true),
@@ -281,6 +291,16 @@ class StringExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, load, true),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, load1, false),
 
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, load1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, load1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, load1, true),
+
                 // --- IN --- //
                 // Common fields
                 Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), load, true),
@@ -377,6 +397,16 @@ class StringExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, shuntCompensator, true),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, shuntCompensator1, false),
+
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, shuntCompensator, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, shuntCompensator1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, shuntCompensator, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, shuntCompensator1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, shuntCompensator, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, shuntCompensator1, true),
 
                 // --- IN --- //
                 // Common fields
@@ -498,6 +528,18 @@ class StringExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, line, true),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, load1, false),
 
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, load1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, load1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, load1, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, load1, true),
+
                 // --- IN --- //
                 // Common fields
                 Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), line, true),
@@ -594,6 +636,16 @@ class StringExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, bus, true),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, bus1, false),
+
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, bus, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, bus1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, bus, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, bus1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, bus, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, bus1, true),
 
                 // --- IN --- //
                 // Common fields
@@ -692,6 +744,16 @@ class StringExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, busbarSection, true),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, busbarSection1, false),
 
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, busbarSection, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, busbarSection1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, busbarSection, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, busbarSection1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, busbarSection, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, busbarSection1, true),
+
                 // --- IN --- //
                 // Common fields
                 Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), busbarSection, true),
@@ -788,6 +850,16 @@ class StringExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, battery, true),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, battery1, false),
+
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, battery, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, battery1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, battery, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, battery1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, battery, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, battery1, true),
 
                 // --- IN --- //
                 // Common fields
@@ -897,6 +969,18 @@ class StringExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, twoWindingsTransformer1, false),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, twoWindingsTransformer, true),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, twoWindingsTransformer1, false),
+
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, twoWindingsTransformer1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, twoWindingsTransformer1, true),
 
                 // --- IN --- //
                 // Common fields
