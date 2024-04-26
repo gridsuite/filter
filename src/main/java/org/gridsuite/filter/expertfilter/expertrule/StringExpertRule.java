@@ -23,6 +23,7 @@ import org.gridsuite.filter.utils.expertfilter.DataType;
 import java.util.*;
 
 import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
+import static org.gridsuite.filter.utils.expertfilter.OperatorType.NOT_EXISTS;
 import static org.gridsuite.filter.utils.expertfilter.OperatorType.isMultipleCriteriaOperator;
 
 /**
@@ -58,7 +59,7 @@ public class StringExpertRule extends AbstractExpertRule {
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
         String identifiableValue = getFieldValue(this.getField(), null, identifiable);
         if (identifiableValue == null) {
-            return false;
+            return this.getOperator() == NOT_EXISTS;
         }
         return switch (this.getOperator()) {
             case IS -> identifiableValue.equalsIgnoreCase(this.getValue());
@@ -66,6 +67,7 @@ public class StringExpertRule extends AbstractExpertRule {
             case BEGINS_WITH -> StringUtils.startsWithIgnoreCase(identifiableValue, this.getValue());
             case ENDS_WITH -> StringUtils.endsWithIgnoreCase(identifiableValue, this.getValue());
             case EXISTS -> !StringUtils.isEmpty(identifiableValue);
+            case NOT_EXISTS -> false; // if true, checked above
             case IN -> this.getValues().contains(identifiableValue);
             case NOT_IN -> !this.getValues().contains(identifiableValue);
             default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");

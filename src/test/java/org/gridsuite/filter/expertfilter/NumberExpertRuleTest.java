@@ -382,6 +382,33 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen, true),
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen1, false),
 
+                // --- NOT_EXISTS --- //
+                // Generator fields
+                Arguments.of(NOT_EXISTS, FieldType.MIN_P, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.MIN_P, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_P, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_P, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_V, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_V, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_P, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_P, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_Q, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_Q, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, gen1, true),
+                // GeneratorStartup extension fields
+                Arguments.of(NOT_EXISTS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MARGINAL_COST, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.MARGINAL_COST, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.PLANNED_OUTAGE_RATE, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.PLANNED_OUTAGE_RATE, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.FORCED_OUTAGE_RATE, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.FORCED_OUTAGE_RATE, null, null, gen1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen1, true),
+
                 // --- IN --- //
                 // Generator fields
                 Arguments.of(IN, FieldType.MIN_P, null, Set.of(-600.0, -500.0, -400.0), gen, true),
@@ -546,6 +573,16 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.Q0, null, null, load, true),
                 Arguments.of(EXISTS, FieldType.Q0, null, null, load1, false),
 
+                // --- NOT_EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, load1, true),
+                // Load fields
+                Arguments.of(NOT_EXISTS, FieldType.P0, null, null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.P0, null, null, load1, true),
+                Arguments.of(NOT_EXISTS, FieldType.Q0, null, null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.Q0, null, null, load1, true),
+
                 // --- IN --- //
                 // VoltageLevel fields
                 Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), load, true),
@@ -625,6 +662,11 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, bus, true),
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, bus1, false),
 
+                // --- NOT_EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, bus, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, bus1, true),
+
                 // --- IN --- //
                 // VoltageLevel fields
                 Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), bus, true),
@@ -697,6 +739,11 @@ class NumberExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, busbarSection, true),
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, busbarSection1, false),
+
+                // --- NOT_EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, busbarSection, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, busbarSection1, true),
 
                 // --- IN --- //
                 // VoltageLevel fields
@@ -911,6 +958,11 @@ class NumberExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator, true),
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator1, false),
+
+                // --- NOT_EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator1, true),
 
                 // Shunt Compensator Fields
 
@@ -1167,6 +1219,14 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line, true),
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line1, false),
 
+                // --- NOT_EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, line1, true),
+
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line1, true),
+
                 // --- IN --- //
                 // VoltageLevel fields
                 Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 13., 14.), line, true),
@@ -1356,6 +1416,19 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.TARGET_P, null, null, battery1, false),
                 Arguments.of(EXISTS, FieldType.TARGET_Q, null, null, battery, true),
                 Arguments.of(EXISTS, FieldType.TARGET_Q, null, null, battery1, false),
+                // --- NOT_EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, battery, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, battery1, true),
+                //Battery fields
+                Arguments.of(NOT_EXISTS, FieldType.MIN_P, null, null, battery, false),
+                Arguments.of(NOT_EXISTS, FieldType.MIN_P, null, null, battery1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_P, null, null, battery, false),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_P, null, null, battery1, true),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_P, null, null, battery, false),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_P, null, null, battery1, true),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_Q, null, null, battery, false),
+                Arguments.of(NOT_EXISTS, FieldType.TARGET_Q, null, null, battery1, true),
 
                 // --- IN --- //
                 // VoltageLevel fields
@@ -1473,6 +1546,14 @@ class NumberExpertRuleTest {
             Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel, true),
             Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel1, false),
 
+            // --- NOT_EXISTS --- //
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel, false),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel1, true),
+            Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel, false),
+            Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel1, true),
+            Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel, false),
+            Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel1, true),
+
             // --- IN --- //
             Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), voltageLevel, true),
             Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, false),
@@ -1527,6 +1608,8 @@ class NumberExpertRuleTest {
         Mockito.when(twoWindingsTransformer1.getG()).thenReturn(Double.NaN);
         Mockito.when(twoWindingsTransformer1.getB()).thenReturn(Double.NaN);
         Mockito.when(twoWindingsTransformer1.getRatedS()).thenReturn(Double.NaN);
+        Mockito.when(twoWindingsTransformer1.getRatedU1()).thenReturn(Double.NaN);
+        Mockito.when(twoWindingsTransformer1.getRatedU2()).thenReturn(Double.NaN);
 
         // Terminal fields
         Terminal terminal1 = Mockito.mock(Terminal.class);
@@ -1769,9 +1852,34 @@ class NumberExpertRuleTest {
             Arguments.of(EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer, true),
             Arguments.of(EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer1, false),
             Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, false),
             Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, false),
+
+            // --- NOT_EXISTS --- //
+            // Terminal
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
+            // RatioTapChanger fields
+            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer1, true),
+            // TwoWindingsTransformer fields
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
 
             // --- IN --- //
             // Terminal
