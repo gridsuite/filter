@@ -83,7 +83,7 @@ public final class FiltersUtils {
     }
 
     private static boolean equipmentNameFilter(Identifiable<?> identifiable, String equipmentName) {
-        return equipmentName == null || identifiable.getNameOrId().equals(equipmentName);
+        return equipmentName == null || equipmentName.equals(identifiable.getOptionalName().orElse(null));
     }
 
     private static boolean substationNameFilter(Terminal terminal, String substationName) {
