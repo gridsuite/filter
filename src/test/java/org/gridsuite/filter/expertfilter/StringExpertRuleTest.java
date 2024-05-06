@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -116,7 +117,7 @@ class StringExpertRuleTest {
         Mockito.when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
         // Common fields
         Mockito.when(gen.getId()).thenReturn("ID");
-        Mockito.when(gen.getNameOrId()).thenReturn("NAME");
+        Mockito.when(gen.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
@@ -223,7 +224,7 @@ class StringExpertRuleTest {
         Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
         // Common fields
         Mockito.when(load.getId()).thenReturn("ID");
-        Mockito.when(load.getNameOrId()).thenReturn("NAME");
+        Mockito.when(load.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
@@ -330,7 +331,7 @@ class StringExpertRuleTest {
         Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
         // Common fields
         Mockito.when(shuntCompensator.getId()).thenReturn("ID");
-        Mockito.when(shuntCompensator.getNameOrId()).thenReturn("NAME");
+        Mockito.when(shuntCompensator.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
@@ -437,7 +438,7 @@ class StringExpertRuleTest {
         Mockito.when(line.getType()).thenReturn(IdentifiableType.LINE);
         // Common fields
         Mockito.when(line.getId()).thenReturn("ID");
-        Mockito.when(line.getNameOrId()).thenReturn("NAME");
+        Mockito.when(line.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
@@ -573,7 +574,7 @@ class StringExpertRuleTest {
         Mockito.when(bus.getType()).thenReturn(IdentifiableType.BUS);
         // Common fields
         Mockito.when(bus.getId()).thenReturn("ID");
-        Mockito.when(bus.getNameOrId()).thenReturn("NAME");
+        Mockito.when(bus.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
@@ -676,7 +677,7 @@ class StringExpertRuleTest {
         Mockito.when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
         // Common fields
         Mockito.when(busbarSection.getId()).thenReturn("ID");
-        Mockito.when(busbarSection.getNameOrId()).thenReturn("NAME");
+        Mockito.when(busbarSection.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
@@ -783,7 +784,7 @@ class StringExpertRuleTest {
         Mockito.when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
         // Common fields
         Mockito.when(battery.getId()).thenReturn("ID");
-        Mockito.when(battery.getNameOrId()).thenReturn("NAME");
+        Mockito.when(battery.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
@@ -890,7 +891,7 @@ class StringExpertRuleTest {
         Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
         // Common fields
         Mockito.when(twoWindingsTransformer.getId()).thenReturn("ID");
-        Mockito.when(twoWindingsTransformer.getNameOrId()).thenReturn("NAME");
+        Mockito.when(twoWindingsTransformer.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
