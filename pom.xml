@@ -47,7 +47,7 @@
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <org.hamcrest.version>2.2</org.hamcrest.version>
         <org.mockito.version>5.11.0</org.mockito.version>
-        <powsybl-ws-dependencies.version>2.10.0-SNAPSHOT</powsybl-ws-dependencies.version>
+        <powsybl-dependencies.version>2024.1.0</powsybl-dependencies.version>
     </properties>
 
     <build>
@@ -99,8 +99,8 @@
             </dependency>
             <dependency>
                 <groupId>com.powsybl</groupId>
-                <artifactId>powsybl-ws-dependencies</artifactId>
-                <version>${powsybl-ws-dependencies.version}</version>
+                <artifactId>powsybl-dependencies</artifactId>
+                <version>${powsybl-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
