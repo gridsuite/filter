@@ -34,7 +34,7 @@ public final class ExpertFilterUtils {
     public static <I extends Identifiable<I>> String getFieldValue(FieldType field, String propertyName, Identifiable<I> identifiable) {
         return switch (field) {
             case ID -> identifiable.getId();
-            case NAME -> identifiable.getNameOrId();
+            case NAME -> identifiable.getOptionalName().orElse(null);
             case FREE_PROPERTIES -> identifiable.getProperty(propertyName);
             default -> switch (identifiable.getType()) {
                 case VOLTAGE_LEVEL -> getVoltageLevelFieldValue(field, propertyName, (VoltageLevel) identifiable);
@@ -45,7 +45,7 @@ public final class ExpertFilterUtils {
                 case BUS -> getBusFieldValue(field, (Bus) identifiable);
                 case BUSBAR_SECTION -> getBusBarSectionFieldValue(field, (BusbarSection) identifiable);
                 case BATTERY -> getBatteryFieldValue(field, propertyName, (Battery) identifiable);
-                case SUBSTATION -> getSubstationFieldValue(field, propertyName, (Substation) identifiable);
+                case SUBSTATION -> getSubstationFieldValue(field, (Substation) identifiable);
                 case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, propertyName, (TwoWindingsTransformer) identifiable);
                 case STATIC_VAR_COMPENSATOR -> getStaticVarCompensatorFieldValue(field, propertyName, (StaticVarCompensator) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
@@ -233,7 +233,7 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getSubstationFieldValue(FieldType field, String propertyName, Substation substation) {
+    private static String getSubstationFieldValue(FieldType field, Substation substation) {
         return switch (field) {
             case COUNTRY -> String.valueOf(substation.getCountry().orElse(null));
             default ->
