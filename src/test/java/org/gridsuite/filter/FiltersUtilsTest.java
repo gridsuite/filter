@@ -954,4 +954,56 @@ class FiltersUtilsTest {
         assertEquals(1, filterEquipments.get(0).getIdentifiableAttributes().size());
         assertEquals("LOAD", filterEquipments.get(0).getIdentifiableAttributes().get(0).getId());
     }
+
+    @Test
+    void testEquipmentNameFilterNoMatch() {
+        // criteria filter (in this network, vsc converter equipments have a name)
+        VscConverterStationFilter vscConverterStationFilter = VscConverterStationFilter.builder()
+                .equipmentName("unexisting name")
+                .build();
+        assertFalse(vscConverterStationFilter.isEmpty());
+        assertEquals(EquipmentType.VSC_CONVERTER_STATION, vscConverterStationFilter.getEquipmentType());
+        CriteriaFilter vscConverterStationCriteriaFilter = new CriteriaFilter(
+                UUID.randomUUID(),
+                new Date(),
+                vscConverterStationFilter
+        );
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(vscConverterStationCriteriaFilter, network2, filterLoader);
+        assertEquals(0, identifiables.size());
+    }
+
+    @Test
+    void testEquipmentNameFilterWithMatch() {
+        // criteria filter (in this network, vsc converter equipments have a name)
+        VscConverterStationFilter vscConverterStationFilter = VscConverterStationFilter.builder()
+                .equipmentName("Converter1")
+                .build();
+        assertFalse(vscConverterStationFilter.isEmpty());
+        assertEquals(EquipmentType.VSC_CONVERTER_STATION, vscConverterStationFilter.getEquipmentType());
+        CriteriaFilter vscConverterStationCriteriaFilter = new CriteriaFilter(
+                UUID.randomUUID(),
+                new Date(),
+                vscConverterStationFilter
+        );
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(vscConverterStationCriteriaFilter, network2, filterLoader);
+        assertEquals(1, identifiables.size());
+    }
+
+    @Test
+    void testEquipmentNameFilterWithNullValueInEquipments() {
+        // criteria filter
+        VoltageLevelFilter voltageLevelFilter = VoltageLevelFilter.builder()
+                .equipmentName("some name")
+                .build();
+        assertFalse(voltageLevelFilter.isEmpty());
+        assertEquals(EquipmentType.VOLTAGE_LEVEL, voltageLevelFilter.getEquipmentType());
+        CriteriaFilter voltageLevelCriteriaFilter = new CriteriaFilter(
+                UUID.randomUUID(),
+                new Date(),
+                voltageLevelFilter
+        );
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(voltageLevelCriteriaFilter, network, filterLoader);
+        // in this network, VL equipments have null name => no match
+        assertEquals(0, identifiables.size());
+    }
 }
