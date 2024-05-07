@@ -6,7 +6,6 @@
  */
 package org.gridsuite.filter.utils;
 
-import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -94,22 +93,14 @@ public final class FiltersUtils {
         if (numericalFilter == null) {
             return true;
         }
-        switch (numericalFilter.getType()) {
-            case EQUALITY:
-                return equipmentNominalVoltage == numericalFilter.getValue1();
-            case GREATER_THAN:
-                return equipmentNominalVoltage > numericalFilter.getValue1();
-            case GREATER_OR_EQUAL:
-                return equipmentNominalVoltage >= numericalFilter.getValue1();
-            case LESS_THAN:
-                return equipmentNominalVoltage < numericalFilter.getValue1();
-            case LESS_OR_EQUAL:
-                return equipmentNominalVoltage <= numericalFilter.getValue1();
-            case RANGE:
-                return equipmentNominalVoltage >= numericalFilter.getValue1() && equipmentNominalVoltage <= numericalFilter.getValue2();
-            default:
-                throw new PowsyblException("Unknown numerical filter type");
-        }
+        return switch (numericalFilter.getType()) {
+            case EQUALITY -> equipmentNominalVoltage == numericalFilter.getValue1();
+            case GREATER_THAN -> equipmentNominalVoltage > numericalFilter.getValue1();
+            case GREATER_OR_EQUAL -> equipmentNominalVoltage >= numericalFilter.getValue1();
+            case LESS_THAN -> equipmentNominalVoltage < numericalFilter.getValue1();
+            case LESS_OR_EQUAL -> equipmentNominalVoltage <= numericalFilter.getValue1();
+            case RANGE -> equipmentNominalVoltage >= numericalFilter.getValue1() && equipmentNominalVoltage <= numericalFilter.getValue2();
+        };
     }
 
     private static boolean filterByCountries(Terminal terminal1, Terminal terminal2, Set<String> filter1, Set<String> filter2) {
@@ -464,59 +455,23 @@ public final class FiltersUtils {
     }
 
     public static List<Identifiable<?>> getIdentifiables(AbstractFilter filter, Network network, FilterLoader filterLoader) {
-        List<Identifiable<?>> identifiables;
-        switch (filter.getEquipmentType()) {
-            case GENERATOR:
-                identifiables = getGeneratorList(network, filter, filterLoader);
-                break;
-            case LOAD:
-                identifiables = getLoadList(network, filter, filterLoader);
-                break;
-            case BATTERY:
-                identifiables = getBatteryList(network, filter, filterLoader);
-                break;
-            case STATIC_VAR_COMPENSATOR:
-                identifiables = getStaticVarCompensatorList(network, filter, filterLoader);
-                break;
-            case SHUNT_COMPENSATOR:
-                identifiables = getShuntCompensatorList(network, filter, filterLoader);
-                break;
-            case LCC_CONVERTER_STATION:
-                identifiables = getLccConverterStationList(network, filter, filterLoader);
-                break;
-            case VSC_CONVERTER_STATION:
-                identifiables = getVscConverterStationList(network, filter, filterLoader);
-                break;
-            case HVDC_LINE:
-                identifiables = getHvdcList(network, filter);
-                break;
-            case DANGLING_LINE:
-                identifiables = getDanglingLineList(network, filter, filterLoader);
-                break;
-            case LINE:
-                identifiables = getLineList(network, filter, filterLoader);
-                break;
-            case TWO_WINDINGS_TRANSFORMER:
-                identifiables = get2WTransformerList(network, filter, filterLoader);
-                break;
-            case THREE_WINDINGS_TRANSFORMER:
-                identifiables = get3WTransformerList(network, filter);
-                break;
-            case BUS:
-                identifiables = getBusList(network, filter, filterLoader);
-                break;
-            case BUSBAR_SECTION:
-                identifiables = getBusbarSectionList(network, filter, filterLoader);
-                break;
-            case VOLTAGE_LEVEL:
-                identifiables = getVoltageLevelList(network, filter, filterLoader);
-                break;
-            case SUBSTATION:
-                identifiables = getSubstationList(network, filter, filterLoader);
-                break;
-            default:
-                throw new PowsyblException("Unknown equipment type");
-        }
-        return identifiables;
+        return switch (filter.getEquipmentType()) {
+            case GENERATOR -> getGeneratorList(network, filter, filterLoader);
+            case LOAD -> getLoadList(network, filter, filterLoader);
+            case BATTERY -> getBatteryList(network, filter, filterLoader);
+            case STATIC_VAR_COMPENSATOR -> getStaticVarCompensatorList(network, filter, filterLoader);
+            case SHUNT_COMPENSATOR -> getShuntCompensatorList(network, filter, filterLoader);
+            case LCC_CONVERTER_STATION -> getLccConverterStationList(network, filter, filterLoader);
+            case VSC_CONVERTER_STATION -> getVscConverterStationList(network, filter, filterLoader);
+            case HVDC_LINE -> getHvdcList(network, filter);
+            case DANGLING_LINE -> getDanglingLineList(network, filter, filterLoader);
+            case LINE -> getLineList(network, filter, filterLoader);
+            case TWO_WINDINGS_TRANSFORMER -> get2WTransformerList(network, filter, filterLoader);
+            case THREE_WINDINGS_TRANSFORMER -> get3WTransformerList(network, filter);
+            case BUS -> getBusList(network, filter, filterLoader);
+            case BUSBAR_SECTION -> getBusbarSectionList(network, filter, filterLoader);
+            case VOLTAGE_LEVEL -> getVoltageLevelList(network, filter, filterLoader);
+            case SUBSTATION -> getSubstationList(network, filter, filterLoader);
+        };
     }
 }
