@@ -128,6 +128,7 @@ class StringExpertRuleTest {
         // for testing none EXISTS
         Generator gen1 = Mockito.mock(Generator.class);
         Mockito.when(gen1.getType()).thenReturn(IdentifiableType.GENERATOR);
+        Mockito.when(gen1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Terminal terminal1 = Mockito.mock(Terminal.class);
@@ -235,6 +236,7 @@ class StringExpertRuleTest {
         // for testing none EXISTS
         Load load1 = Mockito.mock(Load.class);
         Mockito.when(load1.getType()).thenReturn(IdentifiableType.LOAD);
+        Mockito.when(load1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Terminal terminal1 = Mockito.mock(Terminal.class);
@@ -342,6 +344,7 @@ class StringExpertRuleTest {
         // for testing none EXISTS
         ShuntCompensator shuntCompensator1 = Mockito.mock(ShuntCompensator.class);
         Mockito.when(shuntCompensator1.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        Mockito.when(shuntCompensator1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Terminal terminal1 = Mockito.mock(Terminal.class);
@@ -455,18 +458,19 @@ class StringExpertRuleTest {
         Mockito.when(line.getTerminal(TwoSides.TWO)).thenReturn(terminal2);
 
         // for testing none EXISTS
-        Line load1 = Mockito.mock(Line.class);
-        Mockito.when(load1.getType()).thenReturn(IdentifiableType.LINE);
+        Line line1 = Mockito.mock(Line.class);
+        Mockito.when(line1.getType()).thenReturn(IdentifiableType.LINE);
+        Mockito.when(line1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel11 = Mockito.mock(VoltageLevel.class);
         Terminal terminal11 = Mockito.mock(Terminal.class);
         Mockito.when(terminal11.getVoltageLevel()).thenReturn(voltageLevel11);
-        Mockito.when(load1.getTerminal(TwoSides.ONE)).thenReturn(terminal11);
+        Mockito.when(line1.getTerminal(TwoSides.ONE)).thenReturn(terminal11);
 
         VoltageLevel voltageLevel12 = Mockito.mock(VoltageLevel.class);
         Terminal terminal12 = Mockito.mock(Terminal.class);
         Mockito.when(terminal12.getVoltageLevel()).thenReturn(voltageLevel12);
-        Mockito.when(load1.getTerminal(TwoSides.TWO)).thenReturn(terminal12);
+        Mockito.when(line1.getTerminal(TwoSides.TWO)).thenReturn(terminal12);
 
         return Stream.of(
                 // --- IS --- //
@@ -520,26 +524,26 @@ class StringExpertRuleTest {
                 // --- EXISTS --- //
                 // Common fields
                 Arguments.of(EXISTS, FieldType.ID, null, null, line, true),
-                Arguments.of(EXISTS, FieldType.ID, null, null, load1, false),
+                Arguments.of(EXISTS, FieldType.ID, null, null, line1, false),
                 Arguments.of(EXISTS, FieldType.NAME, null, null, line, true),
-                Arguments.of(EXISTS, FieldType.NAME, null, null, load1, false),
+                Arguments.of(EXISTS, FieldType.NAME, null, null, line1, false),
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, line, true),
-                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, load1, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, line1, false),
                 Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, line, true),
-                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, load1, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, line1, false),
 
                 // --- NOT_EXISTS --- //
                 // Common fields
                 Arguments.of(NOT_EXISTS, FieldType.ID, null, null, line, false),
-                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, load1, true),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, line1, true),
                 Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, line, false),
-                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, load1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, line1, true),
                 // VoltageLevel fields
                 Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, line, false),
-                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, load1, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, line1, true),
                 Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, line, false),
-                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, load1, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, line1, true),
 
                 // --- IN --- //
                 // Common fields
@@ -583,6 +587,7 @@ class StringExpertRuleTest {
         // for testing none EXISTS
         Bus bus1 = Mockito.mock(Bus.class);
         Mockito.when(bus1.getType()).thenReturn(IdentifiableType.BUS);
+        Mockito.when(bus1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Mockito.when(bus1.getVoltageLevel()).thenReturn(voltageLevel1);
@@ -688,6 +693,7 @@ class StringExpertRuleTest {
         // for testing none EXISTS
         BusbarSection busbarSection1 = Mockito.mock(BusbarSection.class);
         Mockito.when(busbarSection1.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
+        Mockito.when(busbarSection1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Terminal terminal1 = Mockito.mock(Terminal.class);
@@ -795,6 +801,7 @@ class StringExpertRuleTest {
         // for testing none EXISTS
         Battery battery1 = Mockito.mock(Battery.class);
         Mockito.when(battery1.getType()).thenReturn(IdentifiableType.BATTERY);
+        Mockito.when(battery1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Terminal terminal1 = Mockito.mock(Terminal.class);
@@ -903,6 +910,7 @@ class StringExpertRuleTest {
         // for testing none EXISTS
         TwoWindingsTransformer twoWindingsTransformer1 = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingsTransformer1.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        Mockito.when(twoWindingsTransformer1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Terminal terminal1 = Mockito.mock(Terminal.class);
