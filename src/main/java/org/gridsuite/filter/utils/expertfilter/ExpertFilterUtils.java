@@ -9,12 +9,14 @@ package org.gridsuite.filter.utils.expertfilter;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.GeneratorStartup;
+import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.apache.commons.collections4.CollectionUtils;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.utils.FilterServiceUtils;
 import org.gridsuite.filter.utils.FilterType;
+import org.gridsuite.filter.utils.RegulationType;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -53,14 +55,6 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getStaticVarCompensatorFieldValue(FieldType field, String propertyName, StaticVarCompensator svar) {
-        return switch (field) {
-            case COUNTRY,
-                NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, propertyName, svar.getTerminal().getVoltageLevel());
-            default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + svar.getType() + "]");
-        };
-    }
-
     private static String getVoltageLevelFieldValue(FieldType field, String propertyName, VoltageLevel voltageLevel) {
         return switch (field) {
             case COUNTRY,
@@ -76,6 +70,7 @@ public final class ExpertFilterUtils {
             case LOW_VOLTAGE_LIMIT -> String.valueOf(voltageLevel.getLowVoltageLimit());
             case HIGH_VOLTAGE_LIMIT -> String.valueOf(voltageLevel.getHighVoltageLimit());
             case SUBSTATION_PROPERTIES -> voltageLevel.getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES -> voltageLevel.getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + voltageLevel.getType() + "]");
         };
     }
@@ -198,6 +193,10 @@ public final class ExpertFilterUtils {
             case CONNECTED,
                 CONNECTED_1,
                 CONNECTED_2 -> String.valueOf(terminal.isConnected());
+            case REGULATING_TERMINAL_VL_ID -> terminal.getVoltageLevel() != null ?
+                    String.valueOf(terminal.getVoltageLevel().getId()) : null;
+            case REGULATING_TERMINAL_CONNECTABLE_ID -> terminal.getConnectable() != null ?
+                    String.valueOf(terminal.getConnectable().getId()) : null;
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",terminal]");
         };
     }
@@ -295,6 +294,62 @@ public final class ExpertFilterUtils {
             case SUBSTATION_PROPERTIES_2 -> twoWindingsTransformer.getTerminal2().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + twoWindingsTransformer.getType() + "]");
         };
+    }
+
+    private static String getStaticVarCompensatorFieldValue(FieldType field, String propertyName, StaticVarCompensator svar) {
+        return switch (field) {
+            case COUNTRY,
+                    NOMINAL_VOLTAGE,
+                    VOLTAGE_LEVEL_ID,
+                    VOLTAGE_LEVEL_PROPERTIES,
+                    SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, svar.getTerminal().getVoltageLevel());
+            case CONNECTED,
+                    REGULATING_TERMINAL_VL_ID,
+                    REGULATING_TERMINAL_CONNECTABLE_ID -> getTerminalFieldValue(field, svar.getRegulatingTerminal());
+            case AUTOMATE,
+                    LOW_VOLTAGE_SET_POINT,
+                    HIGH_VOLTAGE_SET_POINT,
+                    LOW_VOLTAGE_THRESHOLD,
+                    HIGH_VOLTAGE_THRESHOLD,
+                    SUSCEPTANCE_FIX,
+                    FIX_Q_AT_NOMINAL_V -> getStandbyAutomationFieldValue(field, svar);
+            case MAX_Q_AT_NOMINAL_V -> String.valueOf(
+                    Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(svar.getBmax())
+            );
+            case MIN_Q_AT_NOMINAL_V -> String.valueOf(
+                    Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(svar.getBmin())
+            );
+            case REGULATION_TYPE -> svar.getRegulatingTerminal() != null &&
+                                    svar.getRegulatingTerminal().getConnectable() == null ?
+                    RegulationType.DISTANT.name() :
+                    RegulationType.LOCAL.name();
+            case MIN_SUSCEPTANCE -> String.valueOf(svar.getBmin());
+            case MAX_SUSCEPTANCE -> String.valueOf(svar.getBmax());
+            case SVAR_REGULATION_MODE -> svar.getRegulationMode() != null ? svar.getRegulationMode().name() : null;
+            case VOLTAGE_SET_POINT -> String.valueOf(svar.getVoltageSetpoint());
+            case REACTIVE_POWER_SET_POINT -> String.valueOf(svar.getReactivePowerSetpoint());
+            default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + svar.getType() + "]");
+        };
+    }
+
+    private static String getStandbyAutomationFieldValue(FieldType field, StaticVarCompensator svar) {
+        StandbyAutomaton standbyAutomaton = svar.getExtension(StandbyAutomaton.class);
+        if (standbyAutomaton == null) {
+            return String.valueOf(Double.NaN);
+        } else {
+            return switch (field) {
+                case AUTOMATE -> String.valueOf(1.0); // 1.0 is used to distinct NaN to say that the extension exists
+                case LOW_VOLTAGE_SET_POINT -> String.valueOf(standbyAutomaton.getLowVoltageSetpoint());
+                case HIGH_VOLTAGE_SET_POINT -> String.valueOf(standbyAutomaton.getHighVoltageSetpoint());
+                case LOW_VOLTAGE_THRESHOLD -> String.valueOf(standbyAutomaton.getLowVoltageThreshold());
+                case HIGH_VOLTAGE_THRESHOLD -> String.valueOf(standbyAutomaton.getHighVoltageThreshold());
+                case SUSCEPTANCE_FIX -> String.valueOf(standbyAutomaton.getB0());
+                case FIX_Q_AT_NOMINAL_V -> String.valueOf(
+                        Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(standbyAutomaton.getB0())
+                );
+                default -> String.valueOf(Double.NaN);
+            };
+        }
     }
 
     public static List<FilterEquipments> getFilterEquipments(Network network, Set<String> uuids, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
