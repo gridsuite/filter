@@ -93,6 +93,8 @@ public final class ExpertFilterUtils {
             case SHUNT_SUSCEPTANCE_2 -> String.valueOf(line.getB2());
             case SUBSTATION_PROPERTIES_1 -> line.getTerminal1().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             case SUBSTATION_PROPERTIES_2 -> line.getTerminal2().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES_1 -> line.getTerminal1().getVoltageLevel().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES_2 -> line.getTerminal2().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + line.getType() + "]");
         };
     }
@@ -107,6 +109,7 @@ public final class ExpertFilterUtils {
             case CONNECTED -> getTerminalFieldValue(field, load.getTerminal());
             case LOAD_TYPE -> load.getLoadType().name();
             case SUBSTATION_PROPERTIES -> load.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES -> load.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + load.getType() + "]");
         };
     }
@@ -125,6 +128,7 @@ public final class ExpertFilterUtils {
                 SWITCHED_ON_SUSCEPTANCE -> getSectionBasedFieldValue(field, shuntCompensator);
             case CONNECTED -> getTerminalFieldValue(field, shuntCompensator.getTerminal());
             case SUBSTATION_PROPERTIES -> shuntCompensator.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES -> shuntCompensator.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + shuntCompensator.getType() + "]");
         };
     }
@@ -149,6 +153,7 @@ public final class ExpertFilterUtils {
                 VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, null, generator.getTerminal().getVoltageLevel());
             case CONNECTED -> getTerminalFieldValue(field, generator.getTerminal());
             case SUBSTATION_PROPERTIES -> generator.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES -> generator.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + generator.getType() + "]");
         };
     }
@@ -222,7 +227,7 @@ public final class ExpertFilterUtils {
             case TARGET_P -> String.valueOf(battery.getTargetP());
             case TARGET_Q -> String.valueOf(battery.getTargetQ());
             case SUBSTATION_PROPERTIES -> battery.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
-
+            case VOLTAGE_LEVEL_PROPERTIES -> battery.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + battery.getType() + "]");
 
         };
@@ -288,6 +293,8 @@ public final class ExpertFilterUtils {
                 PHASE_REGULATION_VALUE -> getPhaseTapChangerFieldValue(field, twoWindingsTransformer.getPhaseTapChanger());
             case SUBSTATION_PROPERTIES_1 -> twoWindingsTransformer.getTerminal1().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             case SUBSTATION_PROPERTIES_2 -> twoWindingsTransformer.getTerminal2().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES_1 -> twoWindingsTransformer.getTerminal1().getVoltageLevel().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES_2 -> twoWindingsTransformer.getTerminal2().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + twoWindingsTransformer.getType() + "]");
         };
     }
