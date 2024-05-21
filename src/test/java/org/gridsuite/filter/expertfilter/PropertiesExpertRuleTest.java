@@ -193,13 +193,34 @@ class PropertiesExpertRuleTest {
         );
     }
 
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTest() {
+
+        ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
+        Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        Mockito.when(shuntCompensator.getProperty("propertyNameSC")).thenReturn("propertyValueSC");
+
+        Substation substation = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getProperty("CodeOI")).thenReturn("33");
+        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(shuntCompensator.getTerminal()).thenReturn(terminal);
+        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("propertyValueSubstation");
+
+        return Stream.of(
+                // --- IN --- //
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC"), shuntCompensator, true),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), shuntCompensator, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), shuntCompensator, true)
+        );
+    }
+
     private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTest() {
 
         TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
         Mockito.when(twoWindingsTransformer.getProperty("propertyNameTWT")).thenReturn("propertyValueTWT");
-
-        Substation substation = Mockito.mock(Substation.class);
 
         Terminal terminal1 = Mockito.mock(Terminal.class);
         Mockito.when(twoWindingsTransformer.getTerminal1()).thenReturn(terminal1);
@@ -208,18 +229,33 @@ class PropertiesExpertRuleTest {
         Mockito.when(voltageLevel1.getProperty("CodeOI")).thenReturn("22");
         Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
 
-        Mockito.when(voltageLevel1.getNullableSubstation()).thenReturn(substation);
-        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("propertyValueSubstation");
+        Terminal terminal2 = Mockito.mock(Terminal.class);
+        Mockito.when(twoWindingsTransformer.getTerminal2()).thenReturn(terminal2);
+        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel2.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(voltageLevel2.getProperty("CodeOI")).thenReturn("33");
+        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+
+        Substation substation1 = Mockito.mock(Substation.class);
+        Substation substation2 = Mockito.mock(Substation.class);
+        Mockito.when(voltageLevel1.getNullableSubstation()).thenReturn(substation1);
+        Mockito.when(voltageLevel2.getNullableSubstation()).thenReturn(substation2);
+        Mockito.when(substation1.getProperty("regionCSV")).thenReturn("LILLE");
+        Mockito.when(substation2.getProperty("regionCSV")).thenReturn("PARIS");
 
         return Stream.of(
                 // --- IN --- //
                 Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), twoWindingsTransformer, true),
                 Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT", "propertyValueTWT"), twoWindingsTransformer, true),
                 Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValue"), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation1"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("LILLE"), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("PARIS"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("PARIS"), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("LILLE"), twoWindingsTransformer, false),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), twoWindingsTransformer, false)
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), twoWindingsTransformer, false)
         );
     }
 
@@ -229,6 +265,7 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForGeneratorTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForLoadTest",
+        "provideArgumentsForShuntCompensatorTest",
         "provideArgumentsForLineTest",
     })
 
