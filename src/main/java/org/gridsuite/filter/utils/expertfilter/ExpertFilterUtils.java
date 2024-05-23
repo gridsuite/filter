@@ -197,6 +197,10 @@ public final class ExpertFilterUtils {
                     String.valueOf(terminal.getVoltageLevel().getId()) : null;
             case REGULATING_TERMINAL_CONNECTABLE_ID -> terminal.getConnectable() != null ?
                     String.valueOf(terminal.getConnectable().getId()) : null;
+            case REGULATION_TYPE -> terminal != null &&
+                                    terminal.getConnectable() == null ?
+                    RegulationType.DISTANT.name() :
+                    RegulationType.LOCAL.name();
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",terminal]");
         };
     }
@@ -305,7 +309,8 @@ public final class ExpertFilterUtils {
                     SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, svar.getTerminal().getVoltageLevel());
             case CONNECTED,
                     REGULATING_TERMINAL_VL_ID,
-                    REGULATING_TERMINAL_CONNECTABLE_ID -> getTerminalFieldValue(field, svar.getRegulatingTerminal());
+                    REGULATING_TERMINAL_CONNECTABLE_ID,
+                    REGULATION_TYPE -> getTerminalFieldValue(field, svar.getRegulatingTerminal());
             case AUTOMATE,
                     LOW_VOLTAGE_SET_POINT,
                     HIGH_VOLTAGE_SET_POINT,
@@ -319,10 +324,6 @@ public final class ExpertFilterUtils {
             case MIN_Q_AT_NOMINAL_V -> String.valueOf(
                     Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(svar.getBmin())
             );
-            case REGULATION_TYPE -> svar.getRegulatingTerminal() != null &&
-                                    svar.getRegulatingTerminal().getConnectable() == null ?
-                    RegulationType.DISTANT.name() :
-                    RegulationType.LOCAL.name();
             case MIN_SUSCEPTANCE -> String.valueOf(svar.getBmin());
             case MAX_SUSCEPTANCE -> String.valueOf(svar.getBmax());
             case SVAR_REGULATION_MODE -> svar.getRegulationMode() != null ? svar.getRegulationMode().name() : null;
