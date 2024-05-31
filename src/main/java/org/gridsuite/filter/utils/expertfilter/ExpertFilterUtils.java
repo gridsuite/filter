@@ -146,7 +146,7 @@ public final class ExpertFilterUtils {
                 MARGINAL_COST,
                 PLANNED_OUTAGE_RATE,
                 FORCED_OUTAGE_RATE ->
-                getGeneratorStartupField(generator, field);
+                getGeneratorStartupFieldValue(generator, field);
             case RATED_S -> String.valueOf(generator.getRatedS());
             case COUNTRY,
                 NOMINAL_VOLTAGE,
@@ -159,9 +159,11 @@ public final class ExpertFilterUtils {
     }
 
     @Nonnull
-    private static String getGeneratorStartupField(Generator generator, FieldType fieldType) {
+    private static String getGeneratorStartupFieldValue(Generator generator, FieldType fieldType) {
         GeneratorStartup generatorStartup = generator.getExtension(GeneratorStartup.class);
-        if (generatorStartup != null) {
+        if (generatorStartup == null) {
+            return String.valueOf(Double.NaN);
+        } else {
             return String.valueOf(
                 switch (fieldType) {
                     case PLANNED_ACTIVE_POWER_SET_POINT -> generatorStartup.getPlannedActivePowerSetpoint();
@@ -170,8 +172,6 @@ public final class ExpertFilterUtils {
                     case FORCED_OUTAGE_RATE -> generatorStartup.getForcedOutageRate();
                     default -> String.valueOf(Double.NaN);
                 });
-        } else {
-            return String.valueOf(Double.NaN);
         }
     }
 
@@ -198,10 +198,19 @@ public final class ExpertFilterUtils {
             case CONNECTED,
                 CONNECTED_1,
                 CONNECTED_2 -> String.valueOf(terminal.isConnected());
-            case REGULATING_TERMINAL_VL_ID -> terminal.getVoltageLevel() != null ?
-                    String.valueOf(terminal.getVoltageLevel().getId()) : null;
-            case REGULATING_TERMINAL_CONNECTABLE_ID -> terminal.getConnectable() != null ?
-                    String.valueOf(terminal.getConnectable().getId()) : null;
+            case REGULATING_TERMINAL ->
+                    terminal != null &&
+                    terminal.getVoltageLevel() != null &&
+                    terminal.getConnectable() != null ?
+                    "" : null; // empty string means a regulating terminal exists
+            case REGULATING_TERMINAL_VL_ID ->
+                    terminal != null &&
+                    terminal.getVoltageLevel() != null ?
+                    terminal.getVoltageLevel().getId() : null;
+            case REGULATING_TERMINAL_CONNECTABLE_ID ->
+                    terminal != null &&
+                    terminal.getConnectable() != null ?
+                    terminal.getConnectable().getId() : null;
             case REGULATION_TYPE -> terminal != null &&
                                     terminal.getConnectable() == null ?
                     RegulationType.DISTANT.name() :
@@ -315,6 +324,7 @@ public final class ExpertFilterUtils {
                     VOLTAGE_LEVEL_PROPERTIES,
                     SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, svar.getTerminal().getVoltageLevel());
             case CONNECTED,
+                    REGULATING_TERMINAL,
                     REGULATING_TERMINAL_VL_ID,
                     REGULATING_TERMINAL_CONNECTABLE_ID,
                     REGULATION_TYPE -> getTerminalFieldValue(field, svar.getRegulatingTerminal());
@@ -324,7 +334,7 @@ public final class ExpertFilterUtils {
                     LOW_VOLTAGE_THRESHOLD,
                     HIGH_VOLTAGE_THRESHOLD,
                     SUSCEPTANCE_FIX,
-                    FIX_Q_AT_NOMINAL_V -> getStandbyAutomationFieldValue(field, svar);
+                    FIX_Q_AT_NOMINAL_V -> getStandbyAutomatonFieldValue(field, svar);
             case MAX_Q_AT_NOMINAL_V -> String.valueOf(
                     Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(svar.getBmax())
             );
@@ -340,7 +350,7 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getStandbyAutomationFieldValue(FieldType field, StaticVarCompensator svar) {
+    private static String getStandbyAutomatonFieldValue(FieldType field, StaticVarCompensator svar) {
         StandbyAutomaton standbyAutomaton = svar.getExtension(StandbyAutomaton.class);
         if (standbyAutomaton == null) {
             return String.valueOf(Double.NaN);
