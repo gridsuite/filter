@@ -23,7 +23,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class PropertiesExpertRuleTest {
     private FilterLoader filterLoader;
 
-    static Stream<Arguments> provideArgumentsForTestWithException() {
+    @BeforeEach
+    public void setUp() {
+        filterLoader = uuids -> null;
+    }
+
+    @ParameterizedTest
+    @MethodSource({
+        "provideArgumentsForTestWithException"
+    })
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String propertyName, List<String> propertyValues, Class expectedException) {
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
+        assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+    }
+
+    private static Stream<Arguments> provideArgumentsForTestWithException() {
 
         Network network = Mockito.mock(Network.class);
         Mockito.when(network.getType()).thenReturn(IdentifiableType.NETWORK);
@@ -60,6 +74,9 @@ class PropertiesExpertRuleTest {
         TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
 
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+
         return Stream.of(
                 // --- Test an unsupported field for some equipment --- //
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, voltageLevel, "region", List.of("east"), PowsyblException.class),
@@ -68,11 +85,28 @@ class PropertiesExpertRuleTest {
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, shuntCompensator, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, line, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, battery, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, svar, "region", List.of("east"), PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.FREE_PROPERTIES, generator, "codeOI", List.of("33"), PowsyblException.class),
                 Arguments.of(CONTAINS, FieldType.SUBSTATION_PROPERTIES, generator, "cvgRegion", List.of("LILLE"), PowsyblException.class)
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource({
+        "provideArgumentsForSubstationTest",
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForShuntCompensatorTest",
+        "provideArgumentsForLineTest",
+        "provideArgumentsForStaticVarCompensatorTest",
+    })
+
+    void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
+        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
     private static Stream<Arguments> provideArgumentsForSubstationTest() {
@@ -83,7 +117,8 @@ class PropertiesExpertRuleTest {
 
         return Stream.of(
                 // --- IN --- //
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("LILLE", "PARIS"), substation, true)
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("LILLE", "PARIS"), substation, true),
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("PARIS"), substation, false)
         );
     }
 
@@ -149,25 +184,16 @@ class PropertiesExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 Arguments.of(IN, FieldType.FREE_PROPERTIES, "region", List.of("north"), line, true),
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "region", List.of("south"), line, false),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("LILLE"), line, true),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("PARIS"), line, false),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("PARIS"), line, true),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("LILLE"), line, false),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), line, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), line, true)
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), line, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), line, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), line, false)
    );
-    }
-
-    @BeforeEach
-    public void setUp() {
-        filterLoader = uuids -> null;
-    }
-
-    @ParameterizedTest
-    @MethodSource({
-        "provideArgumentsForTestWithException"
-    })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String propertyName, List<String> propertyValues, Class expectedException) {
-        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
-        assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
     private static Stream<Arguments> provideArgumentsForLoadTest() {
@@ -188,8 +214,11 @@ class PropertiesExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad"), load, true),
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad2"), load, false),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), load, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), load, true)
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), load, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), load, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), load, false)
         );
     }
 
@@ -211,8 +240,11 @@ class PropertiesExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC"), shuntCompensator, true),
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC1"), shuntCompensator, false),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), shuntCompensator, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), shuntCompensator, true)
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), shuntCompensator, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), shuntCompensator, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), shuntCompensator, false)
         );
     }
 
@@ -246,8 +278,7 @@ class PropertiesExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT", "propertyValueTWT"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValue"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT2"), twoWindingsTransformer, false),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("LILLE"), twoWindingsTransformer, true),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("PARIS"), twoWindingsTransformer, false),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("PARIS"), twoWindingsTransformer, true),
@@ -259,18 +290,29 @@ class PropertiesExpertRuleTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource({
-        "provideArgumentsForSubstationTest",
-        "provideArgumentsForGeneratorTest",
-        "provideArgumentsForTwoWindingTransformerTest",
-        "provideArgumentsForLoadTest",
-        "provideArgumentsForShuntCompensatorTest",
-        "provideArgumentsForLineTest",
-    })
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        Mockito.when(svar.getProperty("propertyNameSVAR")).thenReturn("propertyValueSVAR");
 
-    void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
-        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
-        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+        Substation substation = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getProperty("CodeOI")).thenReturn("33");
+        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(svar.getTerminal()).thenReturn(terminal);
+        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("propertyValueSubstation");
+
+        return Stream.of(
+                // --- IN --- //
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSVAR", List.of("propertyValueSVAR"), svar, true),
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSVAR", List.of("propertyValueSVAR2"), svar, false),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), svar, true),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), svar, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), svar, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), svar, false)
+        );
     }
+
 }

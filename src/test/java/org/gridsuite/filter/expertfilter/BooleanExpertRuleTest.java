@@ -60,15 +60,19 @@ class BooleanExpertRuleTest {
         BusbarSection busbarSection = Mockito.mock(BusbarSection.class);
         Mockito.when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
 
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, voltageLevel, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.P0, generator, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, load, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, shuntCompensator, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, bus, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.VOLTAGE_REGULATOR_ON, generator, PowsyblException.class)
@@ -82,7 +86,8 @@ class BooleanExpertRuleTest {
         "provideArgumentsForBatteryTest",
         "provideArgumentsForLinesTest",
         "provideArgumentsForLoadTest",
-        "provideArgumentsForTwoWindingTransformerTest"
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, boolean value, Identifiable<?> equipment, boolean expected) {
         BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).value(value).build();
@@ -294,6 +299,28 @@ class BooleanExpertRuleTest {
                 // null PhaseTapChanger
                 Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATING, false, twoWindingsTransformer2, false),
                 Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER, false, twoWindingsTransformer2, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
+
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        // Terminal fields
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.isConnected()).thenReturn(true);
+        Mockito.when(svar.getTerminal()).thenReturn(terminal);
+
+        return Stream.of(
+                // --- EQUALS--- //
+                // Terminal fields
+                Arguments.of(EQUALS, FieldType.CONNECTED, true, svar, true),
+                Arguments.of(EQUALS, FieldType.CONNECTED, false, svar, false),
+
+                // --- NOT_EQUALS--- //
+                // Terminal fields
+                Arguments.of(NOT_EQUALS, FieldType.CONNECTED, false, svar, true),
+                Arguments.of(NOT_EQUALS, FieldType.CONNECTED, true, svar, false)
         );
     }
 }

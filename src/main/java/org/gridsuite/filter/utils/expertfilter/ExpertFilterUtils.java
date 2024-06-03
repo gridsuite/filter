@@ -201,8 +201,10 @@ public final class ExpertFilterUtils {
             case REGULATING_TERMINAL ->
                     terminal != null &&
                     terminal.getVoltageLevel() != null &&
-                    terminal.getConnectable() != null ?
-                    "" : null; // empty string means a regulating terminal exists
+                    terminal.getVoltageLevel().getId() != null &&
+                    terminal.getConnectable() != null &&
+                    terminal.getConnectable().getId() != null ?
+                    terminal.getConnectable().getId() : null; // having a connected equipment id means a regulated terminal exists
             case REGULATING_TERMINAL_VL_ID ->
                     terminal != null &&
                     terminal.getVoltageLevel() != null ?
@@ -212,7 +214,7 @@ public final class ExpertFilterUtils {
                     terminal.getConnectable() != null ?
                     terminal.getConnectable().getId() : null;
             case REGULATION_TYPE -> terminal != null &&
-                                    terminal.getConnectable() == null ?
+                                    terminal.getConnectable() != null ?
                     RegulationType.DISTANT.name() :
                     RegulationType.LOCAL.name();
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",terminal]");
@@ -323,8 +325,8 @@ public final class ExpertFilterUtils {
                     VOLTAGE_LEVEL_ID,
                     VOLTAGE_LEVEL_PROPERTIES,
                     SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, svar.getTerminal().getVoltageLevel());
-            case CONNECTED,
-                    REGULATING_TERMINAL,
+            case CONNECTED -> getTerminalFieldValue(field, svar.getTerminal());
+            case REGULATING_TERMINAL,
                     REGULATING_TERMINAL_VL_ID,
                     REGULATING_TERMINAL_CONNECTABLE_ID,
                     REGULATION_TYPE -> getTerminalFieldValue(field, svar.getRegulatingTerminal());

@@ -6,8 +6,8 @@ import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.StringExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -104,7 +104,8 @@ class StringExpertRuleTest {
         "provideArgumentsForBatteryTest",
         "provideArgumentsForShuntCompensatorTest",
         "provideArgumentsForLinesTest",
-        "provideArgumentsForTwoWindingsTransformerTest"
+        "provideArgumentsForTwoWindingsTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         StringExpertRule rule = StringExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -1017,4 +1018,172 @@ class StringExpertRuleTest {
 
         );
     }
+
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
+
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        // Common fields
+        Mockito.when(svar.getId()).thenReturn("ID");
+        Mockito.when(svar.getOptionalName()).thenReturn(Optional.of("NAME"));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getId()).thenReturn("VL");
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(svar.getTerminal()).thenReturn(terminal);
+        // Regulating terminal fields
+        Terminal regulatingTerminal = Mockito.mock(Terminal.class);
+        VoltageLevel distantVoltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(distantVoltageLevel.getId()).thenReturn("VL_2");
+        Mockito.when(regulatingTerminal.getVoltageLevel()).thenReturn(distantVoltageLevel);
+        BusbarSection regulatedBusBarSection = Mockito.mock(BusbarSection.class);
+        Mockito.when(regulatedBusBarSection.getId()).thenReturn("BBS");
+        Mockito.when(regulatingTerminal.getConnectable()).thenReturn(regulatedBusBarSection);
+        Mockito.when(svar.getRegulatingTerminal()).thenReturn(regulatingTerminal);
+
+        // for testing none EXISTS
+        StaticVarCompensator svar1 = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar1.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        Mockito.when(svar1.getOptionalName()).thenReturn(Optional.of(""));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Mockito.when(svar1.getTerminal()).thenReturn(terminal1);
+        // Regulating terminal fields
+        Terminal regulatingTerminal1 = Mockito.mock(Terminal.class);
+        VoltageLevel distantVoltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(regulatingTerminal1.getVoltageLevel()).thenReturn(distantVoltageLevel1);
+        BusbarSection regulatedBusBarSection1 = Mockito.mock(BusbarSection.class);
+        Mockito.when(regulatingTerminal1.getConnectable()).thenReturn(regulatedBusBarSection1);
+        Mockito.when(svar1.getRegulatingTerminal()).thenReturn(regulatingTerminal1);
+
+        return Stream.of(
+                // --- IS --- //
+                // Common fields
+                Arguments.of(IS, FieldType.ID, "id", null, svar, true),
+                Arguments.of(IS, FieldType.ID, "id_1", null, svar, false),
+                Arguments.of(IS, FieldType.NAME, "name", null, svar, true),
+                Arguments.of(IS, FieldType.NAME, "name_1", null, svar, false),
+                // VoltageLevel fields
+                Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, svar, true),
+                Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, svar, false),
+                // Terminal fields
+                Arguments.of(IS, FieldType.REGULATING_TERMINAL_VL_ID, "vl_2", null, svar, true),
+                Arguments.of(IS, FieldType.REGULATING_TERMINAL_VL_ID, "vl_1", null, svar, false),
+                Arguments.of(IS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, "bbs", null, svar, true),
+                Arguments.of(IS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, "bbs_1", null, svar, false),
+
+                // --- CONTAINS --- //
+                // Common fields
+                Arguments.of(CONTAINS, FieldType.ID, "i", null, svar, true),
+                Arguments.of(CONTAINS, FieldType.ID, "ii", null, svar, false),
+                Arguments.of(CONTAINS, FieldType.NAME, "nam", null, svar, true),
+                Arguments.of(CONTAINS, FieldType.NAME, "namm", null, svar, false),
+                // VoltageLevel fields
+                Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, svar, true),
+                Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, svar, false),
+                // Terminal fields
+                Arguments.of(CONTAINS, FieldType.REGULATING_TERMINAL_VL_ID, "v", null, svar, true),
+                Arguments.of(CONTAINS, FieldType.REGULATING_TERMINAL_VL_ID, "vv", null, svar, false),
+                Arguments.of(CONTAINS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, "bb", null, svar, true),
+                Arguments.of(CONTAINS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, "bbb", null, svar, false),
+
+                // --- BEGINS_WITH --- //
+                // Common fields
+                Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, svar, true),
+                Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, svar, false),
+                Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, svar, true),
+                Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, svar, false),
+                // VoltageLevel fields
+                Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, svar, true),
+                Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, svar, false),
+                // Terminal fields
+                Arguments.of(BEGINS_WITH, FieldType.REGULATING_TERMINAL_VL_ID, "v", null, svar, true),
+                Arguments.of(BEGINS_WITH, FieldType.REGULATING_TERMINAL_VL_ID, "s", null, svar, false),
+                Arguments.of(BEGINS_WITH, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, "b", null, svar, true),
+                Arguments.of(BEGINS_WITH, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, "s", null, svar, false),
+
+                // --- ENDS_WITH --- //
+                // Common fields
+                Arguments.of(ENDS_WITH, FieldType.ID, "d", null, svar, true),
+                Arguments.of(ENDS_WITH, FieldType.ID, "e", null, svar, false),
+                Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, svar, true),
+                Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, svar, false),
+                // VoltageLevel fields
+                Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, svar, true),
+                Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, svar, false),
+                // Terminal fields
+                Arguments.of(ENDS_WITH, FieldType.REGULATING_TERMINAL_VL_ID, "2", null, svar, true),
+                Arguments.of(ENDS_WITH, FieldType.REGULATING_TERMINAL_VL_ID, "m", null, svar, false),
+                Arguments.of(ENDS_WITH, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, "s", null, svar, true),
+                Arguments.of(ENDS_WITH, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, "t", null, svar, false),
+
+                // --- EXISTS --- //
+                // Common fields
+                Arguments.of(EXISTS, FieldType.ID, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.ID, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.NAME, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.NAME, null, null, svar1, false),
+                // VoltageLevel fields
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, svar1, false),
+                // Terminal fields
+                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL_VL_ID, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL_VL_ID, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL, null, null, svar1, false),
+
+                // --- NOT_EXISTS --- //
+                // Common fields
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.ID, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, svar1, true),
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, svar1, true),
+                // Terminal fields
+                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL_VL_ID, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL_VL_ID, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL, null, null, svar1, true),
+
+                // --- IN --- //
+                // Common fields
+                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), svar, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), svar, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), svar, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), svar, false),
+                // VoltageLevel fields
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), svar, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), svar, false),
+                // Terminal fields
+                Arguments.of(IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("VL_2", "VL_3"), svar, true),
+                Arguments.of(IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("VL", "VL_3"), svar1, false),
+                Arguments.of(IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("BBS", "BBS_2"), svar, true),
+                Arguments.of(IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("BBS_1", "BBS_2"), svar1, false),
+
+                // --- NOT_IN --- //
+                // Common fields
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), svar, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), svar, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), svar, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), svar, false),
+                // VoltageLevel fields
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), svar, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), svar, false),
+                // Terminal fields
+                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("VL_1", "VL_3"), svar, true),
+                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("VL_2", "VL_3"), svar1, false),
+                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("BBS_1", "BBS_2"), svar, true),
+                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("BBS", "BBS_2"), svar1, false)
+            );
+    }
+
 }

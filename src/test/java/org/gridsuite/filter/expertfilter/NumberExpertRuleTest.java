@@ -3,6 +3,7 @@ package org.gridsuite.filter.expertfilter;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.GeneratorStartup;
+import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.NumberExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
@@ -92,7 +93,8 @@ class NumberExpertRuleTest {
         "provideArgumentsForBatteryTest",
         "provideArgumentsForVoltageLevelTest",
         "provideArgumentsForLinesTest",
-        "provideArgumentsForTwoWindingTransformerTest"
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
         NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -1475,100 +1477,100 @@ class NumberExpertRuleTest {
         Mockito.when(voltageLevel1.getHighVoltageLimit()).thenReturn(Double.NaN);
 
         return Stream.of(
-            // --- EQUALS --- //
-            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, true),
-            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, false),
-            Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, true),
-            Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, false),
-            Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
-            Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
+                // --- EQUALS --- //
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, true),
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, false),
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, true),
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, false),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
 
-            // --- GREATER_OR_EQUALS --- //
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 30.0, null, voltageLevel, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
+                // --- GREATER_OR_EQUALS --- //
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 30.0, null, voltageLevel, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
 
-            // --- GREATER --- //
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, true),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, false),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, false),
-            Arguments.of(GREATER, FieldType.LOW_VOLTAGE_LIMIT, 30.0, null, voltageLevel, true),
-            Arguments.of(GREATER, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, false),
-            Arguments.of(GREATER, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, false),
-            Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, true),
-            Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, false),
-            Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
+                // --- GREATER --- //
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, true),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, false),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, false),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_LIMIT, 30.0, null, voltageLevel, true),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, false),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, true),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
 
-            // --- LOWER_OR_EQUALS --- //
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 30.0, null, voltageLevel, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, false),
+                // --- LOWER_OR_EQUALS --- //
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 30.0, null, voltageLevel, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, false),
 
-            // --- LOWER --- //
-            // voltageLevelerator fields
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, true),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, false),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, false),
-            Arguments.of(LOWER, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, true),
-            Arguments.of(LOWER, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, false),
-            Arguments.of(LOWER, FieldType.LOW_VOLTAGE_LIMIT, 30.0, null, voltageLevel, false),
-            Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, true),
-            Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, false),
-            Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, false),
+                // --- LOWER --- //
+                // voltageLevelerator fields
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, true),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 13.0, null, voltageLevel, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, true),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_LIMIT, 40.0, null, voltageLevel, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_LIMIT, 30.0, null, voltageLevel, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, true),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, false),
 
-            // --- BETWEEN --- //
-            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, true),
-            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), voltageLevel, false),
-            Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, true),
-            Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(50.0, 60.0), voltageLevel, false),
-            Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(20.0, 30.0), voltageLevel, false),
-            Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, true),
-            Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(500.0, 600.0), voltageLevel, false),
-            Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(200.0, 300.0), voltageLevel, false),
+                // --- BETWEEN --- //
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, true),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(50.0, 60.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(20.0, 30.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(500.0, 600.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(200.0, 300.0), voltageLevel, false),
 
-            // --- EXISTS --- //
-            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel, true),
-            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel1, false),
-            Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel, true),
-            Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel1, false),
-            Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel, true),
-            Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel1, false),
+                // --- EXISTS --- //
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel, true),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel1, false),
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel, true),
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel1, false),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel, true),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel1, false),
 
-            // --- NOT_EXISTS --- //
-            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel, false),
-            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel1, true),
-            Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel, false),
-            Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel1, true),
-            Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel, false),
-            Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel1, true),
+                // --- NOT_EXISTS --- //
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel1, true),
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel, false),
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel1, true),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel, false),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel1, true),
 
-            // --- IN --- //
-            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), voltageLevel, true),
-            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, false),
-            Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 40.0, 50.0), voltageLevel, true),
-            Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, false),
-            Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, true),
-            Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, false),
+                // --- IN --- //
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), voltageLevel, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, false),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 40.0, 50.0), voltageLevel, true),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, false),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, true),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, false),
 
-            // --- NOT_IN --- //
-            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, true),
-            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), voltageLevel, false),
-            Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, true),
-            Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 40.0, 50.0), voltageLevel, false),
-            Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, true),
-            Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, false)
+                // --- NOT_IN --- //
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), voltageLevel, false),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 40.0, 50.0), voltageLevel, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, false)
         );
     }
 
@@ -1638,304 +1640,752 @@ class NumberExpertRuleTest {
         Mockito.when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
 
         return Stream.of(
-            // --- EQUALS --- //
-            // Terminal fields
-            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, false),
-            // RatioTapChanger fields
-            Arguments.of(EQUALS, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, false),
-            // PhaseTapChanger fields
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE, 200., null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE, 250., null, twoWindingsTransformer, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.2, null, twoWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE, 0.3, null, twoWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.4, null, twoWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.5, null, twoWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.RATED_S, 200.0, null, twoWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 300., null, twoWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, twoWindingsTransformer, false),
+                // --- EQUALS --- //
+                // Terminal fields
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, false),
+                // RatioTapChanger fields
+                Arguments.of(EQUALS, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, false),
+                // PhaseTapChanger fields
+                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE, 200., null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE, 250., null, twoWindingsTransformer, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.2, null, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.SERIE_REACTANCE, 0.3, null, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.4, null, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.5, null, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.RATED_S, 200.0, null, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 300., null, twoWindingsTransformer, false),
+                Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
+                Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, twoWindingsTransformer, false),
 
-            // --- GREATER_OR_EQUALS --- //
-            // Terminal
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, twoWindingsTransformer, false),
-            // RatioTapChanger fields
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V, 14.0, null, twoWindingsTransformer, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.15, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.25, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.25, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.35, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.35, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.45, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false),
+                // --- GREATER_OR_EQUALS --- //
+                // Terminal
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, twoWindingsTransformer, false),
+                // RatioTapChanger fields
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V, 14.0, null, twoWindingsTransformer, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.15, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.25, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.25, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.35, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.35, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.45, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false),
 
-            // --- GREATER --- //
-            // Terminal
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, twoWindingsTransformer, false),
-            // RatioTapChanger fields
-            Arguments.of(GREATER, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATIO_TARGET_V, 14.0, null, twoWindingsTransformer, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.05, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.15, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.15, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.25, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE, 0.25, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE, 0.35, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.35, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.45, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, true),
-            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false),
+                // --- GREATER --- //
+                // Terminal
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, twoWindingsTransformer, false),
+                // RatioTapChanger fields
+                Arguments.of(GREATER, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.RATIO_TARGET_V, 14.0, null, twoWindingsTransformer, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.05, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.15, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.15, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.25, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE, 0.25, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE, 0.35, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.35, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.45, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, true),
+                Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, false),
+                Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false),
 
-            // --- LOWER_OR_EQUALS --- //
-            // Terminal
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, false),
-            // RatioTapChanger fields
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V, 14.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.25, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.15, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.35, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.25, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.45, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.35, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false),
+                // --- LOWER_OR_EQUALS --- //
+                // Terminal
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, false),
+                // RatioTapChanger fields
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V, 14.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.25, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.15, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.35, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE, 0.25, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.45, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE, 0.35, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false),
 
-            // --- LOWER --- //
-            // Terminal
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, false),
-            // RatioTapChanger fields
-            Arguments.of(LOWER, FieldType.RATIO_TARGET_V, 14.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.15, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.05, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.25, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.15, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE, 0.35, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE, 0.25, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.45, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.35, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, true),
-            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false),
+                // --- LOWER --- //
+                // Terminal
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, twoWindingsTransformer, false),
+                // RatioTapChanger fields
+                Arguments.of(LOWER, FieldType.RATIO_TARGET_V, 14.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.RATIO_TARGET_V, 13.0, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.RATIO_TARGET_V, 12.0, null, twoWindingsTransformer, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.15, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.1, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.05, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.25, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.2, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.15, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE, 0.35, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE, 0.3, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE, 0.25, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.45, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.4, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE, 0.35, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.RATED_S, 150.0, null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.RATED_S, 100.0, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.RATED_S, 50.0, null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, true),
+                Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, false),
+                Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false),
 
-            // --- BETWEEN --- //
-            // Terminal
-            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
-            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
-            // RatioTapChanger fields
-            Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, false),
-            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, false),
-            Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, false),
-            Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.45, 0.55), twoWindingsTransformer, false),
-            Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(150.0, 250.0), twoWindingsTransformer, false),
-            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(48., 52.), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(55., 70.), twoWindingsTransformer, false),
-            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(295., 305.), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(320., 350.), twoWindingsTransformer, false),
+                // --- BETWEEN --- //
+                // Terminal
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
+                // RatioTapChanger fields
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.45, 0.55), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(150.0, 250.0), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(48., 52.), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(55., 70.), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(295., 305.), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(320., 350.), twoWindingsTransformer, false),
 
-            // --- EXISTS --- //
-            // Terminal
-            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer1, false),
-            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer1, false),
-            // RatioTapChanger fields
-            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer1, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer1, false),
-            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer1, false),
-            Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer1, false),
-            Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer1, false),
-            Arguments.of(EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer1, false),
-            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, false),
-            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, false),
+                // --- EXISTS --- //
+                // Terminal
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer1, false),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer1, false),
+                // RatioTapChanger fields
+                Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer1, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer1, false),
+                Arguments.of(EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer1, false),
+                Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer1, false),
+                Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer1, false),
+                Arguments.of(EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer1, false),
+                Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, false),
+                Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, false),
 
-            // --- NOT_EXISTS --- //
-            // Terminal
-            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
-            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
-            // RatioTapChanger fields
-            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer1, true),
-            // TwoWindingsTransformer fields
-            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer1, true),
-            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer1, true),
-            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer1, true),
-            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer1, true),
-            Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer1, true),
-            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
-            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
+                // --- NOT_EXISTS --- //
+                // Terminal
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
+                // RatioTapChanger fields
+                Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer1, true),
+                // TwoWindingsTransformer fields
+                Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
+                Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
 
-            // --- IN --- //
-            // Terminal
-            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
-            // RatioTapChanger fields
-            Arguments.of(IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.3, 0.35), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.4, 0.45), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 100.0, 150.0), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 50.0, 51.0), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 51.0), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, false),
+                // --- IN --- //
+                // Terminal
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
+                // RatioTapChanger fields
+                Arguments.of(IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.3, 0.35), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.4, 0.45), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 100.0, 150.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 50.0, 51.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 51.0), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, false),
 
-            // --- NOT_IN --- //
-            // Terminal
-            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
-            // RatioTapChanger fields
-            Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
-            // TwoWindingsTransformer fields
-            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), twoWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), twoWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.3, 0.35), twoWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.4, 0.45), twoWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 100.0, 150.0), twoWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 51.), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 50., 51.), twoWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, false),
+                // --- NOT_IN --- //
+                // Terminal
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
+                // RatioTapChanger fields
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
+                // TwoWindingsTransformer fields
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.3, 0.35), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.4, 0.45), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 100.0, 150.0), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 51.), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 50., 51.), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, false),
 
-            // null RatioTapChanger
-            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer2, false),
+                // null RatioTapChanger
+                Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer2, false),
 
-            // null PhaseTapChanger
-            Arguments.of(EXISTS, FieldType.PHASE_REGULATION_VALUE, null, null, twoWindingsTransformer2, false)
+                // null PhaseTapChanger
+                Arguments.of(EXISTS, FieldType.PHASE_REGULATION_VALUE, null, null, twoWindingsTransformer2, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+
+        Mockito.when(svar.getBmin()).thenReturn(1.0);
+        Mockito.when(svar.getBmax()).thenReturn(2.0);
+        Mockito.when(svar.getVoltageSetpoint()).thenReturn(1.0);
+        Mockito.when(svar.getReactivePowerSetpoint()).thenReturn(2.0);
+
+        StandbyAutomaton standbyAutomaton = Mockito.mock(StandbyAutomaton.class);
+        Mockito.when(standbyAutomaton.getLowVoltageSetpoint()).thenReturn(1.0);
+        Mockito.when(standbyAutomaton.getHighVoltageSetpoint()).thenReturn(2.0);
+        Mockito.when(standbyAutomaton.getLowVoltageThreshold()).thenReturn(1.0);
+        Mockito.when(standbyAutomaton.getHighVoltageThreshold()).thenReturn(2.0);
+        Mockito.when(standbyAutomaton.getB0()).thenReturn(1.0);
+        Mockito.when(svar.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton);
+
+        // VoltageLevel fields
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(svar.getTerminal()).thenReturn(terminal);
+        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+
+        // for testing none EXISTS
+        StaticVarCompensator svar1 = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar1.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Mockito.when(svar1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+
+        Mockito.when(svar1.getBmin()).thenReturn(Double.NaN);
+        Mockito.when(svar1.getBmax()).thenReturn(Double.NaN);
+        Mockito.when(svar1.getVoltageSetpoint()).thenReturn(Double.NaN);
+        Mockito.when(svar1.getReactivePowerSetpoint()).thenReturn(Double.NaN);
+
+        StandbyAutomaton standbyAutomaton1 = Mockito.mock(StandbyAutomaton.class);
+        Mockito.when(standbyAutomaton1.getLowVoltageSetpoint()).thenReturn(Double.NaN);
+        Mockito.when(standbyAutomaton1.getHighVoltageSetpoint()).thenReturn(Double.NaN);
+        Mockito.when(standbyAutomaton1.getLowVoltageThreshold()).thenReturn(Double.NaN);
+        Mockito.when(standbyAutomaton1.getHighVoltageThreshold()).thenReturn(Double.NaN);
+        Mockito.when(standbyAutomaton1.getB0()).thenReturn(Double.NaN);
+        Mockito.when(svar1.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton1);
+
+        // for testing none EXISTS automaton
+        StaticVarCompensator svar2 = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar2.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+
+        return Stream.of(
+                // --- EQUALS --- //
+                // VoltageLevel fields
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MIN_SUSCEPTANCE, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, 1.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.VOLTAGE_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 1.0, null, svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+
+                // --- GREATER_OR_EQUALS --- //
+                // VoltageLevel fields
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
+
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 1.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.1, null, svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 1.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+
+                // --- GREATER --- //
+                // VoltageLevel fields
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
+
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.REACTIVE_POWER_SET_POINT, 1.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.REACTIVE_POWER_SET_POINT, 2.1, null, svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_SET_POINT, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_SET_POINT, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_SET_POINT, 1.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_SET_POINT, 2.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_THRESHOLD, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_THRESHOLD, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+
+                // --- LOWER_OR_EQUALS --- //
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, true),
+
+                // Static Var Compensator fields
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, true),
+
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 1.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.1, null, svar, true),
+
+                // StandbyAutomaton fields
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 1.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+
+                // --- LOWER --- //
+                // VoltageLevel fields
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, true),
+
+                // Static Var Compensator fields
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, true),
+
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.REACTIVE_POWER_SET_POINT, 1.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.REACTIVE_POWER_SET_POINT, 2.1, null, svar, true),
+
+                // StandbyAutomaton fields
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_SET_POINT, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_SET_POINT, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_SET_POINT, 1.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_SET_POINT, 2.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_THRESHOLD, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_THRESHOLD, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+
+                // --- BETWEEN --- //
+                // VoltageLevel fields
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(337.0, 339.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.5, 339.0), svar, false),
+
+                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+
+                // --- EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar1, false),
+
+                // Static Var Compensator fields
+                Arguments.of(EXISTS, FieldType.MIN_Q_AT_NOMINAL_V, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.MIN_Q_AT_NOMINAL_V, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.MAX_Q_AT_NOMINAL_V, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.MAX_Q_AT_NOMINAL_V, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.MIN_SUSCEPTANCE, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.MIN_SUSCEPTANCE, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.MAX_SUSCEPTANCE, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.MAX_SUSCEPTANCE, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_SET_POINT, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_SET_POINT, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.REACTIVE_POWER_SET_POINT, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.REACTIVE_POWER_SET_POINT, null, null, svar1, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_SET_POINT, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_SET_POINT, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_SET_POINT, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_SET_POINT, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_THRESHOLD, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_THRESHOLD, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_THRESHOLD, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_THRESHOLD, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, false),
+
+                Arguments.of(EXISTS, FieldType.AUTOMATE, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.AUTOMATE, null, null, svar2, false),
+
+                // --- NOT_EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar1, true),
+
+                // Static Var Compensator fields
+                Arguments.of(NOT_EXISTS, FieldType.MIN_Q_AT_NOMINAL_V, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.MIN_Q_AT_NOMINAL_V, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_Q_AT_NOMINAL_V, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_Q_AT_NOMINAL_V, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MIN_SUSCEPTANCE, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.MIN_SUSCEPTANCE, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_SUSCEPTANCE, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_SUSCEPTANCE, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_SET_POINT, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_SET_POINT, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.REACTIVE_POWER_SET_POINT, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.REACTIVE_POWER_SET_POINT, null, null, svar1, true),
+
+                // StandbyAutomaton fields
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_SET_POINT, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_SET_POINT, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_SET_POINT, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_SET_POINT, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_THRESHOLD, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_THRESHOLD, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_THRESHOLD, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_THRESHOLD, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, true),
+
+                Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, null, svar2, true),
+
+                // --- IN --- //
+                // VoltageLevel fields
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.0, 14.0), svar, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, true),
+                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.0, 339.0), svar, true),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.5, 339.0), svar, false),
+
+                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, true),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+
+                // --- NOT_IN --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, false),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(337.0, 339.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.0, 339.0), svar, false),
+
+                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.0, 2.1), svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, false)
         );
     }
 

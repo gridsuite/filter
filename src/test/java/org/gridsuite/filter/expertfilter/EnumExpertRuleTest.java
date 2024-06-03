@@ -4,6 +4,7 @@ import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.EnumExpertRule;
+import org.gridsuite.filter.utils.RegulationType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,7 +101,8 @@ class EnumExpertRuleTest {
         "provideArgumentsForVoltageLevelTest",
         "provideArgumentsForSubstationTest",
         "provideArgumentsForLinesTest",
-        "provideArgumentsForTwoWindingTransformerTest"
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         EnumExpertRule rule = EnumExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -540,5 +542,76 @@ class EnumExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioTapChanger.RegulationMode.VOLTAGE.name()), twoWindingsTransformer, false),
             Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true)
             );
+    }
+
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
+
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        Mockito.when(svar.getRegulationMode()).thenReturn(StaticVarCompensator.RegulationMode.OFF);
+
+        // VoltageLevel fields
+        Substation substation = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(svar.getTerminal()).thenReturn(terminal);
+        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        // Regulating terminal fields
+        Terminal regulatingTerminal = Mockito.mock(Terminal.class);
+        VoltageLevel distantVoltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(distantVoltageLevel.getId()).thenReturn("VL_2");
+        Mockito.when(regulatingTerminal.getVoltageLevel()).thenReturn(distantVoltageLevel);
+        BusbarSection regulatedBusBarSection = Mockito.mock(BusbarSection.class);
+        Mockito.when(regulatedBusBarSection.getId()).thenReturn("BBS");
+        Mockito.when(regulatingTerminal.getConnectable()).thenReturn(regulatedBusBarSection);
+        Mockito.when(svar.getRegulatingTerminal()).thenReturn(regulatingTerminal);
+
+        return Stream.of(
+                // --- EQUALS --- //
+                // VoltageLevel fields
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, svar, true),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.OFF.name(), null, svar, true),
+                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.VOLTAGE.name(), null, svar, false),
+                Arguments.of(EQUALS, FieldType.REGULATION_TYPE, RegulationType.DISTANT.name(), null, svar, true),
+                Arguments.of(EQUALS, FieldType.REGULATION_TYPE, RegulationType.LOCAL.name(), null, svar, false),
+
+                // --- NOT_EQUALS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, svar, true),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.VOLTAGE.name(), null, svar, true),
+                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.OFF.name(), null, svar, false),
+                Arguments.of(NOT_EQUALS, FieldType.REGULATION_TYPE, RegulationType.LOCAL.name(), null, svar, true),
+                Arguments.of(NOT_EQUALS, FieldType.REGULATION_TYPE, RegulationType.DISTANT.name(), null, svar, false),
+
+                // --- IN --- //
+                // VoltageLevel fields
+                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), svar, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.OFF.name()), svar, true),
+                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, false),
+                Arguments.of(IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, true),
+                Arguments.of(IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, false),
+
+                // --- NOT_IN --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), svar, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, true),
+                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.OFF.name()), svar, false),
+                Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, true),
+                Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, false)
+        );
     }
 }
