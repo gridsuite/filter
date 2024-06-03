@@ -67,6 +67,9 @@ class NumberExpertRuleTest {
         TwoWindingsTransformer twoWindingTransformer = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
 
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
@@ -77,6 +80,7 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, bus, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.P0, twoWindingTransformer, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.MIN_P, generator, PowsyblException.class)
