@@ -19,6 +19,7 @@ import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.utils.RegulationType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -193,28 +194,24 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getTerminalFieldValue(FieldType field, Terminal terminal) {
+    private static String getTerminalFieldValue(FieldType field, @Nullable Terminal terminal) {
+        if (terminal == null) {
+            return null;
+        }
         return switch (field) {
             case CONNECTED,
                 CONNECTED_1,
                 CONNECTED_2 -> String.valueOf(terminal.isConnected());
             case REGULATING_TERMINAL ->
-                    terminal != null &&
-                    terminal.getVoltageLevel() != null &&
-                    terminal.getVoltageLevel().getId() != null &&
-                    terminal.getConnectable() != null &&
-                    terminal.getConnectable().getId() != null ?
-                    terminal.getConnectable().getId() : null; // having a connected equipment id means a regulated terminal exists
+                    terminal.getVoltageLevel() != null && terminal.getConnectable() != null ?
+                    OperatorType.EXISTS.name() : null; // "EXISTS" is used as a non-empty string which means regulating terminal exists
             case REGULATING_TERMINAL_VL_ID ->
-                    terminal != null &&
                     terminal.getVoltageLevel() != null ?
                     terminal.getVoltageLevel().getId() : null;
             case REGULATING_TERMINAL_CONNECTABLE_ID ->
-                    terminal != null &&
                     terminal.getConnectable() != null ?
                     terminal.getConnectable().getId() : null;
-            case REGULATION_TYPE -> terminal != null &&
-                                    terminal.getConnectable() != null ?
+            case REGULATION_TYPE -> terminal.getConnectable() != null ?
                     RegulationType.DISTANT.name() :
                     RegulationType.LOCAL.name();
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",terminal]");
@@ -260,7 +257,7 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getRatioTapChangerFieldValue(FieldType field, RatioTapChanger ratioTapChanger) {
+    private static String getRatioTapChangerFieldValue(FieldType field, @Nullable RatioTapChanger ratioTapChanger) {
         if (ratioTapChanger == null) {
             return null;
         }
@@ -273,7 +270,7 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getPhaseTapChangerFieldValue(FieldType field, PhaseTapChanger phaseTapChanger) {
+    private static String getPhaseTapChangerFieldValue(FieldType field, @Nullable PhaseTapChanger phaseTapChanger) {
         if (phaseTapChanger == null) {
             return null;
         }

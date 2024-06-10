@@ -69,7 +69,7 @@ class BooleanExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, voltageLevel, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.P0, generator, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, load, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, shuntCompensator, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, bus, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),

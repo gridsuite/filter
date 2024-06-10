@@ -1059,8 +1059,6 @@ class StringExpertRuleTest {
         Terminal regulatingTerminal1 = Mockito.mock(Terminal.class);
         VoltageLevel distantVoltageLevel1 = Mockito.mock(VoltageLevel.class);
         Mockito.when(regulatingTerminal1.getVoltageLevel()).thenReturn(distantVoltageLevel1);
-        BusbarSection regulatedBusBarSection1 = Mockito.mock(BusbarSection.class);
-        Mockito.when(regulatingTerminal1.getConnectable()).thenReturn(regulatedBusBarSection1);
         Mockito.when(svar1.getRegulatingTerminal()).thenReturn(regulatingTerminal1);
 
         return Stream.of(

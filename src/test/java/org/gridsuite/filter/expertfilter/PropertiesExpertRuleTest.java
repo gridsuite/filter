@@ -103,7 +103,6 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForLineTest",
         "provideArgumentsForStaticVarCompensatorTest",
     })
-
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
         assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
