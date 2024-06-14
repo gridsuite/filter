@@ -1992,10 +1992,6 @@ class NumberExpertRuleTest {
         Mockito.when(standbyAutomaton1.getB0()).thenReturn(Double.NaN);
         Mockito.when(svar1.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton1);
 
-        // for testing none EXISTS automaton
-        StaticVarCompensator svar2 = Mockito.mock(StaticVarCompensator.class);
-        Mockito.when(svar2.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
-
         return Stream.of(
                 // --- EQUALS --- //
                 // VoltageLevel fields
@@ -2284,9 +2280,6 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar, true),
                 Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, false),
 
-                Arguments.of(EXISTS, FieldType.AUTOMATE, null, null, svar, true),
-                Arguments.of(EXISTS, FieldType.AUTOMATE, null, null, svar2, false),
-
                 // --- NOT_EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar, false),
@@ -2319,9 +2312,6 @@ class NumberExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar1, true),
                 Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar, false),
                 Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, true),
-
-                Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, null, svar, false),
-                Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, null, svar2, true),
 
                 // --- IN --- //
                 // VoltageLevel fields

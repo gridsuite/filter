@@ -1136,8 +1136,6 @@ class StringExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL_VL_ID, null, null, svar1, false),
                 Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, null, svar, true),
                 Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, null, svar1, false),
-                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL, null, null, svar, true),
-                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL, null, null, svar1, false),
 
                 // --- NOT_EXISTS --- //
                 // Common fields
@@ -1153,8 +1151,6 @@ class StringExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL_VL_ID, null, null, svar1, true),
                 Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, null, svar, false),
                 Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, null, svar1, true),
-                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL, null, null, svar, false),
-                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL, null, null, svar1, true),
 
                 // --- IN --- //
                 // Common fields

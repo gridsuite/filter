@@ -202,9 +202,6 @@ public final class ExpertFilterUtils {
             case CONNECTED,
                 CONNECTED_1,
                 CONNECTED_2 -> String.valueOf(terminal.isConnected());
-            case REGULATING_TERMINAL ->
-                    terminal.getVoltageLevel() != null && terminal.getConnectable() != null ?
-                    OperatorType.EXISTS.name() : null; // "EXISTS" is used as a non-empty string which means regulating terminal exists
             case REGULATING_TERMINAL_VL_ID ->
                     terminal.getVoltageLevel() != null ?
                     terminal.getVoltageLevel().getId() : null;
@@ -323,17 +320,20 @@ public final class ExpertFilterUtils {
                     VOLTAGE_LEVEL_PROPERTIES,
                     SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, svar.getTerminal().getVoltageLevel());
             case CONNECTED -> getTerminalFieldValue(field, svar.getTerminal());
-            case REGULATING_TERMINAL,
-                    REGULATING_TERMINAL_VL_ID,
+            case REGULATING_TERMINAL_VL_ID,
                     REGULATING_TERMINAL_CONNECTABLE_ID,
                     REGULATION_TYPE -> getTerminalFieldValue(field, svar.getRegulatingTerminal());
-            case AUTOMATE,
-                    LOW_VOLTAGE_SET_POINT,
+            case LOW_VOLTAGE_SET_POINT,
                     HIGH_VOLTAGE_SET_POINT,
                     LOW_VOLTAGE_THRESHOLD,
                     HIGH_VOLTAGE_THRESHOLD,
                     SUSCEPTANCE_FIX,
                     FIX_Q_AT_NOMINAL_V -> getStandbyAutomatonFieldValue(field, svar);
+            case REGULATING_TERMINAL -> svar.getRegulatingTerminal() != null &&
+                    svar.getRegulatingTerminal().getVoltageLevel() != null &&
+                    svar.getRegulatingTerminal().getConnectable() != null ?
+                    String.valueOf(true) : null;
+            case AUTOMATE -> svar.getExtension(StandbyAutomaton.class) != null ? String.valueOf(true) : null;
             case MAX_Q_AT_NOMINAL_V -> String.valueOf(
                     Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(svar.getBmax())
             );
@@ -355,7 +355,6 @@ public final class ExpertFilterUtils {
             return String.valueOf(Double.NaN);
         } else {
             return switch (field) {
-                case AUTOMATE -> String.valueOf(1.0); // 1.0 is used to distinct NaN to say that the extension exists
                 case LOW_VOLTAGE_SET_POINT -> String.valueOf(standbyAutomaton.getLowVoltageSetpoint());
                 case HIGH_VOLTAGE_SET_POINT -> String.valueOf(standbyAutomaton.getHighVoltageSetpoint());
                 case LOW_VOLTAGE_THRESHOLD -> String.valueOf(standbyAutomaton.getLowVoltageThreshold());

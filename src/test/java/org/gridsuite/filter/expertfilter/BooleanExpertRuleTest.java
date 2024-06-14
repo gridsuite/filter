@@ -2,6 +2,7 @@ package org.gridsuite.filter.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.BooleanExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
@@ -89,7 +90,7 @@ class BooleanExpertRuleTest {
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
     })
-    void testEvaluateRule(OperatorType operator, FieldType field, boolean value, Identifiable<?> equipment, boolean expected) {
+    void testEvaluateRule(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) {
         BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).value(value).build();
         assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
@@ -311,6 +312,27 @@ class BooleanExpertRuleTest {
         Mockito.when(terminal.isConnected()).thenReturn(true);
         Mockito.when(svar.getTerminal()).thenReturn(terminal);
 
+        // Regulating terminal fields
+        Terminal regulatingTerminal = Mockito.mock(Terminal.class);
+        VoltageLevel distantVoltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(regulatingTerminal.getVoltageLevel()).thenReturn(distantVoltageLevel);
+        BusbarSection regulatedBusBarSection = Mockito.mock(BusbarSection.class);
+        Mockito.when(regulatingTerminal.getConnectable()).thenReturn(regulatedBusBarSection);
+        Mockito.when(svar.getRegulatingTerminal()).thenReturn(regulatingTerminal);
+
+        StandbyAutomaton standbyAutomaton = Mockito.mock(StandbyAutomaton.class);
+        Mockito.when(svar.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton);
+
+        // for testing none EXISTS automaton and regulating terminal
+        StaticVarCompensator svar1 = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar1.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+
+        // configure a regulating terminal without connected equipment
+        Terminal regulatingTerminal1 = Mockito.mock(Terminal.class);
+        VoltageLevel distantVoltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(regulatingTerminal1.getVoltageLevel()).thenReturn(distantVoltageLevel1);
+        Mockito.when(svar1.getRegulatingTerminal()).thenReturn(regulatingTerminal1);
+
         return Stream.of(
                 // --- EQUALS--- //
                 // Terminal fields
@@ -320,7 +342,19 @@ class BooleanExpertRuleTest {
                 // --- NOT_EQUALS--- //
                 // Terminal fields
                 Arguments.of(NOT_EQUALS, FieldType.CONNECTED, false, svar, true),
-                Arguments.of(NOT_EQUALS, FieldType.CONNECTED, true, svar, false)
+                Arguments.of(NOT_EQUALS, FieldType.CONNECTED, true, svar, false),
+
+                // --- EXISTS--- //
+                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL, null, svar, true),
+                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.AUTOMATE, null, svar, true),
+                Arguments.of(EXISTS, FieldType.AUTOMATE, null, svar1, false),
+
+                // --- NOT_EXISTS--- //
+                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, svar1, true)
         );
     }
 }
