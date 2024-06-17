@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
+import static org.gridsuite.filter.utils.expertfilter.OperatorType.NOT_EXISTS;
 
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
@@ -32,11 +33,11 @@ import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getField
 @Setter
 @SuperBuilder
 public class BooleanExpertRule extends AbstractExpertRule {
-    private boolean value;
+    private Boolean value;
 
     @Override
     public String getStringValue() {
-        return String.valueOf(isValue());
+        return value != null ? value.toString() : null;
     }
 
     @Override
@@ -49,13 +50,15 @@ public class BooleanExpertRule extends AbstractExpertRule {
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
         String fieldValue = getFieldValue(this.getField(), null, identifiable);
         if (fieldValue == null) {
-            return false;
+            return this.getOperator() == NOT_EXISTS;
         }
         boolean identifiableValue = Boolean.parseBoolean(fieldValue);
-        boolean filterValue = this.isValue();
+        Boolean filterValue = this.getValue();
         return switch (this.getOperator()) {
             case EQUALS -> identifiableValue == filterValue;
             case NOT_EQUALS -> identifiableValue != filterValue;
+            case EXISTS -> identifiableValue;
+            case NOT_EXISTS -> !identifiableValue;
             default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
         };
     }

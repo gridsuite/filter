@@ -15,7 +15,7 @@ public enum OperatorType {
     NOT_EQUALS,
     IN,
     NOT_IN,
-    // Number and String
+    // Number and String and Boolean
     EXISTS,
     NOT_EXISTS,
     // Number

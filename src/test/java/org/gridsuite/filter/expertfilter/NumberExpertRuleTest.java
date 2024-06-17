@@ -3,6 +3,7 @@ package org.gridsuite.filter.expertfilter;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.GeneratorStartup;
+import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.NumberExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
@@ -66,6 +67,9 @@ class NumberExpertRuleTest {
         TwoWindingsTransformer twoWindingTransformer = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
 
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
@@ -76,6 +80,7 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, bus, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.P0, twoWindingTransformer, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.MIN_P, generator, PowsyblException.class)
@@ -92,7 +97,8 @@ class NumberExpertRuleTest {
         "provideArgumentsForBatteryTest",
         "provideArgumentsForVoltageLevelTest",
         "provideArgumentsForLinesTest",
-        "provideArgumentsForTwoWindingTransformerTest"
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
         NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -1936,6 +1942,444 @@ class NumberExpertRuleTest {
 
             // null PhaseTapChanger
             Arguments.of(EXISTS, FieldType.PHASE_REGULATION_VALUE, null, null, twoWindingsTransformer2, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+
+        Mockito.when(svar.getBmin()).thenReturn(1.0);
+        Mockito.when(svar.getBmax()).thenReturn(2.0);
+        Mockito.when(svar.getVoltageSetpoint()).thenReturn(1.0);
+        Mockito.when(svar.getReactivePowerSetpoint()).thenReturn(2.0);
+
+        StandbyAutomaton standbyAutomaton = Mockito.mock(StandbyAutomaton.class);
+        Mockito.when(standbyAutomaton.getLowVoltageSetpoint()).thenReturn(1.0);
+        Mockito.when(standbyAutomaton.getHighVoltageSetpoint()).thenReturn(2.0);
+        Mockito.when(standbyAutomaton.getLowVoltageThreshold()).thenReturn(1.0);
+        Mockito.when(standbyAutomaton.getHighVoltageThreshold()).thenReturn(2.0);
+        Mockito.when(standbyAutomaton.getB0()).thenReturn(1.0);
+        Mockito.when(svar.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton);
+
+        // VoltageLevel fields
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(svar.getTerminal()).thenReturn(terminal);
+        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+
+        // for testing none EXISTS
+        StaticVarCompensator svar1 = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar1.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Mockito.when(svar1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+
+        Mockito.when(svar1.getBmin()).thenReturn(Double.NaN);
+        Mockito.when(svar1.getBmax()).thenReturn(Double.NaN);
+        Mockito.when(svar1.getVoltageSetpoint()).thenReturn(Double.NaN);
+        Mockito.when(svar1.getReactivePowerSetpoint()).thenReturn(Double.NaN);
+
+        StandbyAutomaton standbyAutomaton1 = Mockito.mock(StandbyAutomaton.class);
+        Mockito.when(standbyAutomaton1.getLowVoltageSetpoint()).thenReturn(Double.NaN);
+        Mockito.when(standbyAutomaton1.getHighVoltageSetpoint()).thenReturn(Double.NaN);
+        Mockito.when(standbyAutomaton1.getLowVoltageThreshold()).thenReturn(Double.NaN);
+        Mockito.when(standbyAutomaton1.getHighVoltageThreshold()).thenReturn(Double.NaN);
+        Mockito.when(standbyAutomaton1.getB0()).thenReturn(Double.NaN);
+        Mockito.when(svar1.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton1);
+
+        return Stream.of(
+                // --- EQUALS --- //
+                // VoltageLevel fields
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MIN_SUSCEPTANCE, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, 1.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.VOLTAGE_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 1.0, null, svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, 2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+
+                // --- GREATER_OR_EQUALS --- //
+                // VoltageLevel fields
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
+
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 1.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.1, null, svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 1.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+
+                // --- GREATER --- //
+                // VoltageLevel fields
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
+
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.REACTIVE_POWER_SET_POINT, 1.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.REACTIVE_POWER_SET_POINT, 2.1, null, svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_SET_POINT, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_SET_POINT, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_SET_POINT, 1.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_SET_POINT, 2.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_THRESHOLD, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.LOW_VOLTAGE_THRESHOLD, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, true),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+
+                // --- LOWER_OR_EQUALS --- //
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, true),
+
+                // Static Var Compensator fields
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, true),
+
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 1.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.1, null, svar, true),
+
+                // StandbyAutomaton fields
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_SET_POINT, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 1.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_SET_POINT, 2.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+
+                // --- LOWER --- //
+                // VoltageLevel fields
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, true),
+
+                // Static Var Compensator fields
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, true),
+
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.REACTIVE_POWER_SET_POINT, 1.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.REACTIVE_POWER_SET_POINT, 2.1, null, svar, true),
+
+                // StandbyAutomaton fields
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_SET_POINT, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_SET_POINT, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_SET_POINT, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_SET_POINT, 2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_SET_POINT, 1.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_SET_POINT, 2.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_THRESHOLD, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_THRESHOLD, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.LOW_VOLTAGE_THRESHOLD, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, false),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+
+                // --- BETWEEN --- //
+                // VoltageLevel fields
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(337.0, 339.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.5, 339.0), svar, false),
+
+                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+
+                // --- EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar1, false),
+
+                // Static Var Compensator fields
+                Arguments.of(EXISTS, FieldType.MIN_Q_AT_NOMINAL_V, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.MIN_Q_AT_NOMINAL_V, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.MAX_Q_AT_NOMINAL_V, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.MAX_Q_AT_NOMINAL_V, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.MIN_SUSCEPTANCE, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.MIN_SUSCEPTANCE, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.MAX_SUSCEPTANCE, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.MAX_SUSCEPTANCE, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_SET_POINT, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_SET_POINT, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.REACTIVE_POWER_SET_POINT, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.REACTIVE_POWER_SET_POINT, null, null, svar1, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_SET_POINT, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_SET_POINT, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_SET_POINT, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_SET_POINT, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_THRESHOLD, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_THRESHOLD, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_THRESHOLD, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_THRESHOLD, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar, true),
+                Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, false),
+
+                // --- NOT_EXISTS --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar1, true),
+
+                // Static Var Compensator fields
+                Arguments.of(NOT_EXISTS, FieldType.MIN_Q_AT_NOMINAL_V, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.MIN_Q_AT_NOMINAL_V, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_Q_AT_NOMINAL_V, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_Q_AT_NOMINAL_V, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MIN_SUSCEPTANCE, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.MIN_SUSCEPTANCE, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_SUSCEPTANCE, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.MAX_SUSCEPTANCE, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_SET_POINT, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_SET_POINT, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.REACTIVE_POWER_SET_POINT, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.REACTIVE_POWER_SET_POINT, null, null, svar1, true),
+
+                // StandbyAutomaton fields
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_SET_POINT, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_SET_POINT, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_SET_POINT, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_SET_POINT, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_THRESHOLD, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_THRESHOLD, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_THRESHOLD, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_THRESHOLD, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, true),
+
+                // --- IN --- //
+                // VoltageLevel fields
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.0, 14.0), svar, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, true),
+                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.0, 339.0), svar, true),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.5, 339.0), svar, false),
+
+                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, true),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+
+                // --- NOT_IN --- //
+                // VoltageLevel fields
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), svar, false),
+
+                // Static Var Compensator fields
+                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, false),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(337.0, 339.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.0, 339.0), svar, false),
+
+                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.0, 2.1), svar, false),
+
+                // StandbyAutomaton fields
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, false)
         );
     }
 
