@@ -552,6 +552,7 @@ class EnumExpertRuleTest {
 
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        Mockito.when(svar.getId()).thenReturn("SVAR");
         Mockito.when(svar.getRegulationMode()).thenReturn(StaticVarCompensator.RegulationMode.OFF);
 
         // VoltageLevel fields

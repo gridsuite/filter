@@ -208,9 +208,6 @@ public final class ExpertFilterUtils {
             case REGULATING_TERMINAL_CONNECTABLE_ID ->
                     terminal.getConnectable() != null ?
                     terminal.getConnectable().getId() : null;
-            case REGULATION_TYPE -> terminal.getConnectable() != null ?
-                    RegulationType.DISTANT.name() :
-                    RegulationType.LOCAL.name();
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",terminal]");
         };
     }
@@ -321,17 +318,22 @@ public final class ExpertFilterUtils {
                     SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, svar.getTerminal().getVoltageLevel());
             case CONNECTED -> getTerminalFieldValue(field, svar.getTerminal());
             case REGULATING_TERMINAL_VL_ID,
-                    REGULATING_TERMINAL_CONNECTABLE_ID,
-                    REGULATION_TYPE -> getTerminalFieldValue(field, svar.getRegulatingTerminal());
+                    REGULATING_TERMINAL_CONNECTABLE_ID -> getTerminalFieldValue(field, svar.getRegulatingTerminal());
             case LOW_VOLTAGE_SET_POINT,
                     HIGH_VOLTAGE_SET_POINT,
                     LOW_VOLTAGE_THRESHOLD,
                     HIGH_VOLTAGE_THRESHOLD,
                     SUSCEPTANCE_FIX,
                     FIX_Q_AT_NOMINAL_V -> getStandbyAutomatonFieldValue(field, svar);
-            case REGULATING_TERMINAL -> svar.getRegulatingTerminal() != null &&
+            case REGULATION_TYPE -> svar.getRegulatingTerminal() != null &&
+                    svar.getRegulatingTerminal().getConnectable() != null &&
+                    !Objects.equals(svar.getRegulatingTerminal().getConnectable().getId(), svar.getId()) ?
+                    RegulationType.DISTANT.name() :
+                    RegulationType.LOCAL.name();
+            case REMOTE_REGULATED_TERMINAL -> svar.getRegulatingTerminal() != null &&
                     svar.getRegulatingTerminal().getVoltageLevel() != null &&
-                    svar.getRegulatingTerminal().getConnectable() != null ?
+                    svar.getRegulatingTerminal().getConnectable() != null &&
+                    !Objects.equals(svar.getRegulatingTerminal().getConnectable().getId(), svar.getId()) ?
                     String.valueOf(true) : null;
             case AUTOMATE -> svar.getExtension(StandbyAutomaton.class) != null ? String.valueOf(true) : null;
             case MAX_Q_AT_NOMINAL_V -> String.valueOf(

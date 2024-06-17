@@ -307,6 +307,7 @@ class BooleanExpertRuleTest {
 
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        Mockito.when(svar.getId()).thenReturn("SVAR");
         // Terminal fields
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(terminal.isConnected()).thenReturn(true);
@@ -317,6 +318,7 @@ class BooleanExpertRuleTest {
         VoltageLevel distantVoltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(regulatingTerminal.getVoltageLevel()).thenReturn(distantVoltageLevel);
         BusbarSection regulatedBusBarSection = Mockito.mock(BusbarSection.class);
+        Mockito.when(regulatedBusBarSection.getId()).thenReturn("BBS");
         Mockito.when(regulatingTerminal.getConnectable()).thenReturn(regulatedBusBarSection);
         Mockito.when(svar.getRegulatingTerminal()).thenReturn(regulatingTerminal);
 
@@ -345,14 +347,14 @@ class BooleanExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.CONNECTED, true, svar, false),
 
                 // --- EXISTS--- //
-                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL, null, svar, true),
-                Arguments.of(EXISTS, FieldType.REGULATING_TERMINAL, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.REMOTE_REGULATED_TERMINAL, null, svar, true),
+                Arguments.of(EXISTS, FieldType.REMOTE_REGULATED_TERMINAL, null, svar1, false),
                 Arguments.of(EXISTS, FieldType.AUTOMATE, null, svar, true),
                 Arguments.of(EXISTS, FieldType.AUTOMATE, null, svar1, false),
 
                 // --- NOT_EXISTS--- //
-                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL, null, svar, false),
-                Arguments.of(NOT_EXISTS, FieldType.REGULATING_TERMINAL, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.REMOTE_REGULATED_TERMINAL, null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.REMOTE_REGULATED_TERMINAL, null, svar1, true),
                 Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, svar, false),
                 Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, svar1, true)
         );
