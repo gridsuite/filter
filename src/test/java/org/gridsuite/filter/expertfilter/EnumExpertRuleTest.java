@@ -7,6 +7,7 @@ import org.gridsuite.filter.expertfilter.expertrule.EnumExpertRule;
 import org.gridsuite.filter.utils.RegulationType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
+import org.gridsuite.filter.utils.expertfilter.RatioRegulationModeType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -34,8 +35,8 @@ class EnumExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class expectedException) {
-        EnumExpertRule rule = EnumExpertRule.builder().operator(operator).field(field).build();
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String value, Set<String> values, Class expectedException) {
+        EnumExpertRule rule = EnumExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
@@ -72,25 +73,47 @@ class EnumExpertRuleTest {
         TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
 
+        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
+        Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        Mockito.when(ratioTapChanger.getRegulationMode()).thenReturn(RatioTapChanger.RegulationMode.VOLTAGE);
+
+        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        Mockito.when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
-                Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, voltageLevel, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.P0, generator, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, load, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, shuntCompensator, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, bus, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, battery, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, substation, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.P0, twoWindingsTransformer, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, network, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, voltageLevel, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.P0, generator, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, load, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, shuntCompensator, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, bus, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, battery, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, substation, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.P0, twoWindingsTransformer, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, svar, null, null, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
-                Arguments.of(IS, FieldType.ENERGY_SOURCE, generator, PowsyblException.class)
+                Arguments.of(IS, FieldType.ENERGY_SOURCE, generator, null, null, PowsyblException.class),
+                Arguments.of(IS, FieldType.RATIO_REGULATION_MODE, twoWindingsTransformer, null, null, PowsyblException.class),
+                Arguments.of(IS, FieldType.PHASE_REGULATION_MODE, twoWindingsTransformer, null, null, PowsyblException.class),
+
+                // --- Test an unsupported equipment type for field type RATIO_REGULATION_MODE --- //
+                Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, battery, null, null, PowsyblException.class),
+
+                // --- Test an unsupported value for field type RATIO_REGULATION_MODE --- //
+                Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, twoWindingsTransformer, "badValue", null, PowsyblException.class),
+
+                // --- Test an unsupported equipment type for field type PHASE_REGULATION_MODE --- //
+                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, shuntCompensator, null, null, PowsyblException.class),
+
+                // --- Test an unsupported value for field type PHASE_REGULATION_MODE --- //
+                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, twoWindingsTransformer, "badValue", null, PowsyblException.class)
                 );
     }
 
@@ -508,14 +531,20 @@ class EnumExpertRuleTest {
         Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
         Mockito.when(ratioTapChanger.isRegulating()).thenReturn(true);
         Mockito.when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
-        Mockito.when(ratioTapChanger.getRegulationMode()).thenReturn(RatioTapChanger.RegulationMode.VOLTAGE);
         Mockito.when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
 
+        TwoWindingsTransformer twoWindingsTransformer2 = Mockito.mock(TwoWindingsTransformer.class);
+        Mockito.when(twoWindingsTransformer2.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        Mockito.when(twoWindingsTransformer2.getRatioTapChanger()).thenReturn(null);
+
+        Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
         PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
         Mockito.when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
-        Mockito.when(phaseTapChanger.isRegulating()).thenReturn(false);
+        Mockito.when(phaseTapChanger.isRegulating()).thenReturn(true);
         Mockito.when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
         Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(100.);
+
+        Mockito.when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
 
         Substation substation = Mockito.mock(Substation.class);
         Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
@@ -525,25 +554,33 @@ class EnumExpertRuleTest {
             // --- EQUALS --- //
             Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, twoWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, twoWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, RatioTapChanger.RegulationMode.VOLTAGE.name(), null, twoWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, twoWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.FIXED_RATIO.name(), null, twoWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, twoWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, twoWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, twoWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, twoWindingsTransformer2, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, twoWindingsTransformer2, false),
 
             // --- NOT_EQUALS --- //
             Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, twoWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE, RatioTapChanger.RegulationMode.REACTIVE_POWER.name(), null, twoWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.FIXED_RATIO.name(), null, twoWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, twoWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, twoWindingsTransformer, false),
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, twoWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, twoWindingsTransformer, true),
 
             // --- IN --- //
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, true),
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioTapChanger.RegulationMode.VOLTAGE.name(), RatioTapChanger.RegulationMode.REACTIVE_POWER.name()), twoWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), twoWindingsTransformer, false),
             Arguments.of(IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, false),
 
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioTapChanger.RegulationMode.VOLTAGE.name()), twoWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), twoWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true)
             );
     }
