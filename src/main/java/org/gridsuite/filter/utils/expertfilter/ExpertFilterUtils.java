@@ -333,10 +333,10 @@ public final class ExpertFilterUtils {
                     String.valueOf(true) : null;
             case AUTOMATE -> svar.getExtension(StandbyAutomaton.class) != null ? String.valueOf(true) : null;
             case MAX_Q_AT_NOMINAL_V -> String.valueOf(
-                    Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(svar.getBmax())
+                    Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * svar.getBmax()
             );
             case MIN_Q_AT_NOMINAL_V -> String.valueOf(
-                    Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(svar.getBmin())
+                    Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * svar.getBmin()
             );
             case MIN_SUSCEPTANCE -> String.valueOf(svar.getBmin());
             case MAX_SUSCEPTANCE -> String.valueOf(svar.getBmax());
@@ -359,7 +359,7 @@ public final class ExpertFilterUtils {
                 case HIGH_VOLTAGE_THRESHOLD -> String.valueOf(standbyAutomaton.getHighVoltageThreshold());
                 case SUSCEPTANCE_FIX -> String.valueOf(standbyAutomaton.getB0());
                 case FIX_Q_AT_NOMINAL_V -> String.valueOf(
-                        Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * Math.abs(standbyAutomaton.getB0())
+                        Math.pow(svar.getTerminal().getVoltageLevel().getNominalV(), 2) * standbyAutomaton.getB0()
                 );
                 default -> String.valueOf(Double.NaN);
             };
