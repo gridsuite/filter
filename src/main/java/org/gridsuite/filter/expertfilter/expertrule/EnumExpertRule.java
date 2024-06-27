@@ -26,9 +26,6 @@ import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getField
 @NoArgsConstructor
 @SuperBuilder
 public class EnumExpertRule extends StringExpertRule {
-    private static final String OPERATOR_NOT_SUPPORTED_WITH = " operator not supported with ";
-    private static final String RULE_DATA_TYPE = " rule data type";
-
     @Override
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public DataType getDataType() {
@@ -48,8 +45,7 @@ public class EnumExpertRule extends StringExpertRule {
             }
             case IN -> this.getValues().stream().anyMatch(value -> value.equals(getFieldValue(this.getField(), value, identifiable)));
             case NOT_IN -> this.getValues().stream().noneMatch(value -> value.equals(getFieldValue(this.getField(), value, identifiable)));
-            default ->
-                throw new PowsyblException(this.getOperator() + OPERATOR_NOT_SUPPORTED_WITH + this.getDataType() + RULE_DATA_TYPE);
+            default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
         };
     }
 }
