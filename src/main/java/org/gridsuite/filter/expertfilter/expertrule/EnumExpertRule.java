@@ -44,24 +44,20 @@ public class EnumExpertRule extends StringExpertRule {
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
-        if (this.getField().equals(FieldType.RATIO_REGULATION_MODE)) {
-            return evaluateRatioRegulationMode(identifiable);
-        } else if (this.getField().equals(FieldType.PHASE_REGULATION_MODE)) {
-            return evaluatePhaseRegulationMode(identifiable);
-        } else {
-            String identifiableValue = getFieldValue(this.getField(), null, identifiable);
-            if (identifiableValue == null) {
-                return false;
+        return switch (this.getOperator()) {
+            case EQUALS -> {
+                String identifiableValue = getFieldValue(this.getField(), this.getValue(), identifiable);
+                yield identifiableValue != null && identifiableValue.equals(this.getValue());
             }
-            return switch (this.getOperator()) {
-                case EQUALS -> identifiableValue.equals(this.getValue());
-                case NOT_EQUALS -> !identifiableValue.equals(this.getValue());
-                case IN -> this.getValues().contains(identifiableValue);
-                case NOT_IN -> !this.getValues().contains(identifiableValue);
-                default ->
-                    throw new PowsyblException(this.getOperator() + OPERATOR_NOT_SUPPORTED_WITH + this.getDataType() + RULE_DATA_TYPE);
-            };
-        }
+            case NOT_EQUALS -> {
+                String identifiableValue = getFieldValue(this.getField(), this.getValue(), identifiable);
+                yield identifiableValue != null && !identifiableValue.equals(this.getValue());
+            }
+            case IN -> this.getValues().stream().anyMatch(value -> value.equals(getFieldValue(this.getField(), value, identifiable)));
+            case NOT_IN -> this.getValues().stream().noneMatch(value -> value.equals(getFieldValue(this.getField(), value, identifiable)));
+            default ->
+                throw new PowsyblException(this.getOperator() + OPERATOR_NOT_SUPPORTED_WITH + this.getDataType() + RULE_DATA_TYPE);
+        };
     }
 
     private boolean transformerRatioRegulationModeEquals(TwoWindingsTransformer transformer, String value) {
