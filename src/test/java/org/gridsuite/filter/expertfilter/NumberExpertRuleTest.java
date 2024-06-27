@@ -1949,8 +1949,8 @@ class NumberExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
-        Mockito.when(svar.getBmin()).thenReturn(1.0);
-        Mockito.when(svar.getBmax()).thenReturn(2.0);
+        Mockito.when(svar.getBmin()).thenReturn(-1.0);
+        Mockito.when(svar.getBmax()).thenReturn(-2.0);
         Mockito.when(svar.getVoltageSetpoint()).thenReturn(1.0);
         Mockito.when(svar.getReactivePowerSetpoint()).thenReturn(2.0);
 
@@ -1959,7 +1959,7 @@ class NumberExpertRuleTest {
         Mockito.when(standbyAutomaton.getHighVoltageSetpoint()).thenReturn(2.0);
         Mockito.when(standbyAutomaton.getLowVoltageThreshold()).thenReturn(1.0);
         Mockito.when(standbyAutomaton.getHighVoltageThreshold()).thenReturn(2.0);
-        Mockito.when(standbyAutomaton.getB0()).thenReturn(1.0);
+        Mockito.when(standbyAutomaton.getB0()).thenReturn(-1.0);
         Mockito.when(svar.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton);
 
         // VoltageLevel fields
@@ -1999,14 +1999,14 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
-                Arguments.of(EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
-                Arguments.of(EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
-                Arguments.of(EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
-                Arguments.of(EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
-                Arguments.of(EQUALS, FieldType.MIN_SUSCEPTANCE, 2.0, null, svar, false),
-                Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
-                Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, 1.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, -169.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, -170.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, -338.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, -339.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MIN_SUSCEPTANCE, -1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MIN_SUSCEPTANCE, -2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, -2.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, -1.0, null, svar, false),
                 Arguments.of(EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
                 Arguments.of(EQUALS, FieldType.VOLTAGE_SET_POINT, 2.0, null, svar, false),
                 Arguments.of(EQUALS, FieldType.REACTIVE_POWER_SET_POINT, 2.0, null, svar, true),
@@ -2021,10 +2021,10 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
                 Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
                 Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.0, null, svar, false),
-                Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
-                Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, 2.0, null, svar, false),
-                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
-                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, -1.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, -2.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, true),
+                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, false),
 
                 // --- GREATER_OR_EQUALS --- //
                 // VoltageLevel fields
@@ -2033,19 +2033,19 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, -169.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, -170.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, -168.0, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, -338.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, -339.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, -337.0, null, svar, false),
 
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, false),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, -1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, -1.1, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, -0.9, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, -2.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, -2.1, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, -1.9, null, svar, false),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, false),
@@ -2066,12 +2066,12 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, false),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, false),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, -1.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, -1.1, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, -0.9, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, false),
 
                 // --- GREATER --- //
                 // VoltageLevel fields
@@ -2080,19 +2080,19 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, false),
-                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, true),
-                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, false),
-                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, false),
-                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, true),
-                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, -169.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, -170.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.MIN_Q_AT_NOMINAL_V, -168.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, -338.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, -339.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.MAX_Q_AT_NOMINAL_V, -337.0, null, svar, false),
 
-                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, false),
-                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, true),
-                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, false),
-                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, false),
-                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, true),
-                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, false),
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, -1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, -1.1, null, svar, true),
+                Arguments.of(GREATER, FieldType.MIN_SUSCEPTANCE, -0.9, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, -2.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, -2.1, null, svar, true),
+                Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, -1.9, null, svar, false),
                 Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, false),
                 Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, true),
                 Arguments.of(GREATER, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, false),
@@ -2113,12 +2113,12 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
                 Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, true),
                 Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, false),
-                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, false),
-                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, true),
-                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, false),
-                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, false),
-                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, true),
-                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, -1.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, -1.1, null, svar, true),
+                Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, -0.9, null, svar, false),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, true),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, false),
 
                 // --- LOWER_OR_EQUALS --- //
                 Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
@@ -2126,19 +2126,19 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, true),
 
                 // Static Var Compensator fields
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, false),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, false),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, -169.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, -170.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_Q_AT_NOMINAL_V, -168.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, -338.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, -339.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_Q_AT_NOMINAL_V, -337.0, null, svar, true),
 
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, false),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, false),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, -1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, -1.1, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_SUSCEPTANCE, -0.9, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, -2.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, -2.1, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, -1.9, null, svar, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, false),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, true),
@@ -2159,12 +2159,12 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, false),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, false),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, false),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, -1.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, -1.1, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, -0.9, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, true),
 
                 // --- LOWER --- //
                 // VoltageLevel fields
@@ -2173,19 +2173,19 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, svar, true),
 
                 // Static Var Compensator fields
-                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 169.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 168.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, 170.0, null, svar, true),
-                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 338.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 337.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, 339.0, null, svar, true),
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, -169.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, -170.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_Q_AT_NOMINAL_V, -168.0, null, svar, true),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, -338.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, -339.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_Q_AT_NOMINAL_V, -337.0, null, svar, true),
 
-                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 1.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 0.9, null, svar, false),
-                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, 1.1, null, svar, true),
-                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 2.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 1.9, null, svar, false),
-                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 2.1, null, svar, true),
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, -1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, -1.1, null, svar, false),
+                Arguments.of(LOWER, FieldType.MIN_SUSCEPTANCE, -0.9, null, svar, true),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, -2.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, -2.1, null, svar, false),
+                Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, -1.9, null, svar, true),
                 Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 1.0, null, svar, false),
                 Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 0.9, null, svar, false),
                 Arguments.of(LOWER, FieldType.VOLTAGE_SET_POINT, 1.1, null, svar, true),
@@ -2206,12 +2206,12 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.0, null, svar, false),
                 Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 1.9, null, svar, false),
                 Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_THRESHOLD, 2.1, null, svar, true),
-                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 1.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 0.9, null, svar, false),
-                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, 1.1, null, svar, true),
-                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 169.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 168.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, 170.0, null, svar, true),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, -1.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, -1.1, null, svar, false),
+                Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, -0.9, null, svar, true),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, false),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, true),
 
                 // --- BETWEEN --- //
                 // VoltageLevel fields
@@ -2219,15 +2219,15 @@ class NumberExpertRuleTest {
                 Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
-                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
-                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(337.0, 339.0), svar, true),
-                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.5, 339.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-337.0, -339.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-338.5, -339.0), svar, false),
 
-                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(1.9, 2.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-0.9, -1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-1.05, -1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-1.9, -2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-2.05, -2.1), svar, false),
                 Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
                 Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
                 Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
@@ -2242,10 +2242,10 @@ class NumberExpertRuleTest {
                 Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.05, 1.1), svar, false),
                 Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(1.9, 2.1), svar, true),
                 Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.05, 2.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
-                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-0.9, -1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.05, -1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false),
 
                 // --- EXISTS --- //
                 // VoltageLevel fields
@@ -2319,15 +2319,15 @@ class NumberExpertRuleTest {
                 Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, true),
-                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
-                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.0, 339.0), svar, true),
-                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.5, 339.0), svar, false),
+                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, true),
+                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-338.0, -339.0), svar, true),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-338.5, -339.0), svar, false),
 
-                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.0, 1.1), svar, true),
-                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.0, 2.1), svar, true),
-                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-1.0, -1.1), svar, true),
+                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-1.05, -1.1), svar, false),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-2.0, -2.1), svar, true),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-2.05, -2.1), svar, false),
                 Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, true),
                 Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
                 Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.0, 2.1), svar, true),
@@ -2342,10 +2342,10 @@ class NumberExpertRuleTest {
                 Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.05, 1.1), svar, false),
                 Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.0, 2.1), svar, true),
                 Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.05, 2.1), svar, false),
-                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.0, 1.1), svar, true),
-                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, true),
-                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.5, 170.0), svar, false),
+                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.0, -1.1), svar, true),
+                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.05, -1.1), svar, false),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, true),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
@@ -2353,15 +2353,15 @@ class NumberExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
-                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, false),
-                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(337.0, 339.0), svar, true),
-                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(338.0, 339.0), svar, false),
+                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, false),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-337.0, -339.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-338.0, -339.0), svar, false),
 
-                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(1.0, 1.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(1.9, 2.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-0.9, -1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-1.0, -1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-1.9, -2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-2.0, -2.1), svar, false),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, false),
                 Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
@@ -2376,10 +2376,10 @@ class NumberExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.0, 1.1), svar, false),
                 Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(1.9, 2.1), svar, true),
                 Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.0, 2.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(1.0, 1.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(168.0, 170.0), svar, true),
-                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(169.0, 170.0), svar, false)
+                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-0.9, -1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.0, -1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, false)
         );
     }
 
