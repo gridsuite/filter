@@ -106,14 +106,8 @@ class EnumExpertRuleTest {
                 // --- Test an unsupported equipment type for field type RATIO_REGULATION_MODE --- //
                 Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, battery, null, null, PowsyblException.class),
 
-                // --- Test an unsupported value for field type RATIO_REGULATION_MODE --- //
-                Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, twoWindingsTransformer, "badValue", null, PowsyblException.class),
-
                 // --- Test an unsupported equipment type for field type PHASE_REGULATION_MODE --- //
-                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, shuntCompensator, null, null, PowsyblException.class),
-
-                // --- Test an unsupported value for field type PHASE_REGULATION_MODE --- //
-                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, twoWindingsTransformer, "badValue", null, PowsyblException.class)
+                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, shuntCompensator, null, null, PowsyblException.class)
                 );
     }
 

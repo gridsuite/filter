@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
@@ -252,6 +251,16 @@ public final class ExpertFilterUtils {
         };
     }
 
+    private static String getRatioRegulationMode(RatioTapChanger ratioTapChanger) {
+        if (ratioTapChanger.hasLoadTapChangingCapabilities() && ratioTapChanger.isRegulating()) {
+            return RatioRegulationModeType.VOLTAGE_REGULATION.name();
+        } else if (!ratioTapChanger.isRegulating()) {
+            return RatioRegulationModeType.FIXED_RATIO.name();
+        } else {
+            return null;
+        }
+    }
+
     private static String getRatioTapChangerFieldValue(FieldType field, @Nullable RatioTapChanger ratioTapChanger) {
         if (ratioTapChanger == null) {
             return null;
@@ -259,9 +268,23 @@ public final class ExpertFilterUtils {
         return switch (field) {
             case RATIO_TARGET_V -> String.valueOf(ratioTapChanger.getTargetV());
             case LOAD_TAP_CHANGING_CAPABILITIES -> String.valueOf(ratioTapChanger.hasLoadTapChangingCapabilities());
-            case RATIO_REGULATION_MODE -> ratioTapChanger.getRegulationMode() != null ? ratioTapChanger.getRegulationMode().name() : null;
+            case RATIO_REGULATION_MODE -> String.valueOf(getRatioRegulationMode(ratioTapChanger));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",ratioTapChanger]");
         };
+    }
+
+    private static String getPhaseRegulationMode(PhaseTapChanger phaseTapChanger) {
+        if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL && phaseTapChanger.isRegulating()) {
+            return PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name();
+        } else if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && phaseTapChanger.isRegulating()) {
+            return PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name();
+        } else if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.FIXED_TAP ||
+                phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && !phaseTapChanger.isRegulating() ||
+                phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL && !phaseTapChanger.isRegulating()) {
+            return PhaseTapChanger.RegulationMode.FIXED_TAP.name();
+        } else {
+            return null;
+        }
     }
 
     private static String getPhaseTapChangerFieldValue(FieldType field, @Nullable PhaseTapChanger phaseTapChanger) {
@@ -270,7 +293,7 @@ public final class ExpertFilterUtils {
         }
         return switch (field) {
             case PHASE_REGULATION_VALUE -> String.valueOf(phaseTapChanger.getRegulationValue());
-            case PHASE_REGULATION_MODE -> phaseTapChanger.getRegulationMode() != null ? phaseTapChanger.getRegulationMode().name() : null;
+            case PHASE_REGULATION_MODE -> String.valueOf(getPhaseRegulationMode(phaseTapChanger));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",phaseTapChanger]");
         };
     }
@@ -388,80 +411,5 @@ public final class ExpertFilterUtils {
         List<FilterEquipments> equipments = getFilterEquipments(network, uuids, filterLoader, cachedUuidFilters);
         return equipments.stream().flatMap(e -> e.getIdentifiableAttributes().stream()
             .map(IdentifiableAttributes::getId)).collect(Collectors.toSet()).contains(value);
-    }
-
-    private static boolean transformerRatioRegulationModeEquals(TwoWindingsTransformer transformer, String value) {
-        try {
-            return switch (RatioRegulationModeType.valueOf(value)) {
-                case VOLTAGE_REGULATION -> transformer.getRatioTapChanger().hasLoadTapChangingCapabilities() && transformer.getRatioTapChanger().isRegulating();
-                case FIXED_RATIO -> !transformer.getRatioTapChanger().isRegulating();
-            };
-        } catch (IllegalArgumentException e) {
-            throw new PowsyblException("Unexpected ratio regulation mode value + " + value + " : expected values are " + Stream.of(RatioRegulationModeType.values())
-                .map(Enum::name)
-                .toList());
-        }
-    }
-
-    private static boolean transformerRatioRegulationModeIn(TwoWindingsTransformer transformer, Set<String> values) {
-        return values.stream().anyMatch(v -> transformerRatioRegulationModeEquals(transformer, v));
-    }
-
-    public static boolean evaluateRatioRegulationMode(Identifiable<?> identifiable, OperatorType operatorType, String value, Set<String> values, DataType dataType) {
-        if (identifiable.getType() != IdentifiableType.TWO_WINDINGS_TRANSFORMER) {
-            throw new PowsyblException(FieldType.RATIO_REGULATION_MODE + " field only supported for " + IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        }
-        TwoWindingsTransformer transformer = (TwoWindingsTransformer) identifiable;
-        if (transformer.getRatioTapChanger() == null) {
-            return false;
-        }
-
-        return switch (operatorType) {
-            case EQUALS -> transformerRatioRegulationModeEquals(transformer, value);
-            case NOT_EQUALS -> !transformerRatioRegulationModeEquals(transformer, value);
-            case IN -> transformerRatioRegulationModeIn(transformer, values);
-            case NOT_IN -> !transformerRatioRegulationModeIn(transformer, values);
-            default ->
-                throw new PowsyblException(operatorType + " operator not supported with " + dataType.name() + " rule data type");
-        };
-    }
-
-    private static boolean transformerPhaseRegulationModeEquals(TwoWindingsTransformer transformer, String value) {
-        try {
-            return switch (PhaseTapChanger.RegulationMode.valueOf(value)) {
-                case ACTIVE_POWER_CONTROL -> transformer.getPhaseTapChanger().getRegulationMode() == PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL && transformer.getPhaseTapChanger().isRegulating();
-                case CURRENT_LIMITER -> transformer.getPhaseTapChanger().getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && transformer.getPhaseTapChanger().isRegulating();
-                case FIXED_TAP -> transformer.getPhaseTapChanger().getRegulationMode() == PhaseTapChanger.RegulationMode.FIXED_TAP ||
-                    transformer.getPhaseTapChanger().getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && !transformer.getPhaseTapChanger().isRegulating() ||
-                    transformer.getPhaseTapChanger().getRegulationMode() == PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL && !transformer.getPhaseTapChanger().isRegulating();
-            };
-        } catch (IllegalArgumentException e) {
-            throw new PowsyblException("Unexpected phase regulation mode value + " + value + " : expected values are " + Stream.of(PhaseTapChanger.RegulationMode.values())
-                .map(Enum::name)
-                .toList());
-        }
-    }
-
-    private static boolean transformerPhaseRegulationModeIn(TwoWindingsTransformer transformer, Set<String> values) {
-        return values.stream().anyMatch(v -> transformerPhaseRegulationModeEquals(transformer, v));
-    }
-
-    public static boolean evaluatePhaseRegulationMode(Identifiable<?> identifiable, OperatorType operatorType, String value, Set<String> values, DataType dataType) {
-        if (identifiable.getType() != IdentifiableType.TWO_WINDINGS_TRANSFORMER) {
-            throw new PowsyblException(FieldType.PHASE_REGULATION_MODE + " field only supported for " + IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        }
-        TwoWindingsTransformer transformer = (TwoWindingsTransformer) identifiable;
-        if (transformer.getPhaseTapChanger() == null) {
-            return false;
-        }
-
-        return switch (operatorType) {
-            case EQUALS -> transformerPhaseRegulationModeEquals(transformer, value);
-            case NOT_EQUALS -> !transformerPhaseRegulationModeEquals(transformer, value);
-            case IN -> transformerPhaseRegulationModeIn(transformer, values);
-            case NOT_IN -> !transformerPhaseRegulationModeIn(transformer, values);
-            default ->
-                throw new PowsyblException(operatorType + " operator not supported with " + dataType.name() + " rule data type");
-        };
     }
 }
