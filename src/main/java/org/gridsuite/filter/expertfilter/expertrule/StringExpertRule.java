@@ -20,7 +20,10 @@ import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.utils.expertfilter.DataType;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
 import static org.gridsuite.filter.utils.expertfilter.OperatorType.NOT_EXISTS;
@@ -68,8 +71,8 @@ public class StringExpertRule extends AbstractExpertRule {
             case ENDS_WITH -> StringUtils.endsWithIgnoreCase(identifiableValue, this.getValue());
             case EXISTS -> !StringUtils.isEmpty(identifiableValue);
             case NOT_EXISTS -> StringUtils.isEmpty(identifiableValue);
-            case IN -> this.getValues().contains(identifiableValue);
-            case NOT_IN -> !this.getValues().contains(identifiableValue);
+            case IN -> this.getValues().stream().anyMatch(identifiableValue::equalsIgnoreCase);
+            case NOT_IN -> this.getValues().stream().noneMatch(identifiableValue::equalsIgnoreCase);
             default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
         };
     }
