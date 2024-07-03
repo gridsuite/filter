@@ -203,23 +203,23 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), gen, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), gen, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), gen, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), gen, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), gen, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), gen, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), gen, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), gen, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), gen, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), gen, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), gen, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), gen, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), gen, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), gen, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), gen, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), gen, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), gen, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), gen, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), gen, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), gen, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), gen, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), gen, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), gen, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), gen, false)
 
         );
     }
@@ -311,23 +311,23 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), load, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), load, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), load, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), load, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), load, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), load, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), load, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), load, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), load, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), load, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), load, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), load, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), load, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), load, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), load, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), load, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), load, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), load, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), load, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), load, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), load, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), load, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), load, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), load, false)
 
         );
     }
@@ -419,23 +419,23 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), shuntCompensator, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), shuntCompensator, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), shuntCompensator, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), shuntCompensator, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), shuntCompensator, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), shuntCompensator, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), shuntCompensator, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), shuntCompensator, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), shuntCompensator, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), shuntCompensator, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), shuntCompensator, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), shuntCompensator, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), shuntCompensator, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), shuntCompensator, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), shuntCompensator, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), shuntCompensator, false)
 
         );
     }
@@ -552,27 +552,27 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), line, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), line, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), line, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), line, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), line, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), line, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), line, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), line, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("VL1", "VL_2"), line, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("VL_2", "VL_3"), line, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("VL2", "VL_2"), line, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("VL_2", "VL_3"), line, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl1", "VL_2"), line, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), line, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl2", "VL_2"), line, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), line, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), line, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), line, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), line, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), line, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), line, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), line, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), line, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), line, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("VL_2", "VL_3"), line, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("VL1", "VL_2"), line, false),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("VL_2", "VL_3"), line, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("VL2", "VL_2"), line, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), line, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl1", "VL_2"), line, false),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), line, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl2", "VL_2"), line, false)
 
         );
     }
@@ -660,23 +660,23 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), bus, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), bus, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), bus, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), bus, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), bus, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), bus, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), bus, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), bus, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), bus, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), bus, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), bus, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), bus, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), bus, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), bus, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), bus, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), bus, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), bus, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), bus, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), bus, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), bus, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), bus, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), bus, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), bus, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), bus, false)
 
         );
     }
@@ -768,23 +768,23 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), busbarSection, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), busbarSection, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), busbarSection, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), busbarSection, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), busbarSection, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), busbarSection, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), busbarSection, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), busbarSection, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), busbarSection, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), busbarSection, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), busbarSection, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), busbarSection, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), busbarSection, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), busbarSection, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), busbarSection, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), busbarSection, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), busbarSection, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), busbarSection, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), busbarSection, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), busbarSection, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), busbarSection, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), busbarSection, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), busbarSection, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), busbarSection, false)
 
         );
     }
@@ -876,23 +876,23 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), battery, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), battery, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), battery, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), battery, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), battery, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), battery, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), battery, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), battery, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), battery, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), battery, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), battery, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), battery, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), battery, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), battery, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), battery, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), battery, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), battery, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), battery, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), battery, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), battery, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), battery, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), battery, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), battery, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), battery, false)
 
         );
     }
@@ -998,27 +998,27 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), twoWindingsTransformer, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("VL", "VL_2"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("VL_2", "VL_3"), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("VL", "VL_2"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("VL_2", "VL_3"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl", "VL_2"), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), twoWindingsTransformer, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), twoWindingsTransformer, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("VL_2", "VL_3"), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("VL", "VL_2"), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("VL_2", "VL_3"), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("VL", "VL_2"), twoWindingsTransformer, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl", "VL_2"), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), twoWindingsTransformer, false)
 
         );
     }
@@ -1154,33 +1154,33 @@ class StringExpertRuleTest {
 
                 // --- IN --- //
                 // Common fields
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID", "ID_2"), svar, true),
-                Arguments.of(IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), svar, false),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), svar, true),
-                Arguments.of(IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), svar, false),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), svar, true),
+                Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), svar, false),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), svar, true),
+                Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), svar, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), svar, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), svar, false),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), svar, true),
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), svar, false),
                 // Terminal fields
-                Arguments.of(IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("VL_2", "VL_3"), svar, true),
-                Arguments.of(IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("VL", "VL_3"), svar1, false),
-                Arguments.of(IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("BBS", "BBS_2"), svar, true),
-                Arguments.of(IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("BBS_1", "BBS_2"), svar1, false),
+                Arguments.of(IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("Vl_2", "VL_3"), svar, true),
+                Arguments.of(IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("Vl", "VL_3"), svar1, false),
+                Arguments.of(IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("Bbs", "BBS_2"), svar, true),
+                Arguments.of(IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("Bbs_1", "BBS_2"), svar1, false),
 
                 // --- NOT_IN --- //
                 // Common fields
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID_2", "ID_3"), svar, true),
-                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("ID", "ID_2"), svar, false),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME_2", "NAME_3"), svar, true),
-                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("NAME", "NAME_2"), svar, false),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), svar, true),
+                Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), svar, false),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), svar, true),
+                Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), svar, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL_2", "VL_3"), svar, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("VL", "VL_2"), svar, false),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), svar, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), svar, false),
                 // Terminal fields
-                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("VL_1", "VL_3"), svar, true),
-                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("VL_2", "VL_3"), svar1, false),
-                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("BBS_1", "BBS_2"), svar, true),
-                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("BBS", "BBS_2"), svar1, false)
+                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("Vl_1", "VL_3"), svar, true),
+                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_VL_ID, null, Set.of("Vl_2", "VL_3"), svar1, false),
+                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("Bbs_1", "BBS_2"), svar, true),
+                Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("Bbs", "BBS_2"), svar1, false)
             );
     }
 
