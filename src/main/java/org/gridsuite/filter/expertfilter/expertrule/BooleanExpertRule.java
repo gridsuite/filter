@@ -19,6 +19,7 @@ import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.utils.expertfilter.DataType;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
@@ -53,7 +54,7 @@ public class BooleanExpertRule extends AbstractExpertRule {
             return this.getOperator() == NOT_EXISTS;
         }
         boolean identifiableValue = Boolean.parseBoolean(fieldValue);
-        Boolean filterValue = this.getValue();
+        boolean filterValue = Optional.ofNullable(this.getValue()).orElse(false);
         return switch (this.getOperator()) {
             case EQUALS -> identifiableValue == filterValue;
             case NOT_EQUALS -> identifiableValue != filterValue;
