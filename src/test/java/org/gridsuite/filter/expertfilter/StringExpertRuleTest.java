@@ -110,6 +110,7 @@ class StringExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingsTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForDanglingLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         StringExpertRule rule = StringExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -1184,4 +1185,111 @@ class StringExpertRuleTest {
             );
     }
 
+    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
+
+        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
+        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        // Common fields
+        Mockito.when(danglingLine.getId()).thenReturn("ID");
+        Mockito.when(danglingLine.getOptionalName()).thenReturn(Optional.of("NAME"));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getId()).thenReturn("VL");
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+
+        // for testing none EXISTS
+        DanglingLine danglingLine1 = Mockito.mock(DanglingLine.class);
+        Mockito.when(danglingLine1.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        Mockito.when(danglingLine1.getOptionalName()).thenReturn(Optional.of(""));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Mockito.when(danglingLine1.getTerminal()).thenReturn(terminal1);
+
+        return Stream.of(
+            // --- IS --- //
+            // Common fields
+            Arguments.of(IS, FieldType.ID, "id", null, danglingLine, true),
+            Arguments.of(IS, FieldType.ID, "id_1", null, danglingLine, false),
+            Arguments.of(IS, FieldType.NAME, "name", null, danglingLine, true),
+            Arguments.of(IS, FieldType.NAME, "name_1", null, danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, danglingLine, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, danglingLine, false),
+
+            // --- CONTAINS --- //
+            // Common fields
+            Arguments.of(CONTAINS, FieldType.ID, "i", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.ID, "ii", null, danglingLine, false),
+            Arguments.of(CONTAINS, FieldType.NAME, "nam", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.NAME, "namm", null, danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, danglingLine, false),
+
+            // --- BEGINS_WITH --- //
+            // Common fields
+            Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, danglingLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, danglingLine, false),
+
+            // --- ENDS_WITH --- //
+            // Common fields
+            Arguments.of(ENDS_WITH, FieldType.ID, "d", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.ID, "e", null, danglingLine, false),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, danglingLine, false),
+
+            // --- EXISTS --- //
+            // Common fields
+            Arguments.of(EXISTS, FieldType.ID, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.ID, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, danglingLine1, false),
+            // VoltageLevel fields
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine1, false),
+
+            // --- NOT_EXISTS --- //
+            // Common fields
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, danglingLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, danglingLine1, true),
+            // VoltageLevel fields
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine1, true),
+
+            // --- IN --- //
+            // Common fields
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), danglingLine, false),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), danglingLine, false),
+
+            // --- NOT_IN --- //
+            // Common fields
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), danglingLine, false),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, false)
+
+        );
+    }
 }

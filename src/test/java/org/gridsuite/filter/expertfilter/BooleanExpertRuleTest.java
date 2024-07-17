@@ -64,6 +64,9 @@ class BooleanExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+        DanglingLine dl = Mockito.mock(DanglingLine.class);
+        Mockito.when(dl.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
@@ -74,6 +77,7 @@ class BooleanExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, bus, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, dl, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.VOLTAGE_REGULATOR_ON, generator, PowsyblException.class)
@@ -89,6 +93,7 @@ class BooleanExpertRuleTest {
         "provideArgumentsForLoadTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForDanglingLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) {
         BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).value(value).build();
@@ -347,6 +352,36 @@ class BooleanExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.REMOTE_REGULATED_TERMINAL, null, svar1, true),
                 Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, svar, false),
                 Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, svar1, true)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
+
+        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
+        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        //Generator fields
+        Mockito.when(danglingLine.isPaired()).thenReturn(true);
+        // Terminal fields
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.isConnected()).thenReturn(true);
+        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+
+        return Stream.of(
+            // --- EQUALS--- //
+            //Generator fields
+            Arguments.of(EQUALS, FieldType.PAIRED, true, danglingLine, true),
+            Arguments.of(EQUALS, FieldType.PAIRED, false, danglingLine, false),
+            // Terminal fields
+            Arguments.of(EQUALS, FieldType.CONNECTED, true, danglingLine, true),
+            Arguments.of(EQUALS, FieldType.CONNECTED, false, danglingLine, false),
+
+            // --- NOT_EQUALS--- //
+            //Generator fields
+            Arguments.of(NOT_EQUALS, FieldType.PAIRED, false, danglingLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.PAIRED, true, danglingLine, false),
+            // Terminal fields
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED, false, danglingLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED, true, danglingLine, false)
         );
     }
 }
