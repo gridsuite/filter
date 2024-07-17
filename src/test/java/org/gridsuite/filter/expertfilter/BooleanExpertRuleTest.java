@@ -263,15 +263,11 @@ class BooleanExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.CONNECTED_2, false, twoWindingsTransformer, false),
 
                 // RatioTapChanger fields
-                Arguments.of(EQUALS, FieldType.RATIO_REGULATING, true, twoWindingsTransformer, true),
-                Arguments.of(EQUALS, FieldType.RATIO_REGULATING, false, twoWindingsTransformer, false),
                 Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES, true, twoWindingsTransformer, true),
                 Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES, false, twoWindingsTransformer, false),
                 Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER, true, twoWindingsTransformer, true),
 
                 // PhaseTapChanger fields
-                Arguments.of(EQUALS, FieldType.PHASE_REGULATING, false, twoWindingsTransformer, true),
-                Arguments.of(EQUALS, FieldType.PHASE_REGULATING, true, twoWindingsTransformer, false),
                 Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER, true, twoWindingsTransformer, true),
 
                 // --- NOT_EQUALS--- //
@@ -282,23 +278,17 @@ class BooleanExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.CONNECTED_2, true, twoWindingsTransformer, false),
 
                 // RatioTapChanger fields
-                Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATING, false, twoWindingsTransformer, true),
-                Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATING, true, twoWindingsTransformer, false),
                 Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES, false, twoWindingsTransformer, true),
                 Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES, true, twoWindingsTransformer, false),
                 Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER, true, twoWindingsTransformer, false),
 
                 // null RatioTapChanger
-                Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATING, false, twoWindingsTransformer2, false),
                 Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER, false, twoWindingsTransformer2, false),
 
                 // PhaseTapChanger fields
-                Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATING, true, twoWindingsTransformer, true),
-                Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATING, false, twoWindingsTransformer, false),
                 Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER, true, twoWindingsTransformer, false),
 
                 // null PhaseTapChanger
-                Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATING, false, twoWindingsTransformer2, false),
                 Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER, false, twoWindingsTransformer2, false)
         );
     }

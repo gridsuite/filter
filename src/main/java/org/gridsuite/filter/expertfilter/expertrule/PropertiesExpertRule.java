@@ -18,7 +18,10 @@ import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.utils.expertfilter.DataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
 
@@ -46,7 +49,7 @@ public class PropertiesExpertRule extends AbstractExpertRule {
             return false;
         }
         return switch (this.getOperator()) {
-            case IN -> this.getPropertyValues().contains(propertyValue);
+            case IN -> this.getPropertyValues().stream().anyMatch(propertyValue::equalsIgnoreCase);
             default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
         };
     }

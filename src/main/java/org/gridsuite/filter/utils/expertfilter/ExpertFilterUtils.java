@@ -251,17 +251,40 @@ public final class ExpertFilterUtils {
         };
     }
 
+    private static String getRatioRegulationMode(RatioTapChanger ratioTapChanger) {
+        if (ratioTapChanger.hasLoadTapChangingCapabilities() && ratioTapChanger.isRegulating()) {
+            return RatioRegulationModeType.VOLTAGE_REGULATION.name();
+        } else if (!ratioTapChanger.isRegulating()) {
+            return RatioRegulationModeType.FIXED_RATIO.name();
+        } else {
+            return null;
+        }
+    }
+
     private static String getRatioTapChangerFieldValue(FieldType field, @Nullable RatioTapChanger ratioTapChanger) {
         if (ratioTapChanger == null) {
             return null;
         }
         return switch (field) {
-            case RATIO_REGULATING -> String.valueOf(ratioTapChanger.isRegulating());
             case RATIO_TARGET_V -> String.valueOf(ratioTapChanger.getTargetV());
             case LOAD_TAP_CHANGING_CAPABILITIES -> String.valueOf(ratioTapChanger.hasLoadTapChangingCapabilities());
-            case RATIO_REGULATION_MODE -> ratioTapChanger.getRegulationMode() != null ? ratioTapChanger.getRegulationMode().name() : null;
+            case RATIO_REGULATION_MODE -> String.valueOf(getRatioRegulationMode(ratioTapChanger));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",ratioTapChanger]");
         };
+    }
+
+    private static String getPhaseRegulationMode(PhaseTapChanger phaseTapChanger) {
+        if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL && phaseTapChanger.isRegulating()) {
+            return PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name();
+        } else if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && phaseTapChanger.isRegulating()) {
+            return PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name();
+        } else if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.FIXED_TAP ||
+                phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && !phaseTapChanger.isRegulating() ||
+                phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL && !phaseTapChanger.isRegulating()) {
+            return PhaseTapChanger.RegulationMode.FIXED_TAP.name();
+        } else {
+            return null;
+        }
     }
 
     private static String getPhaseTapChangerFieldValue(FieldType field, @Nullable PhaseTapChanger phaseTapChanger) {
@@ -269,9 +292,8 @@ public final class ExpertFilterUtils {
             return null;
         }
         return switch (field) {
-            case PHASE_REGULATING -> String.valueOf(phaseTapChanger.isRegulating());
             case PHASE_REGULATION_VALUE -> String.valueOf(phaseTapChanger.getRegulationValue());
-            case PHASE_REGULATION_MODE -> phaseTapChanger.getRegulationMode() != null ? phaseTapChanger.getRegulationMode().name() : null;
+            case PHASE_REGULATION_MODE -> String.valueOf(getPhaseRegulationMode(phaseTapChanger));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",phaseTapChanger]");
         };
     }
@@ -293,13 +315,11 @@ public final class ExpertFilterUtils {
             case MAGNETIZING_CONDUCTANCE -> String.valueOf(twoWindingsTransformer.getG());
             case MAGNETIZING_SUSCEPTANCE -> String.valueOf(twoWindingsTransformer.getB());
             case HAS_RATIO_TAP_CHANGER -> String.valueOf(twoWindingsTransformer.hasRatioTapChanger());
-            case RATIO_REGULATING,
-                RATIO_TARGET_V,
+            case RATIO_TARGET_V,
                 LOAD_TAP_CHANGING_CAPABILITIES,
                 RATIO_REGULATION_MODE -> getRatioTapChangerFieldValue(field, twoWindingsTransformer.getRatioTapChanger());
             case HAS_PHASE_TAP_CHANGER -> String.valueOf(twoWindingsTransformer.hasPhaseTapChanger());
-            case PHASE_REGULATING,
-                PHASE_REGULATION_MODE,
+            case PHASE_REGULATION_MODE,
                 PHASE_REGULATION_VALUE -> getPhaseTapChangerFieldValue(field, twoWindingsTransformer.getPhaseTapChanger());
             case SUBSTATION_PROPERTIES_1 -> twoWindingsTransformer.getTerminal1().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             case SUBSTATION_PROPERTIES_2 -> twoWindingsTransformer.getTerminal2().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
