@@ -105,6 +105,7 @@ class NumberExpertRuleTest {
         "provideArgumentsForStaticVarCompensatorTest",
         "provideArgumentsForDanglingLineTest",
         "provideArgumentsForHvdcLinesTest",
+        "provideArgumentsForDanglingLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
         NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -2389,7 +2390,6 @@ class NumberExpertRuleTest {
         );
     }
 
-<<<<<<< HEAD
     private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
         DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
         Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);

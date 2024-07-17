@@ -108,6 +108,7 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForStaticVarCompensatorTest",
         "provideArgumentsForDanglingLineTest",
         "provideArgumentsForHvdcLineTest",
+        "provideArgumentsForDanglingLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
@@ -320,32 +321,6 @@ class PropertiesExpertRuleTest {
         );
     }
 
-<<<<<<< HEAD
-    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
-        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
-        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
-        Mockito.when(danglingLine.getProperty("propertyNameDL")).thenReturn("PropertyValueDL");
-
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getProperty("CodeOI")).thenReturn("33");
-        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
-
-        return Stream.of(
-            // --- IN --- //
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL"), danglingLine, true),
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL2"), danglingLine, false),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), danglingLine, true),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), danglingLine, false),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), danglingLine, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), danglingLine, false)
-        );
-    }
-
     private static Stream<Arguments> provideArgumentsForHvdcLineTest() {
         HvdcLine hvdc = Mockito.mock(HvdcLine.class);
         Mockito.when(hvdc.getType()).thenReturn(IdentifiableType.HVDC_LINE);
@@ -387,6 +362,31 @@ class PropertiesExpertRuleTest {
             Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), hvdc, false),
             Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("42"), hvdc, true),
             Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("21"), hvdc, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
+        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
+        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        Mockito.when(danglingLine.getProperty("propertyNameDL")).thenReturn("PropertyValueDL");
+
+        Substation substation = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getProperty("CodeOI")).thenReturn("33");
+        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
+
+        return Stream.of(
+            // --- IN --- //
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL"), danglingLine, true),
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL2"), danglingLine, false),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), danglingLine, true),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), danglingLine, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), danglingLine, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), danglingLine, false)
         );
     }
 
