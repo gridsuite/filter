@@ -47,7 +47,7 @@
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <org.hamcrest.version>2.2</org.hamcrest.version>
         <org.mockito.version>5.11.0</org.mockito.version>
-        <powsybl-dependencies.version>2024.1.0</powsybl-dependencies.version>
+        <powsybl-dependencies.version>2024.2.0</powsybl-dependencies.version>
     </properties>
 
     <build>
