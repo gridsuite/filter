@@ -9,6 +9,7 @@ package org.gridsuite.filter;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.ThreeWindingsTransformer;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
 import com.powsybl.iidm.network.test.HvdcTestNetwork;
 import com.powsybl.iidm.network.test.ShuntTestCaseFactory;
@@ -57,10 +58,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
@@ -358,7 +356,9 @@ class FiltersUtilsTest {
             StringExpertRule.builder().combinator(CombinatorType.AND).field(FieldType.ID).operator(OperatorType.IS).value("3WT").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network5, filterLoader);
-        assertEquals(0, identifiables.size());  // expert filter for 3WT not yet implemented
+        assertEquals(1, identifiables.size());
+        assertInstanceOf(ThreeWindingsTransformer.class, identifiables.get(0));
+        assertEquals("3WT", identifiables.get(0).getId());
     }
 
     @Test
