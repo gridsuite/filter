@@ -81,6 +81,9 @@ class StringExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(IS, FieldType.RATED_S, network, PowsyblException.class),
@@ -93,6 +96,7 @@ class StringExpertRuleTest {
                 Arguments.of(IS, FieldType.RATED_S, battery, PowsyblException.class),
                 Arguments.of(IS, FieldType.P0, twoWindingsTransformer, PowsyblException.class),
                 Arguments.of(IS, FieldType.RATED_S, svar, PowsyblException.class),
+                Arguments.of(IS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(EQUALS, FieldType.ID, generator, PowsyblException.class)
@@ -111,6 +115,7 @@ class StringExpertRuleTest {
         "provideArgumentsForTwoWindingsTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
         "provideArgumentsForDanglingLineTest",
+        "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         StringExpertRule rule = StringExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -1292,4 +1297,175 @@ class StringExpertRuleTest {
 
         );
     }
+
+    private static Stream<Arguments> provideArgumentsForHvdcLineTest() {
+
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        // Common fields
+        Mockito.when(hvdcLine.getId()).thenReturn("ID");
+        Mockito.when(hvdcLine.getOptionalName()).thenReturn(Optional.of("NAME"));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getId()).thenReturn("VL");
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal);
+        Mockito.when(converterStation1.getId()).thenReturn("STATION1");
+        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal);
+        Mockito.when(converterStation2.getId()).thenReturn("STATION2");
+        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
+
+        // for testing none EXISTS
+        HvdcLine hvdcLine1 = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine1.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        Mockito.when(hvdcLine1.getOptionalName()).thenReturn(Optional.of(""));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        HvdcConverterStation converterStation3 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation3.getTerminal()).thenReturn(terminal1);
+        Mockito.when(hvdcLine1.getConverterStation1()).thenReturn(converterStation3);
+        HvdcConverterStation converterStation4 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation4.getTerminal()).thenReturn(terminal1);
+        Mockito.when(hvdcLine1.getConverterStation2()).thenReturn(converterStation4);
+
+        return Stream.of(
+            // --- IS --- //
+            // Common fields
+            Arguments.of(IS, FieldType.ID, "id", null, hvdcLine, true),
+            Arguments.of(IS, FieldType.ID, "id_1", null, hvdcLine, false),
+            Arguments.of(IS, FieldType.NAME, "name", null, hvdcLine, true),
+            Arguments.of(IS, FieldType.NAME, "name_1", null, hvdcLine, false),
+            // VoltageLevel fields
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_1, "vl", null, hvdcLine, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_1, "vl_1", null, hvdcLine, false),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_2, "vl", null, hvdcLine, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_2, "vl_1", null, hvdcLine, false),
+
+            // --- CONTAINS --- //
+            // Common fields
+            Arguments.of(CONTAINS, FieldType.ID, "i", null, hvdcLine, true),
+            Arguments.of(CONTAINS, FieldType.ID, "ii", null, hvdcLine, false),
+            Arguments.of(CONTAINS, FieldType.NAME, "nam", null, hvdcLine, true),
+            Arguments.of(CONTAINS, FieldType.NAME, "namm", null, hvdcLine, false),
+            // VoltageLevel fields
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_1, "v", null, hvdcLine, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_1, "vv", null, hvdcLine, false),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_2, "v", null, hvdcLine, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_2, "vv", null, hvdcLine, false),
+            // Converter Station fields
+            Arguments.of(CONTAINS, FieldType.CONVERTER_STATION_ID_1, "s", null, hvdcLine, true),
+            Arguments.of(CONTAINS, FieldType.CONVERTER_STATION_ID_1, "vv", null, hvdcLine, false),
+            Arguments.of(CONTAINS, FieldType.CONVERTER_STATION_ID_2, "s", null, hvdcLine, true),
+            Arguments.of(CONTAINS, FieldType.CONVERTER_STATION_ID_2, "vv", null, hvdcLine, false),
+
+            // --- BEGINS_WITH --- //
+            // Common fields
+            Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, hvdcLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, hvdcLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, hvdcLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, hvdcLine, false),
+            // VoltageLevel fields
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "v", null, hvdcLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "s", null, hvdcLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "v", null, hvdcLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "s", null, hvdcLine, false),
+            // Converter Station fields
+            Arguments.of(BEGINS_WITH, FieldType.CONVERTER_STATION_ID_1, "s", null, hvdcLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.CONVERTER_STATION_ID_1, "a", null, hvdcLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.CONVERTER_STATION_ID_2, "s", null, hvdcLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.CONVERTER_STATION_ID_2, "a", null, hvdcLine, false),
+
+            // --- ENDS_WITH --- //
+            // Common fields
+            Arguments.of(ENDS_WITH, FieldType.ID, "d", null, hvdcLine, true),
+            Arguments.of(ENDS_WITH, FieldType.ID, "e", null, hvdcLine, false),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, hvdcLine, true),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, hvdcLine, false),
+            // VoltageLevel fields
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "l", null, hvdcLine, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "m", null, hvdcLine, false),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "l", null, hvdcLine, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "m", null, hvdcLine, false),
+            // Converter Station fields
+            Arguments.of(ENDS_WITH, FieldType.CONVERTER_STATION_ID_1, "1", null, hvdcLine, true),
+            Arguments.of(ENDS_WITH, FieldType.CONVERTER_STATION_ID_1, "2", null, hvdcLine, false),
+            Arguments.of(ENDS_WITH, FieldType.CONVERTER_STATION_ID_2, "2", null, hvdcLine, true),
+            Arguments.of(ENDS_WITH, FieldType.CONVERTER_STATION_ID_2, "1", null, hvdcLine, false),
+
+            // --- EXISTS --- //
+            // Common fields
+            Arguments.of(EXISTS, FieldType.ID, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.ID, null, null, hvdcLine1, false),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, hvdcLine1, false),
+            // VoltageLevel fields
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, hvdcLine1, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, hvdcLine1, false),
+            // Converter Station fields
+            Arguments.of(EXISTS, FieldType.CONVERTER_STATION_ID_1, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.CONVERTER_STATION_ID_1, null, null, hvdcLine1, false),
+            Arguments.of(EXISTS, FieldType.CONVERTER_STATION_ID_2, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.CONVERTER_STATION_ID_2, null, null, hvdcLine1, false),
+
+            // --- NOT_EXISTS --- //
+            // Common fields
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, hvdcLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, hvdcLine1, true),
+            // VoltageLevel fields
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, hvdcLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, hvdcLine1, true),
+            // Converter Station fields
+            Arguments.of(NOT_EXISTS, FieldType.CONVERTER_STATION_ID_1, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.CONVERTER_STATION_ID_1, null, null, hvdcLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.CONVERTER_STATION_ID_2, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.CONVERTER_STATION_ID_2, null, null, hvdcLine1, true),
+
+            // --- IN --- //
+            // Common fields
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), hvdcLine, true),
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), hvdcLine, false),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), hvdcLine, true),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), hvdcLine, false),
+            // VoltageLevel fields
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl", "VL_2"), hvdcLine, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), hvdcLine, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), hvdcLine, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), hvdcLine, false),
+            // Converter Station fields
+            Arguments.of(IN, FieldType.CONVERTER_STATION_ID_1, null, Set.of("STATION1", "STATION2"), hvdcLine, true),
+            Arguments.of(IN, FieldType.CONVERTER_STATION_ID_1, null, Set.of("STATION4", "STATION3"), hvdcLine, false),
+            Arguments.of(IN, FieldType.CONVERTER_STATION_ID_2, null, Set.of("STATION3", "STATION2"), hvdcLine, true),
+            Arguments.of(IN, FieldType.CONVERTER_STATION_ID_2, null, Set.of("STATION4", "STATION1"), hvdcLine, false),
+
+            // --- NOT_IN --- //
+            // Common fields
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), hvdcLine, false),
+            // VoltageLevel fields
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl", "VL_2"), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), hvdcLine, false),
+            // Converter Station fields
+            Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_ID_1, null, Set.of("STATION3", "STATION2"), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_ID_1, null, Set.of("STATION4", "STATION1"), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_ID_2, null, Set.of("STATION3", "STATION4"), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_ID_2, null, Set.of("STATION2", "STATION1"), hvdcLine, false)
+        );
+    }
+
 }

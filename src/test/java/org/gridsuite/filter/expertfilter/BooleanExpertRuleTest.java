@@ -64,9 +64,16 @@ class BooleanExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+<<<<<<< HEAD
         DanglingLine dl = Mockito.mock(DanglingLine.class);
         Mockito.when(dl.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
 
+||||||| constructed merge base
+=======
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+
+>>>>>>> add hvdc category for expert filters (#41)
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
@@ -77,7 +84,12 @@ class BooleanExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, bus, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
+<<<<<<< HEAD
                 Arguments.of(EQUALS, FieldType.RATED_S, dl, PowsyblException.class),
+||||||| constructed merge base
+=======
+                Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
+>>>>>>> add hvdc category for expert filters (#41)
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.VOLTAGE_REGULATOR_ON, generator, PowsyblException.class)
@@ -93,7 +105,12 @@ class BooleanExpertRuleTest {
         "provideArgumentsForLoadTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+<<<<<<< HEAD
         "provideArgumentsForDanglingLineTest",
+||||||| constructed merge base
+=======
+        "provideArgumentsForHvdcLinesTest",
+>>>>>>> add hvdc category for expert filters (#41)
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) {
         BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).value(value).build();
@@ -223,6 +240,40 @@ class BooleanExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.CONNECTED_1, true, line, false),
                 Arguments.of(NOT_EQUALS, FieldType.CONNECTED_2, false, line, true),
                 Arguments.of(NOT_EQUALS, FieldType.CONNECTED_2, true, line, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForHvdcLinesTest() {
+
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        // Terminal fields
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.isConnected()).thenReturn(true);
+        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+
+        Terminal terminal2 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal2.isConnected()).thenReturn(true);
+        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal2);
+        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
+
+        return Stream.of(
+            // --- EQUALS--- //
+            // Terminal fields
+            Arguments.of(EQUALS, FieldType.CONNECTED_1, true, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.CONNECTED_1, false, hvdcLine, false),
+            Arguments.of(EQUALS, FieldType.CONNECTED_2, true, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.CONNECTED_2, false, hvdcLine, false),
+
+            // --- NOT_EQUALS--- //
+            // Terminal fields
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_1, false, hvdcLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_1, true, hvdcLine, false),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_2, false, hvdcLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_2, true, hvdcLine, false)
         );
     }
 

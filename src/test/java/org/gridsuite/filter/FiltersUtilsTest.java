@@ -6,6 +6,7 @@
  */
 package org.gridsuite.filter;
 
+import com.powsybl.iidm.network.HvdcLine;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
@@ -57,10 +58,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
@@ -866,7 +864,9 @@ class FiltersUtilsTest {
             StringExpertRule.builder().combinator(CombinatorType.AND).field(FieldType.ID).operator(OperatorType.IS).value("L").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network2, filterLoader);
-        assertEquals(0, identifiables.size());  // expert filter for HVDC line not yet implemented
+        assertEquals(1, identifiables.size());  // expert filter for HVDC line is now implemented
+        assertEquals("L", identifiables.get(0).getId());
+        assertInstanceOf(HvdcLine.class, identifiables.get(0));
     }
 
     @Test
