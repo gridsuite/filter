@@ -61,7 +61,7 @@ public final class ExpertFilterUtils {
         return switch (field) {
             case CONNECTED_1 -> getTerminalFieldValue(field, hvdcLine.getConverterStation1().getTerminal());
             case CONNECTED_2 -> getTerminalFieldValue(field, hvdcLine.getConverterStation2().getTerminal());
-            case CONVERTERS_MODE -> String.valueOf(hvdcLine.getConvertersMode());
+            case CONVERTERS_MODE -> hvdcLine.getConvertersMode() != null ? hvdcLine.getConvertersMode().name() : null;
             case ACTIVE_POWER_SET_POINT -> String.valueOf(hvdcLine.getActivePowerSetpoint());
             case MAX_P -> String.valueOf(hvdcLine.getMaxP());
             case DC_NOMINAL_VOLTAGE -> String.valueOf(hvdcLine.getNominalV());

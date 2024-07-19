@@ -2397,16 +2397,23 @@ class NumberExpertRuleTest {
         Mockito.when(hvdcLine.getNominalV()).thenReturn(400.0);
 
         // Terminal fields
-        Terminal terminal = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel1.getNominalV()).thenReturn(13.0);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+
+        Terminal terminal2 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel2.getNominalV()).thenReturn(13.0);
+        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
 
         // Converter Stations fields
-        HvdcConverterStation converterStation = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation.getTerminal()).thenReturn(terminal);
-        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation);
-        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation);
+        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
+        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal2);
+        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
 
         // for testing none EXISTS
         HvdcLine hvdcLine1 = Mockito.mock(HvdcLine.class);
@@ -2417,16 +2424,22 @@ class NumberExpertRuleTest {
         Mockito.when(hvdcLine1.getNominalV()).thenReturn(Double.NaN);
 
         // Terminal fields
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Terminal terminal3 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel3 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel3.getNominalV()).thenReturn(Double.NaN);
+        Mockito.when(terminal3.getVoltageLevel()).thenReturn(voltageLevel3);
+        Terminal terminal4 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel4 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel4.getNominalV()).thenReturn(Double.NaN);
+        Mockito.when(terminal4.getVoltageLevel()).thenReturn(voltageLevel4);
 
         // None Converter Stations fields
-        HvdcConverterStation hvdcConverterStation1 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(hvdcConverterStation1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(hvdcLine1.getConverterStation1()).thenReturn(hvdcConverterStation1);
-        Mockito.when(hvdcLine1.getConverterStation2()).thenReturn(hvdcConverterStation1);
+        HvdcConverterStation converterStation3 = Mockito.mock(HvdcConverterStation.class);
+        HvdcConverterStation converterStation4 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation3.getTerminal()).thenReturn(terminal3);
+        Mockito.when(converterStation4.getTerminal()).thenReturn(terminal4);
+        Mockito.when(hvdcLine1.getConverterStation1()).thenReturn(converterStation3);
+        Mockito.when(hvdcLine1.getConverterStation2()).thenReturn(converterStation4);
 
         return Stream.of(
             // --- EQUALS --- //
