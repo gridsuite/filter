@@ -84,6 +84,9 @@ class EnumExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, null, null, PowsyblException.class),
@@ -97,6 +100,7 @@ class EnumExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, substation, null, null, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.P0, twoWindingsTransformer, null, null, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, null, null, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.ENERGY_SOURCE, generator, null, null, PowsyblException.class),
@@ -124,6 +128,7 @@ class EnumExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         EnumExpertRule rule = EnumExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -688,6 +693,75 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.OFF.name()), svar, false),
                 Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, true),
                 Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForHvdcLineTest() {
+
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+
+        // VoltageLevel fields
+        Substation substation1 = Mockito.mock(Substation.class);
+        Substation substation2 = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Terminal terminal2 = Mockito.mock(Terminal.class);
+        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
+        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
+
+        Mockito.when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
+        Mockito.when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
+
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(substation1.getCountry()).thenReturn(Optional.of(Country.FR));
+        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+
+        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal2);
+        Mockito.when(substation2.getCountry()).thenReturn(Optional.of(Country.SM));
+        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
+
+        Mockito.when(hvdcLine.getConvertersMode()).thenReturn(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER);
+
+        return Stream.of(
+            // --- EQUALS --- //
+            // VoltageLevel fields
+            Arguments.of(EQUALS, FieldType.COUNTRY_1, Country.FR.name(), null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.COUNTRY_1, Country.DE.name(), null, hvdcLine, false),
+            Arguments.of(EQUALS, FieldType.COUNTRY_2, Country.SM.name(), null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.COUNTRY_2, Country.LI.name(), null, hvdcLine, false),
+            Arguments.of(EQUALS, FieldType.CONVERTERS_MODE, HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name(), null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.CONVERTERS_MODE, HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name(), null, hvdcLine, false),
+
+            // --- NOT_EQUALS --- //
+            // VoltageLevel fields
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY_1, Country.DE.name(), null, hvdcLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY_1, Country.FR.name(), null, hvdcLine, false),
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY_2, Country.LI.name(), null, hvdcLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY_2, Country.SM.name(), null, hvdcLine, false),
+            Arguments.of(NOT_EQUALS, FieldType.CONVERTERS_MODE, HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name(), null, hvdcLine, false),
+            Arguments.of(NOT_EQUALS, FieldType.CONVERTERS_MODE, HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name(), null, hvdcLine, true),
+
+            // --- IN --- //
+            // VoltageLevel fields
+            Arguments.of(IN, FieldType.COUNTRY_1, null, Set.of(Country.FR.name(), Country.DE.name()), hvdcLine, true),
+            Arguments.of(IN, FieldType.COUNTRY_1, null, Set.of(Country.BE.name(), Country.DE.name()), hvdcLine, false),
+            Arguments.of(IN, FieldType.COUNTRY_2, null, Set.of(Country.SM.name(), Country.FO.name()), hvdcLine, true),
+            Arguments.of(IN, FieldType.COUNTRY_2, null, Set.of(Country.LI.name(), Country.MC.name()), hvdcLine, false),
+            Arguments.of(IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name()), hvdcLine, true),
+            Arguments.of(IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name()), hvdcLine, false),
+
+            // --- NOT_IN --- //
+            // VoltageLevel fields
+            Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, Set.of(Country.BE.name(), Country.DE.name()), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, Set.of(Country.FR.name(), Country.DE.name()), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, Set.of(Country.LI.name(), Country.MC.name()), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, Set.of(Country.SM.name(), Country.FO.name()), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name()), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name()), hvdcLine, true)
         );
     }
 }

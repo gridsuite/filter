@@ -70,6 +70,9 @@ class NumberExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
@@ -81,6 +84,7 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.P0, twoWindingTransformer, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.MIN_P, generator, PowsyblException.class)
@@ -99,6 +103,7 @@ class NumberExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForHvdcLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
         NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -2383,4 +2388,243 @@ class NumberExpertRuleTest {
         );
     }
 
+    private static Stream<Arguments> provideArgumentsForHvdcLinesTest() {
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        Mockito.when(hvdcLine.getR()).thenReturn(0.1);
+        Mockito.when(hvdcLine.getMaxP()).thenReturn(200.0);
+        Mockito.when(hvdcLine.getActivePowerSetpoint()).thenReturn(100.0);
+        Mockito.when(hvdcLine.getNominalV()).thenReturn(400.0);
+
+        // Terminal fields
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel1.getNominalV()).thenReturn(13.0);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+
+        Terminal terminal2 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel2.getNominalV()).thenReturn(13.0);
+        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+
+        // Converter Stations fields
+        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
+        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal2);
+        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
+
+        // for testing none EXISTS
+        HvdcLine hvdcLine1 = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine1.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        Mockito.when(hvdcLine1.getR()).thenReturn(Double.NaN);
+        Mockito.when(hvdcLine1.getMaxP()).thenReturn(Double.NaN);
+        Mockito.when(hvdcLine1.getActivePowerSetpoint()).thenReturn(Double.NaN);
+        Mockito.when(hvdcLine1.getNominalV()).thenReturn(Double.NaN);
+
+        // Terminal fields
+        Terminal terminal3 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel3 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel3.getNominalV()).thenReturn(Double.NaN);
+        Mockito.when(terminal3.getVoltageLevel()).thenReturn(voltageLevel3);
+        Terminal terminal4 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel4 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel4.getNominalV()).thenReturn(Double.NaN);
+        Mockito.when(terminal4.getVoltageLevel()).thenReturn(voltageLevel4);
+
+        // None Converter Stations fields
+        HvdcConverterStation converterStation3 = Mockito.mock(HvdcConverterStation.class);
+        HvdcConverterStation converterStation4 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation3.getTerminal()).thenReturn(terminal3);
+        Mockito.when(converterStation4.getTerminal()).thenReturn(terminal4);
+        Mockito.when(hvdcLine1.getConverterStation1()).thenReturn(converterStation3);
+        Mockito.when(hvdcLine1.getConverterStation2()).thenReturn(converterStation4);
+
+        return Stream.of(
+            // --- EQUALS --- //
+            // Terminal fields
+            Arguments.of(EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 13.0, null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 12.0, null, hvdcLine, false),
+            Arguments.of(EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 13.0, null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 12.0, null, hvdcLine, false),
+            // HvdcLine fields
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.2, null, hvdcLine, false),
+            Arguments.of(EQUALS, FieldType.MAX_P, 200.0, null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.MAX_P, 300.0, null, hvdcLine, false),
+            Arguments.of(EQUALS, FieldType.ACTIVE_POWER_SET_POINT, 100.0, null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.ACTIVE_POWER_SET_POINT, 200.0, null, hvdcLine, false),
+            Arguments.of(EQUALS, FieldType.DC_NOMINAL_VOLTAGE, 400.0, null, hvdcLine, true),
+            Arguments.of(EQUALS, FieldType.DC_NOMINAL_VOLTAGE, 200.0, null, hvdcLine, false),
+
+            // --- GREATER_OR_EQUALS --- //
+            // Terminal
+            Arguments.of(GREATER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 12.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 13.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 14.0, null, hvdcLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 12.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 13.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 14.0, null, hvdcLine, false),
+            // HvdcLine fields
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, hvdcLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_P, 150.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_P, 200.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_P, 300.0, null, hvdcLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.ACTIVE_POWER_SET_POINT, 50.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.ACTIVE_POWER_SET_POINT, 100.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.ACTIVE_POWER_SET_POINT, 150.0, null, hvdcLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.DC_NOMINAL_VOLTAGE, 300.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.DC_NOMINAL_VOLTAGE, 400.0, null, hvdcLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.DC_NOMINAL_VOLTAGE, 500.0, null, hvdcLine, false),
+            // --- GREATER --- //
+            // Terminal
+            Arguments.of(GREATER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 12.0, null, hvdcLine, true),
+            Arguments.of(GREATER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 13.0, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 14.0, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 12.0, null, hvdcLine, true),
+            Arguments.of(GREATER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 13.0, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 14.0, null, hvdcLine, false),
+            // HvdcLine fields
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.05, null, hvdcLine, true),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.1, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.15, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.MAX_P, 150.0, null, hvdcLine, true),
+            Arguments.of(GREATER, FieldType.MAX_P, 200.0, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.MAX_P, 300.0, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.ACTIVE_POWER_SET_POINT, 50.0, null, hvdcLine, true),
+            Arguments.of(GREATER, FieldType.ACTIVE_POWER_SET_POINT, 100.0, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.ACTIVE_POWER_SET_POINT, 150.0, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.DC_NOMINAL_VOLTAGE, 300.0, null, hvdcLine, true),
+            Arguments.of(GREATER, FieldType.DC_NOMINAL_VOLTAGE, 400.0, null, hvdcLine, false),
+            Arguments.of(GREATER, FieldType.DC_NOMINAL_VOLTAGE, 500.0, null, hvdcLine, false),
+
+            // --- LOWER_OR_EQUALS --- //
+            // Terminal
+            Arguments.of(LOWER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 12.0, null, hvdcLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 13.0, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 14.0, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 12.0, null, hvdcLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 13.0, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 14.0, null, hvdcLine, true),
+            // HvdcLine fields
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, hvdcLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_P, 150.0, null, hvdcLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_P, 200.0, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_P, 300.0, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.ACTIVE_POWER_SET_POINT, 50.0, null, hvdcLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.ACTIVE_POWER_SET_POINT, 100.0, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.ACTIVE_POWER_SET_POINT, 150.0, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.DC_NOMINAL_VOLTAGE, 300.0, null, hvdcLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.DC_NOMINAL_VOLTAGE, 400.0, null, hvdcLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.DC_NOMINAL_VOLTAGE, 500.0, null, hvdcLine, true),
+
+            // --- LOWER --- //
+            // Terminal
+            Arguments.of(LOWER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 12.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 13.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, 14.0, null, hvdcLine, true),
+            Arguments.of(LOWER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 12.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 13.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, 14.0, null, hvdcLine, true),
+            // HvdcLine fields
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.05, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.1, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.15, null, hvdcLine, true),
+            Arguments.of(LOWER, FieldType.MAX_P, 150.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.MAX_P, 200.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.MAX_P, 300.0, null, hvdcLine, true),
+            Arguments.of(LOWER, FieldType.ACTIVE_POWER_SET_POINT, 50.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.ACTIVE_POWER_SET_POINT, 100.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.ACTIVE_POWER_SET_POINT, 150.0, null, hvdcLine, true),
+            Arguments.of(LOWER, FieldType.DC_NOMINAL_VOLTAGE, 300.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.DC_NOMINAL_VOLTAGE, 400.0, null, hvdcLine, false),
+            Arguments.of(LOWER, FieldType.DC_NOMINAL_VOLTAGE, 500.0, null, hvdcLine, true),
+
+            // --- BETWEEN --- //
+            // Terminal
+            Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), hvdcLine, true),
+            Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(13.5, 14.0), hvdcLine, false),
+            Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), hvdcLine, true),
+            Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(13.5, 14.0), hvdcLine, false),
+            // HvdcLine fields
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), hvdcLine, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.15, 0.25), hvdcLine, false),
+            Arguments.of(BETWEEN, FieldType.MAX_P, null, Set.of(150.0, 250.0), hvdcLine, true),
+            Arguments.of(BETWEEN, FieldType.MAX_P, null, Set.of(225.0, 300.0), hvdcLine, false),
+            Arguments.of(BETWEEN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(50.0, 150.0), hvdcLine, true),
+            Arguments.of(BETWEEN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(120.0, 140.0), hvdcLine, false),
+            Arguments.of(BETWEEN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(300.0, 500.0), hvdcLine, true),
+            Arguments.of(BETWEEN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(450.0, 600.0), hvdcLine, false),
+
+            // --- EXISTS --- //
+            // Terminal
+            Arguments.of(EXISTS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, null, hvdcLine1, false),
+            Arguments.of(EXISTS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, null, hvdcLine1, false),
+            // HvdcLine fields
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, hvdcLine1, false),
+            Arguments.of(EXISTS, FieldType.MAX_P, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.MAX_P, null, null, hvdcLine1, false),
+            Arguments.of(EXISTS, FieldType.ACTIVE_POWER_SET_POINT, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.ACTIVE_POWER_SET_POINT, null, null, hvdcLine1, false),
+            Arguments.of(EXISTS, FieldType.DC_NOMINAL_VOLTAGE, null, null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.DC_NOMINAL_VOLTAGE, null, null, hvdcLine1, false),
+
+            // --- NOT_EXISTS --- //
+            // Terminal
+            Arguments.of(NOT_EXISTS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, null, hvdcLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, null, hvdcLine1, true),
+            // HvdcLine fields
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, hvdcLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAX_P, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAX_P, null, null, hvdcLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.ACTIVE_POWER_SET_POINT, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.ACTIVE_POWER_SET_POINT, null, null, hvdcLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.DC_NOMINAL_VOLTAGE, null, null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.DC_NOMINAL_VOLTAGE, null, null, hvdcLine1, true),
+
+            // --- IN --- //
+            // Terminal
+            Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), hvdcLine, true),
+            Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), hvdcLine, false),
+            Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), hvdcLine, true),
+            Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), hvdcLine, false),
+            // HvdcLine fields
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), hvdcLine, true),
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), hvdcLine, false),
+            Arguments.of(IN, FieldType.MAX_P, null, Set.of(50.0, 200.0, 300.0), hvdcLine, true),
+            Arguments.of(IN, FieldType.MAX_P, null, Set.of(100.0, 150.0), hvdcLine, false),
+            Arguments.of(IN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(50.0, 100.0, 300.0), hvdcLine, true),
+            Arguments.of(IN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(200.0, 150.0), hvdcLine, false),
+            Arguments.of(IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(100.0, 400.0, 300.0), hvdcLine, true),
+            Arguments.of(IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(200.0, 150.0), hvdcLine, false),
+
+            // --- NOT_IN --- //
+            // Terminal
+            Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), hvdcLine, false),
+            // HvdcLine fields
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.MAX_P, null, Set.of(50.0, 200.0, 300.0), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.MAX_P, null, Set.of(100.0, 150.0), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(50.0, 100.0, 300.0), hvdcLine, false),
+            Arguments.of(NOT_IN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(200.0, 150.0), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(100.0, 200.0, 300.0), hvdcLine, true),
+            Arguments.of(NOT_IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(400.0, 150.0), hvdcLine, false)
+        );
+
+    }
 }
