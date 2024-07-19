@@ -64,15 +64,18 @@ public final class ExpertFilterUtils {
             case CONVERTERS_MODE -> String.valueOf(hvdcLine.getConvertersMode());
             case ACTIVE_POWER_SET_POINT -> String.valueOf(hvdcLine.getActivePowerSetpoint());
             case MAX_P -> String.valueOf(hvdcLine.getMaxP());
+            case DC_NOMINAL_VOLTAGE -> String.valueOf(hvdcLine.getNominalV());
             case CONVERTER_STATION_ID_1 -> hvdcLine.getConverterStation1().getId();
+            case CONVERTER_STATION_NOMINAL_VOLTAGE_1 ->
+                String.valueOf(hvdcLine.getConverterStation1().getTerminal().getVoltageLevel().getNominalV());
             case CONVERTER_STATION_ID_2 -> hvdcLine.getConverterStation2().getId();
-            case COUNTRY_1,
-                 VOLTAGE_LEVEL_ID_1,
-                 NOMINAL_VOLTAGE_1 -> getVoltageLevelFieldValue(field, null, hvdcLine.getConverterStation1().getTerminal().getVoltageLevel());
+            case CONVERTER_STATION_NOMINAL_VOLTAGE_2 ->
+                String.valueOf(hvdcLine.getConverterStation2().getTerminal().getVoltageLevel().getNominalV());
             case NOMINAL_VOLTAGE -> String.valueOf(hvdcLine.getNominalV());
-            case COUNTRY_2,
-                 VOLTAGE_LEVEL_ID_2,
-                 NOMINAL_VOLTAGE_2 -> getVoltageLevelFieldValue(field, null, hvdcLine.getConverterStation2().getTerminal().getVoltageLevel());
+            case COUNTRY_1, VOLTAGE_LEVEL_ID_1 ->
+                getVoltageLevelFieldValue(field, null, hvdcLine.getConverterStation1().getTerminal().getVoltageLevel());
+            case COUNTRY_2, VOLTAGE_LEVEL_ID_2 ->
+                getVoltageLevelFieldValue(field, null, hvdcLine.getConverterStation2().getTerminal().getVoltageLevel());
             case SERIE_RESISTANCE -> String.valueOf(hvdcLine.getR());
             case SUBSTATION_PROPERTIES_1 -> hvdcLine.getConverterStation1().getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             case SUBSTATION_PROPERTIES_2 -> hvdcLine.getConverterStation2().getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
