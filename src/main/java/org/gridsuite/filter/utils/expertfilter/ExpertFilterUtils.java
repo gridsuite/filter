@@ -71,7 +71,6 @@ public final class ExpertFilterUtils {
             case CONVERTER_STATION_ID_2 -> hvdcLine.getConverterStation2().getId();
             case CONVERTER_STATION_NOMINAL_VOLTAGE_2 ->
                 String.valueOf(hvdcLine.getConverterStation2().getTerminal().getVoltageLevel().getNominalV());
-            case NOMINAL_VOLTAGE -> String.valueOf(hvdcLine.getNominalV());
             case COUNTRY_1, VOLTAGE_LEVEL_ID_1 ->
                 getVoltageLevelFieldValue(field, null, hvdcLine.getConverterStation1().getTerminal().getVoltageLevel());
             case COUNTRY_2, VOLTAGE_LEVEL_ID_2 ->
