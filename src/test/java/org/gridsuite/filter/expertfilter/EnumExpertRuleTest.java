@@ -130,7 +130,6 @@ class EnumExpertRuleTest {
         "provideArgumentsForStaticVarCompensatorTest",
         "provideArgumentsForDanglingLineTest",
         "provideArgumentsForHvdcLineTest",
-        "provideArgumentsForDanglingLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         EnumExpertRule rule = EnumExpertRule.builder().operator(operator).field(field).value(value).values(values).build();

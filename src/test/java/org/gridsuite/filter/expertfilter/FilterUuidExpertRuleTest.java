@@ -72,11 +72,6 @@ class FilterUuidExpertRuleTest {
     private static final UUID FILTER_VOLTAGE_LEVEL_1_HVDC_LINE_2_UUID = UUID.fromString("65432940-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_VOLTAGE_LEVEL_2_HVDC_LINE_2_UUID = UUID.fromString("65432941-7977-4592-ba19-88027e4254e4");
 
-    private static final UUID FILTER_DANGLING_LINE_1_UUID = UUID.fromString("18273121-7977-4592-ba19-88027e4254e4");
-    private static final UUID FILTER_DANGLING_LINE_2_UUID = UUID.fromString("18273122-7977-4592-ba19-88027e4254e4");
-    private static final UUID FILTER_VOLTAGE_LEVEL_DANGLING_LINE_1_UUID = UUID.fromString("18273123-7977-4592-ba19-88027e4254e4");
-    private static final UUID FILTER_VOLTAGE_LEVEL_DANGLING_LINE_2_UUID = UUID.fromString("18273124-7977-4592-ba19-88027e4254e4");
-
     private FilterLoader filterLoader;
 
     @BeforeEach
@@ -452,52 +447,6 @@ class FilterUuidExpertRuleTest {
             Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of(FILTER_VOLTAGE_LEVEL_2_LINE_1_UUID.toString()), line2, true),
             Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of(FILTER_VOLTAGE_LEVEL_1_LINE_2_UUID.toString()), line1, true),
             Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of(FILTER_VOLTAGE_LEVEL_2_LINE_2_UUID.toString()), line1, true)
-        );
-    }
-
-    private static Stream<Arguments> provideArgumentsForDanglingLinesTest() {
-        Network network = Mockito.mock(Network.class);
-
-        DanglingLine danglingLine1 = Mockito.mock(DanglingLine.class);
-        Mockito.when(danglingLine1.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
-        Mockito.when(danglingLine1.getNetwork()).thenReturn(network);
-        DanglingLine danglingLine2 = Mockito.mock(DanglingLine.class);
-        Mockito.when(danglingLine2.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
-        Mockito.when(danglingLine2.getNetwork()).thenReturn(network);
-
-        // Common fields
-        Mockito.when(danglingLine1.getId()).thenReturn("ID1");
-        Mockito.when(danglingLine2.getId()).thenReturn("ID2");
-
-        // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(danglingLine1.getTerminal()).thenReturn(terminal1);
-
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel2.getId()).thenReturn("VL2");
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(danglingLine2.getTerminal()).thenReturn(terminal2);
-
-        return Stream.of(
-            // --- IS_PART_OF --- //
-            // Common fields
-            Arguments.of(IS_PART_OF, FieldType.ID, null, Set.of(FILTER_DANGLING_LINE_1_UUID.toString()), danglingLine1, true),
-            Arguments.of(IS_PART_OF, FieldType.ID, null, Set.of(FILTER_DANGLING_LINE_2_UUID.toString()), danglingLine2, true),
-            // VoltageLevel fields
-            Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_DANGLING_LINE_1_UUID.toString()), danglingLine1, true),
-            Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_DANGLING_LINE_2_UUID.toString()), danglingLine2, true),
-
-            // --- IS_NOT_PART_OF --- //
-            // Common fields
-            Arguments.of(IS_NOT_PART_OF, FieldType.ID, null, Set.of(FILTER_DANGLING_LINE_1_UUID.toString()), danglingLine2, true),
-            Arguments.of(IS_NOT_PART_OF, FieldType.ID, null, Set.of(FILTER_DANGLING_LINE_2_UUID.toString()), danglingLine1, true),
-            // VoltageLevel fields
-            Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_1_LINE_2_UUID.toString()), danglingLine1, true),
-            Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_GENERATOR_1_UUID.toString()), danglingLine2, true)
         );
     }
 
