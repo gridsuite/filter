@@ -52,8 +52,36 @@ public final class ExpertFilterUtils {
                 case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, propertyName, (TwoWindingsTransformer) identifiable);
                 case STATIC_VAR_COMPENSATOR -> getStaticVarCompensatorFieldValue(field, propertyName, (StaticVarCompensator) identifiable);
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
+                case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
+        };
+    }
+
+    private static String getHvdcLineFieldValue(FieldType field, String propertyName, HvdcLine hvdcLine) {
+        return switch (field) {
+            case CONNECTED_1 -> getTerminalFieldValue(field, hvdcLine.getConverterStation1().getTerminal());
+            case CONNECTED_2 -> getTerminalFieldValue(field, hvdcLine.getConverterStation2().getTerminal());
+            case CONVERTERS_MODE -> hvdcLine.getConvertersMode() != null ? hvdcLine.getConvertersMode().name() : null;
+            case ACTIVE_POWER_SET_POINT -> String.valueOf(hvdcLine.getActivePowerSetpoint());
+            case MAX_P -> String.valueOf(hvdcLine.getMaxP());
+            case DC_NOMINAL_VOLTAGE -> String.valueOf(hvdcLine.getNominalV());
+            case CONVERTER_STATION_ID_1 -> hvdcLine.getConverterStation1().getId();
+            case CONVERTER_STATION_NOMINAL_VOLTAGE_1 ->
+                String.valueOf(hvdcLine.getConverterStation1().getTerminal().getVoltageLevel().getNominalV());
+            case CONVERTER_STATION_ID_2 -> hvdcLine.getConverterStation2().getId();
+            case CONVERTER_STATION_NOMINAL_VOLTAGE_2 ->
+                String.valueOf(hvdcLine.getConverterStation2().getTerminal().getVoltageLevel().getNominalV());
+            case COUNTRY_1, VOLTAGE_LEVEL_ID_1 ->
+                getVoltageLevelFieldValue(field, null, hvdcLine.getConverterStation1().getTerminal().getVoltageLevel());
+            case COUNTRY_2, VOLTAGE_LEVEL_ID_2 ->
+                getVoltageLevelFieldValue(field, null, hvdcLine.getConverterStation2().getTerminal().getVoltageLevel());
+            case SERIE_RESISTANCE -> String.valueOf(hvdcLine.getR());
+            case SUBSTATION_PROPERTIES_1 -> hvdcLine.getConverterStation1().getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case SUBSTATION_PROPERTIES_2 -> hvdcLine.getConverterStation2().getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES_1 -> hvdcLine.getConverterStation1().getTerminal().getVoltageLevel().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES_2 -> hvdcLine.getConverterStation2().getTerminal().getVoltageLevel().getProperty(propertyName);
+            default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + hvdcLine.getType() + "]");
         };
     }
 

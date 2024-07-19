@@ -386,7 +386,7 @@ public final class FiltersUtils {
         }
     }
 
-    private static List<Identifiable<?>> getHvdcList(Network network, AbstractFilter filter) {
+    private static List<Identifiable<?>> getHvdcList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
         if (filter instanceof CriteriaFilter criteriaFilter) {
             HvdcLineFilter hvdcLineFilter = (HvdcLineFilter) criteriaFilter.getEquipmentFilterForm();
             Stream<HvdcLine> stream = network.getHvdcLineStream()
@@ -402,6 +402,12 @@ public final class FiltersUtils {
             List<String> equipmentsIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             Stream<HvdcLine> stream = network.getHvdcLineStream()
                 .filter(hvdcLine -> equipmentsIds.contains(hvdcLine.getId()));
+            return new ArrayList<>(stream.toList());
+        } else if (filter instanceof ExpertFilter expertFilter) {
+            var rule = expertFilter.getRules();
+            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
+            Stream<HvdcLine> stream = network.getHvdcLineStream()
+                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
             return new ArrayList<>(stream.toList());
         } else {
             return List.of();
@@ -469,7 +475,7 @@ public final class FiltersUtils {
             case SHUNT_COMPENSATOR -> getShuntCompensatorList(network, filter, filterLoader);
             case LCC_CONVERTER_STATION -> getLccConverterStationList(network, filter, filterLoader);
             case VSC_CONVERTER_STATION -> getVscConverterStationList(network, filter, filterLoader);
-            case HVDC_LINE -> getHvdcList(network, filter);
+            case HVDC_LINE -> getHvdcList(network, filter, filterLoader);
             case DANGLING_LINE -> getDanglingLineList(network, filter, filterLoader);
             case LINE -> getLineList(network, filter, filterLoader);
             case TWO_WINDINGS_TRANSFORMER -> get2WTransformerList(network, filter, filterLoader);

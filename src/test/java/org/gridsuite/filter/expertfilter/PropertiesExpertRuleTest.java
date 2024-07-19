@@ -80,6 +80,9 @@ class PropertiesExpertRuleTest {
         ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
         Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
 
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+
         return Stream.of(
                 // --- Test an unsupported field for some equipment --- //
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, voltageLevel, "region", List.of("east"), PowsyblException.class),
@@ -91,6 +94,7 @@ class PropertiesExpertRuleTest {
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, svar, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_3, twoWindingsTransformer, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SERIE_REACTANCE, threeWindingsTransformer, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, hvdcLine, "region", List.of("east"), PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.FREE_PROPERTIES, generator, "codeOI", List.of("33"), PowsyblException.class),
@@ -108,6 +112,7 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForLineTest",
         "provideArgumentsForStaticVarCompensatorTest",
         "provideArgumentsForThreeWindingTransformerTest",
+        "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
@@ -380,6 +385,50 @@ class PropertiesExpertRuleTest {
             Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), threeWindingsTransformer, false),
             Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("44"), threeWindingsTransformer, true),
             Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("22"), threeWindingsTransformer, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForHvdcLineTest() {
+        HvdcLine hvdc = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdc.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        Mockito.when(hvdc.getProperty("propertyNameHVDC")).thenReturn("PropertyValueHVDC");
+
+        Substation substation1 = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel1.getProperty("CodeOI")).thenReturn("33");
+        Mockito.when(voltageLevel1.getNullableSubstation()).thenReturn(substation1);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+
+        Substation substation2 = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel2.getProperty("CodeOI")).thenReturn("42");
+        Mockito.when(voltageLevel2.getNullableSubstation()).thenReturn(substation2);
+        Terminal terminal2 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+
+        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(hvdc.getConverterStation1()).thenReturn(converterStation1);
+        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal2);
+        Mockito.when(hvdc.getConverterStation2()).thenReturn(converterStation2);
+
+        Mockito.when(substation1.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation1");
+        Mockito.when(substation2.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation2");
+
+        return Stream.of(
+            // --- IN --- //
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameHVDC", List.of("propertyValueHVDC"), hvdc, true),
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameHVDC", List.of("propertyValueHVDC2"), hvdc, false),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation1"), hvdc, true),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation8"), hvdc, false),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", List.of("PropertyValueSubstation2"), hvdc, true),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", List.of("propertyValueSubstation1"), hvdc, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), hvdc, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), hvdc, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("42"), hvdc, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("21"), hvdc, false)
         );
     }
 
