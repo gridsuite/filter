@@ -30,6 +30,7 @@ public enum FieldType {
     FORCED_OUTAGE_RATE,
     P0,
     Q0,
+    P_ABSOLUTE,
     LOW_VOLTAGE_LIMIT,
     HIGH_VOLTAGE_LIMIT,
     SECTION_COUNT,

@@ -180,7 +180,8 @@ public final class ExpertFilterUtils {
             case COUNTRY,
                 NOMINAL_VOLTAGE,
                 VOLTAGE_LEVEL_ID -> getVoltageLevelFieldValue(field, null, generator.getTerminal().getVoltageLevel());
-            case CONNECTED -> getTerminalFieldValue(field, generator.getTerminal());
+            case CONNECTED,
+                 P_ABSOLUTE-> getTerminalFieldValue(field, generator.getTerminal());
             case SUBSTATION_PROPERTIES -> generator.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             case VOLTAGE_LEVEL_PROPERTIES -> generator.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + generator.getType() + "]");
@@ -236,6 +237,7 @@ public final class ExpertFilterUtils {
             case REGULATING_TERMINAL_CONNECTABLE_ID ->
                     terminal.getConnectable() != null ?
                     terminal.getConnectable().getId() : null;
+            case P_ABSOLUTE -> String.valueOf(Math.abs(terminal.getP()));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",terminal]");
         };
     }
