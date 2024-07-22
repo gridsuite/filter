@@ -107,12 +107,8 @@ class NumberExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
-<<<<<<< HEAD
         "provideArgumentsForThreeWindingTransformerTest",
-||||||| constructed merge base
-=======
         "provideArgumentsForHvdcLinesTest",
->>>>>>> add hvdc category for expert filters (#41)
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
         NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
