@@ -295,8 +295,13 @@ public final class ExpertFilterUtils {
             return null;
         }
         return switch (field) {
-            case RATIO_TARGET_V, RATIO_TARGET_V1, RATIO_TARGET_V2, RATIO_TARGET_V3 -> String.valueOf(ratioTapChanger.getTargetV());
-            case LOAD_TAP_CHANGING_CAPABILITIES, LOAD_TAP_CHANGING_CAPABILITIES_1, LOAD_TAP_CHANGING_CAPABILITIES_2,
+            case RATIO_TARGET_V,
+                 RATIO_TARGET_V1,
+                 RATIO_TARGET_V2,
+                 RATIO_TARGET_V3 -> String.valueOf(ratioTapChanger.getTargetV());
+            case LOAD_TAP_CHANGING_CAPABILITIES,
+                 LOAD_TAP_CHANGING_CAPABILITIES_1,
+                 LOAD_TAP_CHANGING_CAPABILITIES_2,
                  LOAD_TAP_CHANGING_CAPABILITIES_3 -> String.valueOf(ratioTapChanger.hasLoadTapChangingCapabilities());
             case RATIO_REGULATION_MODE, RATIO_REGULATION_MODE_1, RATIO_REGULATION_MODE_2, RATIO_REGULATION_MODE_3
                 -> String.valueOf(getRatioRegulationMode(ratioTapChanger));
@@ -323,7 +328,10 @@ public final class ExpertFilterUtils {
             return null;
         }
         return switch (field) {
-            case PHASE_REGULATION_VALUE, PHASE_REGULATION_VALUE_1, PHASE_REGULATION_VALUE_2, PHASE_REGULATION_VALUE_3 -> String.valueOf(phaseTapChanger.getRegulationValue());
+            case PHASE_REGULATION_VALUE,
+                 PHASE_REGULATION_VALUE_1,
+                 PHASE_REGULATION_VALUE_2,
+                 PHASE_REGULATION_VALUE_3 -> String.valueOf(phaseTapChanger.getRegulationValue());
             case PHASE_REGULATION_MODE, PHASE_REGULATION_MODE_1, PHASE_REGULATION_MODE_2, PHASE_REGULATION_MODE_3 -> String.valueOf(getPhaseRegulationMode(phaseTapChanger));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",phaseTapChanger]");
         };
@@ -364,21 +372,60 @@ public final class ExpertFilterUtils {
         return switch (field) {
             case COUNTRY -> threeWindingsTransformer.getSubstation().flatMap(Substation::getCountry).map(String::valueOf).orElse(null);
             case RATED_VOLTAGE_0 -> String.valueOf(threeWindingsTransformer.getRatedU0());
-            case CONNECTED_1, NOMINAL_VOLTAGE_1, RATED_VOLTAGE_1, VOLTAGE_LEVEL_ID_1, RATED_S1, SERIE_RESISTANCE_1,
-                 SERIE_REACTANCE_1, MAGNETIZING_CONDUCTANCE_1, MAGNETIZING_SUSCEPTANCE_1, HAS_RATIO_TAP_CHANGER_1,
-                 RATIO_TARGET_V1, LOAD_TAP_CHANGING_CAPABILITIES_1, RATIO_REGULATION_MODE_1, HAS_PHASE_TAP_CHANGER_1,
-                 PHASE_REGULATION_MODE_1, PHASE_REGULATION_VALUE_1, SUBSTATION_PROPERTIES_1, VOLTAGE_LEVEL_PROPERTIES_1
-                -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg1());
-            case CONNECTED_2, NOMINAL_VOLTAGE_2, RATED_VOLTAGE_2, VOLTAGE_LEVEL_ID_2, RATED_S2, SERIE_RESISTANCE_2,
-                 SERIE_REACTANCE_2, MAGNETIZING_CONDUCTANCE_2, MAGNETIZING_SUSCEPTANCE_2, HAS_RATIO_TAP_CHANGER_2,
-                 RATIO_TARGET_V2, LOAD_TAP_CHANGING_CAPABILITIES_2, RATIO_REGULATION_MODE_2, HAS_PHASE_TAP_CHANGER_2,
-                 PHASE_REGULATION_MODE_2, PHASE_REGULATION_VALUE_2, SUBSTATION_PROPERTIES_2, VOLTAGE_LEVEL_PROPERTIES_2
-                -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg2());
-            case CONNECTED_3, NOMINAL_VOLTAGE_3, RATED_VOLTAGE_3, VOLTAGE_LEVEL_ID_3, RATED_S3, SERIE_RESISTANCE_3,
-                 SERIE_REACTANCE_3, MAGNETIZING_CONDUCTANCE_3, MAGNETIZING_SUSCEPTANCE_3, HAS_RATIO_TAP_CHANGER_3,
-                 RATIO_TARGET_V3, LOAD_TAP_CHANGING_CAPABILITIES_3, RATIO_REGULATION_MODE_3, HAS_PHASE_TAP_CHANGER_3,
-                 PHASE_REGULATION_MODE_3, PHASE_REGULATION_VALUE_3, SUBSTATION_PROPERTIES_3, VOLTAGE_LEVEL_PROPERTIES_3
-                -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg3());
+            case CONNECTED_1,
+                 NOMINAL_VOLTAGE_1,
+                 RATED_VOLTAGE_1,
+                 VOLTAGE_LEVEL_ID_1,
+                 RATED_S1,
+                 SERIE_RESISTANCE_1,
+                 SERIE_REACTANCE_1,
+                 MAGNETIZING_CONDUCTANCE_1,
+                 MAGNETIZING_SUSCEPTANCE_1,
+                 HAS_RATIO_TAP_CHANGER_1,
+                 RATIO_TARGET_V1,
+                 LOAD_TAP_CHANGING_CAPABILITIES_1,
+                 RATIO_REGULATION_MODE_1,
+                 HAS_PHASE_TAP_CHANGER_1,
+                 PHASE_REGULATION_MODE_1,
+                 PHASE_REGULATION_VALUE_1,
+                 SUBSTATION_PROPERTIES_1,
+                 VOLTAGE_LEVEL_PROPERTIES_1 -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg1());
+            case CONNECTED_2,
+                 NOMINAL_VOLTAGE_2,
+                 RATED_VOLTAGE_2,
+                 VOLTAGE_LEVEL_ID_2,
+                 RATED_S2,
+                 SERIE_RESISTANCE_2,
+                 SERIE_REACTANCE_2,
+                 MAGNETIZING_CONDUCTANCE_2,
+                 MAGNETIZING_SUSCEPTANCE_2,
+                 HAS_RATIO_TAP_CHANGER_2,
+                 RATIO_TARGET_V2,
+                 LOAD_TAP_CHANGING_CAPABILITIES_2,
+                 RATIO_REGULATION_MODE_2,
+                 HAS_PHASE_TAP_CHANGER_2,
+                 PHASE_REGULATION_MODE_2,
+                 PHASE_REGULATION_VALUE_2,
+                 SUBSTATION_PROPERTIES_2,
+                 VOLTAGE_LEVEL_PROPERTIES_2 -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg2());
+            case CONNECTED_3,
+                 NOMINAL_VOLTAGE_3,
+                 RATED_VOLTAGE_3,
+                 VOLTAGE_LEVEL_ID_3,
+                 RATED_S3,
+                 SERIE_RESISTANCE_3,
+                 SERIE_REACTANCE_3,
+                 MAGNETIZING_CONDUCTANCE_3,
+                 MAGNETIZING_SUSCEPTANCE_3,
+                 HAS_RATIO_TAP_CHANGER_3,
+                 RATIO_TARGET_V3,
+                 LOAD_TAP_CHANGING_CAPABILITIES_3,
+                 RATIO_REGULATION_MODE_3,
+                 HAS_PHASE_TAP_CHANGER_3,
+                 PHASE_REGULATION_MODE_3,
+                 PHASE_REGULATION_VALUE_3,
+                 SUBSTATION_PROPERTIES_3,
+                 VOLTAGE_LEVEL_PROPERTIES_3 -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg3());
             default ->
                 throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + threeWindingsTransformer.getType() + "]");
         };
@@ -386,29 +433,60 @@ public final class ExpertFilterUtils {
 
     private static String getTwtLegFieldValue(FieldType field, String propertyName, ThreeWindingsTransformer.Leg leg) {
         return switch (field) {
-            case CONNECTED_1, CONNECTED_2, CONNECTED_3 -> String.valueOf(leg.getTerminal().isConnected());
-            case NOMINAL_VOLTAGE_1, NOMINAL_VOLTAGE_2, NOMINAL_VOLTAGE_3 -> String.valueOf(leg.getTerminal().getVoltageLevel().getNominalV());
-            case RATED_VOLTAGE_1, RATED_VOLTAGE_2, RATED_VOLTAGE_3 -> String.valueOf(leg.getRatedU());
-            case VOLTAGE_LEVEL_ID_1, VOLTAGE_LEVEL_ID_2, VOLTAGE_LEVEL_ID_3 -> String.valueOf(leg.getTerminal().getVoltageLevel().getId());
-            case RATED_S1, RATED_S2, RATED_S3 -> String.valueOf(leg.getRatedS());
-            case SERIE_RESISTANCE_1, SERIE_RESISTANCE_2, SERIE_RESISTANCE_3 -> String.valueOf(leg.getR());
-            case SERIE_REACTANCE_1, SERIE_REACTANCE_2, SERIE_REACTANCE_3 -> String.valueOf(leg.getX());
-            case MAGNETIZING_CONDUCTANCE_1, MAGNETIZING_CONDUCTANCE_2, MAGNETIZING_CONDUCTANCE_3 -> String.valueOf(leg.getG());
-            case MAGNETIZING_SUSCEPTANCE_1, MAGNETIZING_SUSCEPTANCE_2, MAGNETIZING_SUSCEPTANCE_3 -> String.valueOf(leg.getB());
-            case HAS_RATIO_TAP_CHANGER_1, HAS_RATIO_TAP_CHANGER_2, HAS_RATIO_TAP_CHANGER_3 -> String.valueOf(leg.hasRatioTapChanger());
-            case RATIO_TARGET_V1, LOAD_TAP_CHANGING_CAPABILITIES_1,
-                 RATIO_REGULATION_MODE_1, RATIO_TARGET_V2, LOAD_TAP_CHANGING_CAPABILITIES_2,
-                 RATIO_REGULATION_MODE_2, RATIO_TARGET_V3, LOAD_TAP_CHANGING_CAPABILITIES_3,
+            case CONNECTED_1,
+                 CONNECTED_2,
+                 CONNECTED_3 -> String.valueOf(leg.getTerminal().isConnected());
+            case NOMINAL_VOLTAGE_1,
+                 NOMINAL_VOLTAGE_2,
+                 NOMINAL_VOLTAGE_3 -> String.valueOf(leg.getTerminal().getVoltageLevel().getNominalV());
+            case RATED_VOLTAGE_1,
+                 RATED_VOLTAGE_2,
+                 RATED_VOLTAGE_3 -> String.valueOf(leg.getRatedU());
+            case VOLTAGE_LEVEL_ID_1,
+                 VOLTAGE_LEVEL_ID_2,
+                 VOLTAGE_LEVEL_ID_3 -> String.valueOf(leg.getTerminal().getVoltageLevel().getId());
+            case RATED_S1,
+                 RATED_S2,
+                 RATED_S3 -> String.valueOf(leg.getRatedS());
+            case SERIE_RESISTANCE_1,
+                 SERIE_RESISTANCE_2,
+                 SERIE_RESISTANCE_3 -> String.valueOf(leg.getR());
+            case SERIE_REACTANCE_1,
+                 SERIE_REACTANCE_2,
+                 SERIE_REACTANCE_3 -> String.valueOf(leg.getX());
+            case MAGNETIZING_CONDUCTANCE_1,
+                 MAGNETIZING_CONDUCTANCE_2,
+                 MAGNETIZING_CONDUCTANCE_3 -> String.valueOf(leg.getG());
+            case MAGNETIZING_SUSCEPTANCE_1,
+                 MAGNETIZING_SUSCEPTANCE_2,
+                 MAGNETIZING_SUSCEPTANCE_3 -> String.valueOf(leg.getB());
+            case HAS_RATIO_TAP_CHANGER_1,
+                 HAS_RATIO_TAP_CHANGER_2,
+                 HAS_RATIO_TAP_CHANGER_3 -> String.valueOf(leg.hasRatioTapChanger());
+            case RATIO_TARGET_V1,
+                 LOAD_TAP_CHANGING_CAPABILITIES_1,
+                 RATIO_REGULATION_MODE_1,
+                 RATIO_TARGET_V2,
+                 LOAD_TAP_CHANGING_CAPABILITIES_2,
+                 RATIO_REGULATION_MODE_2,
+                 RATIO_TARGET_V3,
+                 LOAD_TAP_CHANGING_CAPABILITIES_3,
                  RATIO_REGULATION_MODE_3 -> getRatioTapChangerFieldValue(field, leg.getRatioTapChanger());
-            case HAS_PHASE_TAP_CHANGER_1, HAS_PHASE_TAP_CHANGER_2, HAS_PHASE_TAP_CHANGER_3 -> String.valueOf(leg.hasPhaseTapChanger());
+            case HAS_PHASE_TAP_CHANGER_1,
+                 HAS_PHASE_TAP_CHANGER_2,
+                 HAS_PHASE_TAP_CHANGER_3 -> String.valueOf(leg.hasPhaseTapChanger());
             case PHASE_REGULATION_MODE_1,
-                 PHASE_REGULATION_VALUE_1, PHASE_REGULATION_MODE_2,
-                 PHASE_REGULATION_VALUE_2, PHASE_REGULATION_MODE_3,
+                 PHASE_REGULATION_VALUE_1,
+                 PHASE_REGULATION_MODE_2,
+                 PHASE_REGULATION_VALUE_2,
+                 PHASE_REGULATION_MODE_3,
                  PHASE_REGULATION_VALUE_3 -> getPhaseTapChangerFieldValue(field, leg.getPhaseTapChanger());
-            case SUBSTATION_PROPERTIES_1, SUBSTATION_PROPERTIES_2, SUBSTATION_PROPERTIES_3 ->
-                leg.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
-            case VOLTAGE_LEVEL_PROPERTIES_1, VOLTAGE_LEVEL_PROPERTIES_2, VOLTAGE_LEVEL_PROPERTIES_3 ->
-                leg.getTerminal().getVoltageLevel().getProperty(propertyName);
+            case SUBSTATION_PROPERTIES_1,
+                 SUBSTATION_PROPERTIES_2,
+                 SUBSTATION_PROPERTIES_3 -> leg.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES_1,
+                 VOLTAGE_LEVEL_PROPERTIES_2,
+                 VOLTAGE_LEVEL_PROPERTIES_3 -> leg.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ", THREE_WINDINGS_TRANSFORMER]");
         };
     }
