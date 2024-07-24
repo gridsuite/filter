@@ -303,8 +303,10 @@ public final class ExpertFilterUtils {
                  LOAD_TAP_CHANGING_CAPABILITIES_1,
                  LOAD_TAP_CHANGING_CAPABILITIES_2,
                  LOAD_TAP_CHANGING_CAPABILITIES_3 -> String.valueOf(ratioTapChanger.hasLoadTapChangingCapabilities());
-            case RATIO_REGULATION_MODE, RATIO_REGULATION_MODE_1, RATIO_REGULATION_MODE_2, RATIO_REGULATION_MODE_3
-                -> String.valueOf(getRatioRegulationMode(ratioTapChanger));
+            case RATIO_REGULATION_MODE,
+                 RATIO_REGULATION_MODE_1,
+                 RATIO_REGULATION_MODE_2,
+                 RATIO_REGULATION_MODE_3 -> String.valueOf(getRatioRegulationMode(ratioTapChanger));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",ratioTapChanger]");
         };
     }
@@ -332,7 +334,10 @@ public final class ExpertFilterUtils {
                  PHASE_REGULATION_VALUE_1,
                  PHASE_REGULATION_VALUE_2,
                  PHASE_REGULATION_VALUE_3 -> String.valueOf(phaseTapChanger.getRegulationValue());
-            case PHASE_REGULATION_MODE, PHASE_REGULATION_MODE_1, PHASE_REGULATION_MODE_2, PHASE_REGULATION_MODE_3 -> String.valueOf(getPhaseRegulationMode(phaseTapChanger));
+            case PHASE_REGULATION_MODE,
+                 PHASE_REGULATION_MODE_1,
+                 PHASE_REGULATION_MODE_2,
+                 PHASE_REGULATION_MODE_3 -> String.valueOf(getPhaseRegulationMode(phaseTapChanger));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",phaseTapChanger]");
         };
     }

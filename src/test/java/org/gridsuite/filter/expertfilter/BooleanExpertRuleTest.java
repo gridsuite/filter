@@ -391,13 +391,16 @@ class BooleanExpertRuleTest {
             // RatioTapChanger fields
             Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_1, true, threeWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_1, false, threeWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, true, threeWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, false, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_2, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_2, false, threeWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, true, threeWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, false, threeWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, false, threeWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, false, threeWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, false, threeWindingsTransformer, false),
 
             // PhaseTapChanger fields
             Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_1, true, threeWindingsTransformer, false),
@@ -424,8 +427,11 @@ class BooleanExpertRuleTest {
             Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, false, threeWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, true, threeWindingsTransformer, false),
             Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, false, threeWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, false, threeWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, false, threeWindingsTransformer, true),
 
             // null RatioTapChanger
             Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, false, threeWindingsTransformer2, false),
