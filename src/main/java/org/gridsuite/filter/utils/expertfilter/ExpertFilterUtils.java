@@ -543,10 +543,10 @@ public final class ExpertFilterUtils {
         return switch (field) {
             case CONNECTED -> getTerminalFieldValue(field, danglingLine.getTerminal());
             case COUNTRY,
-                     VOLTAGE_LEVEL_ID,
-                     NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, null, danglingLine.getTerminal().getVoltageLevel());       
+                    VOLTAGE_LEVEL_ID,
+                    NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, null, danglingLine.getTerminal().getVoltageLevel());
             case VOLTAGE_LEVEL_PROPERTIES,
-                     SUBSTATION_PROPERTIES  -> getVoltageLevelFieldValue(field, propertyName, danglingLine.getTerminal().getVoltageLevel());
+                    SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, danglingLine.getTerminal().getVoltageLevel());
             case P0 -> String.valueOf(danglingLine.getP0());
             case Q0 -> String.valueOf(danglingLine.getQ0());
             case SERIE_RESISTANCE -> String.valueOf(danglingLine.getR());
