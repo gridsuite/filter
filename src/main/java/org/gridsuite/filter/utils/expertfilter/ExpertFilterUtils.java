@@ -542,6 +542,11 @@ public final class ExpertFilterUtils {
     private static String getDanglingLinesFieldValue(FieldType field, String propertyName, DanglingLine danglingLine) {
         return switch (field) {
             case CONNECTED -> getTerminalFieldValue(field, danglingLine.getTerminal());
+            case COUNTRY,
+                     VOLTAGE_LEVEL_ID,
+                     NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, null, danglingLine.getTerminal().getVoltageLevel());       
+            case VOLTAGE_LEVEL_PROPERTIES,
+                     SUBSTATION_PROPERTIES  -> getVoltageLevelFieldValue(field, propertyName, danglingLine.getTerminal().getVoltageLevel());
             case P0 -> String.valueOf(danglingLine.getP0());
             case Q0 -> String.valueOf(danglingLine.getQ0());
             case SERIE_RESISTANCE -> String.valueOf(danglingLine.getR());
@@ -549,11 +554,6 @@ public final class ExpertFilterUtils {
             case SHUNT_SUSCEPTANCE -> String.valueOf(danglingLine.getB());
             case SHUNT_CONDUCTANCE -> String.valueOf(danglingLine.getG());
             case PAIRED -> String.valueOf(danglingLine.isPaired());
-            case COUNTRY,
-                 VOLTAGE_LEVEL_ID,
-                 NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, null, danglingLine.getTerminal().getVoltageLevel());
-            case VOLTAGE_LEVEL_PROPERTIES -> danglingLine.getTerminal().getVoltageLevel().getProperty(propertyName);
-            case SUBSTATION_PROPERTIES -> danglingLine.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             default ->
                 throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + danglingLine.getType() + "]");
         };
