@@ -389,7 +389,7 @@ public final class ExpertFilterUtils {
                  PHASE_REGULATION_MODE_1,
                  PHASE_REGULATION_VALUE_1,
                  SUBSTATION_PROPERTIES_1,
-                 VOLTAGE_LEVEL_PROPERTIES_1 -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg1());
+                 VOLTAGE_LEVEL_PROPERTIES_1 -> getThreeWindingsTransformerLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg1());
             case CONNECTED_2,
                  NOMINAL_VOLTAGE_2,
                  RATED_VOLTAGE_2,
@@ -407,7 +407,7 @@ public final class ExpertFilterUtils {
                  PHASE_REGULATION_MODE_2,
                  PHASE_REGULATION_VALUE_2,
                  SUBSTATION_PROPERTIES_2,
-                 VOLTAGE_LEVEL_PROPERTIES_2 -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg2());
+                 VOLTAGE_LEVEL_PROPERTIES_2 -> getThreeWindingsTransformerLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg2());
             case CONNECTED_3,
                  NOMINAL_VOLTAGE_3,
                  RATED_VOLTAGE_3,
@@ -425,13 +425,13 @@ public final class ExpertFilterUtils {
                  PHASE_REGULATION_MODE_3,
                  PHASE_REGULATION_VALUE_3,
                  SUBSTATION_PROPERTIES_3,
-                 VOLTAGE_LEVEL_PROPERTIES_3 -> getTwtLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg3());
+                 VOLTAGE_LEVEL_PROPERTIES_3 -> getThreeWindingsTransformerLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg3());
             default ->
                 throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + threeWindingsTransformer.getType() + "]");
         };
     }
 
-    private static String getTwtLegFieldValue(FieldType field, String propertyName, ThreeWindingsTransformer.Leg leg) {
+    private static String getThreeWindingsTransformerLegFieldValue(FieldType field, String propertyName, ThreeWindingsTransformer.Leg leg) {
         return switch (field) {
             case CONNECTED_1,
                  CONNECTED_2,
