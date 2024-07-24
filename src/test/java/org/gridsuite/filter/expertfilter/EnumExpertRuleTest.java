@@ -128,6 +128,7 @@ class EnumExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
@@ -622,6 +623,195 @@ class EnumExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), twoWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true)
             );
+    }
+
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTest() {
+
+        // transfo 1
+        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+
+        // Ratio Tap Changer
+        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
+        ThreeWindingsTransformer.Leg leg = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(ratioTapChanger.isRegulating()).thenReturn(true);
+        Mockito.when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
+        Mockito.when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
+        Mockito.when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
+
+        // Phase Tap Changer
+        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(leg.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        Mockito.when(phaseTapChanger.isRegulating()).thenReturn(true);
+        Mockito.when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(100.);
+
+        Mockito.when(threeWindingsTransformer.getLeg1()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getLeg2()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getLeg3()).thenReturn(leg);
+
+        Substation substation = Mockito.mock(Substation.class);
+        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Mockito.when(threeWindingsTransformer.getSubstation()).thenReturn(Optional.of(substation));
+
+        // transfo 2
+        ThreeWindingsTransformer threeWindingsTransformer2 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer2.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+
+        ThreeWindingsTransformer.Leg leg2 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg2.getRatioTapChanger()).thenReturn(null);
+        Mockito.when(leg2.getPhaseTapChanger()).thenReturn(null);
+
+        Mockito.when(threeWindingsTransformer2.getLeg1()).thenReturn(leg2);
+        Mockito.when(threeWindingsTransformer2.getLeg2()).thenReturn(leg2);
+        Mockito.when(threeWindingsTransformer2.getLeg3()).thenReturn(leg2);
+
+        // transfo 3
+        ThreeWindingsTransformer threeWindingsTransformer3 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer3.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+
+        // Ratio Tap Changer
+        RatioTapChanger ratioTapChanger3 = Mockito.mock(RatioTapChanger.class);
+        Mockito.when(ratioTapChanger3.isRegulating()).thenReturn(false);
+        Mockito.when(ratioTapChanger3.hasLoadTapChangingCapabilities()).thenReturn(true);
+        ThreeWindingsTransformer.Leg leg3 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg3.getRatioTapChanger()).thenReturn(ratioTapChanger3);
+        Mockito.when(threeWindingsTransformer3.getLeg1()).thenReturn(leg3);
+        Mockito.when(threeWindingsTransformer3.getLeg2()).thenReturn(leg3);
+        Mockito.when(threeWindingsTransformer3.getLeg3()).thenReturn(leg3);
+
+        // transfo 4
+        ThreeWindingsTransformer threeWindingsTransformer4 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer4.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        RatioTapChanger ratioTapChanger4 = Mockito.mock(RatioTapChanger.class);
+        Mockito.when(ratioTapChanger4.isRegulating()).thenReturn(true);
+        Mockito.when(ratioTapChanger4.hasLoadTapChangingCapabilities()).thenReturn(true);
+
+        ThreeWindingsTransformer.Leg leg4 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg4.getRatioTapChanger()).thenReturn(ratioTapChanger4);
+        Mockito.when(threeWindingsTransformer4.getLeg1()).thenReturn(leg4);
+        Mockito.when(threeWindingsTransformer4.getLeg2()).thenReturn(leg4);
+        Mockito.when(threeWindingsTransformer4.getLeg3()).thenReturn(leg4);
+
+        // transfo 5
+        ThreeWindingsTransformer threeWindingsTransformer5 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer5.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger5 = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger5.isRegulating()).thenReturn(false);
+        Mockito.when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.FIXED_TAP);
+
+        ThreeWindingsTransformer.Leg leg5 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg5.getPhaseTapChanger()).thenReturn(phaseTapChanger5);
+        Mockito.when(threeWindingsTransformer5.getLeg1()).thenReturn(leg5);
+        Mockito.when(threeWindingsTransformer5.getLeg2()).thenReturn(leg5);
+        Mockito.when(threeWindingsTransformer5.getLeg3()).thenReturn(leg5);
+
+        // transfo 6
+        ThreeWindingsTransformer threeWindingsTransformer6 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer6.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger6 = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger6.isRegulating()).thenReturn(false);
+        Mockito.when(phaseTapChanger6.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL);
+
+        ThreeWindingsTransformer.Leg leg6 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg6.getPhaseTapChanger()).thenReturn(phaseTapChanger6);
+        Mockito.when(threeWindingsTransformer6.getLeg1()).thenReturn(leg6);
+        Mockito.when(threeWindingsTransformer6.getLeg2()).thenReturn(leg6);
+        Mockito.when(threeWindingsTransformer6.getLeg3()).thenReturn(leg6);
+
+        // transfo 7
+        ThreeWindingsTransformer threeWindingsTransformer7 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer7.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger7 = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger7.isRegulating()).thenReturn(true);
+        Mockito.when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.FIXED_TAP);
+
+        ThreeWindingsTransformer.Leg leg7 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg7.getPhaseTapChanger()).thenReturn(phaseTapChanger7);
+        Mockito.when(threeWindingsTransformer7.getLeg1()).thenReturn(leg7);
+        Mockito.when(threeWindingsTransformer7.getLeg2()).thenReturn(leg7);
+        Mockito.when(threeWindingsTransformer7.getLeg3()).thenReturn(leg7);
+
+        return Stream.of(
+            // --- EQUALS --- //
+            Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_1, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_2, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_3, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_1, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_2, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_3, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_1, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer3, true),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_2, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer3, true),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_3, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer3, true),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_1, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer4, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_2, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer4, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_3, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer4, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_1, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer2, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_2, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer2, false),
+            Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE_3, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer2, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer2, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer2, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer2, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer5, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer5, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer5, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer6, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer6, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer6, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer7, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer7, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer7, false),
+
+            // --- NOT_EQUALS --- //
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE_1, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE_2, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE_3, RatioRegulationModeType.FIXED_RATIO.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE_1, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE_2, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE_3, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, true),
+
+            // --- IN --- //
+            Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_2, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE_1, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE_2, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE_3, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, false),
+
+            // --- NOT_IN --- //
+            Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_2, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE_1, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE_2, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE_3, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, true)
+        );
     }
 
     private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {

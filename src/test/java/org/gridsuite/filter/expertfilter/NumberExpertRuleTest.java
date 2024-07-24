@@ -70,6 +70,9 @@ class NumberExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+        ThreeWindingsTransformer threeWindingTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+
         HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
         Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
@@ -84,6 +87,7 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.P0, twoWindingTransformer, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.P0, threeWindingTransformer, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
@@ -103,6 +107,7 @@ class NumberExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
@@ -1947,6 +1952,731 @@ class NumberExpertRuleTest {
 
             // null PhaseTapChanger
             Arguments.of(EXISTS, FieldType.PHASE_REGULATION_VALUE, null, null, twoWindingsTransformer2, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTest() {
+        // transfo
+        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer.Leg leg = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg.getR()).thenReturn(0.1);
+        Mockito.when(leg.getX()).thenReturn(0.2);
+        Mockito.when(leg.getG()).thenReturn(0.3);
+        Mockito.when(leg.getB()).thenReturn(0.4);
+        Mockito.when(leg.getRatedS()).thenReturn(100.0);
+        Mockito.when(leg.getRatedU()).thenReturn(50.);
+
+        // Terminal fields
+        Terminal terminal = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(leg.getTerminal()).thenReturn(terminal);
+        // RatioTapChanger fields
+        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
+        Mockito.when(ratioTapChanger.getTargetV()).thenReturn(13.0);
+        Mockito.when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        // PhaseTapChanger fields
+        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(200.);
+        Mockito.when(leg.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+
+        Mockito.when(threeWindingsTransformer.getLeg1()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getLeg2()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getLeg3()).thenReturn(leg);
+
+        // transfo 1
+        // for testing none EXISTS
+        ThreeWindingsTransformer threeWindingsTransformer1 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer1.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer.Leg leg1 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg1.getR()).thenReturn(Double.NaN);
+        Mockito.when(leg1.getX()).thenReturn(Double.NaN);
+        Mockito.when(leg1.getG()).thenReturn(Double.NaN);
+        Mockito.when(leg1.getB()).thenReturn(Double.NaN);
+        Mockito.when(leg1.getRatedS()).thenReturn(Double.NaN);
+        Mockito.when(leg1.getRatedU()).thenReturn(Double.NaN);
+
+        // Terminal fields
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Mockito.when(leg1.getTerminal()).thenReturn(terminal1);
+
+        // RatioTapChanger fields
+        RatioTapChanger ratioTapChanger1 = Mockito.mock(RatioTapChanger.class);
+        Mockito.when(ratioTapChanger1.getTargetV()).thenReturn(Double.NaN);
+        Mockito.when(leg1.getRatioTapChanger()).thenReturn(ratioTapChanger1);
+
+        // PhaseTapChanger fields
+        PhaseTapChanger phaseTapChanger1 = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger1.getRegulationValue()).thenReturn(Double.NaN);
+        Mockito.when(leg1.getPhaseTapChanger()).thenReturn(phaseTapChanger1);
+
+        Mockito.when(threeWindingsTransformer1.getLeg1()).thenReturn(leg1);
+        Mockito.when(threeWindingsTransformer1.getLeg2()).thenReturn(leg1);
+        Mockito.when(threeWindingsTransformer1.getLeg3()).thenReturn(leg1);
+
+        // transfo 2
+        // null RatioTapChanger
+        ThreeWindingsTransformer threeWindingsTransformer2 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer2.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer.Leg leg2 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg2.getRatioTapChanger()).thenReturn(null);
+
+        // null PhaseTapChanger
+        Mockito.when(leg2.getPhaseTapChanger()).thenReturn(null);
+        Mockito.when(threeWindingsTransformer2.getLeg1()).thenReturn(leg2);
+        Mockito.when(threeWindingsTransformer2.getLeg2()).thenReturn(leg2);
+        Mockito.when(threeWindingsTransformer2.getLeg3()).thenReturn(leg2);
+
+        return Stream.of(
+            // --- EQUALS --- //
+            // Terminal fields
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_3, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_3, 12.0, null, threeWindingsTransformer, false),
+            // RatioTapChanger fields
+            Arguments.of(EQUALS, FieldType.RATIO_TARGET_V1, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATIO_TARGET_V2, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATIO_TARGET_V3, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATIO_TARGET_V1, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_TARGET_V2, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATIO_TARGET_V3, 12.0, null, threeWindingsTransformer, false),
+            // PhaseTapChanger fields
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE_1, 200., null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE_2, 200., null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE_3, 200., null, threeWindingsTransformer, true),
+
+            // reprendre ici
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE_1, 250., null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE_2, 250., null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_VALUE_3, 250., null, threeWindingsTransformer, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE_1, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE_2, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE_3, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE_1, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE_2, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE_3, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE_1, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE_2, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE_3, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE_1, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE_2, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE_3, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.5, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.5, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.5, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_S1, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATED_S2, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATED_S3, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATED_S1, 200.0, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_S2, 200.0, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_S3, 200.0, null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 300., null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_3, 300., null, threeWindingsTransformer, false),
+
+            // --- GREATER_OR_EQUALS --- //
+            // Terminal
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_3, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_3, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_3, 14.0, null, threeWindingsTransformer, false),
+            // RatioTapChanger fields
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V1, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V2, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V3, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V1, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V2, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V3, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V1, 14.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V2, 14.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATIO_TARGET_V3, 14.0, null, threeWindingsTransformer, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_1, 0.05, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_2, 0.05, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_3, 0.05, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_1, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_2, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_3, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_1, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_2, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE_3, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_1, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_2, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_3, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_1, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_2, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_3, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_1, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_2, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE_3, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.45, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.45, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.45, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S1, 50.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S2, 50.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S3, 50.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S1, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S2, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S3, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S1, 150.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S2, 150.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S3, 150.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 49., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 51., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, false),
+
+            // --- GREATER --- //
+            // Terminal
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_3, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_3, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_3, 14.0, null, threeWindingsTransformer, false),
+            // RatioTapChanger fields
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V1, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V1, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V1, 14.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V2, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V2, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V2, 14.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V3, 12.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V3, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATIO_TARGET_V3, 14.0, null, threeWindingsTransformer, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_1, 0.05, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_1, 0.1, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_1, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_2, 0.05, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_2, 0.1, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_2, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_3, 0.05, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_3, 0.1, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE_3, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_1, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_1, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_1, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_2, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_2, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_2, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_3, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_3, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE_3, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.45, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.45, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.45, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_S1, 50.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATED_S1, 100.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_S1, 150.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_S2, 50.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATED_S2, 100.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_S2, 150.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_S3, 50.0, null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATED_S3, 100.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_S3, 150.0, null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 49., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 50., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 51., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 49., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 50., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 51., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, true),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, false),
+
+            // --- LOWER_OR_EQUALS --- //
+            // Terminal
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_3, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_3, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_3, 12.0, null, threeWindingsTransformer, false),
+            // RatioTapChanger fields
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V1, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V1, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V1, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V2, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V2, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V2, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V3, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V3, 13.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATIO_TARGET_V3, 12.0, null, threeWindingsTransformer, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_1, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_1, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_1, 0.05, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_2, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_2, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_2, 0.05, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_3, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_3, 0.1, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE_3, 0.05, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_1, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_1, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_1, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_2, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_2, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_2, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_3, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_3, 0.2, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE_3, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.3, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.45, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.45, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.45, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.4, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S1, 150.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S1, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S1, 50.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S2, 150.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S2, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S2, 50.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S3, 150.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S3, 100.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S3, 50.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 51., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 49., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, false),
+
+            // --- LOWER --- //
+            // Terminal
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_2, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_3, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_3, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_3, 12.0, null, threeWindingsTransformer, false),
+            // RatioTapChanger fields
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V1, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V1, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V1, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V2, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V2, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V2, 12.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V3, 14.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V3, 13.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATIO_TARGET_V3, 12.0, null, threeWindingsTransformer, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_1, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_1, 0.1, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_1, 0.05, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_2, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_2, 0.1, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_2, 0.05, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_3, 0.15, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_3, 0.1, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE_3, 0.05, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_1, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_1, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_1, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_2, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_2, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_2, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_3, 0.25, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_3, 0.2, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE_3, 0.15, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_1, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_2, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.35, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.3, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_CONDUCTANCE_3, 0.25, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.45, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_1, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.45, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_2, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.45, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.4, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.MAGNETIZING_SUSCEPTANCE_3, 0.35, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_S1, 150.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATED_S1, 100.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_S1, 50.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_S2, 150.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATED_S2, 100.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_S2, 50.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_S3, 150.0, null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATED_S3, 100.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_S3, 50.0, null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 51., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 50., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 49., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 51., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 50., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 49., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, true),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, false),
+
+            // --- BETWEEN --- //
+            // Terminal
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
+            // RatioTapChanger fields
+            Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V1, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V2, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V3, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.45, 0.55), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.45, 0.55), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.45, 0.55), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_S1, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATED_S1, null, Set.of(150.0, 250.0), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_S2, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATED_S2, null, Set.of(150.0, 250.0), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_S3, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATED_S3, null, Set.of(150.0, 250.0), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(48., 52.), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(55., 70.), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(48., 52.), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(55., 70.), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, Set.of(48., 52.), threeWindingsTransformer, true),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, Set.of(55., 70.), threeWindingsTransformer, false),
+
+            // --- EXISTS --- //
+            // Terminal
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_3, null, null, threeWindingsTransformer1, false),
+            // RatioTapChanger fields
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V3, null, null, threeWindingsTransformer1, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE_1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE_1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE_2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE_2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE_3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE_3, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE_1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE_1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE_2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE_2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE_3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE_3, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_3, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_S1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATED_S1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_S2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATED_S2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_S3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATED_S3, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer1, false),
+
+            // --- NOT_EXISTS --- //
+            // Terminal
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_3, null, null, threeWindingsTransformer1, true),
+            // RatioTapChanger fields
+            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATIO_TARGET_V3, null, null, threeWindingsTransformer1, true),
+            // TwoWindingsTransformer fields
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE_1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE_1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE_2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE_2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE_3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE_3, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE_1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE_1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE_2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE_2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE_3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE_3, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_CONDUCTANCE_3, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_S1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_S1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_S2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_S2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_S3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_S3, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer1, true),
+
+            // --- IN --- //
+            // Terminal
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
+            // RatioTapChanger fields
+            Arguments.of(IN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.15), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.15), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.15), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_S1, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATED_S1, null, Set.of(50.0, 150.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_S2, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATED_S2, null, Set.of(50.0, 150.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_S3, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATED_S3, null, Set.of(50.0, 150.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 51.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49.0, 51.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49.0, 51.0), threeWindingsTransformer, false),
+
+            // --- NOT_IN --- //
+            // Terminal
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+            // RatioTapChanger fields
+            Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+            // TwoWindingsTransformer fields
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATED_S1, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATED_S1, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATED_S2, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATED_S2, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATED_S3, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATED_S3, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 51.), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 50., 51.), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49., 51.), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49., 50., 51.), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49., 51.), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49., 50., 51.), threeWindingsTransformer, false),
+
+            // null RatioTapChanger
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V1, null, null, threeWindingsTransformer2, false),
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V2, null, null, threeWindingsTransformer2, false),
+            Arguments.of(EXISTS, FieldType.RATIO_TARGET_V3, null, null, threeWindingsTransformer2, false),
+
+            // null PhaseTapChanger
+            Arguments.of(EXISTS, FieldType.PHASE_REGULATION_VALUE_1, null, null, threeWindingsTransformer2, false),
+            Arguments.of(EXISTS, FieldType.PHASE_REGULATION_VALUE_2, null, null, threeWindingsTransformer2, false),
+            Arguments.of(EXISTS, FieldType.PHASE_REGULATION_VALUE_3, null, null, threeWindingsTransformer2, false)
         );
     }
 

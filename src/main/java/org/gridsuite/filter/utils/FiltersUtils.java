@@ -353,7 +353,7 @@ public final class FiltersUtils {
         }
     }
 
-    private static List<Identifiable<?>> get3WTransformerList(Network network, AbstractFilter filter) {
+    private static List<Identifiable<?>> get3WTransformerList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
         if (filter instanceof CriteriaFilter criteriaFilter) {
             ThreeWindingsTransformerFilter threeWindingsTransformerFilter = (ThreeWindingsTransformerFilter) criteriaFilter.getEquipmentFilterForm();
             Stream<ThreeWindingsTransformer> stream = network.getThreeWindingsTransformerStream()
@@ -374,6 +374,12 @@ public final class FiltersUtils {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             Stream<ThreeWindingsTransformer> stream = network.getThreeWindingsTransformerStream()
                 .filter(threeWindingsTransformer -> equipmentIds.contains(threeWindingsTransformer.getId()));
+            return new ArrayList<>(stream.toList());
+        } else if (filter instanceof ExpertFilter expertFilter) {
+            var rule = expertFilter.getRules();
+            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
+            Stream<ThreeWindingsTransformer> stream = network.getThreeWindingsTransformerStream()
+                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
             return new ArrayList<>(stream.toList());
         } else {
             return List.of();
@@ -408,7 +414,7 @@ public final class FiltersUtils {
         }
     }
 
-    private static List<Identifiable<?>> getVoltageLevelList(Network network, AbstractFilter filter, FilterLoader filterloader) {
+    private static List<Identifiable<?>> getVoltageLevelList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
         if (filter instanceof CriteriaFilter criteriaFilter) {
             VoltageLevelFilter voltageLevelFilter = (VoltageLevelFilter) criteriaFilter.getEquipmentFilterForm();
             Stream<VoltageLevel> stream = network.getVoltageLevelStream()
@@ -428,7 +434,7 @@ public final class FiltersUtils {
             var rule = expertFilter.getRules();
             Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
             Stream<VoltageLevel> stream = network.getVoltageLevelStream()
-                .filter(ident -> rule.evaluateRule(ident, filterloader, cachedUuidFilters));
+                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
             return new ArrayList<>(stream.toList());
         } else {
             return List.of();
@@ -473,7 +479,7 @@ public final class FiltersUtils {
             case DANGLING_LINE -> getDanglingLineList(network, filter, filterLoader);
             case LINE -> getLineList(network, filter, filterLoader);
             case TWO_WINDINGS_TRANSFORMER -> get2WTransformerList(network, filter, filterLoader);
-            case THREE_WINDINGS_TRANSFORMER -> get3WTransformerList(network, filter);
+            case THREE_WINDINGS_TRANSFORMER -> get3WTransformerList(network, filter, filterLoader);
             case BUS -> getBusList(network, filter, filterLoader);
             case BUSBAR_SECTION -> getBusbarSectionList(network, filter, filterLoader);
             case VOLTAGE_LEVEL -> getVoltageLevelList(network, filter, filterLoader);

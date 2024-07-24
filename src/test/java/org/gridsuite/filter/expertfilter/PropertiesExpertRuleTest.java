@@ -77,6 +77,9 @@ class PropertiesExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+
         HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
         Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
@@ -89,6 +92,8 @@ class PropertiesExpertRuleTest {
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, line, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, battery, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, svar, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_3, twoWindingsTransformer, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, threeWindingsTransformer, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, hvdcLine, "region", List.of("east"), PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
@@ -106,6 +111,7 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForShuntCompensatorTest",
         "provideArgumentsForLineTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
@@ -316,6 +322,69 @@ class PropertiesExpertRuleTest {
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), svar, false),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), svar, true),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), svar, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTest() {
+
+        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        Mockito.when(threeWindingsTransformer.getProperty("propertyNameTWT")).thenReturn("PropertyValueTWT");
+
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        ThreeWindingsTransformer.Leg leg1 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(threeWindingsTransformer.getLeg1()).thenReturn(leg1);
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel1.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(voltageLevel1.getProperty("CodeOI")).thenReturn("22");
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+
+        Terminal terminal2 = Mockito.mock(Terminal.class);
+        ThreeWindingsTransformer.Leg leg2 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg2.getTerminal()).thenReturn(terminal2);
+        Mockito.when(threeWindingsTransformer.getLeg2()).thenReturn(leg2);
+        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel2.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(voltageLevel2.getProperty("CodeOI")).thenReturn("33");
+        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+
+        Terminal terminal3 = Mockito.mock(Terminal.class);
+        ThreeWindingsTransformer.Leg leg3 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg3.getTerminal()).thenReturn(terminal3);
+        Mockito.when(threeWindingsTransformer.getLeg3()).thenReturn(leg3);
+        VoltageLevel voltageLevel3 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel3.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(voltageLevel3.getProperty("CodeOI")).thenReturn("44");
+        Mockito.when(terminal3.getVoltageLevel()).thenReturn(voltageLevel3);
+
+        Substation substation1 = Mockito.mock(Substation.class);
+        Substation substation2 = Mockito.mock(Substation.class);
+        Substation substation3 = Mockito.mock(Substation.class);
+        Mockito.when(voltageLevel1.getNullableSubstation()).thenReturn(substation1);
+        Mockito.when(voltageLevel2.getNullableSubstation()).thenReturn(substation2);
+        Mockito.when(voltageLevel3.getNullableSubstation()).thenReturn(substation3);
+        Mockito.when(substation1.getProperty("regionCSV")).thenReturn("LILLE");
+        Mockito.when(substation2.getProperty("regionCSV")).thenReturn("PARIS");
+        Mockito.when(substation3.getProperty("regionCSV")).thenReturn("MARSEILLE");
+
+        return Stream.of(
+            // --- IN --- //
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT2"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT3"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("Lille"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("Paris"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("Paris"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("Lille"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_3, "regionCSV", List.of("Marseille"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_3, "regionCSV", List.of("Lille"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("44"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("22"), threeWindingsTransformer, false)
         );
     }
 
