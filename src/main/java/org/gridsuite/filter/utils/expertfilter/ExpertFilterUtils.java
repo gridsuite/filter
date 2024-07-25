@@ -51,6 +51,7 @@ public final class ExpertFilterUtils {
                 case SUBSTATION -> getSubstationFieldValue(field, (Substation) identifiable);
                 case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, propertyName, (TwoWindingsTransformer) identifiable);
                 case STATIC_VAR_COMPENSATOR -> getStaticVarCompensatorFieldValue(field, propertyName, (StaticVarCompensator) identifiable);
+                case DANGLING_LINE -> getDanglingLinesFieldValue(field, propertyName, (DanglingLine) identifiable);
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
                 case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
@@ -535,6 +536,26 @@ public final class ExpertFilterUtils {
             case VOLTAGE_SET_POINT -> String.valueOf(svar.getVoltageSetpoint());
             case REACTIVE_POWER_SET_POINT -> String.valueOf(svar.getReactivePowerSetpoint());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + svar.getType() + "]");
+        };
+    }
+
+    private static String getDanglingLinesFieldValue(FieldType field, String propertyName, DanglingLine danglingLine) {
+        return switch (field) {
+            case CONNECTED -> getTerminalFieldValue(field, danglingLine.getTerminal());
+            case COUNTRY,
+                    VOLTAGE_LEVEL_ID,
+                    NOMINAL_VOLTAGE -> getVoltageLevelFieldValue(field, null, danglingLine.getTerminal().getVoltageLevel());
+            case VOLTAGE_LEVEL_PROPERTIES,
+                    SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, danglingLine.getTerminal().getVoltageLevel());
+            case P0 -> String.valueOf(danglingLine.getP0());
+            case Q0 -> String.valueOf(danglingLine.getQ0());
+            case SERIE_RESISTANCE -> String.valueOf(danglingLine.getR());
+            case SERIE_REACTANCE -> String.valueOf(danglingLine.getX());
+            case SHUNT_SUSCEPTANCE -> String.valueOf(danglingLine.getB());
+            case SHUNT_CONDUCTANCE -> String.valueOf(danglingLine.getG());
+            case PAIRED -> String.valueOf(danglingLine.isPaired());
+            default ->
+                throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + danglingLine.getType() + "]");
         };
     }
 

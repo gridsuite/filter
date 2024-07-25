@@ -128,6 +128,7 @@ class EnumExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForDanglingLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
     })
@@ -413,6 +414,42 @@ class EnumExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), battery, true),
                 Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), battery, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
+
+        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
+        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        // VoltageLevel fields
+        Substation substation = Mockito.mock(Substation.class);
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+
+        return Stream.of(
+            // --- EQUALS --- //
+            // VoltageLevel fields
+            Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, danglingLine, true),
+            Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, danglingLine, false),
+
+            // --- NOT_EQUALS --- //
+            // VoltageLevel fields
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, danglingLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, danglingLine, false),
+
+            // --- IN --- //
+            // VoltageLevel fields
+            Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), danglingLine, true),
+            Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), danglingLine, false),
+
+            // --- NOT_IN --- //
+            // VoltageLevel fields
+            Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), danglingLine, false)
         );
     }
 
