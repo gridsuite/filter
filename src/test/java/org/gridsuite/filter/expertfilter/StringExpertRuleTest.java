@@ -1208,6 +1208,11 @@ class StringExpertRuleTest {
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
         Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+        Mockito.when(danglingLine.getPairingKey()).thenReturn("pairingKey");
+
+        TieLine tieLine = Mockito.mock(TieLine.class);
+        Mockito.when(tieLine.getId()).thenReturn("tieLineId");
+        Mockito.when(danglingLine.getTieLine()).thenReturn(Optional.of(tieLine));
 
         // for testing none EXISTS
         DanglingLine danglingLine1 = Mockito.mock(DanglingLine.class);
@@ -1230,6 +1235,12 @@ class StringExpertRuleTest {
             Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, danglingLine, true),
             Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, danglingLine, false),
 
+            // Tie Lines
+            Arguments.of(IS, FieldType.PAIRING_KEY, "pairingKey1", null, danglingLine, false),
+            Arguments.of(IS, FieldType.PAIRING_KEY, "pairingKey", null, danglingLine, true),
+            Arguments.of(IS, FieldType.TIE_LINE_ID, "tieLineId1", null, danglingLine, false),
+            Arguments.of(IS, FieldType.TIE_LINE_ID, "tieLineId", null, danglingLine, true),
+
             // --- CONTAINS --- //
             // Common fields
             Arguments.of(CONTAINS, FieldType.ID, "i", null, danglingLine, true),
@@ -1240,6 +1251,12 @@ class StringExpertRuleTest {
             Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, danglingLine, true),
             Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, danglingLine, false),
 
+            // Tie Lines
+            Arguments.of(CONTAINS, FieldType.PAIRING_KEY, "K", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.PAIRING_KEY, "O", null, danglingLine, false),
+            Arguments.of(CONTAINS, FieldType.TIE_LINE_ID, "L", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.TIE_LINE_ID, "O", null, danglingLine, false),
+
             // --- BEGINS_WITH --- //
             // Common fields
             Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, danglingLine, true),
@@ -1249,6 +1266,11 @@ class StringExpertRuleTest {
             // VoltageLevel fields
             Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, danglingLine, true),
             Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, danglingLine, false),
+            // Tie Lines
+            Arguments.of(BEGINS_WITH, FieldType.PAIRING_KEY, "p", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.PAIRING_KEY, "a", null, danglingLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.TIE_LINE_ID, "t", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.TIE_LINE_ID, "e", null, danglingLine, false),
 
             // --- ENDS_WITH --- //
             // Common fields
@@ -1259,6 +1281,11 @@ class StringExpertRuleTest {
             // VoltageLevel fields
             Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, danglingLine, true),
             Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, danglingLine, false),
+            // Tie Lines
+            Arguments.of(ENDS_WITH, FieldType.PAIRING_KEY, "y", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.PAIRING_KEY, "a", null, danglingLine, false),
+            Arguments.of(ENDS_WITH, FieldType.TIE_LINE_ID, "d", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.TIE_LINE_ID, "z", null, danglingLine, false),
 
             // --- EXISTS --- //
             // Common fields
@@ -1269,6 +1296,11 @@ class StringExpertRuleTest {
             // VoltageLevel fields
             Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine, true),
             Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine1, false),
+            // Tie Lines
+            Arguments.of(EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine1, false),
 
             // --- NOT_EXISTS --- //
             // Common fields
@@ -1279,6 +1311,11 @@ class StringExpertRuleTest {
             // VoltageLevel fields
             Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine, false),
             Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine1, true),
+            // Tie Lines
+            Arguments.of(NOT_EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine1, true),
 
             // --- IN --- //
             // Common fields
@@ -1289,6 +1326,11 @@ class StringExpertRuleTest {
             // VoltageLevel fields
             Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, true),
             Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), danglingLine, false),
+            // Tie Lines
+            Arguments.of(IN, FieldType.PAIRING_KEY, null, Set.of("pairingKey", "VL_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.PAIRING_KEY, null, Set.of("test", "VL_2"), danglingLine, false),
+            Arguments.of(IN, FieldType.TIE_LINE_ID, null, Set.of("tieLineId", "VL_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.TIE_LINE_ID, null, Set.of("test", "VL_2"), danglingLine, false),
 
             // --- NOT_IN --- //
             // Common fields
@@ -1298,7 +1340,12 @@ class StringExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), danglingLine, false),
             // VoltageLevel fields
             Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, false)
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, false),
+            // Tie Lines
+            Arguments.of(NOT_IN, FieldType.PAIRING_KEY, null, Set.of("pairingKey", "VL_2"), danglingLine, false),
+            Arguments.of(NOT_IN, FieldType.PAIRING_KEY, null, Set.of("test", "VL_2"), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.TIE_LINE_ID, null, Set.of("tieLineId", "VL_2"), danglingLine, false),
+            Arguments.of(NOT_IN, FieldType.TIE_LINE_ID, null, Set.of("test", "VL_2"), danglingLine, true)
 
         );
     }
