@@ -555,7 +555,7 @@ public final class ExpertFilterUtils {
             case SHUNT_CONDUCTANCE -> String.valueOf(danglingLine.getG());
             case PAIRED -> String.valueOf(danglingLine.isPaired());
             case PAIRING_KEY -> danglingLine.getPairingKey();
-            case TIE_LINE_ID -> danglingLine.getTieLine().isPresent() ? danglingLine.getTieLine().get().getId() : "";
+            case TIE_LINE_ID -> danglingLine.getTieLine().map(TieLine::getId).orElse(null);
             default ->
                 throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + danglingLine.getType() + "]");
         };
