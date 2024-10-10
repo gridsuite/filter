@@ -6,22 +6,20 @@
  */
 package org.gridsuite.filter.utils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-
+import lombok.Builder;
+import lombok.Getter;
+import lombok.With;
 import org.hamcrest.Description;
 import org.hamcrest.StringDescription;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.text.MatchesPattern;
-
-import lombok.Builder;
-import lombok.Getter;
-import lombok.With;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -87,7 +85,7 @@ class FieldsMatcherMetaTest {
     @Builder
     @Getter
     @With
-    static class Deeper {
+    private static class Deeper {
         private final boolean up;
         private final Float f;
     }
@@ -95,7 +93,7 @@ class FieldsMatcherMetaTest {
     @Builder
     @Getter
     @With
-    static class Deep {
+    private static class Deep {
         private final Set<String> countries;
 
         private final Map<String, Set<Deeper>> deepers;
@@ -104,7 +102,7 @@ class FieldsMatcherMetaTest {
     @Builder
     @Getter
     @With
-    static class Top {
+    private static class Top {
         private String str;
         private int i;
         private byte[] bytes;

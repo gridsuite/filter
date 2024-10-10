@@ -28,7 +28,7 @@ class CombinatorExpertRuleTest {
     private FilterLoader filterLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         filterLoader = uuids -> null;
     }
 

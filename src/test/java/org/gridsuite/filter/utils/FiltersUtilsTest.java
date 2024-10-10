@@ -4,36 +4,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.gridsuite.filter;
+package org.gridsuite.filter.utils;
 
-import com.powsybl.iidm.network.HvdcLine;
-import com.powsybl.iidm.network.Identifiable;
-import com.powsybl.iidm.network.IdentifiableType;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.ThreeWindingsTransformer;
-import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
-import com.powsybl.iidm.network.test.HvdcTestNetwork;
-import com.powsybl.iidm.network.test.ShuntTestCaseFactory;
-import com.powsybl.iidm.network.test.SvcTestCaseFactory;
-import com.powsybl.iidm.network.test.ThreeWindingsTransformerNetworkFactory;
+import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.test.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.gridsuite.filter.criteriafilter.BatteryFilter;
-import org.gridsuite.filter.criteriafilter.BusBarSectionFilter;
-import org.gridsuite.filter.criteriafilter.CriteriaFilter;
+import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.criteriafilter.DanglingLineFilter;
-import org.gridsuite.filter.criteriafilter.GeneratorFilter;
-import org.gridsuite.filter.criteriafilter.HvdcLineFilter;
-import org.gridsuite.filter.criteriafilter.LccConverterStationFilter;
-import org.gridsuite.filter.criteriafilter.LineFilter;
-import org.gridsuite.filter.criteriafilter.LoadFilter;
-import org.gridsuite.filter.criteriafilter.NumericalFilter;
-import org.gridsuite.filter.criteriafilter.ShuntCompensatorFilter;
-import org.gridsuite.filter.criteriafilter.StaticVarCompensatorFilter;
-import org.gridsuite.filter.criteriafilter.SubstationFilter;
-import org.gridsuite.filter.criteriafilter.ThreeWindingsTransformerFilter;
-import org.gridsuite.filter.criteriafilter.TwoWindingsTransformerFilter;
-import org.gridsuite.filter.criteriafilter.VoltageLevelFilter;
-import org.gridsuite.filter.criteriafilter.VscConverterStationFilter;
+import org.gridsuite.filter.criteriafilter.*;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.StringExpertRule;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
@@ -41,23 +19,13 @@ import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
 import org.gridsuite.filter.scriptfilter.ScriptFilter;
-import org.gridsuite.filter.utils.EquipmentType;
-import org.gridsuite.filter.utils.FilterServiceUtils;
-import org.gridsuite.filter.utils.FilterType;
-import org.gridsuite.filter.utils.FiltersUtils;
-import org.gridsuite.filter.utils.RangeType;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,7 +42,7 @@ class FiltersUtilsTest {
     private FilterLoader filterLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         network = EurostagTutorialExample1Factory.createWithMoreGenerators();
         network.getSubstation("P1").setProperty("region", "north");
         network.getSubstation("P2").setProperty("region", "south");

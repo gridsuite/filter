@@ -24,7 +24,7 @@ class PropertiesExpertRuleTest {
     private FilterLoader filterLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         filterLoader = uuids -> null;
     }
 
@@ -32,7 +32,7 @@ class PropertiesExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String propertyName, List<String> propertyValues, Class expectedException) {
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String propertyName, List<String> propertyValues, Class<Throwable> expectedException) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }

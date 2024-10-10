@@ -24,7 +24,7 @@ class BooleanExpertRuleTest {
     private FilterLoader filterLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         filterLoader = uuids -> null;
     }
 
@@ -32,7 +32,7 @@ class BooleanExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class expectedException) {
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
         BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
