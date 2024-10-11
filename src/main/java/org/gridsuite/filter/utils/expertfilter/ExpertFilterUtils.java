@@ -103,9 +103,9 @@ public final class ExpertFilterUtils {
             case HIGH_VOLTAGE_LIMIT -> String.valueOf(voltageLevel.getHighVoltageLimit());
             case SUBSTATION_PROPERTIES -> voltageLevel.getNullableSubstation().getProperty(propertyName);
             case VOLTAGE_LEVEL_PROPERTIES -> voltageLevel.getProperty(propertyName);
-            case SHORT_CIRCUIT_CURRENT_LOW_LIMIT -> String.valueOf(voltageLevel.getExtension(IdentifiableShortCircuit.class) == null ?
+            case LOW_SHORT_CIRCUIT_CURRENT_LIMIT -> String.valueOf(voltageLevel.getExtension(IdentifiableShortCircuit.class) == null ?
                 Double.NaN : voltageLevel.getExtension(IdentifiableShortCircuit.class).getIpMin());
-            case SHORT_CIRCUIT_CURRENT_HIGH_LIMIT -> String.valueOf(voltageLevel.getExtension(IdentifiableShortCircuit.class) == null ?
+            case HIGH_SHORT_CIRCUIT_CURRENT_LIMIT -> String.valueOf(voltageLevel.getExtension(IdentifiableShortCircuit.class) == null ?
                 Double.NaN : voltageLevel.getExtension(IdentifiableShortCircuit.class).getIpMax());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + voltageLevel.getType() + "]");
         };
