@@ -22,11 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.BEGINS_WITH;
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.EQUALS;
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.IS;
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.IS_NOT_PART_OF;
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.IS_PART_OF;
+import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,7 +71,7 @@ class FilterUuidExpertRuleTest {
     private FilterLoader filterLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         filterLoader = uuids -> null;
     }
 
@@ -83,7 +79,7 @@ class FilterUuidExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class expectedException) {
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
         FilterUuidExpertRule rule = FilterUuidExpertRule.builder().operator(operator).field(field).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
