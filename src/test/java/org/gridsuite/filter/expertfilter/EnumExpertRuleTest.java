@@ -27,7 +27,7 @@ class EnumExpertRuleTest {
     private FilterLoader filterLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         filterLoader = uuids -> null;
     }
 
@@ -35,12 +35,12 @@ class EnumExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String value, Set<String> values, Class expectedException) {
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String value, Set<String> values, Class<Throwable> expectedException) {
         EnumExpertRule rule = EnumExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
-    static Stream<Arguments> provideArgumentsForTestWithException() {
+    private static Stream<Arguments> provideArgumentsForTestWithException() {
 
         Network network = Mockito.mock(Network.class);
         Mockito.when(network.getType()).thenReturn(IdentifiableType.NETWORK);
