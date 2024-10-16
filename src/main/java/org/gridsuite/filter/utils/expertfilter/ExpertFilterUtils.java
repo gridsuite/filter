@@ -9,6 +9,7 @@ package org.gridsuite.filter.utils.expertfilter;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.GeneratorStartup;
+import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.apache.commons.collections4.CollectionUtils;
 import org.gridsuite.filter.FilterLoader;
@@ -102,6 +103,10 @@ public final class ExpertFilterUtils {
             case HIGH_VOLTAGE_LIMIT -> String.valueOf(voltageLevel.getHighVoltageLimit());
             case SUBSTATION_PROPERTIES -> voltageLevel.getNullableSubstation().getProperty(propertyName);
             case VOLTAGE_LEVEL_PROPERTIES -> voltageLevel.getProperty(propertyName);
+            case LOW_SHORT_CIRCUIT_CURRENT_LIMIT -> String.valueOf(voltageLevel.getExtension(IdentifiableShortCircuit.class) == null ?
+                Double.NaN : voltageLevel.getExtension(IdentifiableShortCircuit.class).getIpMin());
+            case HIGH_SHORT_CIRCUIT_CURRENT_LIMIT -> String.valueOf(voltageLevel.getExtension(IdentifiableShortCircuit.class) == null ?
+                Double.NaN : voltageLevel.getExtension(IdentifiableShortCircuit.class).getIpMax());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + voltageLevel.getType() + "]");
         };
     }

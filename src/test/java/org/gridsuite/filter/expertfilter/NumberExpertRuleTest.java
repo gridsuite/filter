@@ -3,7 +3,9 @@ package org.gridsuite.filter.expertfilter;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.GeneratorStartup;
+import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
+import com.powsybl.iidm.network.impl.extensions.IdentifiableShortCircuitImpl;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.NumberExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
@@ -1479,6 +1481,7 @@ class NumberExpertRuleTest {
     private static Stream<Arguments> provideArgumentsForVoltageLevelTest() {
 
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getExtension(IdentifiableShortCircuit.class)).thenReturn(new IdentifiableShortCircuitImpl(voltageLevel, 1.0, 4.0));
         Mockito.when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
         Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
         Mockito.when(voltageLevel.getLowVoltageLimit()).thenReturn(40.0);
@@ -1499,6 +1502,10 @@ class NumberExpertRuleTest {
             Arguments.of(EQUALS, FieldType.LOW_VOLTAGE_LIMIT, 50.0, null, voltageLevel, false),
             Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
             Arguments.of(EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
+            Arguments.of(EQUALS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 1.0, null, voltageLevel, true),
+            Arguments.of(EQUALS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 2.0, null, voltageLevel, false),
+            Arguments.of(EQUALS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 4.0, null, voltageLevel, true),
+            Arguments.of(EQUALS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 3.0, null, voltageLevel, false),
 
             // --- GREATER_OR_EQUALS --- //
             Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, true),
@@ -1510,6 +1517,12 @@ class NumberExpertRuleTest {
             Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, true),
             Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
             Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 0.0, null, voltageLevel, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 1.0, null, voltageLevel, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 2.0, null, voltageLevel, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 3.0, null, voltageLevel, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 4.0, null, voltageLevel, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 5.0, null, voltageLevel, false),
 
             // --- GREATER --- //
             Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, voltageLevel, true),
@@ -1521,6 +1534,12 @@ class NumberExpertRuleTest {
             Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, true),
             Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, false),
             Arguments.of(GREATER, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, false),
+            Arguments.of(GREATER, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 0.0, null, voltageLevel, true),
+            Arguments.of(GREATER, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 1.0, null, voltageLevel, false),
+            Arguments.of(GREATER, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 2.0, null, voltageLevel, false),
+            Arguments.of(GREATER, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 3.0, null, voltageLevel, true),
+            Arguments.of(GREATER, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 4.0, null, voltageLevel, false),
+            Arguments.of(GREATER, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 5.0, null, voltageLevel, false),
 
             // --- LOWER_OR_EQUALS --- //
             Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, voltageLevel, true),
@@ -1532,6 +1551,12 @@ class NumberExpertRuleTest {
             Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, true),
             Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, true),
             Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 2.0, null, voltageLevel, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 1.0, null, voltageLevel, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 0.0, null, voltageLevel, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 5.0, null, voltageLevel, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 4.0, null, voltageLevel, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 3.0, null, voltageLevel, false),
 
             // --- LOWER --- //
             // voltageLevelerator fields
@@ -1544,6 +1569,12 @@ class NumberExpertRuleTest {
             Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 500.0, null, voltageLevel, true),
             Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 400.0, null, voltageLevel, false),
             Arguments.of(LOWER, FieldType.HIGH_VOLTAGE_LIMIT, 300.0, null, voltageLevel, false),
+            Arguments.of(LOWER, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 2.0, null, voltageLevel, true),
+            Arguments.of(LOWER, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 1.0, null, voltageLevel, false),
+            Arguments.of(LOWER, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, 1.0, null, voltageLevel, false),
+            Arguments.of(LOWER, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 5.0, null, voltageLevel, true),
+            Arguments.of(LOWER, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 4.0, null, voltageLevel, false),
+            Arguments.of(LOWER, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 3.0, null, voltageLevel, false),
 
             // --- BETWEEN --- //
             Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, true),
@@ -1554,6 +1585,12 @@ class NumberExpertRuleTest {
             Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, true),
             Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(500.0, 600.0), voltageLevel, false),
             Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(200.0, 300.0), voltageLevel, false),
+            Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(0.0, 2.0), voltageLevel, true),
+            Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(2.0, 6.0), voltageLevel, false),
+            Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 4.0), voltageLevel, false),
+            Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, true),
+            Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(5.0, 6.0), voltageLevel, false),
+            Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(2.0, 3.0), voltageLevel, false),
 
             // --- EXISTS --- //
             Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel, true),
@@ -1562,6 +1599,10 @@ class NumberExpertRuleTest {
             Arguments.of(EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel1, false),
             Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel, true),
             Arguments.of(EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel1, false),
+            Arguments.of(EXISTS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel, true),
+            Arguments.of(EXISTS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel1, false),
+            Arguments.of(EXISTS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel, true),
+            Arguments.of(EXISTS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel1, false),
 
             // --- NOT_EXISTS --- //
             Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel, false),
@@ -1570,6 +1611,10 @@ class NumberExpertRuleTest {
             Arguments.of(NOT_EXISTS, FieldType.LOW_VOLTAGE_LIMIT, null, null, voltageLevel1, true),
             Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel, false),
             Arguments.of(NOT_EXISTS, FieldType.HIGH_VOLTAGE_LIMIT, null, null, voltageLevel1, true),
+            Arguments.of(NOT_EXISTS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel, false),
+            Arguments.of(NOT_EXISTS, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel1, true),
+            Arguments.of(NOT_EXISTS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel, false),
+            Arguments.of(NOT_EXISTS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel1, true),
 
             // --- IN --- //
             Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), voltageLevel, true),
@@ -1578,6 +1623,10 @@ class NumberExpertRuleTest {
             Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, false),
             Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, true),
             Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, false),
+            Arguments.of(IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(1.0, 4.0, 5.0), voltageLevel, true),
+            Arguments.of(IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, false),
+            Arguments.of(IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(1.0, 4.0, 5.0), voltageLevel, true),
+            Arguments.of(IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, false),
 
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, true),
@@ -1585,7 +1634,11 @@ class NumberExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, true),
             Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 40.0, 50.0), voltageLevel, false),
             Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, true),
-            Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, false)
+            Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, false),
+            Arguments.of(NOT_IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, true),
+            Arguments.of(NOT_IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(1.0, 4.0, 5.0), voltageLevel, false),
+            Arguments.of(NOT_IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, true),
+            Arguments.of(NOT_IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(1.0, 4.0, 5.0), voltageLevel, false)
         );
     }
 
