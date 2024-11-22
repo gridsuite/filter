@@ -334,8 +334,7 @@ public final class FiltersUtils {
                     countryFilter(twoWindingsTransformer.getTerminal2(), twoWindingsTransformerFilter.getCountries()))
                 .filter(twoWindingsTransformer -> freePropertiesFilter(twoWindingsTransformer.getTerminal1(), twoWindingsTransformerFilter.getSubstationFreeProperties()) ||
                     freePropertiesFilter(twoWindingsTransformer.getTerminal2(), twoWindingsTransformerFilter.getSubstationFreeProperties()))
-                .filter(twoWindingsTransformer -> substationNameFilter(twoWindingsTransformer.getTerminal1(), twoWindingsTransformerFilter.getSubstationName()) ||
-                    substationNameFilter(twoWindingsTransformer.getTerminal2(), twoWindingsTransformerFilter.getSubstationName()));
+                .filter(twoWindingsTransformer -> substationNameFilter(twoWindingsTransformer.getTerminal1(), twoWindingsTransformerFilter.getSubstationName()));
             return new ArrayList<>(stream.toList());
         } else if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
@@ -366,9 +365,7 @@ public final class FiltersUtils {
                 .filter(threeWindingsTransformer -> freePropertiesFilter(threeWindingsTransformer.getLeg1().getTerminal(), threeWindingsTransformerFilter.getSubstationFreeProperties()) ||
                     freePropertiesFilter(threeWindingsTransformer.getLeg2().getTerminal(), threeWindingsTransformerFilter.getSubstationFreeProperties()) ||
                     freePropertiesFilter(threeWindingsTransformer.getLeg3().getTerminal(), threeWindingsTransformerFilter.getSubstationFreeProperties()))
-                .filter(threeWindingsTransformer -> substationNameFilter(threeWindingsTransformer.getLeg1().getTerminal(), threeWindingsTransformerFilter.getSubstationName()) ||
-                    substationNameFilter(threeWindingsTransformer.getLeg2().getTerminal(), threeWindingsTransformerFilter.getSubstationName()) ||
-                    substationNameFilter(threeWindingsTransformer.getLeg3().getTerminal(), threeWindingsTransformerFilter.getSubstationName()));
+                .filter(threeWindingsTransformer -> substationNameFilter(threeWindingsTransformer.getLeg1().getTerminal(), threeWindingsTransformerFilter.getSubstationName()));
             return new ArrayList<>(stream.toList());
         } else if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
