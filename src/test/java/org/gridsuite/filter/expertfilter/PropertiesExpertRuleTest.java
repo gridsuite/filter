@@ -282,6 +282,10 @@ class PropertiesExpertRuleTest {
         Mockito.when(twoWindingsTransformer.getNullableSubstation()).thenReturn(substation);
         Mockito.when(substation.getProperty("regionCSV")).thenReturn("LILLE");
 
+        TwoWindingsTransformer transformerWithNullSub = Mockito.mock(TwoWindingsTransformer.class);
+        Mockito.when(transformerWithNullSub.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        Mockito.when(transformerWithNullSub.getNullableSubstation()).thenReturn(null);
+
         return Stream.of(
                 // --- IN --- //
                 Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), twoWindingsTransformer, true),
@@ -291,7 +295,8 @@ class PropertiesExpertRuleTest {
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), twoWindingsTransformer, true),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), twoWindingsTransformer, false),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), twoWindingsTransformer, false)
+                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), transformerWithNullSub, false)
         );
     }
 
