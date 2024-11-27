@@ -371,8 +371,8 @@ public final class ExpertFilterUtils {
             case HAS_PHASE_TAP_CHANGER -> String.valueOf(twoWindingsTransformer.hasPhaseTapChanger());
             case PHASE_REGULATION_MODE,
                 PHASE_REGULATION_VALUE -> getPhaseTapChangerFieldValue(field, twoWindingsTransformer.getPhaseTapChanger());
-            case SUBSTATION_PROPERTIES_1 -> twoWindingsTransformer.getTerminal1().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
-            case SUBSTATION_PROPERTIES_2 -> twoWindingsTransformer.getTerminal2().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case SUBSTATION_PROPERTIES -> twoWindingsTransformer.getNullableSubstation() != null ?
+                twoWindingsTransformer.getNullableSubstation().getProperty(propertyName) : null;
             case VOLTAGE_LEVEL_PROPERTIES_1 -> twoWindingsTransformer.getTerminal1().getVoltageLevel().getProperty(propertyName);
             case VOLTAGE_LEVEL_PROPERTIES_2 -> twoWindingsTransformer.getTerminal2().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + twoWindingsTransformer.getType() + "]");
@@ -383,6 +383,8 @@ public final class ExpertFilterUtils {
         return switch (field) {
             case COUNTRY -> threeWindingsTransformer.getSubstation().flatMap(Substation::getCountry).map(String::valueOf).orElse(null);
             case RATED_VOLTAGE_0 -> String.valueOf(threeWindingsTransformer.getRatedU0());
+            case SUBSTATION_PROPERTIES -> threeWindingsTransformer.getNullableSubstation() != null ?
+                threeWindingsTransformer.getNullableSubstation().getProperty(propertyName) : null;
             case CONNECTED_1,
                  NOMINAL_VOLTAGE_1,
                  RATED_VOLTAGE_1,
@@ -399,7 +401,6 @@ public final class ExpertFilterUtils {
                  HAS_PHASE_TAP_CHANGER_1,
                  PHASE_REGULATION_MODE_1,
                  PHASE_REGULATION_VALUE_1,
-                 SUBSTATION_PROPERTIES_1,
                  VOLTAGE_LEVEL_PROPERTIES_1 -> getThreeWindingsTransformerLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg1());
             case CONNECTED_2,
                  NOMINAL_VOLTAGE_2,
@@ -417,7 +418,6 @@ public final class ExpertFilterUtils {
                  HAS_PHASE_TAP_CHANGER_2,
                  PHASE_REGULATION_MODE_2,
                  PHASE_REGULATION_VALUE_2,
-                 SUBSTATION_PROPERTIES_2,
                  VOLTAGE_LEVEL_PROPERTIES_2 -> getThreeWindingsTransformerLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg2());
             case CONNECTED_3,
                  NOMINAL_VOLTAGE_3,
@@ -435,7 +435,6 @@ public final class ExpertFilterUtils {
                  HAS_PHASE_TAP_CHANGER_3,
                  PHASE_REGULATION_MODE_3,
                  PHASE_REGULATION_VALUE_3,
-                 SUBSTATION_PROPERTIES_3,
                  VOLTAGE_LEVEL_PROPERTIES_3 -> getThreeWindingsTransformerLegFieldValue(field, propertyName, threeWindingsTransformer.getLeg3());
             default ->
                 throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + threeWindingsTransformer.getType() + "]");
@@ -492,9 +491,6 @@ public final class ExpertFilterUtils {
                  PHASE_REGULATION_VALUE_2,
                  PHASE_REGULATION_MODE_3,
                  PHASE_REGULATION_VALUE_3 -> getPhaseTapChangerFieldValue(field, leg.getPhaseTapChanger());
-            case SUBSTATION_PROPERTIES_1,
-                 SUBSTATION_PROPERTIES_2,
-                 SUBSTATION_PROPERTIES_3 -> leg.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             case VOLTAGE_LEVEL_PROPERTIES_1,
                  VOLTAGE_LEVEL_PROPERTIES_2,
                  VOLTAGE_LEVEL_PROPERTIES_3 -> leg.getTerminal().getVoltageLevel().getProperty(propertyName);
