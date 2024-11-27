@@ -115,6 +115,7 @@ public enum FieldType {
     SUBSTATION_PROPERTIES,
     SUBSTATION_PROPERTIES_1,
     SUBSTATION_PROPERTIES_2,
+    SUBSTATION_PROPERTIES_3, // this FieldType value is obsolete but kept here to avoid crashes in case of remaining filters using it
     VOLTAGE_LEVEL_PROPERTIES,
     VOLTAGE_LEVEL_PROPERTIES_1,
     VOLTAGE_LEVEL_PROPERTIES_2,
