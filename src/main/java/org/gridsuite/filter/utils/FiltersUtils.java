@@ -11,7 +11,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.criteriafilter.*;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
@@ -89,20 +88,6 @@ public final class FiltersUtils {
         return substationName == null || terminal.getVoltageLevel().getSubstation().map(s -> s.getNameOrId().equals(substationName)).orElse(Boolean.TRUE);
     }
 
-    private static boolean filterByVoltage(double equipmentNominalVoltage, NumericalFilter numericalFilter) {
-        if (numericalFilter == null) {
-            return true;
-        }
-        return switch (numericalFilter.getType()) {
-            case EQUALITY -> equipmentNominalVoltage == numericalFilter.getValue1();
-            case GREATER_THAN -> equipmentNominalVoltage > numericalFilter.getValue1();
-            case GREATER_OR_EQUAL -> equipmentNominalVoltage >= numericalFilter.getValue1();
-            case LESS_THAN -> equipmentNominalVoltage < numericalFilter.getValue1();
-            case LESS_OR_EQUAL -> equipmentNominalVoltage <= numericalFilter.getValue1();
-            case RANGE -> equipmentNominalVoltage >= numericalFilter.getValue1() && equipmentNominalVoltage <= numericalFilter.getValue2();
-        };
-    }
-
     private static boolean filterByCountries(Terminal terminal1, Terminal terminal2, Set<String> filter1, Set<String> filter2) {
         return
             // terminal 1 matches filter 1 and terminal 2 matches filter 2
@@ -121,53 +106,6 @@ public final class FiltersUtils {
             freePropertiesFilter(terminal2, freeProperties1);
     }
 
-    private static boolean filterByVoltage(Terminal terminal, NumericalFilter numericalFilter) {
-        return filterByVoltage(terminal.getVoltageLevel(), numericalFilter);
-    }
-
-    private static boolean filterByVoltage(VoltageLevel voltageLevel, NumericalFilter numericalFilter) {
-        return filterByVoltage(voltageLevel.getNominalV(), numericalFilter);
-    }
-
-    private static boolean filterByVoltages(Branch<?> branch, NumericalFilter numFilter1, NumericalFilter numFilter2) {
-        return
-            // terminal 1 matches filter 1 and terminal 2 matches filter 2
-            filterByVoltage(branch.getTerminal1(), numFilter1) &&
-                filterByVoltage(branch.getTerminal2(), numFilter2)
-                || // or the opposite
-                filterByVoltage(branch.getTerminal1(), numFilter2) &&
-                    filterByVoltage(branch.getTerminal2(), numFilter1);
-    }
-
-    private static boolean filterByVoltages(ThreeWindingsTransformer transformer, ThreeWindingsTransformerFilter filter) {
-        return
-            // leg 1 matches filter 1, leg 2 matches filter 2, and leg 3 filter 3
-            filterByVoltage(transformer.getLeg1().getTerminal(), filter.getNominalVoltage1()) &&
-                filterByVoltage(transformer.getLeg2().getTerminal(), filter.getNominalVoltage2()) &&
-                filterByVoltage(transformer.getLeg3().getTerminal(), filter.getNominalVoltage3())
-                // or any other combination :
-                || // keep leg1 on filter 1, switch legs 2/3
-                filterByVoltage(transformer.getLeg1().getTerminal(), filter.getNominalVoltage1()) &&
-                    filterByVoltage(transformer.getLeg3().getTerminal(), filter.getNominalVoltage2()) &&
-                    filterByVoltage(transformer.getLeg2().getTerminal(), filter.getNominalVoltage3())
-                || // now leg2 matches filter 1
-                filterByVoltage(transformer.getLeg2().getTerminal(), filter.getNominalVoltage1()) &&
-                    filterByVoltage(transformer.getLeg1().getTerminal(), filter.getNominalVoltage2()) &&
-                    filterByVoltage(transformer.getLeg3().getTerminal(), filter.getNominalVoltage3())
-                || // keep leg2 on filter 1, switch legs 1/3
-                filterByVoltage(transformer.getLeg2().getTerminal(), filter.getNominalVoltage1()) &&
-                    filterByVoltage(transformer.getLeg3().getTerminal(), filter.getNominalVoltage2()) &&
-                    filterByVoltage(transformer.getLeg1().getTerminal(), filter.getNominalVoltage3())
-                || // now leg3 matches filter 1
-                filterByVoltage(transformer.getLeg3().getTerminal(), filter.getNominalVoltage1()) &&
-                    filterByVoltage(transformer.getLeg1().getTerminal(), filter.getNominalVoltage2()) &&
-                    filterByVoltage(transformer.getLeg2().getTerminal(), filter.getNominalVoltage3())
-                || // keep leg3 on filter 1, switch legs 1/2
-                filterByVoltage(transformer.getLeg3().getTerminal(), filter.getNominalVoltage1()) &&
-                    filterByVoltage(transformer.getLeg2().getTerminal(), filter.getNominalVoltage2()) &&
-                    filterByVoltage(transformer.getLeg1().getTerminal(), filter.getNominalVoltage3());
-    }
-
     private static List<String> getIdentifierListFilterEquipmentIds(IdentifierListFilter identifierListFilter) {
         return identifierListFilter.getFilterEquipmentsAttributes()
             .stream()
@@ -179,35 +117,8 @@ public final class FiltersUtils {
         return energySource == null || generator.getEnergySource() == energySource;
     }
 
-    private static boolean filterByProperties(Line line, LineFilter lineFilter) {
-        return filterByProperties(line.getTerminal1(), line.getTerminal2(), lineFilter.getFreeProperties1(), lineFilter.getFreeProperties2());
-    }
-
-    private static boolean filterByCountries(Line line, LineFilter filter) {
-        return filterByCountries(line.getTerminal1(), line.getTerminal2(), filter.getCountries1(), filter.getCountries2());
-    }
-
-    private static boolean filterByProperties(HvdcLine line, HvdcLineFilter filter) {
-        return filterByProperties(line.getConverterStation1().getTerminal(), line.getConverterStation2().getTerminal(),
-            filter.getFreeProperties1(), filter.getFreeProperties2());
-    }
-
-    private static boolean filterByCountries(HvdcLine line, HvdcLineFilter filter) {
-        return filterByCountries(line.getConverterStation1().getTerminal(), line.getConverterStation2().getTerminal(), filter.getCountries1(), filter.getCountries2());
-    }
-
     private static <I extends Injection<I>> Stream<Injection<I>> getInjectionList(Stream<Injection<I>> stream, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof CriteriaFilter criteriaFilter) {
-            AbstractInjectionFilter injectionFilter = (AbstractInjectionFilter) criteriaFilter.getEquipmentFilterForm();
-            return stream
-                .filter(injection -> equipmentIdFilter(injection, injectionFilter.getEquipmentID()))
-                .filter(injection -> equipmentNameFilter(injection, injectionFilter.getEquipmentName()))
-                .filter(injection -> freePropertiesFilter(injection, injectionFilter.getFreeProperties()))
-                .filter(injection -> filterByVoltage(injection.getTerminal().getVoltageLevel().getNominalV(), injectionFilter.getNominalVoltage()))
-                .filter(injection -> countryFilter(injection.getTerminal(), injectionFilter.getCountries()))
-                .filter(injection -> substationNameFilter(injection.getTerminal(), injectionFilter.getSubstationName()))
-                .filter(injection -> freePropertiesFilter(injection.getTerminal(), injectionFilter.getSubstationFreeProperties()));
-        } else if (filter instanceof IdentifierListFilter identifierListFilter) {
+        if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             return stream.filter(injection -> equipmentIds.contains(injection.getId()));
         } else if (filter instanceof ExpertFilter expertFilter) {
@@ -220,12 +131,7 @@ public final class FiltersUtils {
     }
 
     private static List<Identifiable<?>> getGeneratorList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof CriteriaFilter criteriaFilter) {
-            GeneratorFilter generatorFilter = (GeneratorFilter) criteriaFilter.getEquipmentFilterForm();
-            Stream<Injection<Generator>> stream = getInjectionList(network.getGeneratorStream().map(injection -> injection), filter, filterLoader)
-                .filter(injection -> filterByEnergySource((Generator) injection, generatorFilter.getEnergySource()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof IdentifierListFilter || filter instanceof ExpertFilter) {
+        if (filter instanceof IdentifierListFilter || filter instanceof ExpertFilter) {
             Stream<Injection<Generator>> stream = getInjectionList(network.getGeneratorStream().map(generator -> generator), filter, filterLoader);
             return new ArrayList<>(stream.toList());
         } else {
@@ -294,19 +200,7 @@ public final class FiltersUtils {
     }
 
     private static List<Identifiable<?>> getLineList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof CriteriaFilter criteriaFilter) {
-            LineFilter lineFilter = (LineFilter) criteriaFilter.getEquipmentFilterForm();
-            Stream<Line> stream = network.getLineStream()
-                .filter(line -> equipmentIdFilter(line, lineFilter.getEquipmentID()))
-                .filter(line -> equipmentNameFilter(line, lineFilter.getEquipmentName()))
-                .filter(line -> filterByVoltages(line, lineFilter.getNominalVoltage1(), lineFilter.getNominalVoltage2()))
-                .filter(line -> filterByCountries(line, lineFilter))
-                .filter(line -> filterByProperties(line, lineFilter))
-                .filter(line -> freePropertiesFilter(line, lineFilter.getFreeProperties()))
-                .filter(line -> substationNameFilter(line.getTerminal1(), lineFilter.getSubstationName1()) &&
-                    substationNameFilter(line.getTerminal2(), lineFilter.getSubstationName2()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof IdentifierListFilter identifierListFilter) {
+        if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             Stream<Line> stream = network.getLineStream()
                 .filter(line -> equipmentIds.contains(line.getId()));
@@ -323,20 +217,7 @@ public final class FiltersUtils {
     }
 
     private static List<Identifiable<?>> get2WTransformerList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof CriteriaFilter criteriaFilter) {
-            TwoWindingsTransformerFilter twoWindingsTransformerFilter = (TwoWindingsTransformerFilter) criteriaFilter.getEquipmentFilterForm();
-            Stream<TwoWindingsTransformer> stream = network.getTwoWindingsTransformerStream()
-                .filter(twoWindingsTransformer -> equipmentIdFilter(twoWindingsTransformer, twoWindingsTransformerFilter.getEquipmentID()))
-                .filter(twoWindingsTransformer -> equipmentNameFilter(twoWindingsTransformer, twoWindingsTransformerFilter.getEquipmentName()))
-                .filter(twoWindingsTransformer -> freePropertiesFilter(twoWindingsTransformer, twoWindingsTransformerFilter.getFreeProperties()))
-                .filter(twoWindingsTransformer -> filterByVoltages(twoWindingsTransformer, twoWindingsTransformerFilter.getNominalVoltage1(), twoWindingsTransformerFilter.getNominalVoltage2()))
-                .filter(twoWindingsTransformer -> countryFilter(twoWindingsTransformer.getTerminal1(), twoWindingsTransformerFilter.getCountries()) ||
-                    countryFilter(twoWindingsTransformer.getTerminal2(), twoWindingsTransformerFilter.getCountries()))
-                .filter(twoWindingsTransformer -> freePropertiesFilter(twoWindingsTransformer.getTerminal1(), twoWindingsTransformerFilter.getSubstationFreeProperties()) ||
-                    freePropertiesFilter(twoWindingsTransformer.getTerminal2(), twoWindingsTransformerFilter.getSubstationFreeProperties()))
-                .filter(twoWindingsTransformer -> substationNameFilter(twoWindingsTransformer.getTerminal1(), twoWindingsTransformerFilter.getSubstationName()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof IdentifierListFilter identifierListFilter) {
+        if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             Stream<TwoWindingsTransformer> stream = network.getTwoWindingsTransformerStream()
                 .filter(twoWindingsTransformer -> equipmentIds.contains(twoWindingsTransformer.getId()));
@@ -353,21 +234,7 @@ public final class FiltersUtils {
     }
 
     private static List<Identifiable<?>> get3WTransformerList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof CriteriaFilter criteriaFilter) {
-            ThreeWindingsTransformerFilter threeWindingsTransformerFilter = (ThreeWindingsTransformerFilter) criteriaFilter.getEquipmentFilterForm();
-            Stream<ThreeWindingsTransformer> stream = network.getThreeWindingsTransformerStream()
-                .filter(threeWindingsTransformer -> equipmentIdFilter(threeWindingsTransformer, threeWindingsTransformerFilter.getEquipmentID()))
-                .filter(threeWindingsTransformer -> equipmentNameFilter(threeWindingsTransformer, threeWindingsTransformerFilter.getEquipmentName()))
-                .filter(threeWindingsTransformer -> filterByVoltages(threeWindingsTransformer, threeWindingsTransformerFilter))
-                .filter(threeWindingsTransformer -> countryFilter(threeWindingsTransformer.getLeg1().getTerminal(), threeWindingsTransformerFilter.getCountries()) ||
-                    countryFilter(threeWindingsTransformer.getLeg2().getTerminal(), threeWindingsTransformerFilter.getCountries()) ||
-                    countryFilter(threeWindingsTransformer.getLeg3().getTerminal(), threeWindingsTransformerFilter.getCountries()))
-                .filter(threeWindingsTransformer -> freePropertiesFilter(threeWindingsTransformer.getLeg1().getTerminal(), threeWindingsTransformerFilter.getSubstationFreeProperties()) ||
-                    freePropertiesFilter(threeWindingsTransformer.getLeg2().getTerminal(), threeWindingsTransformerFilter.getSubstationFreeProperties()) ||
-                    freePropertiesFilter(threeWindingsTransformer.getLeg3().getTerminal(), threeWindingsTransformerFilter.getSubstationFreeProperties()))
-                .filter(threeWindingsTransformer -> substationNameFilter(threeWindingsTransformer.getLeg1().getTerminal(), threeWindingsTransformerFilter.getSubstationName()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof IdentifierListFilter identifierListFilter) {
+        if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             Stream<ThreeWindingsTransformer> stream = network.getThreeWindingsTransformerStream()
                 .filter(threeWindingsTransformer -> equipmentIds.contains(threeWindingsTransformer.getId()));
@@ -384,18 +251,7 @@ public final class FiltersUtils {
     }
 
     private static List<Identifiable<?>> getHvdcList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof CriteriaFilter criteriaFilter) {
-            HvdcLineFilter hvdcLineFilter = (HvdcLineFilter) criteriaFilter.getEquipmentFilterForm();
-            Stream<HvdcLine> stream = network.getHvdcLineStream()
-                .filter(hvdcLine -> equipmentIdFilter(hvdcLine, hvdcLineFilter.getEquipmentID()))
-                .filter(hvdcLine -> equipmentNameFilter(hvdcLine, hvdcLineFilter.getEquipmentName()))
-                .filter(hvdcLine -> filterByVoltage(hvdcLine.getNominalV(), hvdcLineFilter.getNominalVoltage()))
-                .filter(hvdcLine -> filterByCountries(hvdcLine, hvdcLineFilter))
-                .filter(hvdcLine -> filterByProperties(hvdcLine, hvdcLineFilter))
-                .filter(hvdcLine -> substationNameFilter(hvdcLine.getConverterStation1().getTerminal(), hvdcLineFilter.getSubstationName1()) &&
-                    substationNameFilter(hvdcLine.getConverterStation2().getTerminal(), hvdcLineFilter.getSubstationName2()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof IdentifierListFilter identifierListFilter) {
+        if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentsIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             Stream<HvdcLine> stream = network.getHvdcLineStream()
                 .filter(hvdcLine -> equipmentsIds.contains(hvdcLine.getId()));
@@ -412,17 +268,7 @@ public final class FiltersUtils {
     }
 
     private static List<Identifiable<?>> getVoltageLevelList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof CriteriaFilter criteriaFilter) {
-            VoltageLevelFilter voltageLevelFilter = (VoltageLevelFilter) criteriaFilter.getEquipmentFilterForm();
-            Stream<VoltageLevel> stream = network.getVoltageLevelStream()
-                .filter(voltageLevel -> equipmentIdFilter(voltageLevel, voltageLevelFilter.getEquipmentID()))
-                .filter(voltageLevel -> equipmentNameFilter(voltageLevel, voltageLevelFilter.getEquipmentName()))
-                .filter(voltageLevel -> filterByVoltage(voltageLevel, voltageLevelFilter.getNominalVoltage()))
-                .filter(voltageLevel -> countryFilter(voltageLevel, voltageLevelFilter.getCountries()))
-                .filter(voltageLevel -> freePropertiesFilter(voltageLevel, voltageLevelFilter.getFreeProperties()))
-                .filter(voltageLevel -> freePropertiesFilter(voltageLevel.getNullableSubstation(), voltageLevelFilter.getSubstationFreeProperties()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof IdentifierListFilter identifierListFilter) {
+        if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             Stream<VoltageLevel> stream = network.getVoltageLevelStream()
                 .filter(voltageLevel -> equipmentIds.contains(voltageLevel.getId()));
@@ -439,15 +285,7 @@ public final class FiltersUtils {
     }
 
     private static List<Identifiable<?>> getSubstationList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof CriteriaFilter criteriaFilter) {
-            SubstationFilter substationFilter = (SubstationFilter) criteriaFilter.getEquipmentFilterForm();
-            Stream<Substation> stream = network.getSubstationStream()
-                .filter(substation -> equipmentIdFilter(substation, substationFilter.getEquipmentID()))
-                .filter(substation -> equipmentNameFilter(substation, substationFilter.getEquipmentName()))
-                .filter(substation -> countryFilter(substation, substationFilter.getCountries()))
-                .filter(substation -> freePropertiesFilter(substation, substationFilter.getFreeProperties()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof IdentifierListFilter identifierListFilter) {
+        if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
             Stream<Substation> stream = network.getSubstationStream()
                 .filter(substation -> equipmentIds.contains(substation.getId()));
