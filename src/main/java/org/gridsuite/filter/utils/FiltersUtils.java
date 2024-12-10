@@ -7,8 +7,6 @@
 package org.gridsuite.filter.utils;
 
 import com.powsybl.iidm.network.*;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
@@ -28,93 +26,11 @@ public final class FiltersUtils {
         throw new AssertionError("Utility class should not be instantiated");
     }
 
-    public static boolean matchesFreeProps(Map<String, List<String>> freeProperties, Substation substation) {
-        if (substation == null) {
-            return MapUtils.isEmpty(freeProperties);
-        }
-        if (MapUtils.isEmpty(freeProperties)) {
-            return true;
-        }
-        return freeProperties.entrySet().stream().allMatch(p -> p.getValue().contains(substation.getProperty(p.getKey())));
-    }
-
-    public static boolean matchesFreeProps(Map<String, List<String>> freeProperties, Identifiable<?> identifiable) {
-        if (identifiable == null) {
-            return MapUtils.isEmpty(freeProperties);
-        }
-        if (MapUtils.isEmpty(freeProperties)) {
-            return true;
-        }
-        return freeProperties.entrySet().stream().allMatch(p -> p.getValue().contains(identifiable.getProperty(p.getKey())));
-    }
-
-    private static boolean freePropertiesFilter(Terminal terminal, Map<String, List<String>> propertiesWithValues) {
-        Optional<Substation> optSubstation = terminal.getVoltageLevel().getSubstation();
-        return optSubstation.filter(substation -> freePropertiesFilter(substation, propertiesWithValues)).isPresent();
-    }
-
-    private static boolean countryFilter(Terminal terminal, Set<String> countries) {
-        Optional<Country> country = terminal.getVoltageLevel().getSubstation().flatMap(Substation::getCountry);
-        return CollectionUtils.isEmpty(countries) || country.map(c -> countries.contains(c.name())).orElse(false);
-    }
-
-    private static boolean countryFilter(VoltageLevel voltageLevel, Set<String> countries) {
-        Optional<Country> country = voltageLevel.getSubstation().flatMap(Substation::getCountry);
-        return CollectionUtils.isEmpty(countries) || country.map(c -> countries.contains(c.name())).orElse(false);
-    }
-
-    private static boolean countryFilter(Substation substation, Set<String> countries) {
-        Optional<Country> country = substation.getCountry();
-        return CollectionUtils.isEmpty(countries) || country.map(c -> countries.contains(c.name())).orElse(false);
-    }
-
-    private static boolean freePropertiesFilter(Substation substation, Map<String, List<String>> propertiesWithValues) {
-        return FiltersUtils.matchesFreeProps(propertiesWithValues, substation);
-    }
-
-    private static boolean freePropertiesFilter(Identifiable<?> identifiable, Map<String, List<String>> propertiesWithValues) {
-        return FiltersUtils.matchesFreeProps(propertiesWithValues, identifiable);
-    }
-
-    private static boolean equipmentIdFilter(Identifiable<?> identifiable, String equipmentId) {
-        return equipmentId == null || identifiable.getId().equals(equipmentId);
-    }
-
-    private static boolean equipmentNameFilter(Identifiable<?> identifiable, String equipmentName) {
-        return equipmentName == null || equipmentName.equals(identifiable.getOptionalName().orElse(null));
-    }
-
-    private static boolean substationNameFilter(Terminal terminal, String substationName) {
-        return substationName == null || terminal.getVoltageLevel().getSubstation().map(s -> s.getNameOrId().equals(substationName)).orElse(Boolean.TRUE);
-    }
-
-    private static boolean filterByCountries(Terminal terminal1, Terminal terminal2, Set<String> filter1, Set<String> filter2) {
-        return
-            // terminal 1 matches filter 1 and terminal 2 matches filter 2
-            countryFilter(terminal1, filter1) &&
-                countryFilter(terminal2, filter2)
-                || // or the opposite
-                countryFilter(terminal1, filter2) &&
-                    countryFilter(terminal2, filter1);
-    }
-
-    private static boolean filterByProperties(Terminal terminal1, Terminal terminal2,
-                                       Map<String, List<String>> freeProperties1, Map<String, List<String>> freeProperties2) {
-        return freePropertiesFilter(terminal1, freeProperties1) &&
-            freePropertiesFilter(terminal2, freeProperties2)
-            || freePropertiesFilter(terminal1, freeProperties2) &&
-            freePropertiesFilter(terminal2, freeProperties1);
-    }
-
     private static List<String> getIdentifierListFilterEquipmentIds(IdentifierListFilter identifierListFilter) {
         return identifierListFilter.getFilterEquipmentsAttributes()
             .stream()
             .map(IdentifierListFilterEquipmentAttributes::getEquipmentID)
             .toList();
-    }
-
-    private static boolean filterByEnergySource(Generator generator, EnergySource energySource) {
-        return energySource == null || generator.getEnergySource() == energySource;
     }
 
     private static <I extends Injection<I>> Stream<Injection<I>> getInjectionList(Stream<Injection<I>> stream, AbstractFilter filter, FilterLoader filterLoader) {
