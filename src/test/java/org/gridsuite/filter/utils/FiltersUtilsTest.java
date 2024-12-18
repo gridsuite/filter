@@ -18,17 +18,11 @@ import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
 import org.gridsuite.filter.scriptfilter.ScriptFilter;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
-import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 
 import static org.gridsuite.filter.utils.expertfilter.FieldType.*;
 import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
@@ -70,22 +64,6 @@ class FiltersUtilsTest {
     @Test
     void testSubstationFilter() {
 
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(Set.of("FR", "IT")).build());
-        rules.add(PropertiesExpertRule.builder().field(FREE_PROPERTIES).propertyName("region").operator(IN)
-            .propertyValues(List.of("north")).build());
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-
-        ExpertFilter substationFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.SUBSTATION, parentRule);
-
-        assertNotNull(substationFilter.getRules());
-        assertFalse(substationFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.SUBSTATION, substationFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(substationFilter, network, filterLoader);
-        assertEquals(1, identifiables.size());
-        assertEquals("P1", identifiables.get(0).getId());
-
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("P1", 30.));
@@ -97,7 +75,7 @@ class FiltersUtilsTest {
             filterEquipmentAttributes);
         assertEquals(FilterType.IDENTIFIER_LIST, identifierListFilter.getType());
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
         assertEquals("P1", identifiables.get(0).getId());
 
@@ -116,22 +94,6 @@ class FiltersUtilsTest {
     @Test
     void testVoltageLevelFilter() {
 
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(Set.of("FR", "IT")).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 15., 30.));
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-
-        ExpertFilter voltageLevelFilter = new ExpertFilter(UUID.randomUUID(), new Date(),
-            EquipmentType.VOLTAGE_LEVEL, parentRule);
-
-        assertNotNull(voltageLevelFilter.getRules());
-        assertFalse(voltageLevelFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.VOLTAGE_LEVEL, voltageLevelFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(voltageLevelFilter, network, filterLoader);
-        assertEquals(1, identifiables.size());
-        assertEquals("VLGEN", identifiables.get(0).getId());
-
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("VLGEN", 30.));
@@ -142,7 +104,7 @@ class FiltersUtilsTest {
             EquipmentType.VOLTAGE_LEVEL,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
         assertEquals("VLGEN", identifiables.get(0).getId());
 
@@ -161,24 +123,6 @@ class FiltersUtilsTest {
     @Test
     void testLineFilter() {
 
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY_1).operator(EQUALS).value("FR").build());
-        rules.add(EnumExpertRule.builder().field(COUNTRY_2).operator(EQUALS).value("FR").build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE_1, 360., 400.));
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE_2, 356.25, 393.75));
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter lineFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.LINE, parentRule);
-
-        assertNotNull(lineFilter.getRules());
-        assertFalse(lineFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.LINE, lineFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(lineFilter, network, filterLoader);
-        assertEquals(2, identifiables.size());
-        assertEquals("NHV1_NHV2_1", identifiables.get(0).getId());
-        assertEquals("NHV1_NHV2_2", identifiables.get(1).getId());
-
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("NHV1_NHV2_1", 30.),
@@ -190,7 +134,7 @@ class FiltersUtilsTest {
             EquipmentType.LINE,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(2, identifiables.size());
         assertEquals("NHV1_NHV2_1", identifiables.get(0).getId());
         assertEquals("NHV1_NHV2_2", identifiables.get(1).getId());
@@ -210,23 +154,6 @@ class FiltersUtilsTest {
     @Test
     void testTwoWindingsTransformerFilter() {
 
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(EQUALS).value("FR").build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE_1, 380., null));
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE_2, 142.4, 157.5));
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter twoWindingsTransformerFilter = new ExpertFilter(UUID.randomUUID(), new Date(),
-            EquipmentType.TWO_WINDINGS_TRANSFORMER, parentRule);
-
-        assertNotNull(twoWindingsTransformerFilter.getRules());
-        assertFalse(twoWindingsTransformerFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.TWO_WINDINGS_TRANSFORMER, twoWindingsTransformerFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(twoWindingsTransformerFilter, network, filterLoader);
-        assertEquals(1, identifiables.size());
-        assertEquals("NHV2_NLOAD", identifiables.get(0).getId());
-
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("NHV2_NLOAD", 30.));
@@ -237,7 +164,7 @@ class FiltersUtilsTest {
             EquipmentType.TWO_WINDINGS_TRANSFORMER,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
         assertEquals("NHV2_NLOAD", identifiables.get(0).getId());
 
@@ -253,69 +180,8 @@ class FiltersUtilsTest {
         assertEquals("NHV2_NLOAD", identifiables.get(0).getId());
     }
 
-    private NumberExpertRule nominalVoltageRuleExpert(FieldType field, Double value1, Double value2) {
-        if (value1 == null) {
-            return null;
-        } else if (value2 == null) {
-            return NumberExpertRule.builder().field(field).operator(EQUALS).value(value1).build();
-        } else {
-            return NumberExpertRule.builder().field(field).operator(BETWEEN).
-                values(new TreeSet<>(Set.of(value1, value2))).build();
-        }
-    }
-
     @Test
     void testThreeWindingsTransformerFilter() {
-
-        //Nominal voltage value for 3WT :
-        // T1 : 132, T2 : 33, T3 : 11
-
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE_1, 130., 140.));
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE_2, 30., 40.));
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE_3, 11., null));
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter threeWindingsTransformerFilter = new ExpertFilter(UUID.randomUUID(), new Date(),
-            EquipmentType.THREE_WINDINGS_TRANSFORMER, parentRule);
-
-        assertNotNull(threeWindingsTransformerFilter.getRules());
-        assertFalse(threeWindingsTransformerFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.THREE_WINDINGS_TRANSFORMER, threeWindingsTransformerFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(threeWindingsTransformerFilter, network5, filterLoader);
-        assertEquals(1, identifiables.size());
-        assertEquals("3WT", identifiables.get(0).getId());
-
-        rules.set(1, nominalVoltageRuleExpert(NOMINAL_VOLTAGE_1, 30., 40.));
-        rules.set(2, nominalVoltageRuleExpert(NOMINAL_VOLTAGE_2, 11., null));
-        rules.set(3, nominalVoltageRuleExpert(NOMINAL_VOLTAGE_3, 130., 140.));
-        threeWindingsTransformerFilter.getRules().setRules(rules);
-
-        identifiables = FiltersUtils.getIdentifiables(threeWindingsTransformerFilter, network5, filterLoader);
-        assertEquals(0, identifiables.size());
-
-        rules.set(1, nominalVoltageRuleExpert(NOMINAL_VOLTAGE_1, 11., null));
-        rules.set(2, nominalVoltageRuleExpert(NOMINAL_VOLTAGE_2, 130., 140.));
-        rules.set(3, nominalVoltageRuleExpert(NOMINAL_VOLTAGE_3, 30., 40.));
-        threeWindingsTransformerFilter.getRules().setRules(rules);
-        identifiables = FiltersUtils.getIdentifiables(threeWindingsTransformerFilter, network5, filterLoader);
-        assertEquals(0, identifiables.size());
-
-        // identifier list filter
-        List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
-            new IdentifierListFilterEquipmentAttributes("3WT", 30.));
-
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
-            UUID.randomUUID(),
-            new Date(),
-            EquipmentType.THREE_WINDINGS_TRANSFORMER,
-            filterEquipmentAttributes);
-
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network5, filterLoader);
-        assertEquals(1, identifiables.size());
-        assertEquals("3WT", identifiables.get(0).getId());
 
         // expert filter
         ExpertFilter expertFilter = new ExpertFilter(
@@ -324,7 +190,7 @@ class FiltersUtilsTest {
             EquipmentType.THREE_WINDINGS_TRANSFORMER,
             StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("3WT").build());
 
-        identifiables = FiltersUtils.getIdentifiables(expertFilter, network5, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(expertFilter, network5, filterLoader);
         assertEquals(1, identifiables.size());
         assertInstanceOf(ThreeWindingsTransformer.class, identifiables.get(0));
         assertEquals("3WT", identifiables.get(0).getId());
@@ -332,44 +198,6 @@ class FiltersUtilsTest {
 
     @Test
     void testGeneratorFilter() {
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR", "IT"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 15., 30.));
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter generatorFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.GENERATOR, parentRule);
-        assertNotNull(generatorFilter.getRules());
-        assertFalse(generatorFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.GENERATOR, generatorFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(generatorFilter, network, filterLoader);
-        assertEquals(2, identifiables.size());
-        assertEquals("GEN", identifiables.get(0).getId());
-        assertEquals("GEN2", identifiables.get(1).getId());
-
-        rules.set(1, NumberExpertRule.builder().field(NOMINAL_VOLTAGE).operator(GREATER).value(50.).build());
-        generatorFilter.getRules().setRules(rules);
-        identifiables = FiltersUtils.getIdentifiables(generatorFilter, network, filterLoader);
-        assertEquals(0, identifiables.size());
-
-        rules.set(1, NumberExpertRule.builder().field(NOMINAL_VOLTAGE).operator(GREATER_OR_EQUALS).value(10.).build());
-        generatorFilter.getRules().setRules(rules);
-        identifiables = FiltersUtils.getIdentifiables(generatorFilter, network, filterLoader);
-        assertEquals(2, identifiables.size());
-        assertEquals("GEN", identifiables.get(0).getId());
-        assertEquals("GEN2", identifiables.get(1).getId());
-
-        rules.set(1, NumberExpertRule.builder().field(NOMINAL_VOLTAGE).operator(LOWER).value(12.).build());
-        generatorFilter.getRules().setRules(rules);
-        identifiables = FiltersUtils.getIdentifiables(generatorFilter, network, filterLoader);
-        assertEquals(0, identifiables.size());
-
-        rules.set(1, NumberExpertRule.builder().field(NOMINAL_VOLTAGE).operator(LOWER_OR_EQUALS).value(40.).build());
-        generatorFilter.getRules().setRules(rules);
-        identifiables = FiltersUtils.getIdentifiables(generatorFilter, network, filterLoader);
-        assertEquals(2, identifiables.size());
-        assertEquals("GEN", identifiables.get(0).getId());
-        assertEquals("GEN2", identifiables.get(1).getId());
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -382,7 +210,7 @@ class FiltersUtilsTest {
             EquipmentType.GENERATOR,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(2, identifiables.size());
         assertEquals("GEN", identifiables.get(0).getId());
         assertEquals("GEN2", identifiables.get(1).getId());
@@ -402,20 +230,6 @@ class FiltersUtilsTest {
 
     @Test
     void testLoadFilter() {
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR", "IT"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 144., 176.));
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter loadFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.LOAD, parentRule);
-
-        assertNotNull(loadFilter.getRules());
-        assertFalse(loadFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.LOAD, loadFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(loadFilter, network, filterLoader);
-        assertEquals(1, identifiables.size());
-        assertEquals("LOAD", identifiables.get(0).getId());
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -427,7 +241,7 @@ class FiltersUtilsTest {
             EquipmentType.LOAD,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
         assertEquals("LOAD", identifiables.get(0).getId());
 
@@ -446,22 +260,6 @@ class FiltersUtilsTest {
     @Test
     void testBatteryFilter() {
 
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR", "IT"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 144., 176.));
-        rules.add(PropertiesExpertRule.builder().field(SUBSTATION_PROPERTIES).propertyName("Name")
-            .propertyValues(List.of("P2")).build());
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter batteryFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.BATTERY, parentRule);
-
-        assertNotNull(batteryFilter.getRules());
-        assertFalse(batteryFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.BATTERY, batteryFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(batteryFilter, network, filterLoader);
-        assertEquals(0, identifiables.size());
-
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("battery1", 30.));
@@ -472,7 +270,7 @@ class FiltersUtilsTest {
             EquipmentType.BATTERY,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(0, identifiables.size());
 
         // expert filter
@@ -489,21 +287,6 @@ class FiltersUtilsTest {
     @Test
     void testShuntCompensatorFilter() {
 
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 380., null));
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter shuntCompensatorFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.SHUNT_COMPENSATOR, parentRule);
-
-        assertNotNull(shuntCompensatorFilter.getRules());
-        assertFalse(shuntCompensatorFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.SHUNT_COMPENSATOR, shuntCompensatorFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(shuntCompensatorFilter, network4, filterLoader);
-        assertEquals(1, identifiables.size());
-        assertEquals("SHUNT", identifiables.get(0).getId());
-
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("SHUNT", 30.));
@@ -514,7 +297,7 @@ class FiltersUtilsTest {
             EquipmentType.SHUNT_COMPENSATOR,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network4, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network4, filterLoader);
         assertEquals(1, identifiables.size());
         assertEquals("SHUNT", identifiables.get(0).getId());
 
@@ -533,22 +316,6 @@ class FiltersUtilsTest {
     @Test
     void testStaticVarCompensatorFilter() {
 
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 380., null));
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter staticVarCompensatorFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.STATIC_VAR_COMPENSATOR, parentRule);
-
-        assertNotNull(staticVarCompensatorFilter.getRules());
-        assertFalse(staticVarCompensatorFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.STATIC_VAR_COMPENSATOR, staticVarCompensatorFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(staticVarCompensatorFilter, network3, filterLoader);
-        assertEquals(2, identifiables.size());
-        assertEquals("SVC2", identifiables.get(0).getId());
-        assertEquals("SVC3", identifiables.get(1).getId());
-
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("SVC2", 30.),
@@ -560,7 +327,7 @@ class FiltersUtilsTest {
             EquipmentType.STATIC_VAR_COMPENSATOR,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network3, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network3, filterLoader);
         assertEquals(2, identifiables.size());
         assertEquals("SVC2", identifiables.get(0).getId());
         assertEquals("SVC3", identifiables.get(1).getId());
@@ -580,21 +347,6 @@ class FiltersUtilsTest {
 
     @Test
     void testDanglingLineFilter() {
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 380., null));
-        rules.add(PropertiesExpertRule.builder().field(SUBSTATION_PROPERTIES).propertyName("Name")
-            .propertyValues(List.of("S2")).build());
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter danglingLineFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.DANGLING_LINE, parentRule);
-
-        assertNotNull(danglingLineFilter.getRules());
-        assertFalse(danglingLineFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.DANGLING_LINE, danglingLineFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(danglingLineFilter, network, filterLoader);
-        assertEquals(0, identifiables.size());
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -606,7 +358,7 @@ class FiltersUtilsTest {
             EquipmentType.DANGLING_LINE,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(0, identifiables.size());
 
         // expert filter
@@ -622,21 +374,6 @@ class FiltersUtilsTest {
 
     @Test
     void testBusbarSectionFilter() {
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 380., null));
-        rules.add(PropertiesExpertRule.builder().field(SUBSTATION_PROPERTIES).propertyName("Name")
-            .propertyValues(List.of("S1")).build());
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter busbarSectionFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.BUSBAR_SECTION, parentRule);
-
-        assertNotNull(busbarSectionFilter.getRules());
-        assertFalse(busbarSectionFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.BUSBAR_SECTION, busbarSectionFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(busbarSectionFilter, network, filterLoader);
-        assertEquals(0, identifiables.size());
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -648,7 +385,7 @@ class FiltersUtilsTest {
             EquipmentType.BUSBAR_SECTION,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(0, identifiables.size());
 
         // expert filter
@@ -678,22 +415,6 @@ class FiltersUtilsTest {
 
     @Test
     void testLccConverterStationFilter() {
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 380., null));
-        rules.add(PropertiesExpertRule.builder().field(SUBSTATION_PROPERTIES).propertyName("Name")
-            .propertyValues(List.of("S1")).build());
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter lccConverterStationFilter = new ExpertFilter(UUID.randomUUID(), new Date(),
-            EquipmentType.LCC_CONVERTER_STATION, parentRule);
-
-        assertNotNull(lccConverterStationFilter);
-        assertFalse(lccConverterStationFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.LCC_CONVERTER_STATION, lccConverterStationFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(lccConverterStationFilter, network2, filterLoader);
-        assertEquals(0, identifiables.size());
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -705,7 +426,7 @@ class FiltersUtilsTest {
             EquipmentType.LCC_CONVERTER_STATION,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
         assertEquals(0, identifiables.size());
 
         // expert filter
@@ -721,20 +442,6 @@ class FiltersUtilsTest {
 
     @Test
     void testHvdcLineFilter() {
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY_1).operator(IN).values(new TreeSet<>(Set.of("FR"))).build());
-        rules.add(nominalVoltageRuleExpert(DC_NOMINAL_VOLTAGE, 400., null));
-
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter hvdcLineFilter = new ExpertFilter(UUID.randomUUID(), new Date(), EquipmentType.HVDC_LINE, parentRule);
-
-        assertNotNull(hvdcLineFilter.getRules());
-        assertFalse(hvdcLineFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.HVDC_LINE, hvdcLineFilter.getEquipmentType());
-
-        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(hvdcLineFilter, network2, filterLoader);
-        assertEquals(1, identifiables.size());
-        assertEquals("L", identifiables.get(0).getId());
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -746,7 +453,7 @@ class FiltersUtilsTest {
             EquipmentType.HVDC_LINE,
             filterEquipmentAttributes);
 
-        identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network2, filterLoader);
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network2, filterLoader);
         assertEquals(1, identifiables.size());
         assertEquals("L", identifiables.get(0).getId());
 
@@ -827,25 +534,6 @@ class FiltersUtilsTest {
         assertEquals("GEN", filterEquipments.get(0).getIdentifiableAttributes().get(0).getId());
         assertEquals("GEN2", filterEquipments.get(0).getIdentifiableAttributes().get(1).getId());
 
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(EnumExpertRule.builder().field(COUNTRY).operator(IN).values(new TreeSet<>(Set.of("FR"))).build());
-        rules.add(nominalVoltageRuleExpert(NOMINAL_VOLTAGE, 144., 176.));
-
-        UUID uuid2 = UUID.randomUUID();
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter loadFilter = new ExpertFilter(uuid2, new Date(), EquipmentType.LOAD, parentRule);
-
-        assertNotNull(loadFilter.getRules());
-        assertFalse(loadFilter.getRules().getRules().isEmpty());
-        assertEquals(EquipmentType.LOAD, loadFilter.getEquipmentType());
-
-        FilterLoader filterLoader2 = uuids -> List.of(loadFilter);
-
-        filterEquipments = FilterServiceUtils.getFilterEquipmentsFromUuid(network, uuid2, filterLoader2);
-        assertEquals(1, filterEquipments.size());
-        assertEquals(uuid2, filterEquipments.get(0).getFilterId());
-        assertEquals(1, filterEquipments.get(0).getIdentifiableAttributes().size());
-        assertEquals("LOAD", filterEquipments.get(0).getIdentifiableAttributes().get(0).getId());
     }
 
     @Test
