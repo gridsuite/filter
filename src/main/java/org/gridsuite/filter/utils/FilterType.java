@@ -12,7 +12,6 @@ package org.gridsuite.filter.utils;
  */
 public enum FilterType {
     SCRIPT,
-    CRITERIA,
     IDENTIFIER_LIST,
     EXPERT,
 }
