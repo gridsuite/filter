@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.gridsuite.filter.criteriafilter.CriteriaFilter;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
@@ -33,7 +32,6 @@ import java.util.UUID;
     visible = true
 )
 @JsonSubTypes({//Below, we define the names and the binding classes.
-    @JsonSubTypes.Type(value = CriteriaFilter.class, name = "CRITERIA"),
     @JsonSubTypes.Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
     @JsonSubTypes.Type(value = ExpertFilter.class, name = "EXPERT"),
     @JsonSubTypes.Type(value = ScriptFilter.class, name = "SCRIPT")
