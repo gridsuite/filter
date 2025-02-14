@@ -13,7 +13,7 @@
     <parent>
         <groupId>com.powsybl</groupId>
         <artifactId>powsybl-parent</artifactId>
-        <version>20</version>
+        <version>21</version>
         <relativePath/>
     </parent>
 
@@ -42,6 +42,7 @@
     </developers>
 
     <properties>
+        <lombok.version>1.18.34</lombok.version>
         <org-apache-commons.version>4.4</org-apache-commons.version>
         <org.hamcrest.version>2.2</org.hamcrest.version>
         <powsybl-dependencies.version>2024.4.0</powsybl-dependencies.version>
@@ -67,6 +68,15 @@
     <dependencyManagement>
         <dependencies>
             <!-- overrides of imports -->
+            <!--
+              lombok for java21 support. We happen to get a version that is
+              not high enough from powsybl-dependencies through open-rao.
+            -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
 
             <!-- imports -->
             <dependency>
