@@ -7,11 +7,13 @@ import org.gridsuite.filter.expertfilter.expertrule.PropertiesExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,6 +37,22 @@ class PropertiesExpertRuleTest {
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String propertyName, List<String> propertyValues, Class<Throwable> expectedException) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+    }
+
+    @Test
+    void testPropertiesValue() {
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(IS_IN).field(FieldType.FREE_PROPERTIES).propertyName("property")
+            .propertyValues(Collections.singletonList("value1")).build();
+        assertEquals(Collections.singletonList("value1"), rule.getPropertyValues());
+        assertEquals("property", rule.getStringValue());
+        assertEquals(FieldType.FREE_PROPERTIES, rule.getField());
+        assertEquals(IS_IN, rule.getOperator());
+        rule = PropertiesExpertRule.builder().operator(IS_NOT_IN).field(FieldType.FREE_PROPERTIES).propertyName("property2")
+            .propertyValues(Collections.singletonList("value2")).build();
+        assertEquals(Collections.singletonList("value2"), rule.getPropertyValues());
+        assertEquals("property2", rule.getStringValue());
+        assertEquals(FieldType.FREE_PROPERTIES, rule.getField());
+        assertEquals(IS_NOT_IN, rule.getOperator());
     }
 
     private static Stream<Arguments> provideArgumentsForTestWithException() {
