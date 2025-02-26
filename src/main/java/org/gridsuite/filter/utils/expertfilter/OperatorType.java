@@ -14,6 +14,8 @@ public enum OperatorType {
     EQUALS,
     NOT_EQUALS,
     IN,
+    IS_IN,
+    IS_NOT_IN,
     NOT_IN,
     // Number and String and Boolean
     EXISTS,
@@ -34,6 +36,7 @@ public enum OperatorType {
     IS_NOT_PART_OF;
 
     public static boolean isMultipleCriteriaOperator(OperatorType operator) {
-        return operator == IN || operator == NOT_IN || operator == BETWEEN || operator == IS_PART_OF || operator == IS_NOT_PART_OF;
+        return operator == IN || operator == NOT_IN || operator == BETWEEN || operator == IS_PART_OF
+            || operator == IS_NOT_PART_OF || operator == IS_IN || operator == IS_NOT_IN;
     }
 }

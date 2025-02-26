@@ -85,15 +85,25 @@ class PropertiesExpertRuleTest {
 
         return Stream.of(
                 // --- Test an unsupported field for some equipment --- //
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, voltageLevel, "region", List.of("east"), PowsyblException.class),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, generator, "region", List.of("north"), PowsyblException.class),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, load, "region", List.of("north"), PowsyblException.class),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, shuntCompensator, "region", List.of("east"), PowsyblException.class),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, line, "region", List.of("east"), PowsyblException.class),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, battery, "region", List.of("east"), PowsyblException.class),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, svar, "region", List.of("east"), PowsyblException.class),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE, threeWindingsTransformer, "region", List.of("east"), PowsyblException.class),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, hvdcLine, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_1, voltageLevel, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_2, generator, "region", List.of("north"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_1, load, "region", List.of("north"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_1, shuntCompensator, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, line, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_2, battery, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_1, svar, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SERIE_REACTANCE, threeWindingsTransformer, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, hvdcLine, "region", List.of("east"), PowsyblException.class),
+
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, voltageLevel, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_2, generator, "region", List.of("north"), PowsyblException.class),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, load, "region", List.of("north"), PowsyblException.class),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, shuntCompensator, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, line, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_2, battery, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, svar, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_NOT_IN, FieldType.SERIE_REACTANCE, threeWindingsTransformer, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, hvdcLine, "region", List.of("east"), PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.FREE_PROPERTIES, generator, "codeOI", List.of("33"), PowsyblException.class),
@@ -126,9 +136,13 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation.getProperty("cvgRegion")).thenReturn("LILLE");
 
         return Stream.of(
-                // --- IN --- //
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Lille", "PARIS"), substation, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Paris"), substation, false)
+                // --- IS_IN --- //
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Lille", "PARIS"), substation, true),
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Paris"), substation, false),
+
+                // --- IS_NOT_IN --- //
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Lille", "PARIS"), substation, false),
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Paris"), substation, true)
         );
     }
 
@@ -153,13 +167,20 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation.getProperty("regionCSV")).thenReturn("LILLE");
 
         return Stream.of(
-                // --- IN --- //
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "CodeOI", List.of("11"), generator, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "CodeOI", List.of("22"), generator, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), generator, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), generator, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), generator, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("11"), generator, false)
+                // --- IS_IN --- //
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "CodeOI", List.of("11"), generator, true),
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "CodeOI", List.of("22"), generator, false),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), generator, true),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), generator, false),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), generator, true),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("11"), generator, false),
+                // --- IS_NOT_IN --- //
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "CodeOI", List.of("11"), generator, false),
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "CodeOI", List.of("22"), generator, true),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), generator, false),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), generator, true),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), generator, false),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("11"), generator, true)
    );
     }
 
@@ -192,17 +213,28 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation2.getProperty("regionCSV")).thenReturn("PARIS");
 
         return Stream.of(
-                // --- IN --- //
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "region", List.of("north"), line, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "region", List.of("south"), line, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("Lille"), line, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("Paris"), line, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("Paris"), line, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("Lille"), line, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), line, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), line, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), line, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), line, false)
+                // --- IS_IN --- //
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "region", List.of("north"), line, true),
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "region", List.of("south"), line, false),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("Lille"), line, true),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("Paris"), line, false),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("Paris"), line, true),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("Lille"), line, false),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), line, true),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), line, false),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), line, true),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), line, false),
+                // --- IS_NOT_IN --- //
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "region", List.of("north"), line, false),
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "region", List.of("south"), line, true),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("Lille"), line, false),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", List.of("Paris"), line, true),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("Paris"), line, false),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", List.of("Lille"), line, true),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), line, false),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), line, true),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), line, false),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), line, true)
    );
     }
 
@@ -222,13 +254,20 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
 
         return Stream.of(
-                // --- IN --- //
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad"), load, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad2"), load, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), load, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), load, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), load, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), load, false)
+                // --- IS_IN --- //
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad"), load, true),
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad2"), load, false),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), load, true),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), load, false),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), load, true),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), load, false),
+                // --- IS_IN --- //
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad"), load, false),
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameLoad", List.of("propertyValueLoad2"), load, true),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), load, false),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), load, true),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), load, false),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), load, true)
         );
     }
 
@@ -248,13 +287,20 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
 
         return Stream.of(
-                // --- IN --- //
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC"), shuntCompensator, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC1"), shuntCompensator, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), shuntCompensator, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), shuntCompensator, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), shuntCompensator, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), shuntCompensator, false)
+                // --- IS_IN --- //
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC"), shuntCompensator, true),
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC1"), shuntCompensator, false),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), shuntCompensator, true),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), shuntCompensator, false),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), shuntCompensator, true),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), shuntCompensator, false),
+                // --- IS_NOT_IN --- //
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC"), shuntCompensator, false),
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameSC", List.of("propertyValueSC1"), shuntCompensator, true),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), shuntCompensator, false),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), shuntCompensator, true),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), shuntCompensator, false),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), shuntCompensator, true)
         );
     }
 
@@ -287,16 +333,26 @@ class PropertiesExpertRuleTest {
         Mockito.when(transformerWithNullSub.getNullableSubstation()).thenReturn(null);
 
         return Stream.of(
-                // --- IN --- //
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT2"), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), transformerWithNullSub, false)
+                // --- IS_IN --- //
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), twoWindingsTransformer, true),
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT2"), twoWindingsTransformer, false),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), twoWindingsTransformer, true),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), twoWindingsTransformer, false),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), twoWindingsTransformer, true),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), twoWindingsTransformer, false),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), twoWindingsTransformer, true),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), twoWindingsTransformer, false),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), transformerWithNullSub, false),
+                // --- IS_NOT_IN --- //
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), twoWindingsTransformer, false),
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT2"), twoWindingsTransformer, true),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), twoWindingsTransformer, false),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), twoWindingsTransformer, true),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), twoWindingsTransformer, false),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), twoWindingsTransformer, true),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), twoWindingsTransformer, false),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), twoWindingsTransformer, true),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), transformerWithNullSub, false)
         );
     }
 
@@ -315,13 +371,20 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
 
         return Stream.of(
-                // --- IN --- //
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSVAR", List.of("propertyValueSVAR"), svar, true),
-                Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSVAR", List.of("propertyValueSVAR2"), svar, false),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), svar, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), svar, false),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), svar, true),
-                Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), svar, false)
+                // --- IS_IN --- //
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameSVAR", List.of("propertyValueSVAR"), svar, true),
+                Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameSVAR", List.of("propertyValueSVAR2"), svar, false),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), svar, true),
+                Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), svar, false),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), svar, true),
+                Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), svar, false),
+                // --- IS_NOT_IN --- //
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameSVAR", List.of("propertyValueSVAR"), svar, false),
+                Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameSVAR", List.of("propertyValueSVAR2"), svar, true),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), svar, false),
+                Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), svar, true),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), svar, false),
+                Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), svar, true)
         );
     }
 
@@ -363,18 +426,30 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation.getProperty("regionCSV")).thenReturn("LILLE");
 
         return Stream.of(
-            // --- IN --- //
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), threeWindingsTransformer, true),
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT2"), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT3"), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), threeWindingsTransformer, true),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), threeWindingsTransformer, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), threeWindingsTransformer, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("44"), threeWindingsTransformer, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("22"), threeWindingsTransformer, false)
+            // --- IS_IN --- //
+            Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), threeWindingsTransformer, true),
+            Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT2"), threeWindingsTransformer, false),
+            Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT3"), threeWindingsTransformer, false),
+            Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), threeWindingsTransformer, true),
+            Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), threeWindingsTransformer, false),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), threeWindingsTransformer, true),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), threeWindingsTransformer, false),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), threeWindingsTransformer, true),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), threeWindingsTransformer, false),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("44"), threeWindingsTransformer, true),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("22"), threeWindingsTransformer, false),
+            // --- IS_NOT_IN --- //
+            Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT"), threeWindingsTransformer, false),
+            Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT2"), threeWindingsTransformer, true),
+            Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameTWT", List.of("propertyValueTWT3"), threeWindingsTransformer, true),
+            Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), threeWindingsTransformer, false),
+            Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), threeWindingsTransformer, true),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), threeWindingsTransformer, false),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), threeWindingsTransformer, true),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), threeWindingsTransformer, false),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), threeWindingsTransformer, true),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("44"), threeWindingsTransformer, false),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("22"), threeWindingsTransformer, true)
         );
     }
 
@@ -408,17 +483,28 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation2.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation2");
 
         return Stream.of(
-            // --- IN --- //
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameHVDC", List.of("propertyValueHVDC"), hvdc, true),
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameHVDC", List.of("propertyValueHVDC2"), hvdc, false),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation1"), hvdc, true),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation8"), hvdc, false),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", List.of("PropertyValueSubstation2"), hvdc, true),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", List.of("propertyValueSubstation1"), hvdc, false),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), hvdc, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), hvdc, false),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("42"), hvdc, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("21"), hvdc, false)
+            // --- IS_IN --- //
+            Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameHVDC", List.of("propertyValueHVDC"), hvdc, true),
+            Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameHVDC", List.of("propertyValueHVDC2"), hvdc, false),
+            Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation1"), hvdc, true),
+            Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation8"), hvdc, false),
+            Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", List.of("PropertyValueSubstation2"), hvdc, true),
+            Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", List.of("propertyValueSubstation1"), hvdc, false),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), hvdc, true),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), hvdc, false),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("42"), hvdc, true),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("21"), hvdc, false),
+            // --- IS_NOT_IN --- //
+            Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameHVDC", List.of("propertyValueHVDC"), hvdc, false),
+            Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameHVDC", List.of("propertyValueHVDC2"), hvdc, true),
+            Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation1"), hvdc, false),
+            Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", List.of("propertyValueSubstation8"), hvdc, true),
+            Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", List.of("PropertyValueSubstation2"), hvdc, false),
+            Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", List.of("propertyValueSubstation1"), hvdc, true),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), hvdc, false),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), hvdc, true),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("42"), hvdc, false),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("21"), hvdc, true)
         );
     }
 
@@ -437,13 +523,20 @@ class PropertiesExpertRuleTest {
         Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
 
         return Stream.of(
-            // --- IN --- //
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL"), danglingLine, true),
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL2"), danglingLine, false),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), danglingLine, true),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), danglingLine, false),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), danglingLine, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), danglingLine, false)
+            // --- IS_IN --- //
+            Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL"), danglingLine, true),
+            Arguments.of(IS_IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL2"), danglingLine, false),
+            Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), danglingLine, true),
+            Arguments.of(IS_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), danglingLine, false),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), danglingLine, true),
+            Arguments.of(IS_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), danglingLine, false),
+            // --- IS_NOT_IN --- //
+            Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL"), danglingLine, false),
+            Arguments.of(IS_NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL2"), danglingLine, true),
+            Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), danglingLine, false),
+            Arguments.of(IS_NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), danglingLine, true),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), danglingLine, false),
+            Arguments.of(IS_NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), danglingLine, true)
         );
     }
 
