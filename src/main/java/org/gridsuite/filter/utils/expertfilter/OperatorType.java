@@ -36,7 +36,6 @@ public enum OperatorType {
     IS_NOT_PART_OF;
 
     public static boolean isMultipleCriteriaOperator(OperatorType operator) {
-        return operator == IN || operator == NOT_IN || operator == BETWEEN || operator == IS_PART_OF
-            || operator == IS_NOT_PART_OF;
+        return operator == IN || operator == NOT_IN || operator == BETWEEN || operator == IS_PART_OF || operator == IS_NOT_PART_OF;
     }
 }
