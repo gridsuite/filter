@@ -50,6 +50,7 @@ public class PropertiesExpertRule extends AbstractExpertRule {
         }
         return switch (this.getOperator()) {
             case IN -> this.getPropertyValues().stream().anyMatch(propertyValue::equalsIgnoreCase);
+            case NOT_IN -> this.getPropertyValues().stream().noneMatch(propertyValue::equalsIgnoreCase);
             default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
         };
     }
