@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    uses: powsybl/github-ci/.github/workflows/build-backend-lib-generic.yml@3cec8155a76cd0b883b1a7b93c3ef034f0182dc1
+    uses: powsybl/github-ci/.github/workflows/build-backend-lib-generic.yml@c9a05e3d86f2a7d3e459d40667262f96753ecf5d
     with:
       sonarOrganization: gridsuite
       sonarProjectKey: org.gridsuite:filter
