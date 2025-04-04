@@ -45,7 +45,7 @@
         <lombok.version>1.18.34</lombok.version>
         <org-apache-commons.version>4.4</org-apache-commons.version>
         <org.hamcrest.version>2.2</org.hamcrest.version>
-        <powsybl-dependencies.version>2024.4.0</powsybl-dependencies.version>
+        <powsybl-dependencies.version>2025.0.0</powsybl-dependencies.version>
     </properties>
 
     <build>
