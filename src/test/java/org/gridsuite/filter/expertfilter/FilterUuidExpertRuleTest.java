@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -33,6 +34,8 @@ class FilterUuidExpertRuleTest {
     private static final UUID FILTER_GENERATOR_2_UUID = UUID.fromString("7928181d-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_VOLTAGE_LEVEL_GENERATOR_1_UUID = UUID.fromString("7928181e-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_VOLTAGE_LEVEL_GENERATOR_2_UUID = UUID.fromString("7928181f-7977-4592-ba19-88027e4254e4");
+    private static final UUID FILTER_SUBSTATION_GENERATOR_1_UUID = UUID.fromString("7222181e-7977-4592-ba19-88027e4254e4");
+    private static final UUID FILTER_SUBSTATION_GENERATOR_2_UUID = UUID.fromString("7111181f-7977-4592-ba19-88027e4254e4");
 
     private static final UUID FILTER_LOAD_1_UUID = UUID.fromString("1928181c-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_LOAD_2_UUID = UUID.fromString("1928181d-7977-4592-ba19-88027e4254e4");
@@ -55,6 +58,10 @@ class FilterUuidExpertRuleTest {
     private static final UUID FILTER_VOLTAGE_LEVEL_2_LINE_1_UUID = UUID.fromString("49281813-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_VOLTAGE_LEVEL_1_LINE_2_UUID = UUID.fromString("49281814-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_VOLTAGE_LEVEL_2_LINE_2_UUID = UUID.fromString("49281815-7977-4592-ba19-88027e4254e4");
+    private static final UUID FILTER_SUBSTATION_1_LINE_1_UUID = UUID.fromString("49281111-7977-4592-ba19-88027e4254e4");
+    private static final UUID FILTER_SUBSTATION_2_LINE_1_UUID = UUID.fromString("49281222-7977-4592-ba19-88027e4254e4");
+    private static final UUID FILTER_SUBSTATION_1_LINE_2_UUID = UUID.fromString("49281333-7977-4592-ba19-88027e4254e4");
+    private static final UUID FILTER_SUBSTATION_2_LINE_2_UUID = UUID.fromString("49281444-7977-4592-ba19-88027e4254e4");
 
     private static final UUID FILTER_DANGLING_LINE_1_UUID = UUID.fromString("18273121-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_DANGLING_LINE_2_UUID = UUID.fromString("18273122-7977-4592-ba19-88027e4254e4");
@@ -134,6 +141,8 @@ class FilterUuidExpertRuleTest {
         mockGetFilterEquipments(filtersUtilsMock, network, FILTER_GENERATOR_2_UUID, new IdentifiableAttributes("ID2", IdentifiableType.GENERATOR, 100D));
         mockGetFilterEquipments(filtersUtilsMock, network, FILTER_VOLTAGE_LEVEL_GENERATOR_1_UUID, new IdentifiableAttributes("VL1", IdentifiableType.VOLTAGE_LEVEL, 100D));
         mockGetFilterEquipments(filtersUtilsMock, network, FILTER_VOLTAGE_LEVEL_GENERATOR_2_UUID, new IdentifiableAttributes("VL2", IdentifiableType.VOLTAGE_LEVEL, 100D));
+        mockGetFilterEquipments(filtersUtilsMock, network, FILTER_SUBSTATION_GENERATOR_1_UUID, new IdentifiableAttributes("SUBST1", IdentifiableType.SUBSTATION, 100D));
+        mockGetFilterEquipments(filtersUtilsMock, network, FILTER_SUBSTATION_GENERATOR_2_UUID, new IdentifiableAttributes("SUBST2", IdentifiableType.SUBSTATION, 100D));
 
         // Load
         mockGetFilterEquipments(filtersUtilsMock, network, FILTER_LOAD_1_UUID, new IdentifiableAttributes("ID1", IdentifiableType.LOAD, 100D));
@@ -160,6 +169,10 @@ class FilterUuidExpertRuleTest {
         mockGetFilterEquipments(filtersUtilsMock, network, FILTER_VOLTAGE_LEVEL_2_LINE_1_UUID, new IdentifiableAttributes("VL21", IdentifiableType.VOLTAGE_LEVEL, 100D));
         mockGetFilterEquipments(filtersUtilsMock, network, FILTER_VOLTAGE_LEVEL_1_LINE_2_UUID, new IdentifiableAttributes("VL12", IdentifiableType.VOLTAGE_LEVEL, 100D));
         mockGetFilterEquipments(filtersUtilsMock, network, FILTER_VOLTAGE_LEVEL_2_LINE_2_UUID, new IdentifiableAttributes("VL22", IdentifiableType.VOLTAGE_LEVEL, 100D));
+        mockGetFilterEquipments(filtersUtilsMock, network, FILTER_SUBSTATION_1_LINE_1_UUID, new IdentifiableAttributes("SUBST1", IdentifiableType.SUBSTATION, 100D));
+        mockGetFilterEquipments(filtersUtilsMock, network, FILTER_SUBSTATION_2_LINE_1_UUID, new IdentifiableAttributes("SUBST2", IdentifiableType.SUBSTATION, 100D));
+        mockGetFilterEquipments(filtersUtilsMock, network, FILTER_SUBSTATION_1_LINE_2_UUID, new IdentifiableAttributes("SUBST3", IdentifiableType.SUBSTATION, 100D));
+        mockGetFilterEquipments(filtersUtilsMock, network, FILTER_SUBSTATION_2_LINE_2_UUID, new IdentifiableAttributes("SUBST4", IdentifiableType.SUBSTATION, 100D));
 
         // Dangling Lines
         mockGetFilterEquipments(filtersUtilsMock, network, FILTER_DANGLING_LINE_1_UUID, new IdentifiableAttributes("ID1", IdentifiableType.DANGLING_LINE, 100D));
@@ -218,16 +231,22 @@ class FilterUuidExpertRuleTest {
 
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Substation substation1 = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
+        Mockito.when(substation1.getId()).thenReturn("SUBST1");
         Terminal terminal1 = Mockito.mock(Terminal.class);
         Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
         Mockito.when(gen1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
 
         VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Substation substation2 = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel2.getId()).thenReturn("VL2");
+        Mockito.when(substation2.getId()).thenReturn("SUBST2");
         Terminal terminal2 = Mockito.mock(Terminal.class);
         Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
         Mockito.when(gen2.getTerminal()).thenReturn(terminal2);
+        Mockito.when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
 
         return Stream.of(
             // --- IS_PART_OF --- //
@@ -237,6 +256,9 @@ class FilterUuidExpertRuleTest {
             // VoltageLevel fields
             Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_GENERATOR_1_UUID.toString()), gen1, true),
             Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_GENERATOR_2_UUID.toString()), gen2, true),
+            // Substation fields
+            Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID, null, Set.of(FILTER_SUBSTATION_GENERATOR_1_UUID.toString()), gen1, true),
+            Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID, null, Set.of(FILTER_SUBSTATION_GENERATOR_2_UUID.toString()), gen2, true),
 
             // --- IS_NOT_PART_OF --- //
             // Common fields
@@ -244,8 +266,11 @@ class FilterUuidExpertRuleTest {
             Arguments.of(IS_NOT_PART_OF, FieldType.ID, null, Set.of(FILTER_GENERATOR_2_UUID.toString()), gen1, true),
             // VoltageLevel fields
             Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_GENERATOR_2_UUID.toString()), gen1, true),
-            Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_GENERATOR_1_UUID.toString()), gen2, true)
-        );
+            Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, null, Set.of(FILTER_VOLTAGE_LEVEL_GENERATOR_1_UUID.toString()), gen2, true),
+            // Substation fields
+            Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID, null, Set.of(FILTER_SUBSTATION_GENERATOR_2_UUID.toString()), gen1, true),
+            Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID, null, Set.of(FILTER_SUBSTATION_GENERATOR_1_UUID.toString()), gen2, true)
+            );
     }
 
     private static Stream<Arguments> provideArgumentsForLoadTest() {
@@ -402,26 +427,40 @@ class FilterUuidExpertRuleTest {
 
         // VoltageLevel fields
         VoltageLevel voltageLevel1Line1 = Mockito.mock(VoltageLevel.class);
+        Substation substation1Line1 = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel1Line1.getId()).thenReturn("VL11");
+        Mockito.when(substation1Line1.getId()).thenReturn("SUBST1");
         Terminal terminal1Line1 = Mockito.mock(Terminal.class);
         Mockito.when(terminal1Line1.getVoltageLevel()).thenReturn(voltageLevel1Line1);
         Mockito.when(line1.getTerminal(TwoSides.ONE)).thenReturn(terminal1Line1);
+        Mockito.when(voltageLevel1Line1.getSubstation()).thenReturn(Optional.of(substation1Line1));
+
         VoltageLevel voltageLevel2Line1 = Mockito.mock(VoltageLevel.class);
+        Substation substation2Line1 = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel2Line1.getId()).thenReturn("VL21");
+        Mockito.when(substation2Line1.getId()).thenReturn("SUBST2");
         Terminal terminal2Line1 = Mockito.mock(Terminal.class);
         Mockito.when(terminal2Line1.getVoltageLevel()).thenReturn(voltageLevel2Line1);
         Mockito.when(line1.getTerminal(TwoSides.TWO)).thenReturn(terminal2Line1);
+        Mockito.when(voltageLevel2Line1.getSubstation()).thenReturn(Optional.of(substation2Line1));
 
         VoltageLevel voltageLevel1Line2 = Mockito.mock(VoltageLevel.class);
+        Substation substation1Line2 = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel1Line2.getId()).thenReturn("VL12");
+        Mockito.when(substation1Line2.getId()).thenReturn("SUBST3");
         Terminal terminal1Line2 = Mockito.mock(Terminal.class);
         Mockito.when(terminal1Line2.getVoltageLevel()).thenReturn(voltageLevel1Line2);
         Mockito.when(line2.getTerminal(TwoSides.ONE)).thenReturn(terminal1Line2);
+        Mockito.when(voltageLevel1Line2.getSubstation()).thenReturn(Optional.of(substation1Line2));
+
         VoltageLevel voltageLevel2Line2 = Mockito.mock(VoltageLevel.class);
+        Substation substation2Line2 = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel2Line2.getId()).thenReturn("VL22");
+        Mockito.when(substation2Line2.getId()).thenReturn("SUBST4");
         Terminal terminal2Line2 = Mockito.mock(Terminal.class);
         Mockito.when(terminal2Line2.getVoltageLevel()).thenReturn(voltageLevel2Line2);
         Mockito.when(line2.getTerminal(TwoSides.TWO)).thenReturn(terminal2Line2);
+        Mockito.when(voltageLevel2Line2.getSubstation()).thenReturn(Optional.of(substation2Line2));
 
         return Stream.of(
             // --- IS_PART_OF --- //
@@ -433,6 +472,11 @@ class FilterUuidExpertRuleTest {
             Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of(FILTER_VOLTAGE_LEVEL_2_LINE_1_UUID.toString()), line1, true),
             Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of(FILTER_VOLTAGE_LEVEL_1_LINE_2_UUID.toString()), line2, true),
             Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of(FILTER_VOLTAGE_LEVEL_2_LINE_2_UUID.toString()), line2, true),
+            // Substation fields
+            Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_1, null, Set.of(FILTER_SUBSTATION_1_LINE_1_UUID.toString()), line1, true),
+            Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_2, null, Set.of(FILTER_SUBSTATION_2_LINE_1_UUID.toString()), line1, true),
+            Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_1, null, Set.of(FILTER_SUBSTATION_1_LINE_2_UUID.toString()), line2, true),
+            Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_2, null, Set.of(FILTER_SUBSTATION_2_LINE_2_UUID.toString()), line2, true),
 
             // --- IS_NOT_PART_OF --- //
             // Common fields
@@ -442,8 +486,13 @@ class FilterUuidExpertRuleTest {
             Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of(FILTER_VOLTAGE_LEVEL_1_LINE_1_UUID.toString()), line2, true),
             Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of(FILTER_VOLTAGE_LEVEL_2_LINE_1_UUID.toString()), line2, true),
             Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of(FILTER_VOLTAGE_LEVEL_1_LINE_2_UUID.toString()), line1, true),
-            Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of(FILTER_VOLTAGE_LEVEL_2_LINE_2_UUID.toString()), line1, true)
-        );
+            Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of(FILTER_VOLTAGE_LEVEL_2_LINE_2_UUID.toString()), line1, true),
+            // Substation fields
+            Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_1, null, Set.of(FILTER_SUBSTATION_1_LINE_1_UUID.toString()), line2, true),
+            Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_2, null, Set.of(FILTER_SUBSTATION_2_LINE_1_UUID.toString()), line2, true),
+            Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_1, null, Set.of(FILTER_SUBSTATION_1_LINE_2_UUID.toString()), line1, true),
+            Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_2, null, Set.of(FILTER_SUBSTATION_2_LINE_2_UUID.toString()), line1, true)
+            );
     }
 
     private static Stream<Arguments> provideArgumentsForHvdcTest() {
