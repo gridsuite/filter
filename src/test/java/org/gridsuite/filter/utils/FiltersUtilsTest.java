@@ -18,7 +18,6 @@ import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
-import org.gridsuite.filter.scriptfilter.ScriptFilter;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.BeforeEach;
@@ -500,16 +499,6 @@ class FiltersUtilsTest {
         assertEquals(2, identifiables.size());
         assertEquals("GEN", identifiables.get(0).getId());
         assertEquals("GEN2", identifiables.get(1).getId());
-    }
-
-    @Test
-    void testScriptFilter() {
-        ScriptFilter scriptFilter = new ScriptFilter(
-            UUID.randomUUID(),
-            new Date(),
-            "");
-        assertEquals(FilterType.SCRIPT, scriptFilter.getType());
-        assertNull(scriptFilter.getEquipmentType());
     }
 
     @Test
