@@ -14,7 +14,6 @@ import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
-import org.gridsuite.filter.scriptfilter.ScriptFilter;
 import org.gridsuite.filter.utils.EquipmentType;
 
 import java.util.Date;
@@ -33,8 +32,7 @@ import java.util.UUID;
 )
 @JsonSubTypes({//Below, we define the names and the binding classes.
     @JsonSubTypes.Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
-    @JsonSubTypes.Type(value = ExpertFilter.class, name = "EXPERT"),
-    @JsonSubTypes.Type(value = ScriptFilter.class, name = "SCRIPT")
+    @JsonSubTypes.Type(value = ExpertFilter.class, name = "EXPERT")
 })
 @Data
 @NoArgsConstructor
