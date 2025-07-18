@@ -330,14 +330,8 @@ public final class ExpertFilterUtils {
     }
 
     private static String getPhaseRegulationMode(PhaseTapChanger phaseTapChanger) {
-        if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL && phaseTapChanger.isRegulating()) {
-            return PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name();
-        } else if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && phaseTapChanger.isRegulating()) {
-            return PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name();
-        } else if (phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.FIXED_TAP ||
-                phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.CURRENT_LIMITER && !phaseTapChanger.isRegulating() ||
-                phaseTapChanger.getRegulationMode() == PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL && !phaseTapChanger.isRegulating()) {
-            return PhaseTapChanger.RegulationMode.FIXED_TAP.name();
+        if (phaseTapChanger.getRegulationMode() != null && phaseTapChanger.isRegulating()) {
+            return phaseTapChanger.getRegulationMode().name();
         } else {
             return null;
         }

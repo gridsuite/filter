@@ -606,7 +606,7 @@ class EnumExpertRuleTest {
         PhaseTapChanger phaseTapChanger5 = Mockito.mock(PhaseTapChanger.class);
         Mockito.when(twoWindingsTransformer5.getPhaseTapChanger()).thenReturn(phaseTapChanger5);
         Mockito.when(phaseTapChanger5.isRegulating()).thenReturn(false);
-        Mockito.when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.FIXED_TAP);
+        Mockito.when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
         TwoWindingsTransformer twoWindingsTransformer6 = Mockito.mock(TwoWindingsTransformer.class);
         Mockito.when(twoWindingsTransformer6.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
@@ -620,7 +620,7 @@ class EnumExpertRuleTest {
         PhaseTapChanger phaseTapChanger7 = Mockito.mock(PhaseTapChanger.class);
         Mockito.when(twoWindingsTransformer7.getPhaseTapChanger()).thenReturn(phaseTapChanger7);
         Mockito.when(phaseTapChanger7.isRegulating()).thenReturn(true);
-        Mockito.when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.FIXED_TAP);
+        Mockito.when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
         return Stream.of(
             // --- EQUALS --- //
@@ -632,11 +632,11 @@ class EnumExpertRuleTest {
             Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.FIXED_RATIO.name(), null, twoWindingsTransformer4, false),
             Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, twoWindingsTransformer2, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, twoWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, twoWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, twoWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, twoWindingsTransformer2, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, twoWindingsTransformer5, false),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, twoWindingsTransformer6, true),
+            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, twoWindingsTransformer6, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, twoWindingsTransformer7, false),
 
             // --- NOT_EQUALS --- //
@@ -645,20 +645,19 @@ class EnumExpertRuleTest {
             Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.FIXED_RATIO.name(), null, twoWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.RATIO_REGULATION_MODE, RatioRegulationModeType.VOLTAGE_REGULATION.name(), null, twoWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, twoWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, twoWindingsTransformer, true),
 
             // --- IN --- //
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, true),
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, false),
             Arguments.of(IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, false),
+            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true),
 
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, false),
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true)
+            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, false)
             );
     }
 
@@ -735,7 +734,7 @@ class EnumExpertRuleTest {
         Mockito.when(threeWindingsTransformer5.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
         PhaseTapChanger phaseTapChanger5 = Mockito.mock(PhaseTapChanger.class);
         Mockito.when(phaseTapChanger5.isRegulating()).thenReturn(false);
-        Mockito.when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.FIXED_TAP);
+        Mockito.when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
         ThreeWindingsTransformer.Leg leg5 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
         Mockito.when(leg5.getPhaseTapChanger()).thenReturn(phaseTapChanger5);
@@ -761,7 +760,7 @@ class EnumExpertRuleTest {
         Mockito.when(threeWindingsTransformer7.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
         PhaseTapChanger phaseTapChanger7 = Mockito.mock(PhaseTapChanger.class);
         Mockito.when(phaseTapChanger7.isRegulating()).thenReturn(true);
-        Mockito.when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.FIXED_TAP);
+        Mockito.when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
         ThreeWindingsTransformer.Leg leg7 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
         Mockito.when(leg7.getPhaseTapChanger()).thenReturn(phaseTapChanger7);
@@ -791,9 +790,6 @@ class EnumExpertRuleTest {
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, false),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, false),
@@ -803,9 +799,6 @@ class EnumExpertRuleTest {
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer5, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer5, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer5, false),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer6, true),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer6, true),
-            Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer6, true),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer7, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer7, false),
             Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer7, false),
@@ -822,9 +815,6 @@ class EnumExpertRuleTest {
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, false),
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, false),
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), null, threeWindingsTransformer, false),
-            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, true),
-            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, true),
-            Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.FIXED_TAP.name(), null, threeWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_1, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_2, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, true),
             Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, true),
@@ -835,19 +825,13 @@ class EnumExpertRuleTest {
             Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
             Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_2, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
             Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE_1, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE_2, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE_3, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, false),
 
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, false),
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_2, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE_1, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE_2, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE_3, null, Set.of(PhaseTapChanger.RegulationMode.FIXED_TAP.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), threeWindingsTransformer, true)
+            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true)
         );
     }
 
@@ -856,7 +840,7 @@ class EnumExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
         Mockito.when(svar.getId()).thenReturn("SVAR");
-        Mockito.when(svar.getRegulationMode()).thenReturn(StaticVarCompensator.RegulationMode.OFF);
+        Mockito.when(svar.getRegulationMode()).thenReturn(StaticVarCompensator.RegulationMode.VOLTAGE);
 
         // VoltageLevel fields
         Substation substation = Mockito.mock(Substation.class);
@@ -883,8 +867,8 @@ class EnumExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.OFF.name(), null, svar, true),
-                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.VOLTAGE.name(), null, svar, false),
+                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.VOLTAGE.name(), null, svar, true),
+                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.REACTIVE_POWER.name(), null, svar, false),
                 Arguments.of(EQUALS, FieldType.REGULATION_TYPE, RegulationType.DISTANT.name(), null, svar, true),
                 Arguments.of(EQUALS, FieldType.REGULATION_TYPE, RegulationType.LOCAL.name(), null, svar, false),
 
@@ -894,8 +878,8 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.VOLTAGE.name(), null, svar, true),
-                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.OFF.name(), null, svar, false),
+                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.VOLTAGE.name(), null, svar, false),
+                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.REACTIVE_POWER.name(), null, svar, true),
                 Arguments.of(NOT_EQUALS, FieldType.REGULATION_TYPE, RegulationType.LOCAL.name(), null, svar, true),
                 Arguments.of(NOT_EQUALS, FieldType.REGULATION_TYPE, RegulationType.DISTANT.name(), null, svar, false),
 
@@ -905,8 +889,8 @@ class EnumExpertRuleTest {
                 Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.OFF.name()), svar, true),
-                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, false),
+                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, true),
+                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.REACTIVE_POWER.name()), svar, false),
                 Arguments.of(IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, true),
                 Arguments.of(IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, false),
 
@@ -916,8 +900,8 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, true),
-                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.OFF.name()), svar, false),
+                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.REACTIVE_POWER.name()), svar, true),
+                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, false),
                 Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, true),
                 Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, false)
         );
