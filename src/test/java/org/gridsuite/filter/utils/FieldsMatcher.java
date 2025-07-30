@@ -6,25 +6,6 @@
  */
 package org.gridsuite.filter.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.MutableTriple;
@@ -32,12 +13,16 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.hamcrest.Description;
 import org.hamcrest.StringDescription;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.collection.ArrayMatching;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+
 import static java.lang.String.format;
-import lombok.SneakyThrows;
 
 public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
 
@@ -48,8 +33,6 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         Enum.class);
 
     private final T expected;
-    private Map<String, TypeSafeMatcher<?>> pathBasedMatchersMap;
-    private Map<Class<?>, TypeSafeMatcher<?>> classBasedMatcherMap;
 
     @RequiredArgsConstructor
     private static class EqualDiagnosingMatcher<U> extends TypeSafeDiagnosingMatcher<U> {
@@ -63,25 +46,16 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
             return equals;
         }
 
+        @Override
         public void describeTo(Description description) {
             description.appendText("Objects.equals");
         }
     }
 
-    public FieldsMatcher(T expected,
-        Map<String, TypeSafeMatcher<?>> pathBasedMatchersMap,
-        Map<Class<?>, TypeSafeMatcher<?>> classBasedMatcherMap) {
-
-        this.expected = expected;
-        this.pathBasedMatchersMap = pathBasedMatchersMap;
-        this.classBasedMatcherMap = classBasedMatcherMap;
-    }
-
     public FieldsMatcher(T expected) {
-        this(expected, null, null);
+        this.expected = expected;
     }
 
-    @SneakyThrows
     @Override
     protected boolean matchesSafely(T actual, Description mismatch) {
         return matchesRecurs(null, expected, SEP, actual, mismatch);
@@ -122,6 +96,7 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
                 return mismatchCount == 0;
             }
 
+            @Override
             public void describeTo(Description description) {
                 description.appendText("map without order on keys");
             }
@@ -238,6 +213,7 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
                 return mismatchCount;
             }
 
+            @Override
             public void describeTo(Description description) {
                 description.appendText("ordered");
             }
@@ -283,6 +259,7 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
                 return mismatchCount == 0;
             }
 
+            @Override
             public void describeTo(Description description) {
                 description.appendText("collection");
             }
@@ -433,6 +410,7 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
         }
     }
 
+    @Override
     public void describeTo(Description description) {
         description.appendText("acyclic fields matcher");
     }

@@ -27,7 +27,7 @@ class StringExpertRuleTest {
     private FilterLoader filterLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         filterLoader = uuids -> null;
     }
 
@@ -43,7 +43,7 @@ class StringExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class expectedException) {
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
         StringExpertRule rule = StringExpertRule.builder().operator(operator).field(field).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
@@ -81,6 +81,9 @@ class StringExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+
         HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
         Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
@@ -96,6 +99,7 @@ class StringExpertRuleTest {
                 Arguments.of(IS, FieldType.RATED_S, battery, PowsyblException.class),
                 Arguments.of(IS, FieldType.P0, twoWindingsTransformer, PowsyblException.class),
                 Arguments.of(IS, FieldType.RATED_S, svar, PowsyblException.class),
+                Arguments.of(IS, FieldType.P0, threeWindingsTransformer, PowsyblException.class),
                 Arguments.of(IS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
@@ -114,6 +118,8 @@ class StringExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingsTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForDanglingLineTest",
+        "provideArgumentsForThreeWindingsTransformerTest",
         "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
@@ -130,7 +136,10 @@ class StringExpertRuleTest {
         Mockito.when(gen.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Substation substation = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
+        Mockito.when(substation.getId()).thenReturn("SUBST");
+        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
         Mockito.when(gen.getTerminal()).thenReturn(terminal);
@@ -156,6 +165,10 @@ class StringExpertRuleTest {
                 Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, gen, true),
                 Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, gen, false),
 
+                // Substation fields
+                Arguments.of(IS, FieldType.SUBSTATION_ID, "SUBST", null, gen, true),
+                Arguments.of(IS, FieldType.SUBSTATION_ID, "SUBST_1", null, gen, false),
+
                 // --- CONTAINS --- //
                 // Common fields
                 Arguments.of(CONTAINS, FieldType.ID, "i", null, gen, true),
@@ -165,6 +178,9 @@ class StringExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, gen, true),
                 Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, gen, false),
+                // Substation fields
+                Arguments.of(CONTAINS, FieldType.SUBSTATION_ID, "UBS", null, gen, true),
+                Arguments.of(CONTAINS, FieldType.SUBSTATION_ID, "UBB", null, gen, false),
 
                 // --- BEGINS_WITH --- //
                 // Common fields
@@ -175,6 +191,9 @@ class StringExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, gen, true),
                 Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, gen, false),
+                // Substation fields
+                Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID, "SUB", null, gen, true),
+                Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID, "TUB", null, gen, false),
 
                 // --- ENDS_WITH --- //
                 // Common fields
@@ -185,6 +204,9 @@ class StringExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, gen, true),
                 Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, gen, false),
+                // Substation fields
+                Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID, "BST", null, gen, true),
+                Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID, "BSI", null, gen, false),
 
                 // --- EXISTS --- //
                 // Common fields
@@ -215,6 +237,9 @@ class StringExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), gen, true),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), gen, false),
+                // Substation fields
+                Arguments.of(IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST", "SUBST_2"), gen, true),
+                Arguments.of(IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST_1", "SUBST_2"), gen, false),
 
                 // --- NOT_IN --- //
                 // Common fields
@@ -224,8 +249,10 @@ class StringExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), gen, false),
                 // VoltageLevel fields
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), gen, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), gen, false)
-
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), gen, false),
+                // Substation fields
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST_1", "SUBST_2"), gen, true),
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST", "SUBST_1"), gen, false)
         );
     }
 
@@ -454,14 +481,20 @@ class StringExpertRuleTest {
         Mockito.when(line.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Substation substation1 = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
+        Mockito.when(substation1.getId()).thenReturn("SUBST1");
+        Mockito.when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
 
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel1);
         Mockito.when(line.getTerminal(TwoSides.ONE)).thenReturn(terminal);
 
         VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
+        Substation substation2 = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel2.getId()).thenReturn("VL2");
+        Mockito.when(substation2.getId()).thenReturn("SUBST2");
+        Mockito.when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
 
         Terminal terminal2 = Mockito.mock(Terminal.class);
         Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
@@ -494,6 +527,11 @@ class StringExpertRuleTest {
                 Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_1, "vl_1", null, line, false),
                 Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_2, "vl2", null, line, true),
                 Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_2, "vl_1", null, line, false),
+                // Substation fields
+                Arguments.of(IS, FieldType.SUBSTATION_ID_1, "SUBST1", null, line, true),
+                Arguments.of(IS, FieldType.SUBSTATION_ID_1, "SUBST_1", null, line, false),
+                Arguments.of(IS, FieldType.SUBSTATION_ID_2, "SUBST2", null, line, true),
+                Arguments.of(IS, FieldType.SUBSTATION_ID_2, "SUBST_2", null, line, false),
 
                 // --- CONTAINS --- //
                 // Common fields
@@ -506,6 +544,11 @@ class StringExpertRuleTest {
                 Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_1, "vv", null, line, false),
                 Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_2, "v", null, line, true),
                 Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_2, "vv", null, line, false),
+                // Substation fields
+                Arguments.of(CONTAINS, FieldType.SUBSTATION_ID_1, "UBST1", null, line, true),
+                Arguments.of(CONTAINS, FieldType.SUBSTATION_ID_1, "UBSV1", null, line, false),
+                Arguments.of(CONTAINS, FieldType.SUBSTATION_ID_2, "UBST2", null, line, true),
+                Arguments.of(CONTAINS, FieldType.SUBSTATION_ID_2, "UBSV2", null, line, false),
 
                 // --- BEGINS_WITH --- //
                 // Common fields
@@ -518,6 +561,11 @@ class StringExpertRuleTest {
                 Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "s", null, line, false),
                 Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "v", null, line, true),
                 Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "s", null, line, false),
+                // Substation fields
+                Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID_1, "SUBST", null, line, true),
+                Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID_1, "TUBST", null, line, false),
+                Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID_2, "SUBST", null, line, true),
+                Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID_2, "TUBST", null, line, false),
 
                 // --- ENDS_WITH --- //
                 // Common fields
@@ -530,6 +578,11 @@ class StringExpertRuleTest {
                 Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "m", null, line, false),
                 Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "2", null, line, true),
                 Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "m", null, line, false),
+                // Substation fields
+                Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID_1, "1", null, line, true),
+                Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID_1, "X", null, line, false),
+                Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID_2, "2", null, line, true),
+                Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID_2, "X", null, line, false),
 
                 // --- EXISTS --- //
                 // Common fields
@@ -566,6 +619,11 @@ class StringExpertRuleTest {
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), line, false),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl2", "VL_2"), line, true),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), line, false),
+                // Substation fields
+                Arguments.of(IN, FieldType.SUBSTATION_ID_1, null, Set.of("SUBST1", "SUBST2"), line, true),
+                Arguments.of(IN, FieldType.SUBSTATION_ID_1, null, Set.of("SUBST2", "SUBST3"), line, false),
+                Arguments.of(IN, FieldType.SUBSTATION_ID_2, null, Set.of("SUBST2", "SUBST3"), line, true),
+                Arguments.of(IN, FieldType.SUBSTATION_ID_2, null, Set.of("SUBST1", "SUBST3"), line, false),
 
                 // --- NOT_IN --- //
                 // Common fields
@@ -577,8 +635,12 @@ class StringExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), line, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl1", "VL_2"), line, false),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), line, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl2", "VL_2"), line, false)
-
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl2", "VL_2"), line, false),
+                // Substation fields
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_ID_1, null, Set.of("SUBST2", "SUBST3"), line, true),
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_ID_1, null, Set.of("SUBST1", "SUBST3"), line, false),
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_ID_2, null, Set.of("SUBST1", "SUBST3"), line, true),
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_ID_2, null, Set.of("SUBST1", "SUBST2"), line, false)
         );
     }
 
@@ -911,11 +973,15 @@ class StringExpertRuleTest {
         Mockito.when(twoWindingsTransformer.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Substation substation = Mockito.mock(Substation.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
+        Mockito.when(substation.getId()).thenReturn("SUBST");
+        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
         Mockito.when(twoWindingsTransformer.getTerminal1()).thenReturn(terminal);
         Mockito.when(twoWindingsTransformer.getTerminal2()).thenReturn(terminal);
+        Mockito.when(twoWindingsTransformer.getNullableSubstation()).thenReturn(substation);
 
         // for testing none EXISTS
         TwoWindingsTransformer twoWindingsTransformer1 = Mockito.mock(TwoWindingsTransformer.class);
@@ -940,6 +1006,9 @@ class StringExpertRuleTest {
                 Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_1, "vl_1", null, twoWindingsTransformer, false),
                 Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_2, "vl", null, twoWindingsTransformer, true),
                 Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_2, "vl_1", null, twoWindingsTransformer, false),
+                // Substation fields
+                Arguments.of(IS, FieldType.SUBSTATION_ID, "SUBST", null, twoWindingsTransformer, true),
+                Arguments.of(IS, FieldType.SUBSTATION_ID, "SUBSV", null, twoWindingsTransformer, false),
 
                 // --- CONTAINS --- //
                 // Common fields
@@ -952,6 +1021,9 @@ class StringExpertRuleTest {
                 Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_1, "vv", null, twoWindingsTransformer, false),
                 Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_2, "v", null, twoWindingsTransformer, true),
                 Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_2, "vv", null, twoWindingsTransformer, false),
+                // Substation fields
+                Arguments.of(CONTAINS, FieldType.SUBSTATION_ID, "UBST", null, twoWindingsTransformer, true),
+                Arguments.of(CONTAINS, FieldType.SUBSTATION_ID, "UBSV", null, twoWindingsTransformer, false),
 
                 // --- BEGINS_WITH --- //
                 // Common fields
@@ -964,6 +1036,9 @@ class StringExpertRuleTest {
                 Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "s", null, twoWindingsTransformer, false),
                 Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "v", null, twoWindingsTransformer, true),
                 Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "s", null, twoWindingsTransformer, false),
+                // Substation fields
+                Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID, "SUB", null, twoWindingsTransformer, true),
+                Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID, "TUB", null, twoWindingsTransformer, false),
 
                 // --- ENDS_WITH --- //
                 // Common fields
@@ -976,6 +1051,9 @@ class StringExpertRuleTest {
                 Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "m", null, twoWindingsTransformer, false),
                 Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "l", null, twoWindingsTransformer, true),
                 Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "m", null, twoWindingsTransformer, false),
+                // Substation fields
+                Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID, "ST", null, twoWindingsTransformer, true),
+                Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID, "SV", null, twoWindingsTransformer, false),
 
                 // --- EXISTS --- //
                 // Common fields
@@ -1012,6 +1090,9 @@ class StringExpertRuleTest {
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), twoWindingsTransformer, false),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), twoWindingsTransformer, true),
                 Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), twoWindingsTransformer, false),
+                // Substation fields
+                Arguments.of(IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST", "SUBST1"), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST1", "SUBST2"), twoWindingsTransformer, false),
 
                 // --- NOT_IN --- //
                 // Common fields
@@ -1023,7 +1104,10 @@ class StringExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), twoWindingsTransformer, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl", "VL_2"), twoWindingsTransformer, false),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), twoWindingsTransformer, false)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), twoWindingsTransformer, false),
+                // Substation fields
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST1", "SUBST2"), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST", "SUBST3"), twoWindingsTransformer, false)
 
         );
     }
@@ -1187,6 +1271,336 @@ class StringExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("Bbs_1", "BBS_2"), svar, true),
                 Arguments.of(NOT_IN, FieldType.REGULATING_TERMINAL_CONNECTABLE_ID, null, Set.of("Bbs", "BBS_2"), svar1, false)
             );
+    }
+
+    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
+
+        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
+        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        // Common fields
+        Mockito.when(danglingLine.getId()).thenReturn("ID");
+        Mockito.when(danglingLine.getOptionalName()).thenReturn(Optional.of("NAME"));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getId()).thenReturn("VL");
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+        Mockito.when(danglingLine.getPairingKey()).thenReturn("pairingKey");
+
+        TieLine tieLine = Mockito.mock(TieLine.class);
+        Mockito.when(tieLine.getId()).thenReturn("tieLineId");
+        Mockito.when(danglingLine.getTieLine()).thenReturn(Optional.of(tieLine));
+
+        // for testing none EXISTS
+        DanglingLine danglingLine1 = Mockito.mock(DanglingLine.class);
+        Mockito.when(danglingLine1.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        Mockito.when(danglingLine1.getOptionalName()).thenReturn(Optional.of(""));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Mockito.when(danglingLine1.getTerminal()).thenReturn(terminal1);
+
+        return Stream.of(
+            // --- IS --- //
+            // Common fields
+            Arguments.of(IS, FieldType.ID, "id", null, danglingLine, true),
+            Arguments.of(IS, FieldType.ID, "id_1", null, danglingLine, false),
+            Arguments.of(IS, FieldType.NAME, "name", null, danglingLine, true),
+            Arguments.of(IS, FieldType.NAME, "name_1", null, danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, danglingLine, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, danglingLine, false),
+
+            // Tie Lines
+            Arguments.of(IS, FieldType.PAIRING_KEY, "pairingKey1", null, danglingLine, false),
+            Arguments.of(IS, FieldType.PAIRING_KEY, "pairingKey", null, danglingLine, true),
+            Arguments.of(IS, FieldType.TIE_LINE_ID, "tieLineId1", null, danglingLine, false),
+            Arguments.of(IS, FieldType.TIE_LINE_ID, "tieLineId", null, danglingLine, true),
+
+            // --- CONTAINS --- //
+            // Common fields
+            Arguments.of(CONTAINS, FieldType.ID, "i", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.ID, "ii", null, danglingLine, false),
+            Arguments.of(CONTAINS, FieldType.NAME, "nam", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.NAME, "namm", null, danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, danglingLine, false),
+
+            // Tie Lines
+            Arguments.of(CONTAINS, FieldType.PAIRING_KEY, "K", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.PAIRING_KEY, "O", null, danglingLine, false),
+            Arguments.of(CONTAINS, FieldType.TIE_LINE_ID, "L", null, danglingLine, true),
+            Arguments.of(CONTAINS, FieldType.TIE_LINE_ID, "O", null, danglingLine, false),
+
+            // --- BEGINS_WITH --- //
+            // Common fields
+            Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, danglingLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, danglingLine, false),
+            // Tie Lines
+            Arguments.of(BEGINS_WITH, FieldType.PAIRING_KEY, "p", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.PAIRING_KEY, "a", null, danglingLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.TIE_LINE_ID, "t", null, danglingLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.TIE_LINE_ID, "e", null, danglingLine, false),
+
+            // --- ENDS_WITH --- //
+            // Common fields
+            Arguments.of(ENDS_WITH, FieldType.ID, "d", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.ID, "e", null, danglingLine, false),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, danglingLine, false),
+            // Tie Lines
+            Arguments.of(ENDS_WITH, FieldType.PAIRING_KEY, "y", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.PAIRING_KEY, "a", null, danglingLine, false),
+            Arguments.of(ENDS_WITH, FieldType.TIE_LINE_ID, "d", null, danglingLine, true),
+            Arguments.of(ENDS_WITH, FieldType.TIE_LINE_ID, "z", null, danglingLine, false),
+
+            // --- EXISTS --- //
+            // Common fields
+            Arguments.of(EXISTS, FieldType.ID, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.ID, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, danglingLine1, false),
+            // VoltageLevel fields
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine1, false),
+            // Tie Lines
+            Arguments.of(EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine, true),
+            Arguments.of(EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine1, false),
+
+            // --- NOT_EXISTS --- //
+            // Common fields
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, danglingLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, danglingLine1, true),
+            // VoltageLevel fields
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine1, true),
+            // Tie Lines
+            Arguments.of(NOT_EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine1, true),
+
+            // --- IN --- //
+            // Common fields
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), danglingLine, false),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), danglingLine, false),
+            // Tie Lines
+            Arguments.of(IN, FieldType.PAIRING_KEY, null, Set.of("pairingKey", "VL_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.PAIRING_KEY, null, Set.of("test", "VL_2"), danglingLine, false),
+            Arguments.of(IN, FieldType.TIE_LINE_ID, null, Set.of("tieLineId", "VL_2"), danglingLine, true),
+            Arguments.of(IN, FieldType.TIE_LINE_ID, null, Set.of("test", "VL_2"), danglingLine, false),
+
+            // --- NOT_IN --- //
+            // Common fields
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), danglingLine, false),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), danglingLine, false),
+            // VoltageLevel fields
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, false),
+            // Tie Lines
+            Arguments.of(NOT_IN, FieldType.PAIRING_KEY, null, Set.of("pairingKey", "VL_2"), danglingLine, false),
+            Arguments.of(NOT_IN, FieldType.PAIRING_KEY, null, Set.of("test", "VL_2"), danglingLine, true),
+            Arguments.of(NOT_IN, FieldType.TIE_LINE_ID, null, Set.of("tieLineId", "VL_2"), danglingLine, false),
+            Arguments.of(NOT_IN, FieldType.TIE_LINE_ID, null, Set.of("test", "VL_2"), danglingLine, true)
+
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForThreeWindingsTransformerTest() {
+
+        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        // Common fields
+        Mockito.when(threeWindingsTransformer.getId()).thenReturn("ID");
+        Mockito.when(threeWindingsTransformer.getOptionalName()).thenReturn(Optional.of("NAME"));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Substation substation = Mockito.mock(Substation.class);
+        Mockito.when(voltageLevel.getId()).thenReturn("VL");
+        Mockito.when(substation.getId()).thenReturn("SUBST");
+        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        ThreeWindingsTransformer.Leg leg = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+
+        Mockito.when(leg.getTerminal()).thenReturn(terminal);
+        Mockito.when(threeWindingsTransformer.getLeg1()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getLeg2()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getLeg3()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getNullableSubstation()).thenReturn(substation);
+
+        // for testing none EXISTS
+        ThreeWindingsTransformer threeWindingsTransformer1 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer1.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        Mockito.when(threeWindingsTransformer1.getOptionalName()).thenReturn(Optional.of(""));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel1.getId()).thenReturn("");
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        ThreeWindingsTransformer.Leg leg1 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+
+        Mockito.when(leg1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(threeWindingsTransformer1.getLeg1()).thenReturn(leg1);
+        Mockito.when(threeWindingsTransformer1.getLeg2()).thenReturn(leg1);
+        Mockito.when(threeWindingsTransformer1.getLeg3()).thenReturn(leg1);
+
+        return Stream.of(
+            // --- IS --- //
+            // Common fields
+            Arguments.of(IS, FieldType.ID, "id", null, threeWindingsTransformer, true),
+            Arguments.of(IS, FieldType.ID, "id_1", null, threeWindingsTransformer, false),
+            Arguments.of(IS, FieldType.NAME, "name", null, threeWindingsTransformer, true),
+            Arguments.of(IS, FieldType.NAME, "name_1", null, threeWindingsTransformer, false),
+            // VoltageLevel fields
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_1, "vl", null, threeWindingsTransformer, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_1, "vl_1", null, threeWindingsTransformer, false),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_2, "vl", null, threeWindingsTransformer, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_2, "vl_1", null, threeWindingsTransformer, false),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_3, "vl", null, threeWindingsTransformer, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID_3, "vl_1", null, threeWindingsTransformer, false),
+            // Substation fields
+            Arguments.of(IS, FieldType.SUBSTATION_ID, "SUBST", null, threeWindingsTransformer, true),
+            Arguments.of(IS, FieldType.SUBSTATION_ID, "SUBSV", null, threeWindingsTransformer, false),
+
+            // --- CONTAINS --- //
+            // Common fields
+            Arguments.of(CONTAINS, FieldType.ID, "i", null, threeWindingsTransformer, true),
+            Arguments.of(CONTAINS, FieldType.ID, "ii", null, threeWindingsTransformer, false),
+            Arguments.of(CONTAINS, FieldType.NAME, "nam", null, threeWindingsTransformer, true),
+            Arguments.of(CONTAINS, FieldType.NAME, "namm", null, threeWindingsTransformer, false),
+            // VoltageLevel fields
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_1, "v", null, threeWindingsTransformer, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_1, "vv", null, threeWindingsTransformer, false),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_2, "v", null, threeWindingsTransformer, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_2, "vv", null, threeWindingsTransformer, false),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_3, "v", null, threeWindingsTransformer, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID_3, "vv", null, threeWindingsTransformer, false),
+            // Substation fields
+            Arguments.of(CONTAINS, FieldType.SUBSTATION_ID, "UBST", null, threeWindingsTransformer, true),
+            Arguments.of(CONTAINS, FieldType.SUBSTATION_ID, "UBSV", null, threeWindingsTransformer, false),
+
+            // --- BEGINS_WITH --- //
+            // Common fields
+            Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, threeWindingsTransformer, true),
+            Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, threeWindingsTransformer, false),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, threeWindingsTransformer, true),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, threeWindingsTransformer, false),
+            // VoltageLevel fields
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "v", null, threeWindingsTransformer, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "s", null, threeWindingsTransformer, false),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "v", null, threeWindingsTransformer, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "s", null, threeWindingsTransformer, false),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_3, "v", null, threeWindingsTransformer, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID_3, "s", null, threeWindingsTransformer, false),
+            // Substation fields
+            Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID, "SUB", null, threeWindingsTransformer, true),
+            Arguments.of(BEGINS_WITH, FieldType.SUBSTATION_ID, "TUB", null, threeWindingsTransformer, false),
+
+            // --- ENDS_WITH --- //
+            // Common fields
+            Arguments.of(ENDS_WITH, FieldType.ID, "d", null, threeWindingsTransformer, true),
+            Arguments.of(ENDS_WITH, FieldType.ID, "e", null, threeWindingsTransformer, false),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, threeWindingsTransformer, true),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, threeWindingsTransformer, false),
+            // VoltageLevel fields
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "l", null, threeWindingsTransformer, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_1, "m", null, threeWindingsTransformer, false),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "l", null, threeWindingsTransformer, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_2, "m", null, threeWindingsTransformer, false),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_3, "l", null, threeWindingsTransformer, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID_3, "m", null, threeWindingsTransformer, false),
+            // Substation fields
+            Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID, "ST", null, threeWindingsTransformer, true),
+            Arguments.of(ENDS_WITH, FieldType.SUBSTATION_ID, "SV", null, threeWindingsTransformer, false),
+
+            // --- EXISTS --- //
+            // Common fields
+            Arguments.of(EXISTS, FieldType.ID, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.ID, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, threeWindingsTransformer1, false),
+            // VoltageLevel fields
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_3, null, null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID_3, null, null, threeWindingsTransformer1, false),
+
+            // --- NOT_EXISTS --- //
+            // Common fields
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, threeWindingsTransformer1, true),
+            // VoltageLevel fields
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_1, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_2, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_3, null, null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID_3, null, null, threeWindingsTransformer1, true),
+            // Substation fields
+            Arguments.of(IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST", "SUBST1"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST1", "SUBST2"), threeWindingsTransformer, false),
+
+            // --- IN --- //
+            // Common fields
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), threeWindingsTransformer, false),
+            // VoltageLevel fields
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl", "VL_2"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_3, null, Set.of("Vl", "VL_2"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID_3, null, Set.of("Vl_2", "VL_3"), threeWindingsTransformer, false),
+            // Substation fields
+            Arguments.of(IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST", "SUBST1"), threeWindingsTransformer, true),
+            Arguments.of(IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST1", "SUBST2"), threeWindingsTransformer, false),
+
+            // --- NOT_IN --- //
+            // Common fields
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), threeWindingsTransformer, false),
+            // VoltageLevel fields
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl_2", "VL_3"), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_1, null, Set.of("Vl", "VL_2"), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl_2", "VL_3"), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_2, null, Set.of("Vl", "VL_2"), threeWindingsTransformer, false),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_3, null, Set.of("Vl_2", "VL_3"), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID_3, null, Set.of("Vl", "VL_2"), threeWindingsTransformer, false),
+            // Substation fields
+            Arguments.of(NOT_IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST1", "SUBST2"), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.SUBSTATION_ID, null, Set.of("SUBST", "SUBST3"), threeWindingsTransformer, false)
+        );
     }
 
     private static Stream<Arguments> provideArgumentsForHvdcLineTest() {
@@ -1358,5 +1772,4 @@ class StringExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_ID_2, null, Set.of("STATION2", "STATION1"), hvdcLine, false)
         );
     }
-
 }

@@ -24,7 +24,7 @@ class BooleanExpertRuleTest {
     private FilterLoader filterLoader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         filterLoader = uuids -> null;
     }
 
@@ -32,7 +32,7 @@ class BooleanExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class expectedException) {
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
         BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
@@ -64,6 +64,15 @@ class BooleanExpertRuleTest {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
+        DanglingLine dl = Mockito.mock(DanglingLine.class);
+        Mockito.when(dl.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+
+        TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
+        Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+
+        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+
         HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
         Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
@@ -77,7 +86,10 @@ class BooleanExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, bus, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.CONNECTED, twoWindingsTransformer, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, threeWindingsTransformer, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, dl, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.VOLTAGE_REGULATOR_ON, generator, PowsyblException.class)
@@ -93,6 +105,8 @@ class BooleanExpertRuleTest {
         "provideArgumentsForLoadTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForDanglingLineTest",
+        "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) {
@@ -332,6 +346,115 @@ class BooleanExpertRuleTest {
         );
     }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTest() {
+
+        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        // Terminal fields
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.isConnected()).thenReturn(true);
+        ThreeWindingsTransformer.Leg leg = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg.getTerminal()).thenReturn(terminal);
+        Mockito.when(threeWindingsTransformer.getLeg1()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getLeg2()).thenReturn(leg);
+        Mockito.when(threeWindingsTransformer.getLeg3()).thenReturn(leg);
+
+        // RatioTapChanger fields
+        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
+        Mockito.when(ratioTapChanger.isRegulating()).thenReturn(true);
+        Mockito.when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(true);
+        Mockito.when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        Mockito.when(leg.hasRatioTapChanger()).thenReturn(true);
+
+        // null RatioTapChanger
+        ThreeWindingsTransformer threeWindingsTransformer2 = Mockito.mock(ThreeWindingsTransformer.class);
+        Mockito.when(threeWindingsTransformer2.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer.Leg leg2 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
+        Mockito.when(leg2.getRatioTapChanger()).thenReturn(null);
+        Mockito.when(leg2.hasRatioTapChanger()).thenReturn(false);
+
+        // PhaseTapChanger fields
+        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
+        Mockito.when(phaseTapChanger.isRegulating()).thenReturn(false);
+        Mockito.when(leg2.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        Mockito.when(leg2.hasPhaseTapChanger()).thenReturn(true);
+
+        Mockito.when(threeWindingsTransformer2.getLeg1()).thenReturn(leg2);
+        Mockito.when(threeWindingsTransformer2.getLeg2()).thenReturn(leg2);
+        Mockito.when(threeWindingsTransformer2.getLeg3()).thenReturn(leg2);
+
+        return Stream.of(
+            // --- EQUALS--- //
+            // Terminal fields
+            Arguments.of(EQUALS, FieldType.CONNECTED_1, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.CONNECTED_1, false, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.CONNECTED_2, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.CONNECTED_2, false, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.CONNECTED_3, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.CONNECTED_3, false, threeWindingsTransformer, false),
+
+            // RatioTapChanger fields
+            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_1, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_1, false, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_2, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_2, false, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, false, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, false, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, false, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, true, threeWindingsTransformer, true),
+            Arguments.of(EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, false, threeWindingsTransformer, false),
+
+            // PhaseTapChanger fields
+            Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_1, true, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_2, true, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_3, true, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_1, true, threeWindingsTransformer2, true),
+            Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_2, true, threeWindingsTransformer2, true),
+            Arguments.of(EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_3, true, threeWindingsTransformer2, true),
+
+            // --- NOT_EQUALS--- //
+            // Terminal fields
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_1, false, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_1, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_2, false, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_2, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_3, false, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED_3, true, threeWindingsTransformer, false),
+
+            // RatioTapChanger fields
+            Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_1, false, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_1, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_2, false, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_2, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, false, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.LOAD_TAP_CHANGING_CAPABILITIES_3, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, false, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, false, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, true, threeWindingsTransformer, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, false, threeWindingsTransformer, true),
+
+            // null RatioTapChanger
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_1, false, threeWindingsTransformer2, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_2, false, threeWindingsTransformer2, false),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_RATIO_TAP_CHANGER_3, false, threeWindingsTransformer2, false),
+
+            // PhaseTapChanger fields
+            Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_1, true, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_2, true, threeWindingsTransformer, true),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_3, true, threeWindingsTransformer, true),
+
+            // null PhaseTapChanger
+            Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_1, false, threeWindingsTransformer2, true),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_2, false, threeWindingsTransformer2, true),
+            Arguments.of(NOT_EQUALS, FieldType.HAS_PHASE_TAP_CHANGER_3, false, threeWindingsTransformer2, true)
+        );
+    }
+
     private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
 
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
@@ -386,6 +509,36 @@ class BooleanExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.REMOTE_REGULATED_TERMINAL, null, svar1, true),
                 Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, svar, false),
                 Arguments.of(NOT_EXISTS, FieldType.AUTOMATE, null, svar1, true)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
+
+        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
+        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        //Generator fields
+        Mockito.when(danglingLine.isPaired()).thenReturn(true);
+        // Terminal fields
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.isConnected()).thenReturn(true);
+        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+
+        return Stream.of(
+            // --- EQUALS--- //
+            //Generator fields
+            Arguments.of(EQUALS, FieldType.PAIRED, true, danglingLine, true),
+            Arguments.of(EQUALS, FieldType.PAIRED, false, danglingLine, false),
+            // Terminal fields
+            Arguments.of(EQUALS, FieldType.CONNECTED, true, danglingLine, true),
+            Arguments.of(EQUALS, FieldType.CONNECTED, false, danglingLine, false),
+
+            // --- NOT_EQUALS--- //
+            //Generator fields
+            Arguments.of(NOT_EQUALS, FieldType.PAIRED, false, danglingLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.PAIRED, true, danglingLine, false),
+            // Terminal fields
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED, false, danglingLine, true),
+            Arguments.of(NOT_EQUALS, FieldType.CONNECTED, true, danglingLine, false)
         );
     }
 }

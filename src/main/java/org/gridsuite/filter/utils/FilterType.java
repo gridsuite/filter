@@ -11,8 +11,6 @@ package org.gridsuite.filter.utils;
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
 public enum FilterType {
-    SCRIPT,
-    CRITERIA,
     IDENTIFIER_LIST,
     EXPERT,
 }

@@ -13,13 +13,13 @@
     <parent>
         <groupId>com.powsybl</groupId>
         <artifactId>powsybl-parent</artifactId>
-        <version>18</version>
+        <version>23</version>
         <relativePath/>
     </parent>
 
     <groupId>org.gridsuite</groupId>
     <artifactId>gridsuite-filter</artifactId>
-    <version>1.0.11</version>
+    <version>1.7.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>Filter library</name>
@@ -42,12 +42,12 @@
     </developers>
 
     <properties>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <org-apache-commons.version>4.4</org-apache-commons.version>
-        <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <org.hamcrest.version>2.2</org.hamcrest.version>
-        <org.mockito.version>5.11.0</org.mockito.version>
-        <powsybl-dependencies.version>2024.2.0</powsybl-dependencies.version>
+        <powsybl-dependencies.version>2025.1.0</powsybl-dependencies.version>
+        <sonar.organization>gridsuite</sonar.organization>
+        <sonar.projectKey>org.gridsuite:filter</sonar.projectKey>
     </properties>
 
     <build>
@@ -70,39 +70,35 @@
     <dependencyManagement>
         <dependencies>
             <!-- overrides of imports -->
-
-            <!-- imports -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-collections4</artifactId>
-                <version>${org-apache-commons.version}</version>
-            </dependency>
+            <!--
+              lombok for java21 support. We happen to get a version that is
+              not high enough from powsybl-dependencies through open-rao.
+            -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-params</artifactId>
-                <version>${junit.jupiter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest</artifactId>
-                <version>${org.hamcrest.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${org.mockito.version}</version>
-            </dependency>
+
+            <!-- imports -->
             <dependency>
                 <groupId>com.powsybl</groupId>
                 <artifactId>powsybl-dependencies</artifactId>
                 <version>${powsybl-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- project specific dependencies -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${org-apache-commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <version>${org.hamcrest.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -112,6 +108,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -131,7 +128,7 @@
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
