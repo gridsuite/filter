@@ -140,6 +140,7 @@ class NumberExpertRuleTest {
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(gen.getTerminal()).thenReturn(terminal);
         Mockito.when(terminal.getP()).thenReturn(-100.0);
+        Mockito.when(terminal.getQ()).thenReturn(-200.0);
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
@@ -166,6 +167,7 @@ class NumberExpertRuleTest {
         Terminal terminal1 = Mockito.mock(Terminal.class);
         Mockito.when(gen1.getTerminal()).thenReturn(terminal1);
         Mockito.when(terminal1.getP()).thenReturn(Double.NaN);
+        Mockito.when(terminal1.getQ()).thenReturn(Double.NaN);
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
@@ -186,8 +188,14 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.TARGET_Q, 30.0, null, gen, false),
                 Arguments.of(EQUALS, FieldType.RATED_S, 60.0, null, gen, true),
                 Arguments.of(EQUALS, FieldType.RATED_S, 50.0, null, gen, false),
+                Arguments.of(EQUALS, FieldType.P, -100.0, null, gen, true),
+                Arguments.of(EQUALS, FieldType.P, -50.0, null, gen, false),
+                Arguments.of(EQUALS, FieldType.Q, -200.0, null, gen, true),
+                Arguments.of(EQUALS, FieldType.Q, -100.0, null, gen, false),
                 Arguments.of(EQUALS, FieldType.P_ABSOLUTE, 100.0, null, gen, true),
                 Arguments.of(EQUALS, FieldType.P_ABSOLUTE, 50.0, null, gen, false),
+                Arguments.of(EQUALS, FieldType.Q_ABSOLUTE, 200.0, null, gen, true),
+                Arguments.of(EQUALS, FieldType.Q_ABSOLUTE, 100.0, null, gen, false),
                 // GeneratorStartup extension fields
                 Arguments.of(EQUALS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 50.0, null, gen, true),
                 Arguments.of(EQUALS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 40.0, null, gen, false),
@@ -221,9 +229,18 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 50.0, null, gen, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 60.0, null, gen, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_S, 70.0, null, gen, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.P, -90.0, null, gen, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.P, -100.0, null, gen, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.P, -110.0, null, gen, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.Q, -190.0, null, gen, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.Q, -200.0, null, gen, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.Q, -210.0, null, gen, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.P_ABSOLUTE, 90.0, null, gen, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.P_ABSOLUTE, 100.0, null, gen, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.P_ABSOLUTE, 110.0, null, gen, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.Q_ABSOLUTE, 190.0, null, gen, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.Q_ABSOLUTE, 200.0, null, gen, true),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.Q_ABSOLUTE, 210.0, null, gen, false),
                 // GeneratorStartup extension fields
                 Arguments.of(GREATER_OR_EQUALS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 40.0, null, gen, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 50.0, null, gen, true),
@@ -262,9 +279,18 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER, FieldType.RATED_S, 50.0, null, gen, true),
                 Arguments.of(GREATER, FieldType.RATED_S, 60.0, null, gen, false),
                 Arguments.of(GREATER, FieldType.RATED_S, 70.0, null, gen, false),
+                Arguments.of(GREATER, FieldType.P, -90.0, null, gen, false),
+                Arguments.of(GREATER, FieldType.P, -100.0, null, gen, false),
+                Arguments.of(GREATER, FieldType.P, -110.0, null, gen, true),
+                Arguments.of(GREATER, FieldType.Q, -190.0, null, gen, false),
+                Arguments.of(GREATER, FieldType.Q, -200.0, null, gen, false),
+                Arguments.of(GREATER, FieldType.Q, -210.0, null, gen, true),
                 Arguments.of(GREATER, FieldType.P_ABSOLUTE, 90.0, null, gen, true),
                 Arguments.of(GREATER, FieldType.P_ABSOLUTE, 100.0, null, gen, false),
                 Arguments.of(GREATER, FieldType.P_ABSOLUTE, 110.0, null, gen, false),
+                Arguments.of(GREATER, FieldType.Q_ABSOLUTE, 190.0, null, gen, true),
+                Arguments.of(GREATER, FieldType.Q_ABSOLUTE, 200.0, null, gen, false),
+                Arguments.of(GREATER, FieldType.Q_ABSOLUTE, 210.0, null, gen, false),
 
                 // GeneratorStartup extension fields
                 Arguments.of(GREATER, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 40.0, null, gen, true),
@@ -304,9 +330,18 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 70.0, null, gen, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 60.0, null, gen, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_S, 50.0, null, gen, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.P, -110.0, null, gen, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.P, -100.0, null, gen, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.P, -90.0, null, gen, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.Q, -210.0, null, gen, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.Q, -200.0, null, gen, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.Q, -190.0, null, gen, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.P_ABSOLUTE, 110.0, null, gen, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.P_ABSOLUTE, 100.0, null, gen, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.P_ABSOLUTE, 90.0, null, gen, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.Q_ABSOLUTE, 210.0, null, gen, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.Q_ABSOLUTE, 200.0, null, gen, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.Q_ABSOLUTE, 190.0, null, gen, false),
                 // GeneratorStartup extension fields
                 Arguments.of(LOWER_OR_EQUALS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 60.0, null, gen, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 50.0, null, gen, true),
@@ -345,9 +380,18 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.RATED_S, 70.0, null, gen, true),
                 Arguments.of(LOWER, FieldType.RATED_S, 60.0, null, gen, false),
                 Arguments.of(LOWER, FieldType.RATED_S, 50.0, null, gen, false),
+                Arguments.of(LOWER, FieldType.P, -110.0, null, gen, false),
+                Arguments.of(LOWER, FieldType.P, -100.0, null, gen, false),
+                Arguments.of(LOWER, FieldType.P, -90.0, null, gen, true),
+                Arguments.of(LOWER, FieldType.Q, -210.0, null, gen, false),
+                Arguments.of(LOWER, FieldType.Q, -200.0, null, gen, false),
+                Arguments.of(LOWER, FieldType.Q, -190.0, null, gen, true),
                 Arguments.of(LOWER, FieldType.P_ABSOLUTE, 110.0, null, gen, true),
                 Arguments.of(LOWER, FieldType.P_ABSOLUTE, 100.0, null, gen, false),
                 Arguments.of(LOWER, FieldType.P_ABSOLUTE, 90.0, null, gen, false),
+                Arguments.of(LOWER, FieldType.Q_ABSOLUTE, 210.0, null, gen, true),
+                Arguments.of(LOWER, FieldType.Q_ABSOLUTE, 200.0, null, gen, false),
+                Arguments.of(LOWER, FieldType.Q_ABSOLUTE, 190.0, null, gen, false),
                 // GeneratorStartup extension fields
                 Arguments.of(LOWER, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 60.0, null, gen, true),
                 Arguments.of(LOWER, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, 50.0, null, gen, false),
@@ -380,8 +424,14 @@ class NumberExpertRuleTest {
                 Arguments.of(BETWEEN, FieldType.TARGET_Q, null, Set.of(45.0, 50.0), gen, false),
                 Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(50.0, 70.0), gen, true),
                 Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(65.0, 70.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.P, null, Set.of(-90.0, -110.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.P, null, Set.of(-80.0, -90.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.Q, null, Set.of(-190.0, -210.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.Q, null, Set.of(-180.0, -190.0), gen, false),
                 Arguments.of(BETWEEN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 110.0), gen, true),
                 Arguments.of(BETWEEN, FieldType.P_ABSOLUTE, null, Set.of(80.0, 90.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 210.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.Q_ABSOLUTE, null, Set.of(180.0, 190.0), gen, false),
                 // GeneratorStartup extension fields
                 Arguments.of(BETWEEN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 60.0), gen, true),
                 Arguments.of(BETWEEN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(55.0, 60.0), gen, false),
@@ -409,8 +459,14 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.TARGET_Q, null, null, gen1, false),
                 Arguments.of(EXISTS, FieldType.RATED_S, null, null, gen, true),
                 Arguments.of(EXISTS, FieldType.RATED_S, null, null, gen1, false),
+                Arguments.of(EXISTS, FieldType.P, null, null, gen, true),
+                Arguments.of(EXISTS, FieldType.P, null, null, gen1, false),
+                Arguments.of(EXISTS, FieldType.Q, null, null, gen, true),
+                Arguments.of(EXISTS, FieldType.Q, null, null, gen1, false),
                 Arguments.of(EXISTS, FieldType.P_ABSOLUTE, null, null, gen, true),
                 Arguments.of(EXISTS, FieldType.P_ABSOLUTE, null, null, gen1, false),
+                Arguments.of(EXISTS, FieldType.Q_ABSOLUTE, null, null, gen, true),
+                Arguments.of(EXISTS, FieldType.Q_ABSOLUTE, null, null, gen1, false),
                 // GeneratorStartup extension fields
                 Arguments.of(EXISTS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, null, gen, true),
                 Arguments.of(EXISTS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, null, gen1, false),
@@ -438,8 +494,14 @@ class NumberExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.TARGET_Q, null, null, gen1, true),
                 Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, gen, false),
                 Arguments.of(NOT_EXISTS, FieldType.RATED_S, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.P, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.P, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.Q, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.Q, null, null, gen1, true),
                 Arguments.of(NOT_EXISTS, FieldType.P_ABSOLUTE, null, null, gen, false),
                 Arguments.of(NOT_EXISTS, FieldType.P_ABSOLUTE, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.Q_ABSOLUTE, null, null, gen, false),
+                Arguments.of(NOT_EXISTS, FieldType.Q_ABSOLUTE, null, null, gen1, true),
                 // GeneratorStartup extension fields
                 Arguments.of(NOT_EXISTS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, null, gen, false),
                 Arguments.of(NOT_EXISTS, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, null, gen1, true),
@@ -467,8 +529,14 @@ class NumberExpertRuleTest {
                 Arguments.of(IN, FieldType.TARGET_Q, null, Set.of(30.0, 50.0), gen, false),
                 Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 60.0, 70.0), gen, true),
                 Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 70.0), gen, false),
+                Arguments.of(IN, FieldType.P, null, Set.of(-90.0, -100.0, -110.0), gen, true),
+                Arguments.of(IN, FieldType.P, null, Set.of(-90.0, -110.0), gen, false),
+                Arguments.of(IN, FieldType.Q, null, Set.of(-190.0, -200.0, -210.0), gen, true),
+                Arguments.of(IN, FieldType.Q, null, Set.of(-190.0, -210.0), gen, false),
                 Arguments.of(IN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 100.0, 110.0), gen, true),
                 Arguments.of(IN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 110.0), gen, false),
+                Arguments.of(IN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 200.0, 210.0), gen, true),
+                Arguments.of(IN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 210.0), gen, false),
                 // GeneratorStartup extension fields
                 Arguments.of(IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 50.0, 60.0), gen, true),
                 Arguments.of(IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 60.0), gen, false),
@@ -496,8 +564,14 @@ class NumberExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.TARGET_Q, null, Set.of(30.0, 40.0, 50.0), gen, false),
                 Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 70.0), gen, true),
                 Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 60.0, 70.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.P, null, Set.of(-90.0, -110.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.P, null, Set.of(-90.0, -100.0, -110.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.Q, null, Set.of(-190.0, -210.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.Q, null, Set.of(-190.0, -200.0, -210.0), gen, false),
                 Arguments.of(NOT_IN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 110.0), gen, true),
                 Arguments.of(NOT_IN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 100.0, 110.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 210.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 200.0, 210.0), gen, false),
                 // GeneratorStartup extension fields
                 Arguments.of(NOT_IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 60.0), gen, true),
                 Arguments.of(NOT_IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 50.0, 60.0), gen, false),
