@@ -197,7 +197,11 @@ public final class ExpertFilterUtils {
                 VOLTAGE_LEVEL_ID,
                 SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, generator.getTerminal().getVoltageLevel());
             case CONNECTED,
-                 P_ABSOLUTE -> getTerminalFieldValue(field, generator.getTerminal());
+                 P,
+                 Q,
+                 P_ABSOLUTE,
+                 Q_ABSOLUTE
+                    -> getTerminalFieldValue(field, generator.getTerminal());
             case SUBSTATION_PROPERTIES -> generator.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
             case VOLTAGE_LEVEL_PROPERTIES -> generator.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + generator.getType() + "]");
@@ -255,7 +259,10 @@ public final class ExpertFilterUtils {
             case REGULATING_TERMINAL_CONNECTABLE_ID ->
                     terminal.getConnectable() != null ?
                     terminal.getConnectable().getId() : null;
+            case P -> String.valueOf(terminal.getP());
+            case Q -> String.valueOf(terminal.getQ());
             case P_ABSOLUTE -> String.valueOf(Math.abs(terminal.getP()));
+            case Q_ABSOLUTE -> String.valueOf(Math.abs(terminal.getQ()));
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + ",terminal]");
         };
     }
