@@ -11,6 +11,7 @@ package org.gridsuite.filter.utils;
  */
 public enum EquipmentType {
     BATTERY,
+    BRANCH,
     BUS,
     BUSBAR_SECTION,
     DANGLING_LINE,
