@@ -79,7 +79,7 @@ class FilterUuidExpertRuleTest {
 
     @BeforeEach
     void setUp() {
-        filterLoader = uuids -> null;
+        filterLoader = uuids -> List.of();
     }
 
     @ParameterizedTest
@@ -131,7 +131,7 @@ class FilterUuidExpertRuleTest {
     }
 
     private void mockGetFilterEquipments(MockedStatic<FilterServiceUtils> filterServiceUtilsMockedStatic, Network network, UUID filterUuid, IdentifiableAttributes identifiableAttributes) {
-        filterServiceUtilsMockedStatic.when(() -> FilterServiceUtils.getFilterEquipmentsFromUuid(eq(network), eq(filterUuid), any(FilterLoader.class), any(Set.class)))
+        filterServiceUtilsMockedStatic.when(() -> FilterServiceUtils.getFilterEquipmentsFromUuid(eq(network), eq(filterUuid), any(FilterLoader.class)))
             .thenReturn(List.of(new FilterEquipments(filterUuid, List.of(identifiableAttributes), null)));
     }
 

@@ -16,7 +16,6 @@ import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.utils.FilterServiceUtils;
-import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.utils.RegulationType;
 
 import javax.annotation.Nonnull;
@@ -610,9 +609,12 @@ public final class ExpertFilterUtils {
                     res.add(cachedUuidFilters.get(uuid));
                 }
             } else {
-                // We do not allow to use expert filters for IS_PART_OF or IS_NOT_PART_OF operators
-                List<FilterEquipments> filterEquipments = FilterServiceUtils.getFilterEquipmentsFromUuid(network, uuid, filterLoader, Set.of(FilterType.EXPERT));
-                cachedUuidFilters.put(uuid, !CollectionUtils.isEmpty(filterEquipments) ? filterEquipments.get(0) : null);
+                filterLoader.getFilters(List.of(uuid)).stream()
+                    .findFirst()
+                    .ifPresent(filter -> FilterCycleDetector.checkNoCycle(filter, filterLoader));
+
+                List<FilterEquipments> filterEquipments = FilterServiceUtils.getFilterEquipmentsFromUuid(network, uuid, filterLoader);
+                cachedUuidFilters.put(uuid, !CollectionUtils.isEmpty(filterEquipments) ? filterEquipments.getFirst() : null);
                 res.addAll(filterEquipments);
             }
         });
