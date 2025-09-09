@@ -81,8 +81,7 @@ public final class FilterCycleDetector {
                     }
                 }
             }
-            default -> {
-            }
+            default -> throw new IllegalStateException("Unexpected rule: " + rule);
         }
     }
 }

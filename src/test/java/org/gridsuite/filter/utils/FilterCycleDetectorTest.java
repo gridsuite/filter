@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Mohamed BENREJEB <mohamed.ben-rejeb at rte-france.com>
  */
-public class FilterCycleDetectorTest {
+class FilterCycleDetectorTest {
 
     @Test
-    public void testDetectCycleBetweenExpertFilters() {
+    void testDetectCycleBetweenExpertFilters() {
         UUID filterIdA = UUID.randomUUID();
         UUID filterIdB = UUID.randomUUID();
 
@@ -63,7 +63,7 @@ public class FilterCycleDetectorTest {
     }
 
     @Test
-    public void testNoCycle() {
+    void testNoCycle() {
         UUID filterIdA = UUID.randomUUID();
         UUID filterIdB = UUID.randomUUID();
         UUID filterIdC = UUID.randomUUID();
