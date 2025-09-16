@@ -12,6 +12,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
+import org.gridsuite.filter.identifierlistfilter.FilteredIdentifiables;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.utils.EquipmentType;
@@ -51,5 +52,9 @@ public abstract class AbstractFilter implements IFilterAttributes {
                 .filterId(id)
                 .identifiableAttributes(identifiableAttributes)
                 .build();
+    }
+
+    public FilteredIdentifiables toFilteredIdentifiables(List<IdentifiableAttributes> identifiableAttributes) {
+        return new FilteredIdentifiables(identifiableAttributes, null);
     }
 }
