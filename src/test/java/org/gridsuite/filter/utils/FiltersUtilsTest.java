@@ -21,7 +21,6 @@ import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -34,17 +33,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
 class FiltersUtilsTest {
-    private Network network;
-    private Network network2;
-    private Network network3;
-    private Network network4;
-    private Network network5;
+    private final FilterLoader filterLoader = uuids -> null;
 
-    private FilterLoader filterLoader;
-
-    @BeforeEach
-    void setUp() {
-        network = EurostagTutorialExample1Factory.createWithMoreGenerators();
+    private static Network prepareNetwork() {
+        Network network = EurostagTutorialExample1Factory.createWithMoreGenerators();
         network.getSubstation("P1").setProperty("region", "north");
         network.getSubstation("P2").setProperty("region", "south");
         network.getGenerator("GEN").setProperty("region", "north");
@@ -54,17 +46,18 @@ class FiltersUtilsTest {
         network.getTwoWindingsTransformer("NHV2_NLOAD").setProperty("region", "south");
         network.getLine("NHV1_NHV2_1").setProperty("region", "south");
         network.getLine("NHV1_NHV2_2").setProperty("region", "south");
+        return network;
+    }
 
-        network2 = HvdcTestNetwork.createVsc();
+    private static Network prepareHvdcNetwork() {
+        Network network2 = HvdcTestNetwork.createVsc();
         network2.getSubstation("S2").setProperty("region", "north");
-        network3 = SvcTestCaseFactory.createWithMoreSVCs();
-        network4 = ShuntTestCaseFactory.create();
-        network5 = ThreeWindingsTransformerNetworkFactory.create();
-        filterLoader = uuids -> null;
+        return network2;
     }
 
     @Test
     void testSubstationFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -95,6 +88,7 @@ class FiltersUtilsTest {
 
     @Test
     void testVoltageLevelFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -124,6 +118,7 @@ class FiltersUtilsTest {
 
     @Test
     void testLineFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -155,6 +150,7 @@ class FiltersUtilsTest {
 
     @Test
     void testTwoWindingsTransformerFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -184,6 +180,7 @@ class FiltersUtilsTest {
 
     @Test
     void testThreeWindingsTransformerFilter() {
+        final Network network5 = ThreeWindingsTransformerNetworkFactory.create();
 
         // expert filter
         ExpertFilter expertFilter = new ExpertFilter(
@@ -200,6 +197,7 @@ class FiltersUtilsTest {
 
     @Test
     void testGeneratorFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -232,6 +230,7 @@ class FiltersUtilsTest {
 
     @Test
     void testLoadFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -261,6 +260,7 @@ class FiltersUtilsTest {
 
     @Test
     void testBatteryFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -288,6 +288,7 @@ class FiltersUtilsTest {
 
     @Test
     void testShuntCompensatorFilter() {
+        final Network network4 = ShuntTestCaseFactory.create();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -317,6 +318,7 @@ class FiltersUtilsTest {
 
     @Test
     void testStaticVarCompensatorFilter() {
+        final Network network3 = SvcTestCaseFactory.createWithMoreSVCs();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -349,6 +351,7 @@ class FiltersUtilsTest {
 
     @Test
     void testDanglingLineFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -376,6 +379,7 @@ class FiltersUtilsTest {
 
     @Test
     void testBusbarSectionFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -403,6 +407,8 @@ class FiltersUtilsTest {
 
     @Test
     void testBusFilter() {
+        final Network network = prepareNetwork();
+
         // expert filter only for bus
         ExpertFilter expertFilter = new ExpertFilter(
             UUID.randomUUID(),
@@ -417,6 +423,7 @@ class FiltersUtilsTest {
 
     @Test
     void testLccConverterStationFilter() {
+        final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -444,6 +451,7 @@ class FiltersUtilsTest {
 
     @Test
     void testHvdcLineFilter() {
+        final Network network2 = prepareHvdcNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
@@ -474,6 +482,7 @@ class FiltersUtilsTest {
 
     @Test
     void testIdentifierListFilter() {
+        final Network network = prepareNetwork();
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("GEN", 30.),
             new IdentifierListFilterEquipmentAttributes("notFound1", 50.),
@@ -513,6 +522,7 @@ class FiltersUtilsTest {
 
     @Test
     void testFilterLoader() {
+        final Network network = prepareNetwork();
         // with identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("GEN", 30.),
@@ -539,6 +549,7 @@ class FiltersUtilsTest {
 
     @Test
     void testEquipmentNameFilterNoMatch() {
+        final Network network2 = prepareHvdcNetwork();
         List<AbstractExpertRule> rules = new ArrayList<>();
         rules.add(StringExpertRule.builder().field(NAME).operator(IS).value("unexisting name").build());
         AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
@@ -555,6 +566,7 @@ class FiltersUtilsTest {
 
     @Test
     void testEquipmentNameFilterWithMatch() {
+        final Network network2 = prepareHvdcNetwork();
         List<AbstractExpertRule> rules = new ArrayList<>();
         rules.add(StringExpertRule.builder().field(NAME).operator(IS).value("Converter1").build());
         AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
@@ -570,6 +582,7 @@ class FiltersUtilsTest {
 
     @Test
     void testEquipmentNameFilterWithNullValueInEquipments() {
+        final Network network = prepareNetwork();
         List<AbstractExpertRule> rules = new ArrayList<>();
         rules.add(StringExpertRule.builder().field(NAME).operator(IS).value("some name").build());
         AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
