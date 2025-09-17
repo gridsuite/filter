@@ -15,6 +15,7 @@ import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.StringExpertRule;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
+import org.gridsuite.filter.identifierlistfilter.FilteredIdentifiables;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
@@ -499,6 +500,15 @@ class FiltersUtilsTest {
         assertEquals(2, identifiables.size());
         assertEquals("GEN", identifiables.get(0).getId());
         assertEquals("GEN2", identifiables.get(1).getId());
+
+        FilteredIdentifiables filteredIdentifiables = identifierListFilter.toFilteredIdentifiables(identifiableAttributes);
+        assertTrue(CollectionUtils.isEqualCollection(filteredIdentifiables.getNotFoundIds(),
+            List.of(new IdentifiableAttributes("notFound1", IdentifiableType.GENERATOR, null),
+                new IdentifiableAttributes("notFound2", IdentifiableType.GENERATOR, null))));
+
+        assertEquals(2, filteredIdentifiables.getEquipmentIds().size());
+        assertEquals("GEN", filteredIdentifiables.getEquipmentIds().getFirst().getId());
+        assertEquals("GEN2", filteredIdentifiables.getEquipmentIds().get(1).getId());
     }
 
     @Test
