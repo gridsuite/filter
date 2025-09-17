@@ -24,6 +24,7 @@ public final class GlobalFilterUtils {
         throw new IllegalCallerException("Utility class should not be instantiated");
     }
 
+    @Nonnull
     public static List<FieldType> getNominalVoltageFieldType(@Nonnull final EquipmentType equipmentType) {
         return switch (equipmentType) {
             case LINE, TWO_WINDINGS_TRANSFORMER -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2);
@@ -36,6 +37,7 @@ public final class GlobalFilterUtils {
      * Builds nominal voltage rules combining all relevant field types
      * @see GlobalFilter#getNominalV()
      */
+    @Nonnull
     public static Optional<AbstractExpertRule> buildNominalVoltageRules(
             @Nonnull final List<String> nominalVoltages, @Nonnull final EquipmentType equipmentType) {
         final List<FieldType> fields = getNominalVoltageFieldType(equipmentType);
@@ -53,6 +55,7 @@ public final class GlobalFilterUtils {
             }).toList());
     }
 
+    @Nonnull
     public static List<FieldType> getCountryCodeFieldType(@Nonnull final EquipmentType equipmentType) {
         return switch (equipmentType) {
             case VOLTAGE_LEVEL, TWO_WINDINGS_TRANSFORMER -> List.of(FieldType.COUNTRY);
@@ -64,6 +67,7 @@ public final class GlobalFilterUtils {
     /**
      * Builds country code rules combining all relevant field types
      */
+    @Nonnull
     public static Optional<AbstractExpertRule> buildCountryCodeRules(
             @Nonnull final List<Country> countryCodes, @Nonnull final EquipmentType equipmentType) {
         final List<FieldType> fields = getCountryCodeFieldType(equipmentType);
@@ -81,7 +85,8 @@ public final class GlobalFilterUtils {
         .toList());
     }
 
-    public static List<FieldType> getSubstationPropertiesFieldTypes(@Nonnull final EquipmentType equipmentType) {
+    @Nonnull
+    public static List<FieldType> getSubstationPropertiesFieldTypes(@Nullable final EquipmentType equipmentType) {
         return equipmentType == EquipmentType.LINE
             ? List.of(FieldType.SUBSTATION_PROPERTIES_1, FieldType.SUBSTATION_PROPERTIES_2)
             : List.of(FieldType.SUBSTATION_PROPERTIES);
@@ -90,7 +95,8 @@ public final class GlobalFilterUtils {
     /**
      * Builds substation property rules combining all relevant field types
      */
-    protected static Optional<AbstractExpertRule> buildSubstationPropertyRules(
+    @Nonnull
+    public static Optional<AbstractExpertRule> buildSubstationPropertyRules(
             @Nonnull final Map<String, List<String>> properties, @Nonnull final EquipmentType equipmentType) {
         final List<FieldType> fields = getSubstationPropertiesFieldTypes(equipmentType);
         return ExpertFilterUtils.buildOrCombination(properties.entrySet()
@@ -157,6 +163,7 @@ public final class GlobalFilterUtils {
      * Extracts filtered {@link Identifiable#getId() equipment ID}s by applying {@link ExpertFilter expert}
      * and {@link AbstractFilter generic filter}s.
      */
+    @Nonnull
     public static List<String> applyGlobalFilterOnNetwork(@Nonnull final Network network,
                                                           @Nonnull final GlobalFilter globalFilter, @Nonnull final List<AbstractFilter> genericFilters,
                                                           @Nonnull final EquipmentType equipmentType, @Nonnull final FilterLoader filterLoader) {
@@ -185,6 +192,7 @@ public final class GlobalFilterUtils {
      * Filters equipments by {@link EquipmentType type}
      * @return map of {@link Identifiable#getId() equipment ID}s grouped by {@link EquipmentType equipment type}
      */
+    @Nonnull
     public static Map<EquipmentType, List<String>> applyGlobalFilterOnNetwork(@Nonnull final Network network,
             @Nonnull final GlobalFilter globalFilter, @Nonnull final List<AbstractFilter> genericFilters,
             @Nonnull final List<EquipmentType> equipmentTypes, @Nonnull final FilterLoader filterLoader) {

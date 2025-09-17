@@ -650,6 +650,7 @@ public final class ExpertFilterUtils {
     /**
      * Builds expert filter with {@link VoltageLevel voltage level} IDs criteria.
      */
+    @Nonnull
     public static ExpertFilter buildExpertFilterWithVoltageLevelIdsCriteria(@Nonnull final UUID filterUuid, @Nonnull final EquipmentType equipmentType) {
         return new ExpertFilter(UUID.randomUUID(), new Date(), equipmentType, CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
             FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_1).values(Set.of(filterUuid.toString())).build(),
