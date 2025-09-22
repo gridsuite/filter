@@ -7,18 +7,8 @@
 
 package org.gridsuite.filter.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.util.UUID;
 
 // partial class from ElementAttributes (Directory-server)
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-public class ElementAttributes {
-
-    private UUID elementUuid;
-    private String elementName;
+public record ElementAttributes(UUID elementUuid, String elementName) {
 }
