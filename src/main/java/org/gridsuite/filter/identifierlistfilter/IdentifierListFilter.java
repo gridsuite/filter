@@ -83,12 +83,10 @@ public class IdentifierListFilter extends AbstractFilter {
 
         FilterEquipments filterEquipments = toFilterEquipments(identifiableAttributes);
 
-        FilteredIdentifiables filteredIdentifiables = new FilteredIdentifiables();
-        filteredIdentifiables.setEquipmentIds(filterEquipments.getIdentifiableAttributes());
         IdentifiableType idType = IdentifiableType.valueOf(getEquipmentType().name());
-        filteredIdentifiables.setNotFoundIds(filterEquipments.getNotFoundEquipments().stream().map(element ->
-            new IdentifiableAttributes(element, idType, null)).toList());
+        List<IdentifiableAttributes> notFounds = filterEquipments.getNotFoundEquipments().stream().map(element ->
+            new IdentifiableAttributes(element, idType, null)).toList();
 
-        return filteredIdentifiables;
+        return new FilteredIdentifiables(filterEquipments.getIdentifiableAttributes(), notFounds);
     }
 }

@@ -502,13 +502,13 @@ class FiltersUtilsTest {
         assertEquals("GEN2", identifiables.get(1).getId());
 
         FilteredIdentifiables filteredIdentifiables = identifierListFilter.toFilteredIdentifiables(identifiableAttributes);
-        assertTrue(CollectionUtils.isEqualCollection(filteredIdentifiables.getNotFoundIds(),
+        assertTrue(CollectionUtils.isEqualCollection(filteredIdentifiables.notFoundIds(),
             List.of(new IdentifiableAttributes("notFound1", IdentifiableType.GENERATOR, null),
                 new IdentifiableAttributes("notFound2", IdentifiableType.GENERATOR, null))));
 
-        assertEquals(2, filteredIdentifiables.getEquipmentIds().size());
-        assertEquals("GEN", filteredIdentifiables.getEquipmentIds().getFirst().getId());
-        assertEquals("GEN2", filteredIdentifiables.getEquipmentIds().get(1).getId());
+        assertEquals(2, filteredIdentifiables.equipmentIds().size());
+        assertEquals("GEN", filteredIdentifiables.equipmentIds().getFirst().getId());
+        assertEquals("GEN2", filteredIdentifiables.equipmentIds().get(1).getId());
     }
 
     @Test

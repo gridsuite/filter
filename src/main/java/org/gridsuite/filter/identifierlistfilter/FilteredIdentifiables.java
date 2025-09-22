@@ -7,18 +7,8 @@
 
 package org.gridsuite.filter.identifierlistfilter;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class FilteredIdentifiables {
-    private List<IdentifiableAttributes> equipmentIds;
-    private List<IdentifiableAttributes> notFoundIds;
+public record FilteredIdentifiables(List<IdentifiableAttributes> equipmentIds,
+                                    List<IdentifiableAttributes> notFoundIds) {
 }
