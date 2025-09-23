@@ -9,6 +9,10 @@ package org.gridsuite.filter.identifierlistfilter;
 
 import java.util.List;
 
+/**
+ * @author Bassel El Cheikh <bassel.el-cheikh at rte-france.com>
+ */
+
 public record FilteredIdentifiables(List<IdentifiableAttributes> equipmentIds,
                                     List<IdentifiableAttributes> notFoundIds) {
 }
