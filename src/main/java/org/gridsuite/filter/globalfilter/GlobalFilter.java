@@ -12,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -31,4 +33,15 @@ public class GlobalFilter {
     private List<Country> countryCode;
     private List<UUID> genericFilter;
     private Map<String, List<String>> substationProperty;
+
+    /**
+     * @return {@code true} if all filter parameters are empty, else {@code false}.
+     */
+    public boolean isEmpty() {
+        return CollectionUtils.isEmpty(this.nominalV)
+            && CollectionUtils.isEmpty(this.countryCode)
+            && CollectionUtils.isEmpty(this.genericFilter)
+            && MapUtils.isEmpty(this.substationProperty)
+            && this.substationProperty.values().stream().allMatch(CollectionUtils::isEmpty);
+    }
 }

@@ -13,8 +13,16 @@ import java.util.UUID;
 public abstract class AbstractGlobalFilterService implements FilterLoader {
     protected abstract Network getNetwork(@NonNull UUID networkUuid, @NonNull String variantId);
 
-    protected List<String> getIdsFilter(@NonNull final UUID networkUuid, @NonNull final String variantId,
-                                        @NonNull final GlobalFilter globalFilter, @NonNull final List<EquipmentType> equipmentTypes) {
+    /**
+     * Get filtered equipment IDs.
+     * @param networkUuid the network to load
+     * @param variantId the network variant to work on
+     * @param globalFilter the filter(s) to apply
+     * @param equipmentTypes the {@link EquipmentType equipment types} to filter
+     * @return the {@link List list} of {@link UUID IDs} of filtered {@link EquipmentType equipments}.
+     */
+    protected List<String> getFilteredIds(@NonNull final UUID networkUuid, @NonNull final String variantId,
+                                          @NonNull final GlobalFilter globalFilter, @NonNull final List<EquipmentType> equipmentTypes) {
         final Network network = getNetwork(networkUuid, variantId);
         final List<AbstractFilter> genericFilters = getFilters(globalFilter.getGenericFilter());
         return GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, genericFilters, equipmentTypes, this)
