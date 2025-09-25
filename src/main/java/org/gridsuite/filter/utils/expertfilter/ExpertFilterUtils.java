@@ -13,8 +13,13 @@ import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.apache.commons.collections4.CollectionUtils;
 import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.expertfilter.ExpertFilter;
+import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
+import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
+import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRule;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
+import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterServiceUtils;
 import org.gridsuite.filter.utils.RegulationType;
 
@@ -625,5 +630,30 @@ public final class ExpertFilterUtils {
         List<FilterEquipments> equipments = getFilterEquipments(network, uuids, filterLoader, cachedUuidFilters);
         return equipments.stream().flatMap(e -> e.getIdentifiableAttributes().stream()
             .map(IdentifiableAttributes::getId)).collect(Collectors.toSet()).contains(value);
+    }
+
+    /**
+     * Build an "OR" rule from the rules passed.
+     * @param rules the rule(s) to be applied
+     * @return {@link Optional#empty() Empty} if no rule is passed,
+     *     the {@link AbstractExpertRule rule} if the list has only 1 rule inside,
+     *     otherwise an {@link CombinatorExpertRule OR combinator} with the rules.
+     */
+    @Nonnull
+    public static Optional<AbstractExpertRule> buildOrCombination(@Nullable final List<AbstractExpertRule> rules) {
+        if (rules == null || rules.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(rules.size() > 1 ? CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(rules).build() : rules.getFirst());
+    }
+
+    /**
+     * Builds expert filter with {@link VoltageLevel voltage level} IDs criteria.
+     */
+    public static ExpertFilter buildExpertFilterWithVoltageLevelIdsCriteria(@Nonnull final UUID filterUuid, @Nonnull final EquipmentType equipmentType) {
+        return new ExpertFilter(UUID.randomUUID(), new Date(), equipmentType, CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
+            FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_1).values(Set.of(filterUuid.toString())).build(),
+            FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_2).values(Set.of(filterUuid.toString())).build()
+        )).build());
     }
 }
