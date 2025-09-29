@@ -8,6 +8,7 @@
 package org.gridsuite.filter.identifierlistfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.powsybl.iidm.network.IdentifiableType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -75,5 +76,17 @@ public class IdentifierListFilter extends AbstractFilter {
                 .identifiableAttributes(orderedIdentifiableAttributes)
                 .notFoundEquipments(notFound)
                 .build();
+    }
+
+    @Override
+    public FilteredIdentifiables toFilteredIdentifiables(List<IdentifiableAttributes> identifiableAttributes) {
+
+        FilterEquipments filterEquipments = toFilterEquipments(identifiableAttributes);
+
+        IdentifiableType idType = IdentifiableType.valueOf(getEquipmentType().name());
+        List<IdentifiableAttributes> notFounds = filterEquipments.getNotFoundEquipments().stream().map(element ->
+            new IdentifiableAttributes(element, idType, null)).toList();
+
+        return new FilteredIdentifiables(filterEquipments.getIdentifiableAttributes(), notFounds);
     }
 }
