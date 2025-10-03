@@ -241,7 +241,7 @@ public final class FiltersUtils {
     }
 
     /**
-     * Combines multiple filter results using AND or OR logic.
+     * Combines multiple filter results using {@code AND} or {@code OR} logic.
      */
     @Nonnull
     public static <E> List<E> combineFilterResults(@Nullable final List<List<E>> filterResults, final boolean useAndLogic) {

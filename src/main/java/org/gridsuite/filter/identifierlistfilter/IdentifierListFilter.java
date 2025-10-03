@@ -79,7 +79,7 @@ public class IdentifierListFilter extends AbstractFilter {
 
         FilterEquipments filterEquipments = toFilterEquipments(identifiableAttributes);
 
-        IdentifiableType idType = IdentifiableType.valueOf(getEquipmentType().name());
+        IdentifiableType idType = IdentifiableType.valueOf(getEquipmentType().name()); // {LC,VS}C_CONVERTER_STATION not supported!
         List<IdentifiableAttributes> notFounds = filterEquipments.getNotFoundEquipments().stream().map(element ->
             new IdentifiableAttributes(element, idType, null)).toList();
 
