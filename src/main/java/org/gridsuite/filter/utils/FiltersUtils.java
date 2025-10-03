@@ -6,16 +6,21 @@
  */
 package org.gridsuite.filter.utils;
 
-import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.TopologyKind;
+import com.powsybl.iidm.network.VoltageLevel;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
+import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
 
 import java.util.*;
-import java.util.function.Predicate;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -26,215 +31,70 @@ public final class FiltersUtils {
         throw new AssertionError("Utility class should not be instantiated");
     }
 
-    private static List<String> getIdentifierListFilterEquipmentIds(IdentifierListFilter identifierListFilter) {
-        return identifierListFilter.getFilterEquipmentsAttributes()
-            .stream()
-            .map(IdentifierListFilterEquipmentAttributes::getEquipmentID)
-            .toList();
+    private static List<Identifiable<?>> filterById(@Nonnull final Network network, @Nonnull final IdentifierListFilter filter,
+                                                    @Nonnull final Function<Network, Stream<? extends Identifiable<?>>> extractor) {
+        final List<String> equipmentIds = filter.getFilterEquipmentsAttributes()
+                                                .stream()
+                                                .map(IdentifierListFilterEquipmentAttributes::getEquipmentID)
+                                                .toList();
+        return extractor.apply(network)
+                        .filter(ident -> equipmentIds.contains(ident.getId()))
+                        .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private static <I extends Injection<I>> Stream<Injection<I>> getInjectionList(Stream<Injection<I>> stream, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter identifierListFilter) {
-            List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
-            return stream.filter(injection -> equipmentIds.contains(injection.getId()));
-        } else if (filter instanceof ExpertFilter expertFilter) {
-            var rule = expertFilter.getRules();
-            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
-            return stream.filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
-        } else {
-            return Stream.empty();
-        }
+    private static List<Identifiable<?>> filterByRules(@Nonnull final Network network,
+                                                       @Nonnull final ExpertFilter filter, final FilterLoader filterLoader,
+                                                       @Nonnull final Function<Network, Stream<? extends Identifiable<?>>> extractor) {
+        final AbstractExpertRule rule = filter.getRules();
+        final Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
+        return extractor.apply(network)
+                        .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters))
+                        .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private static List<Identifiable<?>> getGeneratorList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter || filter instanceof ExpertFilter) {
-            Stream<Injection<Generator>> stream = getInjectionList(network.getGeneratorStream().map(generator -> generator), filter, filterLoader);
-            return new ArrayList<>(stream.toList());
-        } else {
-            return List.of();
-        }
-    }
-
-    private static List<Identifiable<?>> getLoadList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<Load>> stream = getInjectionList(network.getLoadStream().map(load -> load), filter, filterLoader);
-        return new ArrayList<>(stream.toList());
-    }
-
-    private static List<Identifiable<?>> getBatteryList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<Battery>> stream = getInjectionList(network.getBatteryStream().map(battery -> battery), filter, filterLoader);
-        return new ArrayList<>(stream.toList());
-    }
-
-    private static List<Identifiable<?>> getStaticVarCompensatorList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<StaticVarCompensator>> stream = getInjectionList(network.getStaticVarCompensatorStream().map(svc -> svc), filter, filterLoader);
-        return new ArrayList<>(stream.toList());
-    }
-
-    private static List<Identifiable<?>> getShuntCompensatorList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<ShuntCompensator>> stream = getInjectionList(network.getShuntCompensatorStream().map(sc -> sc), filter, filterLoader);
-        return new ArrayList<>(stream.toList());
-    }
-
-    private static List<Identifiable<?>> getDanglingLineList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<DanglingLine>> stream = getInjectionList(network.getDanglingLineStream().map(dl -> dl), filter, filterLoader);
-        return new ArrayList<>(stream.toList());
-    }
-
-    private static List<Identifiable<?>> getLccConverterStationList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<LccConverterStation>> stream = getInjectionList(network.getLccConverterStationStream().map(lcc -> lcc), filter, filterLoader);
-        return new ArrayList<>(stream.toList());
-    }
-
-    private static List<Identifiable<?>> getVscConverterStationList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<VscConverterStation>> stream = getInjectionList(network.getVscConverterStationStream().map(vsc -> vsc), filter, filterLoader);
-        return new ArrayList<>(stream.toList());
-    }
-
-    private static List<Identifiable<?>> getBusList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof ExpertFilter expertFilter) {
-            // topologyKind is an optional info attached into expert filter when filtering bus for optimizing the perf
-            // note that with voltage levels of kind TopologyKind.NODE_BREAKER, buses are computed on-the-fly => expensive
-            var topologyKind = expertFilter.getTopologyKind();
-            Predicate<VoltageLevel> voltageLevelFilter = vl -> topologyKind == null || vl.getTopologyKind() == topologyKind;
-
-            Stream<Identifiable<?>> stream = network.getVoltageLevelStream()
-                .filter(voltageLevelFilter)
-                .map(VoltageLevel::getBusBreakerView)
-                .flatMap(VoltageLevel.BusBreakerView::getBusStream);
-
-            var rule = expertFilter.getRules();
-            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
-            return stream.filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters)).toList();
-        } else {
-            return List.of();
-        }
-    }
-
-    private static List<Identifiable<?>> getBusbarSectionList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<BusbarSection>> stream = getInjectionList(network.getBusbarSectionStream().map(bbs -> bbs), filter, filterLoader);
-        return new ArrayList<>(stream.toList());
-    }
-
-    private static List<Identifiable<?>> getLineList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter identifierListFilter) {
-            List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
-            Stream<Line> stream = network.getLineStream()
-                .filter(line -> equipmentIds.contains(line.getId()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof ExpertFilter expertFilter) {
-            var rule = expertFilter.getRules();
-            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
-            Stream<Line> stream = network.getLineStream()
-                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
-            return new ArrayList<>(stream.toList());
-        } else {
-            return List.of();
-        }
-    }
-
-    private static List<Identifiable<?>> get2WTransformerList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter identifierListFilter) {
-            List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
-            Stream<TwoWindingsTransformer> stream = network.getTwoWindingsTransformerStream()
-                .filter(twoWindingsTransformer -> equipmentIds.contains(twoWindingsTransformer.getId()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof ExpertFilter expertFilter) {
-            var rule = expertFilter.getRules();
-            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
-            Stream<TwoWindingsTransformer> stream = network.getTwoWindingsTransformerStream()
-                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
-            return new ArrayList<>(stream.toList());
-        } else {
-            return List.of();
-        }
-    }
-
-    private static List<Identifiable<?>> get3WTransformerList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter identifierListFilter) {
-            List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
-            Stream<ThreeWindingsTransformer> stream = network.getThreeWindingsTransformerStream()
-                .filter(threeWindingsTransformer -> equipmentIds.contains(threeWindingsTransformer.getId()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof ExpertFilter expertFilter) {
-            var rule = expertFilter.getRules();
-            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
-            Stream<ThreeWindingsTransformer> stream = network.getThreeWindingsTransformerStream()
-                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
-            return new ArrayList<>(stream.toList());
-        } else {
-            return List.of();
-        }
-    }
-
-    private static List<Identifiable<?>> getHvdcList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter identifierListFilter) {
-            List<String> equipmentsIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
-            Stream<HvdcLine> stream = network.getHvdcLineStream()
-                .filter(hvdcLine -> equipmentsIds.contains(hvdcLine.getId()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof ExpertFilter expertFilter) {
-            var rule = expertFilter.getRules();
-            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
-            Stream<HvdcLine> stream = network.getHvdcLineStream()
-                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
-            return new ArrayList<>(stream.toList());
-        } else {
-            return List.of();
-        }
-    }
-
-    private static List<Identifiable<?>> getVoltageLevelList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter identifierListFilter) {
-            List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
-            Stream<VoltageLevel> stream = network.getVoltageLevelStream()
-                .filter(voltageLevel -> equipmentIds.contains(voltageLevel.getId()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof ExpertFilter expertFilter) {
-            var rule = expertFilter.getRules();
-            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
-            Stream<VoltageLevel> stream = network.getVoltageLevelStream()
-                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
-            return new ArrayList<>(stream.toList());
-        } else {
-            return List.of();
-        }
-    }
-
-    private static List<Identifiable<?>> getSubstationList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter identifierListFilter) {
-            List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
-            Stream<Substation> stream = network.getSubstationStream()
-                .filter(substation -> equipmentIds.contains(substation.getId()));
-            return new ArrayList<>(stream.toList());
-        } else if (filter instanceof ExpertFilter expertFilter) {
-            var rule = expertFilter.getRules();
-            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
-            Stream<Substation> stream = network.getSubstationStream()
-                .filter(ident -> rule.evaluateRule(ident, filterLoader, cachedUuidFilters));
-            return new ArrayList<>(stream.toList());
-        } else {
-            return List.of();
-        }
-    }
-
-    public static List<Identifiable<?>> getIdentifiables(AbstractFilter filter, Network network, FilterLoader filterLoader) {
-        return switch (filter.getEquipmentType()) {
-            case GENERATOR -> getGeneratorList(network, filter, filterLoader);
-            case LOAD -> getLoadList(network, filter, filterLoader);
-            case BATTERY -> getBatteryList(network, filter, filterLoader);
-            case STATIC_VAR_COMPENSATOR -> getStaticVarCompensatorList(network, filter, filterLoader);
-            case SHUNT_COMPENSATOR -> getShuntCompensatorList(network, filter, filterLoader);
-            case LCC_CONVERTER_STATION -> getLccConverterStationList(network, filter, filterLoader);
-            case VSC_CONVERTER_STATION -> getVscConverterStationList(network, filter, filterLoader);
-            case HVDC_LINE -> getHvdcList(network, filter, filterLoader);
-            case DANGLING_LINE -> getDanglingLineList(network, filter, filterLoader);
-            case LINE -> getLineList(network, filter, filterLoader);
-            case TWO_WINDINGS_TRANSFORMER -> get2WTransformerList(network, filter, filterLoader);
-            case THREE_WINDINGS_TRANSFORMER -> get3WTransformerList(network, filter, filterLoader);
-            case BUS -> getBusList(network, filter, filterLoader);
-            case BUSBAR_SECTION -> getBusbarSectionList(network, filter, filterLoader);
-            case VOLTAGE_LEVEL -> getVoltageLevelList(network, filter, filterLoader);
-            case SUBSTATION -> getSubstationList(network, filter, filterLoader);
+    private static List<Identifiable<?>> getIdentifiableList(@Nonnull final Network network,
+                                                             @Nonnull final AbstractFilter filter, final FilterLoader filterLoader,
+                                                             @Nonnull final Function<Network, Stream<? extends Identifiable<?>>> extractor) {
+        return switch (filter) {
+            case final IdentifierListFilter identifierListFilter -> filterById(network, identifierListFilter, extractor);
+            case final ExpertFilter expertFilter -> filterByRules(network, expertFilter, filterLoader, extractor);
+            default -> List.of();
         };
+    }
+
+    public static List<Identifiable<?>> getIdentifiables(@Nonnull final AbstractFilter filter, @Nonnull final Network network,
+                                                         final FilterLoader filterLoader) {
+        final Function<Network, Stream<? extends Identifiable<?>>> getter = switch (filter.getEquipmentType()) {
+            case null -> throw new NullPointerException("Equipment type cannot be null");
+            case BATTERY -> Network::getBatteryStream;
+            case BUS -> network1 -> {
+                if (filter instanceof final ExpertFilter expertFilter) {
+                    // topologyKind is an optional info attached into an expert filter when filtering bus for optimizing the perf
+                    // note that with voltage levels of kind TopologyKind.NODE_BREAKER, buses are computed on-the-fly => expensive
+                    final TopologyKind topologyKind = expertFilter.getTopologyKind();
+                    return network.getVoltageLevelStream()
+                            .filter(vl -> topologyKind == null || vl.getTopologyKind() == topologyKind)
+                            .map(VoltageLevel::getBusBreakerView)
+                            .flatMap(VoltageLevel.BusBreakerView::getBusStream);
+                }
+                // Note: the webapps don't permit filtering a BUS by ID, so this case will not happen in reality
+                return Stream.empty();
+            };
+            case BUSBAR_SECTION -> Network::getBusbarSectionStream;
+            case DANGLING_LINE -> Network::getDanglingLineStream;
+            case GENERATOR -> Network::getGeneratorStream;
+            case HVDC_LINE -> Network::getHvdcLineStream;
+            case LCC_CONVERTER_STATION -> Network::getLccConverterStationStream;
+            case LINE -> Network::getLineStream;
+            case LOAD -> Network::getLoadStream;
+            case SHUNT_COMPENSATOR -> Network::getShuntCompensatorStream;
+            case STATIC_VAR_COMPENSATOR -> Network::getStaticVarCompensatorStream;
+            case SUBSTATION -> Network::getSubstationStream;
+            case THREE_WINDINGS_TRANSFORMER -> Network::getThreeWindingsTransformerStream;
+            case TWO_WINDINGS_TRANSFORMER -> Network::getTwoWindingsTransformerStream;
+            case VOLTAGE_LEVEL -> Network::getVoltageLevelStream;
+            case VSC_CONVERTER_STATION -> Network::getVscConverterStationStream;
+        };
+        return getIdentifiableList(network, filter, filterLoader, getter);
     }
 }
