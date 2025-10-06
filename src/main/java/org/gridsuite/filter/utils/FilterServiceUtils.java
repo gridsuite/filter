@@ -39,7 +39,11 @@ public final class FilterServiceUtils {
     }
 
     public static List<IdentifiableAttributes> getIdentifiableAttributes(AbstractFilter filter, Set<IdentifiableType> equipmentTypes, Network network, FilterLoader filterLoader) {
-        return FilterServiceUtils.getIdentifiableAttributes(filter, network, filterLoader).stream()
+        List<IdentifiableAttributes> identifiableAttributesList = FilterServiceUtils.getIdentifiableAttributes(filter, network, filterLoader);
+        if (equipmentTypes == null) {
+            return identifiableAttributesList;
+        }
+        return identifiableAttributesList.stream()
             .filter(identifiableAttributes -> equipmentTypes.contains(identifiableAttributes.getType())).toList();
     }
 
