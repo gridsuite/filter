@@ -13,6 +13,8 @@ import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.apache.commons.collections4.CollectionUtils;
 import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.exception.InvalidEquipmentType;
+import org.gridsuite.filter.exception.UnknownFilterType;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
@@ -25,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
@@ -631,18 +634,37 @@ public final class ExpertFilterUtils {
     }
 
     /**
-     * Build an "OR" rule from the rules passed.
+     * Build an {@code OR} rule from the rules passed.
      * @param rules the rule(s) to be applied
      * @return {@link Optional#empty() Empty} if no rule is passed,
      *     the {@link AbstractExpertRule rule} if the list has only 1 rule inside,
-     *     otherwise an {@link CombinatorExpertRule OR combinator} with the rules.
+     *     otherwise an {@link CombinatorType#OR OR} {@link CombinatorExpertRule combinator} with the rules.
      */
     @Nonnull
     public static Optional<AbstractExpertRule> buildOrCombination(@Nullable final List<AbstractExpertRule> rules) {
+        return buildCombination(rules, false);
+    }
+
+    /**
+     * Build an {@code AND} rule from the rules passed.
+     * @param rules the rule(s) to be applied
+     * @return {@link Optional#empty() Empty} if no rule is passed,
+     *     the {@link AbstractExpertRule rule} if the list has only 1 rule inside,
+     *     otherwise an {@link CombinatorType#AND AND} {@link CombinatorExpertRule combinator} with the rules.
+     */
+    @Nonnull
+    public static Optional<AbstractExpertRule> buildAndCombination(@Nullable final List<AbstractExpertRule> rules) {
+        return buildCombination(rules, true);
+    }
+
+    @Nonnull
+    private static Optional<AbstractExpertRule> buildCombination(@Nullable final List<AbstractExpertRule> rules, final boolean and) {
         if (rules == null || rules.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(rules.size() > 1 ? CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(rules).build() : rules.getFirst());
+        return Optional.of(rules.size() > 1
+                ? CombinatorExpertRule.builder().combinator(and ? CombinatorType.AND : CombinatorType.OR).rules(rules).build()
+                : rules.getFirst());
     }
 
     /**
@@ -655,5 +677,31 @@ public final class ExpertFilterUtils {
                 FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_1).values(Set.of(filterUuid.toString())).build(),
                 FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_2).values(Set.of(filterUuid.toString())).build()
             )).build());
+    }
+
+    @Nonnull
+    public static Stream<FieldType> getIdFieldMatchingType(@Nonnull final EquipmentType actualType, @Nonnull final EquipmentType filterEquipmentType) {
+        if (actualType == filterEquipmentType) {
+            return Stream.of(FieldType.ID);
+        } else if (filterEquipmentType == EquipmentType.SUBSTATION) {
+            return switch (actualType) {
+                case SUBSTATION -> throw new AssertionError("This case can't happen");
+                case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, VOLTAGE_LEVEL,
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
+                case LINE, HVDC_LINE, DANGLING_LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER
+                        -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2);
+            };
+        } else if (filterEquipmentType == EquipmentType.VOLTAGE_LEVEL) {
+            return switch (actualType) {
+                case VOLTAGE_LEVEL -> throw new AssertionError("This case can't happen");
+                case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, SUBSTATION,
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION -> Stream.of(FieldType.SUBSTATION_ID);
+                case LINE, HVDC_LINE, DANGLING_LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER
+                        -> Stream.of(FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
+            };
+        } else {
+            // the webapp doesn't authorize this case, so normally this case can't happen
+            throw new InvalidEquipmentType("No matching field for type " + actualType + " and filter type " + filterEquipmentType);
+        }
     }
 }

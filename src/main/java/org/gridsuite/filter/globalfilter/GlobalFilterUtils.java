@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public final class GlobalFilterUtils {
     private GlobalFilterUtils() {
@@ -125,10 +126,36 @@ public final class GlobalFilterUtils {
     }
 
     /**
+     * {@link FilterLoader#getFilters(List) Loads} generic filters by their {@link UUID UUIDs},
+     * then builds {@link AbstractExpertRule expert rules}, taking into account the {@link EquipmentType equipment type}.
+     * @param genericFilterIds the generic filter {@link UUID UUIDs} to load and build rules for
+     * @return the {@link List list} of {@link AbstractExpertRule expert rules} built from the loaded generic filters.
+     */
+    @Nonnull
+    public static List<AbstractExpertRule> buildGenericFilterRules(@Nonnull final List<UUID> genericFilterIds,
+                                                                   @Nonnull final EquipmentType actualType,
+                                                                   @Nonnull final FilterLoader filterLoader) {
+        /* note: We can't do a FilterUuidExpertRule IS_PART_OF rule here because we need to know the equipment type
+         * the filter is intended to deduce on what field to apply the rule. */
+        final List<AbstractExpertRule> rules = new ArrayList<>(genericFilterIds.size());
+        for (final AbstractFilter filter : filterLoader.getFilters(genericFilterIds)) {
+            rules.add(ExpertFilterUtils.buildOrCombination(ExpertFilterUtils.getIdFieldMatchingType(actualType, filter.getEquipmentType())
+                .map(field -> FilterUuidExpertRule.builder()
+                                                  .field(field)
+                                                  .operator(OperatorType.IS_PART_OF)
+                                                  .value(filter.getId().toString())
+                                                  .build())
+                .collect(Collectors.toUnmodifiableList())).orElseThrow());
+        }
+        return rules;
+    }
+
+    /**
      * Builds expert filter from a {@link GlobalFilter global filter} for an {@link EquipmentType equipment type}.
      */
     @Nullable
-    public static ExpertFilter buildExpertFilter(@Nonnull final GlobalFilter globalFilter, @Nonnull final EquipmentType equipmentType) {
+    public static ExpertFilter buildExpertFilter(@Nonnull final GlobalFilter globalFilter, @Nonnull final EquipmentType equipmentType,
+                                                 @Nonnull final FilterLoader filterLoader) {
         final List<AbstractExpertRule> andRules = new ArrayList<>();
         if (globalFilter.getNominalV() != null) {
             buildNominalVoltageRules(globalFilter.getNominalV(), equipmentType).ifPresent(andRules::add);
@@ -140,8 +167,12 @@ public final class GlobalFilterUtils {
             // custom extension with apps-metadata server
             buildSubstationPropertyRules(globalFilter.getSubstationProperty(), equipmentType).ifPresent(andRules::add);
         }
-        return andRules.isEmpty() ? null : new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType,
-            CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(andRules).build());
+        if (globalFilter.getGenericFilter() != null) {
+            andRules.addAll(buildGenericFilterRules(globalFilter.getGenericFilter(), equipmentType, filterLoader));
+        }
+        return ExpertFilterUtils.buildAndCombination(andRules)
+                .map(rule -> new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType, rule))
+                .orElse(null);
     }
 
     @VisibleForTesting
@@ -178,12 +209,12 @@ public final class GlobalFilterUtils {
         List<List<String>> allFilterResults = new ArrayList<>(1 + genericFilters.size());
 
         // Extract IDs from expert filter
-        final ExpertFilter expertFilter = buildExpertFilter(globalFilter, equipmentType);
+        final ExpertFilter expertFilter = buildExpertFilter(globalFilter, equipmentType, filterLoader);
         if (expertFilter != null) {
             allFilterResults.add(filterNetwork(expertFilter, network, filterLoader));
         }
 
-        // Extract IDs from generic filters
+        // Extract IDs from generic filters, case for computation backend columns filters
         for (final AbstractFilter filter : genericFilters) {
             final List<String> filterResult = applyFilterOnNetwork(filter, equipmentType, network, filterLoader);
             if (!filterResult.isEmpty()) {
