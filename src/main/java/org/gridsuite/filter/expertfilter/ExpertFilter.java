@@ -8,10 +8,7 @@ package org.gridsuite.filter.expertfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.iidm.network.TopologyKind;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
@@ -24,11 +21,11 @@ import java.util.UUID;
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
  */
-@Getter
-@Setter
 @SuperBuilder
 @NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class ExpertFilter extends AbstractFilter {
 
     private AbstractExpertRule rules;

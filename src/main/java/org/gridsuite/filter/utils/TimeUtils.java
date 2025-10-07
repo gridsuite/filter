@@ -1,24 +1,32 @@
 package org.gridsuite.filter.utils;
 
 import com.google.common.annotations.VisibleForTesting;
+import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
-import java.util.function.Supplier;
+import java.time.Clock;
+import java.time.Instant;
+import java.util.Date;
 
 /**
- * Utility class for UUID to permit during tests to mock {@link UUID} generation..
+ * Utility class for datetime to permit during tests to mock time related operations.
+ * @apiNote This class is to permit tests to intercept date/time
  */
-@VisibleForTesting
+
 public final class TimeUtils {
     private TimeUtils() {
         throw new AssertionError("Utility class should not be instantiated");
     }
 
-    @Setter
-    private static Supplier<UUID> uuidSupplier = UUID::randomUUID;
+    @Setter(onMethod_ = {@VisibleForTesting})
+    @Getter
+    private static Clock clock = Clock.systemUTC();
 
-    public static UUID generateUUID() {
-        return uuidSupplier.get();
+    public static Instant now() {
+        return Instant.now(clock);
+    }
+
+    public static Date nowAsDate() {
+        return Date.from(now());
     }
 }

@@ -9,6 +9,8 @@ import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FiltersUtils;
+import org.gridsuite.filter.utils.TimeUtils;
+import org.gridsuite.filter.utils.UuidUtils;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
@@ -123,17 +125,21 @@ public final class GlobalFilterUtils {
         final List<AbstractExpertRule> andRules = new ArrayList<>();
 
         // Nominal voltage rules
-        buildNominalVoltageRules(globalFilter.getNominalV(), equipmentType).ifPresent(andRules::add);
+        if (globalFilter.getNominalV() != null) {
+            buildNominalVoltageRules(globalFilter.getNominalV(), equipmentType).ifPresent(andRules::add);
+        }
 
         // Country code rules
-        buildCountryCodeRules(globalFilter.getCountryCode(), equipmentType).ifPresent(andRules::add);
+        if (globalFilter.getCountryCode() != null) {
+            buildCountryCodeRules(globalFilter.getCountryCode(), equipmentType).ifPresent(andRules::add);
+        }
 
         // Substation property rules
         if (globalFilter.getSubstationProperty() != null) {
             buildSubstationPropertyRules(globalFilter.getSubstationProperty(), equipmentType).ifPresent(andRules::add);
         }
 
-        return andRules.isEmpty() ? null : new ExpertFilter(UUID.randomUUID(), new Date(), equipmentType,
+        return andRules.isEmpty() ? null : new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType,
             CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(andRules).build());
     }
 

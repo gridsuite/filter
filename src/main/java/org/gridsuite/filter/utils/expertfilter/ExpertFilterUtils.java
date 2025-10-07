@@ -19,9 +19,7 @@ import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRule;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
-import org.gridsuite.filter.utils.EquipmentType;
-import org.gridsuite.filter.utils.FilterServiceUtils;
-import org.gridsuite.filter.utils.RegulationType;
+import org.gridsuite.filter.utils.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -619,7 +617,7 @@ public final class ExpertFilterUtils {
                     .ifPresent(filter -> FilterCycleDetector.checkNoCycle(filter, filterLoader));
 
                 List<FilterEquipments> filterEquipments = FilterServiceUtils.getFilterEquipmentsFromUuid(network, uuid, filterLoader);
-                cachedUuidFilters.put(uuid, !CollectionUtils.isEmpty(filterEquipments) ? filterEquipments.getFirst() : null);
+                cachedUuidFilters.put(uuid, CollectionUtils.isNotEmpty(filterEquipments) ? filterEquipments.getFirst() : null);
                 res.addAll(filterEquipments);
             }
         });
@@ -652,9 +650,10 @@ public final class ExpertFilterUtils {
      */
     @Nonnull
     public static ExpertFilter buildExpertFilterWithVoltageLevelIdsCriteria(@Nonnull final UUID filterUuid, @Nonnull final EquipmentType equipmentType) {
-        return new ExpertFilter(UUID.randomUUID(), new Date(), equipmentType, CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
-            FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_1).values(Set.of(filterUuid.toString())).build(),
-            FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_2).values(Set.of(filterUuid.toString())).build()
-        )).build());
+        return new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType,
+            CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
+                FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_1).values(Set.of(filterUuid.toString())).build(),
+                FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_2).values(Set.of(filterUuid.toString())).build()
+            )).build());
     }
 }

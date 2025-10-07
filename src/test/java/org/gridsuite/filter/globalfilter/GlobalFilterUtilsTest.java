@@ -1,4 +1,355 @@
 package org.gridsuite.filter.globalfilter;
 
-public class GlobalFilterUtilsTest {
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
+import org.assertj.core.api.*;
+import org.gridsuite.filter.AbstractFilter;
+import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.expertfilter.ExpertFilter;
+import org.gridsuite.filter.expertfilter.expertrule.*;
+import org.gridsuite.filter.utils.EquipmentType;
+import org.gridsuite.filter.utils.FiltersUtils;
+import org.gridsuite.filter.utils.UuidUtils;
+import org.gridsuite.filter.utils.expertfilter.CombinatorType;
+import org.gridsuite.filter.utils.expertfilter.FieldType;
+import org.gridsuite.filter.utils.expertfilter.OperatorType;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+/* Methods dependencies:
+ * applyGlobalFilterOnNetwork
+ *  ↳ applyGlobalFilterOnNetwork
+ *     ↳ applyFilterOnNetwork
+ *     ⇃  ↳ filterNetwork
+ *     ↳ buildExpertFilter
+ *        ↳ buildNominalVoltageRules
+ *        ⇃  ↳ getNominalVoltageFieldType
+ *        ↳ buildCountryCodeRules
+ *        ⇃  ↳ getCountryCodeFieldType
+ *        ↳ buildSubstationPropertyRules
+ *           ↳ getSubstationPropertiesFieldTypes
+ */
+class GlobalFilterUtilsTest implements WithAssertions {
+    private static <T extends AbstractExpertRule> void testVariableOrCombinationRules(final Optional<AbstractExpertRule> result, final int inputSize,
+                                                                                      final Class<T> ruleClass, final ThrowingConsumer<T>[] singleRuleAsserts,
+                                                                                      final Iterable<T> multiAssertElements) {
+        final OptionalAssert<AbstractExpertRule> assertion = Assertions.assertThat(result).as("result");
+        if (inputSize <= 0) {
+            assertion.isEmpty();
+        } else {
+            assertion.isPresent();
+            if (inputSize == 1) {
+                assertion.get(InstanceOfAssertFactories.type(ruleClass))
+                    .as("expert rule")
+                    .satisfies(singleRuleAsserts);
+            } else {
+                assertion.get(InstanceOfAssertFactories.type(CombinatorExpertRule.class))
+                    .as("combinator expert rule")
+                    .satisfies(cer -> Assertions.assertThat(cer.getCombinator()).as("combinator").isEqualTo(CombinatorType.OR))
+                    .extracting(CombinatorExpertRule::getRules, InstanceOfAssertFactories.list(AbstractExpertRule.class)).as("expert rules")
+                    .containsExactlyInAnyOrderElementsOf(multiAssertElements);
+            }
+        }
+    }
+
+    /** Trick Java to create generic array */
+    @SafeVarargs
+    private static <T> ThrowingConsumer<T>[] createAssertArray(final ThrowingConsumer<T>... assertions) {
+        return assertions;
+    }
+
+    @Nested
+    @DisplayName("buildNominalVoltageRules(...)")
+    class BuildNominalVoltageRules {
+        @ParameterizedTest
+        @MethodSource({"expertRulesData"})
+        void shouldCreateExpertRules(final List<String> nominalVoltages) {
+            testVariableOrCombinationRules(
+                GlobalFilterUtils.buildNominalVoltageRules(nominalVoltages, EquipmentType.VOLTAGE_LEVEL),
+                nominalVoltages.size(),
+                NumberExpertRule.class,
+                createAssertArray(
+                    ner -> assertThat(ner.getValue()).as("value").hasToString(nominalVoltages.getFirst()),
+                    ner -> assertThat(ner.getField()).as("field").isEqualTo(FieldType.NOMINAL_VOLTAGE),
+                    ner -> assertThat(ner.getOperator()).as("operator").isEqualTo(OperatorType.EQUALS)
+                ),
+                nominalVoltages.stream().map(nv -> NumberExpertRule.builder().value(Double.valueOf(nv))
+                    .field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.EQUALS).build()).collect(Collectors.toUnmodifiableList()));
+        }
+
+        private static Stream<Arguments> expertRulesData() {
+            return Stream.of(
+                Arguments.of(List.of()),
+                Arguments.of(List.of("300.0")),
+                Arguments.of(List.of("400.0", "225.0"))
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("buildCountryCodeRules(...)")
+    class BuildCountryCodeRules {
+        @ParameterizedTest
+        @MethodSource({"enumRulesData"})
+        void shouldCreateEnumRules(final List<Country> countries) {
+            testVariableOrCombinationRules(
+                GlobalFilterUtils.buildCountryCodeRules(countries, EquipmentType.VOLTAGE_LEVEL),
+                countries.size(),
+                EnumExpertRule.class,
+                createAssertArray(
+                    ner -> assertThat(ner.getValue()).as("value").hasToString(countries.getFirst().name()),
+                    ner -> assertThat(ner.getField()).as("field").isEqualTo(FieldType.COUNTRY),
+                    ner -> assertThat(ner.getOperator()).as("operator").isEqualTo(OperatorType.EQUALS)
+                ),
+                (List<EnumExpertRule>) countries.stream().map(c -> EnumExpertRule.builder().value(c.name())
+                    .field(FieldType.COUNTRY).operator(OperatorType.EQUALS).build()).toList());
+        }
+
+        private static Stream<Arguments> enumRulesData() {
+            return Stream.of(
+                Arguments.of(List.of()),
+                Arguments.of(List.of(Country.YT)),
+                Arguments.of(List.of(Country.FR, Country.DE))
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("buildSubstationPropertyRules(...)")
+    class BuildSubstationPropertyRules {
+        @ParameterizedTest
+        @MethodSource({"propertiesRulesData"})
+        void shouldCreateCorrectPropertiesRules(final Map<String, List<String>> properties) {
+            testVariableOrCombinationRules(
+                GlobalFilterUtils.buildSubstationPropertyRules(properties, EquipmentType.VOLTAGE_LEVEL),
+                properties.size(),
+                PropertiesExpertRule.class,
+                createAssertArray(
+                    per -> assertThat(per.getCombinator()).as("combinator").isEqualTo(CombinatorType.OR),
+                    per -> assertThat(per.getOperator()).as("operator").isEqualTo(OperatorType.IN),
+                    per -> assertThat(per.getField()).as("field").isEqualTo(FieldType.SUBSTATION_PROPERTIES),
+                    per -> assertThat(per.getPropertyName()).as("property name").isEqualTo("prop1"),
+                    per -> assertThat(per.getPropertyValues()).as("property values").containsExactlyInAnyOrderElementsOf(properties.values().iterator().next())
+                ),
+                (List<PropertiesExpertRule>) properties.entrySet().stream().map(e -> PropertiesExpertRule.builder().combinator(CombinatorType.OR)
+                    .operator(OperatorType.IN).field(FieldType.SUBSTATION_PROPERTIES).propertyName(e.getKey()).propertyValues(e.getValue()).build()).toList());
+        }
+
+        private static Stream<Arguments> propertiesRulesData() {
+            return Stream.of(
+                Arguments.of(Map.of()),
+                Arguments.of(Map.of("prop1", List.of("value0"))),
+                Arguments.of(Map.of("prop1", List.of("value1", "value2"), "prop2", List.of("value3")))
+            );
+        }
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("nominalVoltageFieldTypeData")
+    void shouldReturnCorrectNominalVoltageFieldTypes(final EquipmentType equipmentType, final List<FieldType> expectedFields) {
+        assertThat(GlobalFilterUtils.getNominalVoltageFieldType(equipmentType))
+            .as("result").containsExactlyInAnyOrderElementsOf(expectedFields);
+    }
+
+    private static Stream<Arguments> nominalVoltageFieldTypeData() {
+        return Stream.of(
+            // Nominal voltage
+            Arguments.of(EquipmentType.LINE, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2)),
+            Arguments.of(EquipmentType.TWO_WINDINGS_TRANSFORMER, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2)),
+            Arguments.of(EquipmentType.VOLTAGE_LEVEL, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.GENERATOR, Collections.emptyList())
+        );
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("countryCodeFieldTypeData")
+    void shouldReturnCorrectCountryCodeFieldTypes(final EquipmentType equipmentType, final List<FieldType> expectedFields) {
+        assertThat(GlobalFilterUtils.getCountryCodeFieldType(equipmentType))
+            .as("result").containsExactlyInAnyOrderElementsOf(expectedFields);
+    }
+
+    private static Stream<Arguments> countryCodeFieldTypeData() {
+        return Stream.of(
+            // Country code
+            Arguments.of(EquipmentType.VOLTAGE_LEVEL, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.TWO_WINDINGS_TRANSFORMER, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.LINE, List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2)),
+            Arguments.of(EquipmentType.GENERATOR, Collections.emptyList())
+        );
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("substationPropertyFieldTypeData")
+    void shouldReturnCorrectSubstationPropertyFieldTypes(final EquipmentType equipmentType, final List<FieldType> expectedFields) {
+        assertThat(GlobalFilterUtils.getSubstationPropertiesFieldTypes(equipmentType))
+            .as("result").containsExactlyInAnyOrderElementsOf(expectedFields);
+    }
+
+    private static Stream<Arguments> substationPropertyFieldTypeData() {
+        return Stream.of(
+            // Substation properties
+            Arguments.of(EquipmentType.LINE, List.of(FieldType.SUBSTATION_PROPERTIES_1, FieldType.SUBSTATION_PROPERTIES_2)),
+            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.SUBSTATION_PROPERTIES))
+        );
+    }
+
+    @Nested
+    @DisplayName("buildExpertFilter(...)")
+    class BuildExpertFilter {
+        @Test
+        void shouldReturnNullWhenNoExpertFiltersProvided() {
+            final GlobalFilter globalFilter = new GlobalFilter(null, null, null, null);
+            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR))
+                    .as("result").isNull();
+        }
+
+        @Test
+        void shouldReturnNullWhenNoRules() {
+            final GlobalFilter globalFilter = new GlobalFilter(List.of(), List.of(), List.of(), Map.of());
+            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR))
+                .as("result").isNull();
+        }
+
+        @Test
+        void shouldCreateFilterWhenRulesExist() {
+            final List<String> nv = List.of("400.0");
+            final GlobalFilter globalFilter = Mockito.spy(new GlobalFilter(nv, null, null, null));
+            try (final MockedStatic<GlobalFilterUtils> mockedGFU = Mockito.mockStatic(GlobalFilterUtils.class, Mockito.CALLS_REAL_METHODS)) {
+                mockedGFU.when(() -> GlobalFilterUtils.buildNominalVoltageRules(nv, EquipmentType.GENERATOR))
+                         .thenReturn(Optional.of(Mockito.mock(AbstractExpertRule.class)));
+                mockedGFU.clearInvocations(); //important because stubbing static method counts as call
+                assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR)).as("result")
+                    .isNotNull().satisfies(
+                        ef -> assertThat(ef.getEquipmentType()).as("equipment type").isEqualTo(EquipmentType.GENERATOR),
+                        ef -> assertThat(ef.getRules()).as("rule combinator")
+                            .asInstanceOf(InstanceOfAssertFactories.type(CombinatorExpertRule.class))
+                            .extracting(CombinatorExpertRule::getRules, InstanceOfAssertFactories.list(AbstractExpertRule.class))
+                            .as("rules").hasSize(1)
+                );
+                Mockito.verify(globalFilter, Mockito.atLeastOnce()).getNominalV();
+                Mockito.verify(globalFilter, Mockito.atLeastOnce()).getCountryCode();
+                Mockito.verify(globalFilter, Mockito.atLeastOnce()).getSubstationProperty();
+                mockedGFU.verify(() -> GlobalFilterUtils.buildNominalVoltageRules(Mockito.anyList(), any(EquipmentType.class)), Mockito.times(1));
+                mockedGFU.verify(() -> GlobalFilterUtils.buildExpertFilter(any(GlobalFilter.class), any(EquipmentType.class)), Mockito.times(1));
+                mockedGFU.verifyNoMoreInteractions(); //check if forget to mock a method
+                Mockito.verifyNoMoreInteractions(globalFilter);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("filterNetwork(...)")
+    class FilterNetwork {
+        @Test
+        void shouldReturnIdsFromFilteredNetwork() {
+            final Network network = Mockito.mock(Network.class);
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            when(filter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
+            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+                final Identifiable<?> i1 = Mockito.mock(Identifiable.class);
+                when(i1.getId()).thenReturn("id1");
+                final Identifiable<?> i2 = Mockito.mock(Identifiable.class);
+                when(i2.getId()).thenReturn("id2");
+                final List<Identifiable<?>> attributes = List.of(i1, i2);
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(filter, network, loader)).thenReturn(attributes);
+                mockedFU.clearInvocations(); //important because stubbing static method counts as call
+                assertThat(GlobalFilterUtils.filterNetwork(filter, network, loader)).as("result")
+                    .containsExactlyInAnyOrder("id1", "id2");
+                Mockito.verify(i1, Mockito.atLeastOnce()).getId();
+                Mockito.verify(i2, Mockito.atLeastOnce()).getId();
+                Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
+                Mockito.verifyNoMoreInteractions(filter, network, loader, i1, i2);
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(eq(filter), eq(network), eq(loader)), Mockito.times(1));
+                mockedFU.verifyNoMoreInteractions(); //check if forget to mock a method
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("applyFilterOnNetwork(...)")
+    class ApplyFilterOnNetwork {
+        @Test
+        void shouldReturnFilteredNetworkWhenSameEquipmentType() {
+            final Network network = Mockito.mock(Network.class);
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            when(filter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
+            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+                final Identifiable<?> gen1 = Mockito.mock(Identifiable.class);
+                when(gen1.getId()).thenReturn("gen1");
+                final Identifiable<?> gen2 = Mockito.mock(Identifiable.class);
+                when(gen2.getId()).thenReturn("gen2");
+                final List<Identifiable<?>> attributes = List.of(gen1, gen2);
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(filter, network, loader)).thenReturn(attributes);
+                mockedFU.clearInvocations(); //important because stubbing static method counts as call
+                assertThat(GlobalFilterUtils.applyFilterOnNetwork(filter, EquipmentType.GENERATOR, network, loader))
+                    .as("result").containsExactlyInAnyOrder("gen1", "gen2");
+                Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
+                Mockito.verify(gen1, Mockito.atLeastOnce()).getId();
+                Mockito.verify(gen2, Mockito.atLeastOnce()).getId();
+                Mockito.verifyNoMoreInteractions(filter, network, loader, gen1, gen2);
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(eq(filter), eq(network), eq(loader)), Mockito.atLeastOnce());
+                mockedFU.verifyNoMoreInteractions(); //check if forget to mock a method
+            }
+        }
+
+        @Test
+        void shouldBuildVoltageLevelFilterWhenVoltageLevelType() {
+            final Network network = Mockito.mock(Network.class);
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            when(filter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
+            final UUID filterUuid = UuidUtils.createUUID(0);
+            when(filter.getId()).thenReturn(filterUuid);
+            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+                final Identifiable<?> line1 = Mockito.mock(Identifiable.class);
+                when(line1.getId()).thenReturn("line1");
+                final Identifiable<?> line2 = Mockito.mock(Identifiable.class);
+                when(line2.getId()).thenReturn("line2");
+                final List<Identifiable<?>> attributes = List.of(line1, line2);
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
+                mockedFU.clearInvocations(); //important because stubbing static method counts as call
+                assertThat(GlobalFilterUtils.applyFilterOnNetwork(filter, EquipmentType.LINE, network, loader))
+                    .as("result").containsExactlyInAnyOrder("line1", "line2");
+                Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
+                Mockito.verify(filter, Mockito.atLeastOnce()).getId();
+                Mockito.verify(line1, Mockito.atLeastOnce()).getId();
+                Mockito.verify(line2, Mockito.atLeastOnce()).getId();
+                Mockito.verifyNoMoreInteractions(filter, network, loader, line1, line2);
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader)), Mockito.atLeastOnce());
+                mockedFU.verifyNoMoreInteractions(); //check if forget to mock a method
+            }
+        }
+
+        @Test
+        void shouldReturnEmptyWhenDifferentEquipmentType() {
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+            final Network network = Mockito.mock(Network.class);
+            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            when(filter.getEquipmentType()).thenReturn(EquipmentType.LOAD);
+            assertThat(GlobalFilterUtils.applyFilterOnNetwork(filter, EquipmentType.GENERATOR, network, loader))
+                .as("result").isEmpty();
+            Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
+            Mockito.verifyNoMoreInteractions(loader, network, filter);
+        }
+    }
+
+    //TODO applyGlobalFilterOnNetwork(single)
+    //TODO applyGlobalFilterOnNetwork(list)
 }

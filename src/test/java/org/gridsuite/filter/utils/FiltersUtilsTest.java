@@ -9,30 +9,28 @@ package org.gridsuite.filter.utils;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.test.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.assertj.core.api.WithAssertions;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.StringExpertRule;
-import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
-import org.gridsuite.filter.identifierlistfilter.FilteredIdentifiables;
-import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
-import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
-import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
+import org.gridsuite.filter.identifierlistfilter.*;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.gridsuite.filter.utils.expertfilter.FieldType.*;
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
+import static org.gridsuite.filter.utils.expertfilter.FieldType.ID;
+import static org.gridsuite.filter.utils.expertfilter.FieldType.NAME;
+import static org.gridsuite.filter.utils.expertfilter.OperatorType.IS;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
-class FiltersUtilsTest {
+class FiltersUtilsTest implements WithAssertions {
     private final FilterLoader filterLoader = uuids -> null;
 
     private static Network prepareNetwork() {
@@ -595,5 +593,28 @@ class FiltersUtilsTest {
         List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(voltageLevelFilter, network, filterLoader);
         // in this network, VL equipments have null name => no match
         assertEquals(0, identifiables.size());
+    }
+
+    @Test
+    void shouldReturnEmptyWhenCombineFilterResultsInputIsEmpty() {
+        assertThat(FiltersUtils.combineFilterResults(List.of(), true)).as("result").isEmpty();
+    }
+
+    @Test
+    void shouldReturnIntersectionWhenUsingAndLogic() {
+        assertThat(FiltersUtils.combineFilterResults(Arrays.asList(
+                List.of("item1", "item2", "item3"),
+                List.of("item2", "item3", "item4"),
+                List.of("item2", "item5")), true))
+            .as("result").singleElement().isEqualTo("item2");
+    }
+
+    @Test
+    void shouldReturnUnionWhenUsingOrLogic() {
+        assertThat(FiltersUtils.combineFilterResults(Arrays.asList(
+                List.of("item1", "item2"),
+                List.of("item3", "item4"),
+                List.of("item5")), false))
+            .as("result").containsExactlyInAnyOrder("item1", "item2", "item3", "item4", "item5");
     }
 }
