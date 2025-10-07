@@ -6,7 +6,6 @@
  */
 package org.gridsuite.filter.utils;
 
-import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
@@ -15,7 +14,6 @@ import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -36,15 +34,6 @@ public final class FilterServiceUtils {
                 identifiable.getType(),
                 isGeneratorOrLoad ? ((IdentifierListFilter) filter).getDistributionKey(identifiable.getId()) : null))
             .toList();
-    }
-
-    public static List<IdentifiableAttributes> getIdentifiableAttributes(AbstractFilter filter, Set<IdentifiableType> equipmentTypes, Network network, FilterLoader filterLoader) {
-        List<IdentifiableAttributes> identifiableAttributesList = FilterServiceUtils.getIdentifiableAttributes(filter, network, filterLoader);
-        if (equipmentTypes == null) {
-            return identifiableAttributesList;
-        }
-        return identifiableAttributesList.stream()
-            .filter(identifiableAttributes -> equipmentTypes.contains(identifiableAttributes.getType())).toList();
     }
 
     public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, UUID uuid, FilterLoader filterLoader) {
