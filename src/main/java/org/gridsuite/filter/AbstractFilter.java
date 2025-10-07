@@ -6,9 +6,16 @@
  */
 package org.gridsuite.filter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
@@ -16,6 +23,7 @@ import org.gridsuite.filter.identifierlistfilter.FilteredIdentifiables;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.utils.EquipmentType;
+import org.gridsuite.filter.utils.FilterType;
 
 import java.util.Date;
 import java.util.List;
@@ -25,15 +33,10 @@ import java.util.UUID;
  * @author Jacques Borsenberger <jacques.borsenberger at rte-france.com>
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    property = "type",
-    include = JsonTypeInfo.As.EXISTING_PROPERTY,
-    visible = true
-)
+@JsonTypeInfo(use = Id.NAME, property = "type", include = As.EXISTING_PROPERTY, visible = true)
 @JsonSubTypes({//Below, we define the names and the binding classes.
-    @JsonSubTypes.Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
-    @JsonSubTypes.Type(value = ExpertFilter.class, name = "EXPERT")
+    @Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
+    @Type(value = ExpertFilter.class, name = "EXPERT")
 })
 @Data
 @NoArgsConstructor
@@ -46,6 +49,10 @@ public abstract class AbstractFilter implements IFilterAttributes {
     private Date modificationDate;
 
     private EquipmentType equipmentType;
+
+    @JsonProperty(access = Access.READ_ONLY)
+    @Override
+    public abstract FilterType getType();
 
     public FilterEquipments toFilterEquipments(List<IdentifiableAttributes> identifiableAttributes) {
         return FilterEquipments.builder()

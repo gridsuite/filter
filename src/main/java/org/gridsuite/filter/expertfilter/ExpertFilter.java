@@ -6,7 +6,6 @@
  */
 package org.gridsuite.filter.expertfilter;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.iidm.network.TopologyKind;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -41,7 +40,6 @@ public class ExpertFilter extends AbstractFilter {
         this.rules = rules;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Override
     public FilterType getType() {
         return FilterType.EXPERT;
