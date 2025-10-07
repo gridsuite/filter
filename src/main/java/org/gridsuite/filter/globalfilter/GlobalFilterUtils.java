@@ -1,5 +1,6 @@
 package org.gridsuite.filter.globalfilter;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
@@ -143,8 +144,9 @@ public final class GlobalFilterUtils {
             CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(andRules).build());
     }
 
+    @VisibleForTesting
     @Nonnull
-    private static List<String> filterNetwork(@Nonnull final AbstractFilter filter, @Nonnull final Network network, @Nonnull final FilterLoader filterLoader) {
+    static List<String> filterNetwork(@Nonnull final AbstractFilter filter, @Nonnull final Network network, @Nonnull final FilterLoader filterLoader) {
         return FiltersUtils.getIdentifiables(filter, network, filterLoader)
             .stream()
             .map(Identifiable::getId)
