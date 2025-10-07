@@ -26,11 +26,12 @@ public final class GlobalFilterUtils {
         throw new IllegalCallerException("Utility class should not be instantiated");
     }
 
+    /** @see ExpertFilterUtils#getFieldValue(FieldType, String, Identifiable) for possible values */
     @Nonnull
     public static List<FieldType> getNominalVoltageFieldType(@Nonnull final EquipmentType equipmentType) {
         return switch (equipmentType) {
-            case LINE, TWO_WINDINGS_TRANSFORMER -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2);
-            case VOLTAGE_LEVEL -> List.of(FieldType.NOMINAL_VOLTAGE);
+            case LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2);
+            case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, VOLTAGE_LEVEL -> List.of(FieldType.NOMINAL_VOLTAGE);
             default -> List.of();
         };
     }
@@ -57,11 +58,14 @@ public final class GlobalFilterUtils {
             }).toList());
     }
 
+    /** @see ExpertFilterUtils#getFieldValue(FieldType, String, Identifiable) for possible values */
     @Nonnull
     public static List<FieldType> getCountryCodeFieldType(@Nonnull final EquipmentType equipmentType) {
         return switch (equipmentType) {
-            case VOLTAGE_LEVEL, TWO_WINDINGS_TRANSFORMER -> List.of(FieldType.COUNTRY);
-            case LINE -> List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2);
+            case BATTERY, BUS, BUSBAR_SECTION, DANGLING_LINE, GENERATOR, LOAD,
+                 SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, SUBSTATION,
+                 THREE_WINDINGS_TRANSFORMER, TWO_WINDINGS_TRANSFORMER, VOLTAGE_LEVEL -> List.of(FieldType.COUNTRY);
+            case LINE, HVDC_LINE -> List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2);
             default -> List.of();
         };
     }
@@ -87,11 +91,13 @@ public final class GlobalFilterUtils {
         .toList());
     }
 
+    /** @see ExpertFilterUtils#getFieldValue(FieldType, String, Identifiable) for possible values */
     @Nonnull
-    public static List<FieldType> getSubstationPropertiesFieldTypes(@Nullable final EquipmentType equipmentType) {
-        return equipmentType == EquipmentType.LINE
-            ? List.of(FieldType.SUBSTATION_PROPERTIES_1, FieldType.SUBSTATION_PROPERTIES_2)
-            : List.of(FieldType.SUBSTATION_PROPERTIES);
+    public static List<FieldType> getSubstationPropertiesFieldTypes(@Nonnull final EquipmentType equipmentType) {
+        return switch (equipmentType) {
+            case LINE, HVDC_LINE -> List.of(FieldType.SUBSTATION_PROPERTIES_1, FieldType.SUBSTATION_PROPERTIES_2);
+            default -> List.of(FieldType.SUBSTATION_PROPERTIES);
+        };
     }
 
     /**
@@ -123,22 +129,16 @@ public final class GlobalFilterUtils {
     @Nullable
     public static ExpertFilter buildExpertFilter(@Nonnull final GlobalFilter globalFilter, @Nonnull final EquipmentType equipmentType) {
         final List<AbstractExpertRule> andRules = new ArrayList<>();
-
-        // Nominal voltage rules
         if (globalFilter.getNominalV() != null) {
             buildNominalVoltageRules(globalFilter.getNominalV(), equipmentType).ifPresent(andRules::add);
         }
-
-        // Country code rules
         if (globalFilter.getCountryCode() != null) {
             buildCountryCodeRules(globalFilter.getCountryCode(), equipmentType).ifPresent(andRules::add);
         }
-
-        // Substation property rules
         if (globalFilter.getSubstationProperty() != null) {
+            // custom extension with apps-metadata server
             buildSubstationPropertyRules(globalFilter.getSubstationProperty(), equipmentType).ifPresent(andRules::add);
         }
-
         return andRules.isEmpty() ? null : new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType,
             CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(andRules).build());
     }
