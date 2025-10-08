@@ -13,7 +13,6 @@ import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.apache.commons.collections4.CollectionUtils;
 import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.exception.InvalidEquipmentType;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
@@ -686,21 +685,22 @@ public final class ExpertFilterUtils {
             return switch (actualType) {
                 case SUBSTATION -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, VOLTAGE_LEVEL,
-                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION -> Stream.of(FieldType.SUBSTATION_ID);
-                case LINE, HVDC_LINE, DANGLING_LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, TWO_WINDINGS_TRANSFORMER,
+                     THREE_WINDINGS_TRANSFORMER, DANGLING_LINE -> Stream.of(FieldType.SUBSTATION_ID);
+                case LINE, HVDC_LINE
                         -> Stream.of(FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
             };
         } else if (filterEquipmentType == EquipmentType.VOLTAGE_LEVEL) {
             return switch (actualType) {
                 case VOLTAGE_LEVEL -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, SUBSTATION,
-                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
-                case LINE, HVDC_LINE, DANGLING_LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, DANGLING_LINE -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
+                case LINE, HVDC_LINE, TWO_WINDINGS_TRANSFORMER
                         -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2);
+                case THREE_WINDINGS_TRANSFORMER -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2, FieldType.VOLTAGE_LEVEL_ID_3);
             };
         } else {
-            // the webapp doesn't authorize this case, so normally this case can't happen
-            throw new InvalidEquipmentType("No matching field for type " + actualType + " and filter type " + filterEquipmentType);
+            return Stream.empty();
         }
     }
 }

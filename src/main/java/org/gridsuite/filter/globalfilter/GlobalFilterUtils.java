@@ -32,8 +32,9 @@ public final class GlobalFilterUtils {
     @Nonnull
     public static List<FieldType> getNominalVoltageFieldType(@Nonnull final EquipmentType equipmentType) {
         return switch (equipmentType) {
-            case LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2);
-            case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, VOLTAGE_LEVEL -> List.of(FieldType.NOMINAL_VOLTAGE);
+            case LINE, TWO_WINDINGS_TRANSFORMER, HVDC_LINE -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2);
+            case THREE_WINDINGS_TRANSFORMER -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2, FieldType.NOMINAL_VOLTAGE_3);
+            case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, VOLTAGE_LEVEL, DANGLING_LINE, LCC_CONVERTER_STATION, VSC_CONVERTER_STATION -> List.of(FieldType.NOMINAL_VOLTAGE);
             default -> List.of();
         };
     }
@@ -66,7 +67,7 @@ public final class GlobalFilterUtils {
         return switch (equipmentType) {
             case BATTERY, BUS, BUSBAR_SECTION, DANGLING_LINE, GENERATOR, LOAD,
                  SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, SUBSTATION,
-                 THREE_WINDINGS_TRANSFORMER, TWO_WINDINGS_TRANSFORMER, VOLTAGE_LEVEL -> List.of(FieldType.COUNTRY);
+                 THREE_WINDINGS_TRANSFORMER, TWO_WINDINGS_TRANSFORMER, VOLTAGE_LEVEL, LCC_CONVERTER_STATION, VSC_CONVERTER_STATION -> List.of(FieldType.COUNTRY);
             case LINE, HVDC_LINE -> List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2);
             default -> List.of();
         };
@@ -139,13 +140,16 @@ public final class GlobalFilterUtils {
          * the filter is intended to deduce on what field to apply the rule. */
         final List<AbstractExpertRule> rules = new ArrayList<>(genericFilterIds.size());
         for (final AbstractFilter filter : filterLoader.getFilters(genericFilterIds)) {
-            rules.add(ExpertFilterUtils.buildOrCombination(ExpertFilterUtils.getIdFieldMatchingType(actualType, filter.getEquipmentType())
-                .map(field -> FilterUuidExpertRule.builder()
-                                                  .field(field)
-                                                  .operator(OperatorType.IS_PART_OF)
-                                                  .values(Set.of(filter.getId().toString()))
-                                                  .build())
-                .collect(Collectors.toUnmodifiableList())).orElseThrow());
+            Set<FieldType> fieldTypeSet = ExpertFilterUtils.getIdFieldMatchingType(actualType, filter.getEquipmentType()).collect(Collectors.toSet());
+            if (!fieldTypeSet.isEmpty()) {
+                rules.add(ExpertFilterUtils.buildOrCombination(fieldTypeSet.stream()
+                    .map(field -> FilterUuidExpertRule.builder()
+                        .field(field)
+                        .operator(OperatorType.IS_PART_OF)
+                        .values(Set.of(filter.getId().toString()))
+                        .build())
+                    .collect(Collectors.toUnmodifiableList())).orElseThrow());
+            }
         }
         return rules;
     }
