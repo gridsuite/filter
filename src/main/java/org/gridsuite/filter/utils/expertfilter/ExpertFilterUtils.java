@@ -14,7 +14,6 @@ import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.apache.commons.collections4.CollectionUtils;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.exception.InvalidEquipmentType;
-import org.gridsuite.filter.exception.UnknownFilterType;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
