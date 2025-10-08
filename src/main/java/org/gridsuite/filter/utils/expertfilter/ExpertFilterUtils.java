@@ -58,6 +58,7 @@ public final class ExpertFilterUtils {
                 case DANGLING_LINE -> getDanglingLinesFieldValue(field, propertyName, (DanglingLine) identifiable);
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
                 case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
+                case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, propertyName, (HvdcConverterStation) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
         };
@@ -299,6 +300,19 @@ public final class ExpertFilterUtils {
             case VOLTAGE_LEVEL_PROPERTIES -> battery.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + battery.getType() + "]");
 
+        };
+    }
+
+    private static String getHvdcConverterStationFieldValue(FieldType field, String propertyName, HvdcConverterStation hvdcConverterStation) {
+        return switch (field) {
+            case COUNTRY,
+                 NOMINAL_VOLTAGE,
+                 VOLTAGE_LEVEL_ID,
+                 SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, hvdcConverterStation.getTerminal().getVoltageLevel());
+            case CONNECTED -> getTerminalFieldValue(field, hvdcConverterStation.getTerminal());
+            case SUBSTATION_PROPERTIES -> hvdcConverterStation.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
+            case VOLTAGE_LEVEL_PROPERTIES -> hvdcConverterStation.getTerminal().getVoltageLevel().getProperty(propertyName);
+            default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + hvdcConverterStation.getType() + "]");
         };
     }
 
