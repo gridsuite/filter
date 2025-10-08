@@ -143,7 +143,7 @@ public final class GlobalFilterUtils {
                 .map(field -> FilterUuidExpertRule.builder()
                                                   .field(field)
                                                   .operator(OperatorType.IS_PART_OF)
-                                                  .value(filter.getId().toString())
+                                                  .values(Set.of(filter.getId().toString()))
                                                   .build())
                 .collect(Collectors.toUnmodifiableList())).orElseThrow());
         }

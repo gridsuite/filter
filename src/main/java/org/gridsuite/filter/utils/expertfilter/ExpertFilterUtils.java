@@ -686,17 +686,17 @@ public final class ExpertFilterUtils {
             return switch (actualType) {
                 case SUBSTATION -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, VOLTAGE_LEVEL,
-                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION -> Stream.of(FieldType.SUBSTATION_ID);
                 case LINE, HVDC_LINE, DANGLING_LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER
-                        -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2);
+                        -> Stream.of(FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
             };
         } else if (filterEquipmentType == EquipmentType.VOLTAGE_LEVEL) {
             return switch (actualType) {
                 case VOLTAGE_LEVEL -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, SUBSTATION,
-                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION -> Stream.of(FieldType.SUBSTATION_ID);
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
                 case LINE, HVDC_LINE, DANGLING_LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER
-                        -> Stream.of(FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
+                        -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2);
             };
         } else {
             // the webapp doesn't authorize this case, so normally this case can't happen
