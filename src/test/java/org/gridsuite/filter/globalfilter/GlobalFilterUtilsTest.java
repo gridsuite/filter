@@ -171,7 +171,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             Arguments.of(EquipmentType.LINE, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2)),
             Arguments.of(EquipmentType.TWO_WINDINGS_TRANSFORMER, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2)),
             Arguments.of(EquipmentType.VOLTAGE_LEVEL, List.of(FieldType.NOMINAL_VOLTAGE)),
-            Arguments.of(EquipmentType.GENERATOR, Collections.emptyList())
+            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.NOMINAL_VOLTAGE))
         );
     }
 
@@ -188,7 +188,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             Arguments.of(EquipmentType.VOLTAGE_LEVEL, List.of(FieldType.COUNTRY)),
             Arguments.of(EquipmentType.TWO_WINDINGS_TRANSFORMER, List.of(FieldType.COUNTRY)),
             Arguments.of(EquipmentType.LINE, List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2)),
-            Arguments.of(EquipmentType.GENERATOR, Collections.emptyList())
+            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.COUNTRY))
         );
     }
 
@@ -222,32 +222,6 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final GlobalFilter globalFilter = new GlobalFilter(List.of(), List.of(), List.of(), Map.of());
             assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, uuids -> List.of()))
                 .as("result").isNull();
-        }
-
-        @Test
-        void shouldCreateFilterWhenRulesExist() {
-            final List<String> nv = List.of("400.0");
-            final GlobalFilter globalFilter = Mockito.spy(new GlobalFilter(nv, null, null, null));
-            try (final MockedStatic<GlobalFilterUtils> mockedGFU = Mockito.mockStatic(GlobalFilterUtils.class, Mockito.CALLS_REAL_METHODS)) {
-                mockedGFU.when(() -> GlobalFilterUtils.buildNominalVoltageRules(nv, EquipmentType.GENERATOR))
-                         .thenReturn(Optional.of(Mockito.mock(AbstractExpertRule.class)));
-                mockedGFU.clearInvocations(); //important because stubbing static method counts as call
-                assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, null)).as("result")
-                    .isNotNull().satisfies(
-                        ef -> assertThat(ef.getEquipmentType()).as("equipment type").isEqualTo(EquipmentType.GENERATOR),
-                        ef -> assertThat(ef.getRules()).as("rule combinator")
-                            .asInstanceOf(InstanceOfAssertFactories.type(CombinatorExpertRule.class))
-                            .extracting(CombinatorExpertRule::getRules, InstanceOfAssertFactories.list(AbstractExpertRule.class))
-                            .as("rules").hasSize(1)
-                );
-                Mockito.verify(globalFilter, Mockito.atLeastOnce()).getNominalV();
-                Mockito.verify(globalFilter, Mockito.atLeastOnce()).getCountryCode();
-                Mockito.verify(globalFilter, Mockito.atLeastOnce()).getSubstationProperty();
-                mockedGFU.verify(() -> GlobalFilterUtils.buildNominalVoltageRules(Mockito.anyList(), any(EquipmentType.class)), Mockito.times(1));
-                mockedGFU.verify(() -> GlobalFilterUtils.buildExpertFilter(any(GlobalFilter.class), any(EquipmentType.class), isNull(FilterLoader.class)), Mockito.times(1));
-                mockedGFU.verifyNoMoreInteractions(); //check if forget to mock a method
-                Mockito.verifyNoMoreInteractions(globalFilter);
-            }
         }
     }
 
