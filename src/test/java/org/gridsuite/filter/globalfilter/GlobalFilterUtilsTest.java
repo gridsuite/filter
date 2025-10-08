@@ -170,9 +170,20 @@ class GlobalFilterUtilsTest implements WithAssertions {
             // Nominal voltage
             Arguments.of(EquipmentType.LINE, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2)),
             Arguments.of(EquipmentType.TWO_WINDINGS_TRANSFORMER, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2)),
+            Arguments.of(EquipmentType.THREE_WINDINGS_TRANSFORMER, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2, FieldType.NOMINAL_VOLTAGE_3)),
             Arguments.of(EquipmentType.VOLTAGE_LEVEL, List.of(FieldType.NOMINAL_VOLTAGE)),
-            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.NOMINAL_VOLTAGE))
-        );
+            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.LOAD, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.SHUNT_COMPENSATOR, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.STATIC_VAR_COMPENSATOR, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.BATTERY, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.BUS, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.BUSBAR_SECTION, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.DANGLING_LINE, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.HVDC_LINE, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2)),
+            Arguments.of(EquipmentType.LCC_CONVERTER_STATION, List.of(FieldType.NOMINAL_VOLTAGE)),
+            Arguments.of(EquipmentType.VSC_CONVERTER_STATION, List.of(FieldType.NOMINAL_VOLTAGE))
+            );
     }
 
     @ParameterizedTest(name = "{0}")
@@ -188,7 +199,17 @@ class GlobalFilterUtilsTest implements WithAssertions {
             Arguments.of(EquipmentType.VOLTAGE_LEVEL, List.of(FieldType.COUNTRY)),
             Arguments.of(EquipmentType.TWO_WINDINGS_TRANSFORMER, List.of(FieldType.COUNTRY)),
             Arguments.of(EquipmentType.LINE, List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2)),
-            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.COUNTRY))
+            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.LOAD, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.SHUNT_COMPENSATOR, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.STATIC_VAR_COMPENSATOR, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.BATTERY, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.BUS, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.BUSBAR_SECTION, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.DANGLING_LINE, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.HVDC_LINE, List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2)),
+            Arguments.of(EquipmentType.LCC_CONVERTER_STATION, List.of(FieldType.COUNTRY)),
+            Arguments.of(EquipmentType.VSC_CONVERTER_STATION, List.of(FieldType.COUNTRY))
         );
     }
 
