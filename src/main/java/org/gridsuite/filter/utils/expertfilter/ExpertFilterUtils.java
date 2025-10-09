@@ -58,7 +58,7 @@ public final class ExpertFilterUtils {
                 case DANGLING_LINE -> getDanglingLinesFieldValue(field, propertyName, (DanglingLine) identifiable);
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
                 case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
-                case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, propertyName, (HvdcConverterStation) identifiable);
+                case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, (HvdcConverterStation<?>) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
         };
@@ -303,7 +303,7 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getHvdcConverterStationFieldValue(FieldType field, String propertyName, HvdcConverterStation hvdcConverterStation) {
+    private static String getHvdcConverterStationFieldValue(FieldType field, HvdcConverterStation<?> hvdcConverterStation) {
         return switch (field) {
             case COUNTRY,
                  NOMINAL_VOLTAGE,
@@ -671,9 +671,11 @@ public final class ExpertFilterUtils {
         if (rules == null || rules.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(rules.size() > 1
-                ? CombinatorExpertRule.builder().combinator(and ? CombinatorType.AND : CombinatorType.OR).rules(rules).build()
-                : rules.getFirst());
+        if (rules.size() > 1) {
+            return Optional.of(CombinatorExpertRule.builder().combinator(and ? CombinatorType.AND : CombinatorType.OR).rules(rules).build());
+        } else {
+            return Optional.of(rules.getFirst());
+        }
     }
 
     /**
