@@ -309,9 +309,6 @@ public final class ExpertFilterUtils {
                  NOMINAL_VOLTAGE,
                  VOLTAGE_LEVEL_ID,
                  SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, hvdcConverterStation.getTerminal().getVoltageLevel());
-            case CONNECTED -> getTerminalFieldValue(field, hvdcConverterStation.getTerminal());
-            case SUBSTATION_PROPERTIES -> hvdcConverterStation.getTerminal().getVoltageLevel().getNullableSubstation().getProperty(propertyName);
-            case VOLTAGE_LEVEL_PROPERTIES -> hvdcConverterStation.getTerminal().getVoltageLevel().getProperty(propertyName);
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + hvdcConverterStation.getType() + "]");
         };
     }
