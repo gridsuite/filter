@@ -79,7 +79,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
     @DisplayName("buildNominalVoltageRules(...)")
     class BuildNominalVoltageRules {
         @ParameterizedTest
-        @MethodSource({"expertRulesData"})
+        @MethodSource("expertRulesData")
         void shouldCreateExpertRules(final List<String> nominalVoltages) {
             testVariableOrCombinationRules(
                 GlobalFilterUtils.buildNominalVoltageRules(nominalVoltages, EquipmentType.VOLTAGE_LEVEL),
@@ -107,7 +107,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
     @DisplayName("buildCountryCodeRules(...)")
     class BuildCountryCodeRules {
         @ParameterizedTest
-        @MethodSource({"enumRulesData"})
+        @MethodSource("enumRulesData")
         void shouldCreateEnumRules(final List<Country> countries) {
             testVariableOrCombinationRules(
                 GlobalFilterUtils.buildCountryCodeRules(countries, EquipmentType.VOLTAGE_LEVEL),
@@ -135,7 +135,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
     @DisplayName("buildSubstationPropertyRules(...)")
     class BuildSubstationPropertyRules {
         @ParameterizedTest
-        @MethodSource({"propertiesRulesData"})
+        @MethodSource("propertiesRulesData")
         void shouldCreateCorrectPropertiesRules(final Map<String, List<String>> properties) {
             testVariableOrCombinationRules(
                 GlobalFilterUtils.buildSubstationPropertyRules(properties, EquipmentType.VOLTAGE_LEVEL),
