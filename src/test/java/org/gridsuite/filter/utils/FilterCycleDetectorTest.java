@@ -6,9 +6,9 @@
  */
 package org.gridsuite.filter.utils;
 
-import com.powsybl.commons.PowsyblException;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.exceptions.FilterCycleException;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
@@ -58,7 +58,7 @@ class FilterCycleDetectorTest {
         Map<UUID, AbstractFilter> filters = Map.of(filterIdA, filterA, filterIdB, filterB);
         FilterLoader loader = ids -> ids.stream().map(filters::get).toList();
 
-        PowsyblException ex = assertThrows(PowsyblException.class, () -> FilterCycleDetector.checkNoCycle(filterA, loader));
+        FilterCycleException ex = assertThrows(FilterCycleException.class, () -> FilterCycleDetector.checkNoCycle(filterA, loader));
         assertEquals("Cycle detected in filters", ex.getMessage());
     }
 
@@ -92,7 +92,7 @@ class FilterCycleDetectorTest {
 
         try {
             FilterCycleDetector.checkNoCycle(filterA, loader);
-        } catch (PowsyblException e) {
+        } catch (FilterCycleException e) {
             fail("Unexpected cycle detected");
         }
     }

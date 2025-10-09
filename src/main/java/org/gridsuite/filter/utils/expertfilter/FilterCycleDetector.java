@@ -7,9 +7,9 @@
 
 package org.gridsuite.filter.utils.expertfilter;
 
-import com.powsybl.commons.PowsyblException;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.exceptions.FilterCycleException;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
@@ -44,7 +44,7 @@ public final class FilterCycleDetector {
         UUID id = filter.getId();
         if (id != null) {
             if (visiting.contains(id)) {
-                throw new PowsyblException("Cycle detected in filters");
+                throw new FilterCycleException("Cycle detected in filters");
             }
             visiting.add(id);
         }
