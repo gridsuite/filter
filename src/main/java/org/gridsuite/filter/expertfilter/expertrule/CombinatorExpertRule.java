@@ -6,7 +6,6 @@
  */
 package org.gridsuite.filter.expertfilter.expertrule;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,6 @@ import java.util.UUID;
 @SuperBuilder
 public class CombinatorExpertRule extends AbstractExpertRule {
     @Override
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public DataType getDataType() {
         return DataType.COMBINATOR;
     }

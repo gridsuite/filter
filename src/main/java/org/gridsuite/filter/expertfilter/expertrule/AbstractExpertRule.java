@@ -6,10 +6,12 @@
  */
 package org.gridsuite.filter.expertfilter.expertrule;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.powsybl.iidm.network.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,20 +32,17 @@ import java.util.UUID;
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
  */
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "dataType",
-        include = JsonTypeInfo.As.EXISTING_PROPERTY)
+@JsonTypeInfo(use = Id.NAME, property = "dataType", include = As.EXISTING_PROPERTY, visible = true)
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = StringExpertRule.class, name = "STRING"),
-    @JsonSubTypes.Type(value = BooleanExpertRule.class, name = "BOOLEAN"),
-    @JsonSubTypes.Type(value = EnumExpertRule.class, name = "ENUM"),
-    @JsonSubTypes.Type(value = NumberExpertRule.class, name = "NUMBER"),
-    @JsonSubTypes.Type(value = CombinatorExpertRule.class, name = "COMBINATOR"),
-    @JsonSubTypes.Type(value = FilterUuidExpertRule.class, name = "FILTER_UUID"),
-    @JsonSubTypes.Type(value = PropertiesExpertRule.class, name = "PROPERTIES"),
+    @Type(value = StringExpertRule.class, name = "STRING"),
+    @Type(value = BooleanExpertRule.class, name = "BOOLEAN"),
+    @Type(value = EnumExpertRule.class, name = "ENUM"),
+    @Type(value = NumberExpertRule.class, name = "NUMBER"),
+    @Type(value = CombinatorExpertRule.class, name = "COMBINATOR"),
+    @Type(value = FilterUuidExpertRule.class, name = "FILTER_UUID"),
+    @Type(value = PropertiesExpertRule.class, name = "PROPERTIES"),
 })
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -61,6 +60,7 @@ public abstract class AbstractExpertRule {
 
     public abstract boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters);
 
+    @JsonProperty(access = Access.READ_ONLY)
     public abstract DataType getDataType();
 
     @JsonIgnore
