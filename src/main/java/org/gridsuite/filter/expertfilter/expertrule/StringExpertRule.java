@@ -10,10 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.gridsuite.filter.FilterLoader;
@@ -34,8 +31,9 @@ import static org.gridsuite.filter.utils.expertfilter.OperatorType.isMultipleCri
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @SuperBuilder
 public class StringExpertRule extends AbstractExpertRule {
     private String value;
