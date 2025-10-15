@@ -41,7 +41,6 @@ public class GlobalFilter {
         return CollectionUtils.isEmpty(this.nominalV)
             && CollectionUtils.isEmpty(this.countryCode)
             && CollectionUtils.isEmpty(this.genericFilter)
-            && MapUtils.isEmpty(this.substationProperty)
-            && this.substationProperty.values().stream().allMatch(CollectionUtils::isEmpty);
+            && (MapUtils.isEmpty(this.substationProperty) || this.substationProperty.values().stream().allMatch(CollectionUtils::isEmpty));
     }
 }
