@@ -9,10 +9,7 @@ package org.gridsuite.filter.expertfilter.expertrule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
@@ -30,8 +27,9 @@ import static org.gridsuite.filter.utils.expertfilter.OperatorType.NOT_EXISTS;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @SuperBuilder
 public class BooleanExpertRule extends AbstractExpertRule {
     private Boolean value;

@@ -14,6 +14,8 @@ import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -236,5 +238,31 @@ public final class FiltersUtils {
             case VOLTAGE_LEVEL -> getVoltageLevelList(network, filter, filterLoader);
             case SUBSTATION -> getSubstationList(network, filter, filterLoader);
         };
+    }
+
+    /**
+     * Combines multiple filter results using {@code AND} or {@code OR} logic.
+     */
+    @Nonnull
+    public static <E> List<E> combineFilterResults(@Nullable final List<List<E>> filterResults, final boolean useAndLogic) {
+        if (filterResults == null || filterResults.isEmpty()) {
+            return List.of();
+        }
+        if (filterResults.size() == 1) {
+            return filterResults.getFirst();
+        }
+        if (useAndLogic) {
+            // Intersection of all results
+            Set<E> result = new HashSet<>(filterResults.getFirst());
+            for (int i = 1; i < filterResults.size(); i++) {
+                result.retainAll(filterResults.get(i));
+            }
+            return new ArrayList<>(result);
+        } else {
+            // Union of all results
+            Set<E> result = new HashSet<>();
+            filterResults.forEach(result::addAll);
+            return new ArrayList<>(result);
+        }
     }
 }
