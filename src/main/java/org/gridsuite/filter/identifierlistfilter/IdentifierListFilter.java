@@ -9,10 +9,7 @@ package org.gridsuite.filter.identifierlistfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.iidm.network.IdentifiableType;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.utils.EquipmentType;
@@ -20,16 +17,15 @@ import org.gridsuite.filter.utils.FilterType;
 
 import java.util.*;
 
-
 /**
  * @author Seddik Yengui <seddik.yengui at rte-france.com>
  */
 
-@NoArgsConstructor
-@Getter
-@Setter
 @SuperBuilder
+@NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class IdentifierListFilter extends AbstractFilter {
 
     private List<IdentifierListFilterEquipmentAttributes> filterEquipmentsAttributes;
@@ -83,7 +79,7 @@ public class IdentifierListFilter extends AbstractFilter {
 
         FilterEquipments filterEquipments = toFilterEquipments(identifiableAttributes);
 
-        IdentifiableType idType = IdentifiableType.valueOf(getEquipmentType().name());
+        IdentifiableType idType = IdentifiableType.valueOf(getEquipmentType().name()); // {LC,VS}C_CONVERTER_STATION not supported!
         List<IdentifiableAttributes> notFounds = filterEquipments.getNotFoundEquipments().stream().map(element ->
             new IdentifiableAttributes(element, idType, null)).toList();
 

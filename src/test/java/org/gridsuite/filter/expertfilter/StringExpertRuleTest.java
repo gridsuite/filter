@@ -87,6 +87,9 @@ class StringExpertRuleTest {
         HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
         Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
+        HvdcConverterStation hvdcConverterStation = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(hvdcConverterStation.getType()).thenReturn(IdentifiableType.HVDC_CONVERTER_STATION);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(IS, FieldType.RATED_S, network, PowsyblException.class),
@@ -101,6 +104,7 @@ class StringExpertRuleTest {
                 Arguments.of(IS, FieldType.RATED_S, svar, PowsyblException.class),
                 Arguments.of(IS, FieldType.P0, threeWindingsTransformer, PowsyblException.class),
                 Arguments.of(IS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
+                Arguments.of(IS, FieldType.RATED_S, hvdcConverterStation, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(EQUALS, FieldType.ID, generator, PowsyblException.class)
@@ -121,6 +125,7 @@ class StringExpertRuleTest {
         "provideArgumentsForDanglingLineTest",
         "provideArgumentsForThreeWindingsTransformerTest",
         "provideArgumentsForHvdcLineTest",
+        "provideArgumentsForHvdcConverterStationTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         StringExpertRule rule = StringExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
@@ -1770,6 +1775,112 @@ class StringExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_ID_1, null, Set.of("STATION4", "STATION1"), hvdcLine, false),
             Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_ID_2, null, Set.of("STATION3", "STATION4"), hvdcLine, true),
             Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_ID_2, null, Set.of("STATION2", "STATION1"), hvdcLine, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForHvdcConverterStationTest() {
+        HvdcConverterStation converterStation = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation.getType()).thenReturn(IdentifiableType.HVDC_CONVERTER_STATION);
+        // Common fields
+        Mockito.when(converterStation.getId()).thenReturn("ID");
+        Mockito.when(converterStation.getOptionalName()).thenReturn(Optional.of("NAME"));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevel.getId()).thenReturn("VL");
+        Terminal terminal = Mockito.mock(Terminal.class);
+        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        Mockito.when(converterStation.getTerminal()).thenReturn(terminal);
+
+        // for testing none EXISTS
+        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation1.getType()).thenReturn(IdentifiableType.HVDC_CONVERTER_STATION);
+        Mockito.when(converterStation1.getOptionalName()).thenReturn(Optional.of(""));
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
+        Terminal terminal1 = Mockito.mock(Terminal.class);
+        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1);
+
+        return Stream.of(
+            // --- IS --- //
+            // Common fields
+            Arguments.of(IS, FieldType.ID, "id", null, converterStation, true),
+            Arguments.of(IS, FieldType.ID, "id_1", null, converterStation, false),
+            Arguments.of(IS, FieldType.NAME, "name", null, converterStation, true),
+            Arguments.of(IS, FieldType.NAME, "name_1", null, converterStation, false),
+            // VoltageLevel fields
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, converterStation, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, converterStation, false),
+
+            // --- CONTAINS --- //
+            // Common fields
+            Arguments.of(CONTAINS, FieldType.ID, "i", null, converterStation, true),
+            Arguments.of(CONTAINS, FieldType.ID, "ii", null, converterStation, false),
+            Arguments.of(CONTAINS, FieldType.NAME, "nam", null, converterStation, true),
+            Arguments.of(CONTAINS, FieldType.NAME, "namm", null, converterStation, false),
+            // VoltageLevel fields
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, converterStation, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, converterStation, false),
+
+            // --- BEGINS_WITH --- //
+            // Common fields
+            Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, converterStation, true),
+            Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, converterStation, false),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, converterStation, true),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, converterStation, false),
+            // VoltageLevel fields
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, converterStation, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, converterStation, false),
+
+            // --- ENDS_WITH --- //
+            // Common fields
+            Arguments.of(ENDS_WITH, FieldType.ID, "d", null, converterStation, true),
+            Arguments.of(ENDS_WITH, FieldType.ID, "e", null, converterStation, false),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, converterStation, true),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, converterStation, false),
+            // VoltageLevel fields
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, converterStation, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, converterStation, false),
+
+            // --- EXISTS --- //
+            // Common fields
+            Arguments.of(EXISTS, FieldType.ID, null, null, converterStation, true),
+            Arguments.of(EXISTS, FieldType.ID, null, null, converterStation1, false),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, converterStation, true),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, converterStation1, false),
+            // VoltageLevel fields
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, converterStation, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, converterStation1, false),
+
+            // --- NOT_EXISTS --- //
+            // Common fields
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, converterStation, false),
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, converterStation1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, converterStation, false),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, converterStation1, true),
+            // VoltageLevel fields
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, converterStation, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, converterStation1, true),
+
+            // --- IN --- //
+            // Common fields
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), converterStation, true),
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), converterStation, false),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), converterStation, true),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), converterStation, false),
+            // VoltageLevel fields
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), converterStation, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), converterStation, false),
+
+            // --- NOT_IN --- //
+            // Common fields
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), converterStation, true),
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), converterStation, false),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), converterStation, true),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), converterStation, false),
+            // VoltageLevel fields
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), converterStation, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), converterStation, false)
         );
     }
 }

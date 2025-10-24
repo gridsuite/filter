@@ -10,13 +10,16 @@ package org.gridsuite.filter;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 
+import java.util.Date;
+import java.util.UUID;
+
 /**
  * @author Jacques Borsenberger <jacques.borsenberger at rte-france.com>
  */
 public interface IFilterAttributes {
-    java.util.UUID getId();
+    UUID getId();
 
-    java.util.Date getModificationDate();
+    Date getModificationDate(); // TODO use Instant like in servers (client not on same timezone than server)
 
     FilterType getType();
 

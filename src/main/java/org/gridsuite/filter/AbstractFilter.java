@@ -8,7 +8,9 @@ package org.gridsuite.filter;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
@@ -43,7 +45,7 @@ public abstract class AbstractFilter implements IFilterAttributes {
 
     private UUID id;
 
-    private Date modificationDate;
+    private Date modificationDate; // TODO use Instant like in servers (client not on same timezone than server)
 
     private EquipmentType equipmentType;
 
