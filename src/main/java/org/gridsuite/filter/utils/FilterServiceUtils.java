@@ -14,6 +14,7 @@ import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -39,6 +40,18 @@ public final class FilterServiceUtils {
                 .map(identifiable -> new IdentifiableAttributes(identifiable.getId(), identifiable.getType(), null))
                 .toList();
         }
+    }
+
+    public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, List<UUID> uuids, FilterLoader filterLoader) {
+        return getFilterEquipmentsFromUuid(network, uuids, filterLoader, Set.of());
+    }
+
+    public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, List<UUID> uuids, FilterLoader filterLoader, Set<FilterType> filterTypesToExclude) {
+        List<AbstractFilter> filters = filterLoader.getFilters(uuids);
+        return filters.stream()
+            .filter(filter -> filter != null && !filterTypesToExclude.contains(filter.getType()))
+            .map(filter -> filter.toFilterEquipments(FilterServiceUtils.getIdentifiableAttributes(filter, network, filterLoader)))
+            .toList();
     }
 
     public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, UUID uuid, FilterLoader filterLoader) {
