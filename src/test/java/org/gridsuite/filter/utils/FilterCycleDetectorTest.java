@@ -8,7 +8,7 @@ package org.gridsuite.filter.utils;
 
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.exceptions.FilterCycleException;
+import org.gridsuite.filter.exception.FilterCycleException;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,6 +61,7 @@ class FilterCycleDetectorTest {
 
         FilterCycleException ex = assertThrows(FilterCycleException.class, () -> FilterCycleDetector.checkNoCycle(filterA, loader));
         assertEquals("Cycle detected in filters", ex.getMessage());
+        assertThat(ex.getCycleFilterIds()).containsExactly(filterIdA, filterIdB, filterIdA);
     }
 
     @Test
