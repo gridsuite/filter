@@ -33,11 +33,11 @@ public final class FilterCycleDetector {
      * @param filterLoader loader used to retrieve referenced filters
      */
     public static void checkNoCycle(AbstractFilter filter, FilterLoader filterLoader) {
-        checkNoCycle(filter, filterLoader, new ArrayDeque<>());
+        checkNoCycle(filter, filterLoader, new ArrayList<>());
     }
 
     private static void checkNoCycle(AbstractFilter filter, FilterLoader loader,
-                                     Deque<UUID> visiting) {
+                                     List<UUID> visiting) {
         UUID id = filter.getId();
         if (id != null) {
             if (visiting.contains(id)) {
@@ -58,7 +58,7 @@ public final class FilterCycleDetector {
     }
 
     private static void checkRule(AbstractExpertRule rule, FilterLoader loader,
-                                  Deque<UUID> visiting) {
+                                  List<UUID> visiting) {
         switch (rule) {
             case CombinatorExpertRule combinatorRule -> {
                 List<AbstractExpertRule> rules = combinatorRule.getRules();

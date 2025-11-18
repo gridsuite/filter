@@ -24,8 +24,4 @@ public class FilterCycleException extends RuntimeException {
         super(Objects.requireNonNull(message, "message must not be null"));
         this.cycleFilterIds = List.copyOf(Objects.requireNonNull(cycleFilterIds, "cycleFilterIds must not be null"));
     }
-
-    public List<UUID> getCycleFilterIds() {
-        return cycleFilterIds;
-    }
 }
