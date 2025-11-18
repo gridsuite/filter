@@ -41,11 +41,9 @@ public final class FilterCycleDetector {
         UUID id = filter.getId();
         if (id != null) {
             if (visiting.contains(id)) {
-                List<UUID> path = new ArrayList<>(visiting);
-                int startIndex = path.indexOf(id);
-                List<UUID> cycle = new ArrayList<>(path.subList(startIndex, path.size()));
-                cycle.add(id);
-                throw new FilterCycleException("Cycle detected in filters", cycle);
+                visiting.addLast(id);
+                int startIndex = visiting.indexOf(id);
+                throw new FilterCycleException("Cycle detected in filters", visiting.subList(startIndex, visiting.size()));
             }
             visiting.addLast(id);
         }
