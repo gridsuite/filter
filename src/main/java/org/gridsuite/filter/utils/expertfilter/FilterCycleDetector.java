@@ -9,16 +9,13 @@ package org.gridsuite.filter.utils.expertfilter;
 
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.exceptions.FilterCycleException;
+import org.gridsuite.filter.exception.FilterCycleException;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRule;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Mohamed BENREJEB <mohamed.ben-rejeb at rte-france.com>
@@ -36,30 +33,32 @@ public final class FilterCycleDetector {
      * @param filterLoader loader used to retrieve referenced filters
      */
     public static void checkNoCycle(AbstractFilter filter, FilterLoader filterLoader) {
-        checkNoCycle(filter, filterLoader, new HashSet<>());
+        checkNoCycle(filter, filterLoader, new ArrayList<>());
     }
 
     private static void checkNoCycle(AbstractFilter filter, FilterLoader loader,
-                                     Set<UUID> visiting) {
+                                     List<UUID> visiting) {
         UUID id = filter.getId();
         if (id != null) {
             if (visiting.contains(id)) {
-                throw new FilterCycleException("Cycle detected in filters");
+                visiting.addLast(id);
+                int startIndex = visiting.indexOf(id);
+                throw new FilterCycleException("Cycle detected in filters", visiting.subList(startIndex, visiting.size()));
             }
-            visiting.add(id);
+            visiting.addLast(id);
         }
 
         if (filter instanceof ExpertFilter expertFilter) {
             checkRule(expertFilter.getRules(), loader, visiting);
         }
 
-        if (id != null) {
-            visiting.remove(id);
+        if (id != null && !visiting.isEmpty()) {
+            visiting.removeLast();
         }
     }
 
     private static void checkRule(AbstractExpertRule rule, FilterLoader loader,
-                                  Set<UUID> visiting) {
+                                  List<UUID> visiting) {
         switch (rule) {
             case CombinatorExpertRule combinatorRule -> {
                 List<AbstractExpertRule> rules = combinatorRule.getRules();
