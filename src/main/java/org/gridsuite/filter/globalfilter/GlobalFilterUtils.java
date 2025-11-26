@@ -197,7 +197,9 @@ public final class GlobalFilterUtils {
             rules.add(ExpertFilterUtils.buildOrCombination(subsStationsAndVoltageLevelsRules).orElseThrow());
         }
 
-        return rules;
+        // Create and rule from rules
+        AbstractExpertRule resultRule = ExpertFilterUtils.buildAndCombination(rules).orElse(null);
+        return resultRule != null ? Collections.singletonList(resultRule) : Collections.emptyList();
     }
 
     /**
