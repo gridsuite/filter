@@ -145,8 +145,7 @@ public final class GlobalFilterUtils {
      * @param genericFilterIds the generic filter {@link UUID UUIDs} to load and build rules for
      * @return the {@link List list} of {@link AbstractExpertRule expert rules} built from the loaded generic filters.
      */
-    @Nonnull
-    public static List<AbstractExpertRule> buildGenericFilterRules(@Nonnull final List<UUID> genericFilterIds,
+    public static AbstractExpertRule buildGenericFilterRules(@Nonnull final List<UUID> genericFilterIds,
                                                                    @Nonnull final EquipmentType actualType,
                                                                    @Nonnull final FilterLoader filterLoader) {
         /* note: We can't do a FilterUuidExpertRule IS_PART_OF rule here because we need to know the equipment type
@@ -198,8 +197,7 @@ public final class GlobalFilterUtils {
         }
 
         // Create and rule from rules
-        AbstractExpertRule resultRule = ExpertFilterUtils.buildAndCombination(rules).orElse(null);
-        return resultRule != null ? Collections.singletonList(resultRule) : Collections.emptyList();
+        return ExpertFilterUtils.buildAndCombination(rules).orElse(null);
     }
 
     /**
@@ -220,7 +218,10 @@ public final class GlobalFilterUtils {
             buildSubstationPropertyRules(globalFilter.getSubstationProperty(), equipmentType).ifPresent(andRules::add);
         }
         if (globalFilter.getGenericFilter() != null) {
-            andRules.addAll(buildGenericFilterRules(globalFilter.getGenericFilter(), equipmentType, filterLoader));
+            AbstractExpertRule genericRule = buildGenericFilterRules(globalFilter.getGenericFilter(), equipmentType, filterLoader);
+            if (genericRule != null) {
+                andRules.add(genericRule);
+            }
         }
         return ExpertFilterUtils.buildAndCombination(andRules)
                 .map(rule -> new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType, rule))
