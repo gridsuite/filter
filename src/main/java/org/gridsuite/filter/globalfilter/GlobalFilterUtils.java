@@ -141,13 +141,13 @@ public final class GlobalFilterUtils {
 
     /**
      * {@link FilterLoader#getFilters(List) Loads} generic filters by their {@link UUID UUIDs},
-     * then builds {@link AbstractExpertRule expert rules}, taking into account the {@link EquipmentType equipment type}.
+     * then builds {@link AbstractExpertRule expert rule}, taking into account the {@link EquipmentType equipment type}.
      * @param genericFilterIds the generic filter {@link UUID UUIDs} to load and build rules for
      * @return the {@link List list} of {@link AbstractExpertRule expert rules} built from the loaded generic filters.
      */
-    public static AbstractExpertRule buildGenericFilterRules(@Nonnull final List<UUID> genericFilterIds,
-                                                                   @Nonnull final EquipmentType actualType,
-                                                                   @Nonnull final FilterLoader filterLoader) {
+    public static AbstractExpertRule buildGenericFilterRule(@Nonnull final List<UUID> genericFilterIds,
+                                                            @Nonnull final EquipmentType actualType,
+                                                            @Nonnull final FilterLoader filterLoader) {
         /* note: We can't do a FilterUuidExpertRule IS_PART_OF rule here because we need to know the equipment type
          * the filter is intended to deduce on what field to apply the rule. */
         final List<AbstractExpertRule> rules = new ArrayList<>(genericFilterIds.size());
@@ -218,7 +218,7 @@ public final class GlobalFilterUtils {
             buildSubstationPropertyRules(globalFilter.getSubstationProperty(), equipmentType).ifPresent(andRules::add);
         }
         if (globalFilter.getGenericFilter() != null) {
-            AbstractExpertRule genericRule = buildGenericFilterRules(globalFilter.getGenericFilter(), equipmentType, filterLoader);
+            AbstractExpertRule genericRule = buildGenericFilterRule(globalFilter.getGenericFilter(), equipmentType, filterLoader);
             if (genericRule != null) {
                 andRules.add(genericRule);
             }
