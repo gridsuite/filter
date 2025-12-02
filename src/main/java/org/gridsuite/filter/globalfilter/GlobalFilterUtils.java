@@ -126,32 +126,78 @@ public final class GlobalFilterUtils {
         .toList());
     }
 
+    public static AbstractExpertRule createFilterBasedRule(List<AbstractFilter> filters, Set<FieldType> fieldTypes) {
+        if (!filters.isEmpty()) {
+            return ExpertFilterUtils.buildOrCombination(fieldTypes.stream()
+                .map(field -> FilterUuidExpertRule.builder()
+                    .field(field)
+                    .operator(OperatorType.IS_PART_OF)
+                    .values(new HashSet<>(filters.stream().map(filter -> filter.getId().toString()).toList()))
+                    .build())
+                .collect(Collectors.toUnmodifiableList())).orElseThrow();
+        }
+        return null;
+    }
+
     /**
      * {@link FilterLoader#getFilters(List) Loads} generic filters by their {@link UUID UUIDs},
-     * then builds {@link AbstractExpertRule expert rules}, taking into account the {@link EquipmentType equipment type}.
+     * then builds {@link AbstractExpertRule expert rule}, taking into account the {@link EquipmentType equipment type}.
      * @param genericFilterIds the generic filter {@link UUID UUIDs} to load and build rules for
      * @return the {@link List list} of {@link AbstractExpertRule expert rules} built from the loaded generic filters.
      */
-    @Nonnull
-    public static List<AbstractExpertRule> buildGenericFilterRules(@Nonnull final List<UUID> genericFilterIds,
-                                                                   @Nonnull final EquipmentType actualType,
-                                                                   @Nonnull final FilterLoader filterLoader) {
+    public static AbstractExpertRule buildGenericFilterRule(@Nonnull final List<UUID> genericFilterIds,
+                                                            @Nonnull final EquipmentType actualType,
+                                                            @Nonnull final FilterLoader filterLoader) {
         /* note: We can't do a FilterUuidExpertRule IS_PART_OF rule here because we need to know the equipment type
          * the filter is intended to deduce on what field to apply the rule. */
         final List<AbstractExpertRule> rules = new ArrayList<>(genericFilterIds.size());
-        for (final AbstractFilter filter : filterLoader.getFilters(genericFilterIds)) {
-            Set<FieldType> fieldTypeSet = ExpertFilterUtils.getIdFieldMatchingType(actualType, filter.getEquipmentType()).collect(Collectors.toSet());
-            if (!fieldTypeSet.isEmpty()) {
-                rules.add(ExpertFilterUtils.buildOrCombination(fieldTypeSet.stream()
-                    .map(field -> FilterUuidExpertRule.builder()
-                        .field(field)
-                        .operator(OperatorType.IS_PART_OF)
-                        .values(Set.of(filter.getId().toString()))
-                        .build())
-                    .collect(Collectors.toUnmodifiableList())).orElseThrow());
+        List<AbstractFilter> filters = filterLoader.getFilters(genericFilterIds);
+
+        // Create only one OR rule for all filters with same type (matches actualType exclude substation and voltage levels)
+        if (!actualType.equals(EquipmentType.VOLTAGE_LEVEL) && !actualType.equals(EquipmentType.SUBSTATION)) {
+            List<AbstractFilter> typeMatches = filters.stream().filter(abstractFilter ->
+                abstractFilter.getEquipmentType().equals(actualType)).toList();
+
+            AbstractExpertRule typeMatchesRule = createFilterBasedRule(typeMatches, Set.of(FieldType.ID));
+            if (typeMatchesRule != null) {
+                rules.add(typeMatchesRule);
             }
         }
-        return rules;
+
+        // Create one rule for substations and voltage levels (combined with Or)
+        List<AbstractExpertRule> subsStationsAndVoltageLevelsRules = new ArrayList<>();
+
+        // Create substations rule
+        List<AbstractFilter> substations = filters.stream()
+            .filter(abstractFilter -> abstractFilter.getEquipmentType().equals(EquipmentType.SUBSTATION))
+            .toList();
+        if (!substations.isEmpty()) {
+            AbstractExpertRule substationsRule = createFilterBasedRule(substations,
+                ExpertFilterUtils.getIdFieldMatchingType(actualType, EquipmentType.SUBSTATION).collect(Collectors.toSet()));
+            if (substationsRule != null) {
+                subsStationsAndVoltageLevelsRules.add(substationsRule);
+            }
+        }
+
+        // Create voltage levels rule
+        List<AbstractFilter> voltageLevels = filters.stream()
+            .filter(abstractFilter -> abstractFilter.getEquipmentType().equals(EquipmentType.VOLTAGE_LEVEL))
+            .toList();
+        if (!voltageLevels.isEmpty()) {
+            AbstractExpertRule voltageLevelsRule = createFilterBasedRule(voltageLevels,
+                ExpertFilterUtils.getIdFieldMatchingType(actualType, EquipmentType.VOLTAGE_LEVEL).collect(Collectors.toSet()));
+            if (voltageLevelsRule != null) {
+                subsStationsAndVoltageLevelsRules.add(voltageLevelsRule);
+            }
+        }
+
+        // Combine Substations and voltage levels rules with Or and add it to rules
+        if (!subsStationsAndVoltageLevelsRules.isEmpty()) {
+            rules.add(ExpertFilterUtils.buildOrCombination(subsStationsAndVoltageLevelsRules).orElseThrow());
+        }
+
+        // Create and rule from rules
+        return ExpertFilterUtils.buildAndCombination(rules).orElse(null);
     }
 
     /**
@@ -172,7 +218,10 @@ public final class GlobalFilterUtils {
             buildSubstationPropertyRules(globalFilter.getSubstationProperty(), equipmentType).ifPresent(andRules::add);
         }
         if (globalFilter.getGenericFilter() != null) {
-            andRules.addAll(buildGenericFilterRules(globalFilter.getGenericFilter(), equipmentType, filterLoader));
+            AbstractExpertRule genericRule = buildGenericFilterRule(globalFilter.getGenericFilter(), equipmentType, filterLoader);
+            if (genericRule != null) {
+                andRules.add(genericRule);
+            }
         }
         return ExpertFilterUtils.buildAndCombination(andRules)
                 .map(rule -> new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType, rule))
