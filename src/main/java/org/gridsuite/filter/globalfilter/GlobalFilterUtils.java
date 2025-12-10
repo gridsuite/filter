@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
+import org.apache.commons.collections4.CollectionUtils;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
@@ -280,6 +281,35 @@ public final class GlobalFilterUtils {
         return FiltersUtils.combineFilterResults(allFilterResults, !genericFilters.isEmpty());
     }
 
+    /** When tab we are filtering on includes several equipment types, and we have generic filters,
+     * we consider only equipment types that have one or more generic filter the other types are excluded
+     * Substation and Voltage level types include all equipment types, only if there is no other equipment
+     * type filter
+     * **/
+    @Nonnull
+    public static List<EquipmentType> filterEquipmentTypes(@Nonnull final List<EquipmentType> equipmentTypes,
+                                                    final List<UUID>genericFiltersUuids, @Nonnull final FilterLoader filterLoader) {
+
+        if (!CollectionUtils.isEmpty(genericFiltersUuids)) {
+            List<AbstractFilter> genericFilters = filterLoader.getFilters(genericFiltersUuids);
+
+            // Substation or voltage level generic filter include all type of equipments
+            // but if the is any filter on other equipment we do not consider this condition
+            if (genericFilters.stream().noneMatch(filter -> !filter.getEquipmentType().equals(EquipmentType.VOLTAGE_LEVEL)
+                && !filter.getEquipmentType().equals(EquipmentType.SUBSTATION))) {
+                return equipmentTypes;
+            }
+
+            // if no voltage level or substation filters keep only equipment types that have at least one generic filter
+            return equipmentTypes.stream().filter(equipmentType -> !genericFilters.stream()
+                .filter(filter -> filter.getEquipmentType().equals(equipmentType))
+                .toList().isEmpty()).toList();
+        } else {
+            // keep all equipment types if no generic filters
+            return equipmentTypes;
+        }
+    }
+
     /**
      * Filters equipments by {@link EquipmentType type}
      * @return map of {@link Identifiable#getId() equipment ID}s grouped by {@link EquipmentType equipment type}
@@ -289,7 +319,10 @@ public final class GlobalFilterUtils {
             @Nonnull final GlobalFilter globalFilter, @Nonnull final List<AbstractFilter> genericFilters,
             @Nonnull final List<EquipmentType> equipmentTypes, @Nonnull final FilterLoader filterLoader) {
         Map<EquipmentType, List<String>> result = new EnumMap<>(EquipmentType.class);
-        for (final EquipmentType equipmentType : equipmentTypes) {
+
+        List<EquipmentType> filteredEquipmentTypes = filterEquipmentTypes(equipmentTypes, globalFilter.getGenericFilter(), filterLoader);
+
+        for (final EquipmentType equipmentType : filteredEquipmentTypes) {
             final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, genericFilters, equipmentType, filterLoader);
             if (!filteredIds.isEmpty()) {
                 result.put(equipmentType, filteredIds);
