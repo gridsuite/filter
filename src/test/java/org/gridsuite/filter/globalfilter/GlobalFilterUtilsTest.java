@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -66,6 +67,66 @@ class GlobalFilterUtilsTest implements WithAssertions {
                     .extracting(CombinatorExpertRule::getRules, InstanceOfAssertFactories.list(AbstractExpertRule.class)).as("expert rules")
                     .containsExactlyInAnyOrderElementsOf(multiAssertElements);
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("filterEquipmentTypes(...)")
+    class FilterEquipmentTypes {
+
+        @Test
+        void testNoGenericFilters() {
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+            List<EquipmentType> equipmentTypes = List.of(EquipmentType.LINE, EquipmentType.SUBSTATION);
+            List<UUID> genericFiltersUuids = Collections.emptyList();
+
+            List<EquipmentType> result = GlobalFilterUtils.filterEquipmentTypes(equipmentTypes, genericFiltersUuids, loader);
+
+            // Expect all equipment types to be returned
+            assertEquals(equipmentTypes, result);
+        }
+
+        @Test
+        void testSubstationAndVoltageLevelFilters() {
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+            List<EquipmentType> equipmentTypes = List.of(EquipmentType.LINE, EquipmentType.TWO_WINDINGS_TRANSFORMER);
+            List<UUID> genericFiltersUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
+
+            // Mock the return values for your generic filters
+            final AbstractFilter subStationFilter = Mockito.mock(AbstractFilter.class);
+            Mockito.when(subStationFilter.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
+            final AbstractFilter voltageLevelfilter = Mockito.mock(AbstractFilter.class);
+            Mockito.when(voltageLevelfilter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
+
+            Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(
+                subStationFilter, voltageLevelfilter));
+
+            List<EquipmentType> result = GlobalFilterUtils.filterEquipmentTypes(equipmentTypes, genericFiltersUuids, loader);
+
+            // Expect all equipment types to be returned
+            assertEquals(equipmentTypes, result);
+        }
+
+        @Test
+        void testFiltersOnOtherEquipmentTypes() {
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+            List<EquipmentType> equipmentTypes = List.of(EquipmentType.LINE, EquipmentType.TWO_WINDINGS_TRANSFORMER);
+            List<UUID> genericFiltersUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
+
+            // Mock the return values for your generic filters
+            final AbstractFilter lineFilter = Mockito.mock(AbstractFilter.class);
+            Mockito.when(lineFilter.getEquipmentType()).thenReturn(EquipmentType.LINE);
+
+            final AbstractFilter voltageLevelFilter = Mockito.mock(AbstractFilter.class);
+            Mockito.when(voltageLevelFilter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
+
+            Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(
+                lineFilter, voltageLevelFilter));
+
+            List<EquipmentType> result = GlobalFilterUtils.filterEquipmentTypes(equipmentTypes, genericFiltersUuids, loader);
+
+            // Expect only TYPE_A to be returned
+            assertEquals(List.of(EquipmentType.LINE), result);
         }
     }
 
