@@ -267,29 +267,19 @@ public final class GlobalFilterUtils {
     @Nonnull
     public static List<String> applyGlobalFilterOnNetwork(@Nonnull final Network network,
                                                           @Nonnull final GlobalFilter globalFilter,
-                                                          @Nonnull final List<AbstractFilter> genericFilters,
                                                           @Nonnull final EquipmentType equipmentType,
-                                                          final List<AbstractFilter> genericFiltersCache,
+                                                          final List<AbstractFilter> genericFilters,
                                                           @Nonnull final FilterLoader filterLoader) {
-        List<List<String>> allFilterResults = new ArrayList<>(1 + genericFilters.size());
+        List<String> allFilterResults = null;
 
         // Extract IDs from expert filter
-        final ExpertFilter expertFilter = buildExpertFilter(globalFilter, equipmentType, genericFiltersCache);
+        final ExpertFilter expertFilter = buildExpertFilter(globalFilter, equipmentType, genericFilters);
         if (expertFilter != null) {
-            allFilterResults.add(filterNetwork(expertFilter, network, filterLoader));
+            allFilterResults = filterNetwork(expertFilter, network, filterLoader);
         }
 
-        // Extract IDs from generic filters, case for computation backend columns filters
-        for (final AbstractFilter filter : genericFilters) {
-            final List<String> filterResult = applyFilterOnNetwork(filter, equipmentType, network, filterLoader);
-            if (!filterResult.isEmpty()) {
-                allFilterResults.add(filterResult);
-            }
-        }
-
-        // Combine results with appropriate logic
-        // Expert filters use OR between them, generic filters use AND
-        return FiltersUtils.combineFilterResults(allFilterResults, !genericFilters.isEmpty());
+        // return filters List
+        return allFilterResults != null ? allFilterResults : List.of();
     }
 
     /** When we are filtering on several equipment types, and we have generic filters,
@@ -322,18 +312,19 @@ public final class GlobalFilterUtils {
      */
     @Nonnull
     public static Map<EquipmentType, List<String>> applyGlobalFilterOnNetwork(@Nonnull final Network network,
-            @Nonnull final GlobalFilter globalFilter, @Nonnull final List<AbstractFilter> genericFilters,
-            @Nonnull final List<EquipmentType> equipmentTypes, @Nonnull final FilterLoader filterLoader) {
+                                                                              @Nonnull final GlobalFilter globalFilter,
+                                                                              @Nonnull final List<EquipmentType> equipmentTypes,
+                                                                              @Nonnull final FilterLoader filterLoader) {
         Map<EquipmentType, List<String>> result = new EnumMap<>(EquipmentType.class);
 
-        List<AbstractFilter> genericFiltersCache = null;
+        List<AbstractFilter> genericFilters = null;
         if (CollectionUtils.isNotEmpty(globalFilter.getGenericFilter())) {
-            genericFiltersCache = filterLoader.getFilters(globalFilter.getGenericFilter());
+            genericFilters = filterLoader.getFilters(globalFilter.getGenericFilter());
         }
 
 
         for (final EquipmentType equipmentType : equipmentTypes) {
-            final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, genericFilters, equipmentType, genericFiltersCache, filterLoader);
+            final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, equipmentType, genericFilters, filterLoader);
             if (!filteredIds.isEmpty()) {
                 result.put(equipmentType, filteredIds);
             }

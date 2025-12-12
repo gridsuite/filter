@@ -453,7 +453,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final List<Identifiable<?>> attributes = List.of(gen1, gen2);
                 mockedFU.when(() -> FiltersUtils.getIdentifiables(filter, network, loader)).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
-                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(filter), EquipmentType.GENERATOR, List.of(filter), loader))
+                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.GENERATOR, List.of(filter), loader))
                     .as("result").containsExactlyInAnyOrder("gen1", "gen2");
                 Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
                 Mockito.verify(gen1, Mockito.atLeastOnce()).getId();
@@ -480,7 +480,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final List<Identifiable<?>> attributes = List.of(line1, line2);
                 mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
-                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(filter), EquipmentType.LINE, List.of(filter), loader))
+                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.LINE, List.of(filter), loader))
                     .as("result").containsExactlyInAnyOrder("line1", "line2");
                 Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
                 Mockito.verify(filter, Mockito.atLeastOnce()).getId();
@@ -498,7 +498,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
             final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.LOAD);
-            assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(filter), EquipmentType.GENERATOR, List.of(filter), loader))
+            assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.GENERATOR, List.of(filter), loader))
                 .as("result").isEmpty();
             Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
             Mockito.verifyNoMoreInteractions(network, filter);
@@ -523,7 +523,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final List<Identifiable<?>> attributes = List.of(line1, trf1);
                 mockedFU.when(() -> FiltersUtils.getIdentifiables(filter, network, loader)).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
-                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(filter), List.of(EquipmentType.GENERATOR), loader))
+                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(EquipmentType.GENERATOR), loader))
                     .as("result").containsExactlyInAnyOrderEntriesOf(Map.of(EquipmentType.GENERATOR, List.of("line1", "trf1")));
                 Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
                 Mockito.verify(line1, Mockito.atLeastOnce()).getId();

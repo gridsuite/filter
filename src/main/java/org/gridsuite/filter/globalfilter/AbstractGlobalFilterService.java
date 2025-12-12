@@ -23,7 +23,7 @@ public abstract class AbstractGlobalFilterService implements FilterLoader {
     protected List<String> getFilteredIds(@NonNull final UUID networkUuid, @NonNull final String variantId,
                                           @NonNull final GlobalFilter globalFilter, @NonNull final List<EquipmentType> equipmentTypes) {
         final Network network = getNetwork(networkUuid, variantId);
-        return GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(), equipmentTypes, this)
+        return GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, equipmentTypes, this)
             .values()
             .stream()
             .filter(Objects::nonNull)
