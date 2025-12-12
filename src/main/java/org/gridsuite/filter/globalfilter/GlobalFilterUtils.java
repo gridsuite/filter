@@ -152,11 +152,15 @@ public final class GlobalFilterUtils {
         /* note: We can't do a FilterUuidExpertRule IS_PART_OF rule here because we need to know the equipment type
          * the filter is intended to deduce on what field to apply the rule. */
         final List<AbstractExpertRule> rules = new ArrayList<>(genericFilterIds.size());
-        List<AbstractFilter> filters = filterLoader.getFilters(genericFilterIds);
+        List<AbstractFilter> genericFilters = filterLoader.getFilters(genericFilterIds);
+
+        if (!shouldProcessEquipmentType(actualType, genericFilters)) {
+            return null;
+        }
 
         // Create only one OR rule for all filters with same type (matches actualType exclude substation and voltage levels)
         if (!actualType.equals(EquipmentType.VOLTAGE_LEVEL) && !actualType.equals(EquipmentType.SUBSTATION)) {
-            List<AbstractFilter> typeMatches = filters.stream().filter(abstractFilter ->
+            List<AbstractFilter> typeMatches = genericFilters.stream().filter(abstractFilter ->
                 abstractFilter.getEquipmentType().equals(actualType)).toList();
 
             AbstractExpertRule typeMatchesRule = createFilterBasedRule(typeMatches, Set.of(FieldType.ID));
@@ -169,7 +173,7 @@ public final class GlobalFilterUtils {
         List<AbstractExpertRule> subsStationsAndVoltageLevelsRules = new ArrayList<>();
 
         // Create substations rule
-        List<AbstractFilter> substations = filters.stream()
+        List<AbstractFilter> substations = genericFilters.stream()
             .filter(abstractFilter -> abstractFilter.getEquipmentType().equals(EquipmentType.SUBSTATION))
             .toList();
         if (!substations.isEmpty()) {
@@ -181,7 +185,7 @@ public final class GlobalFilterUtils {
         }
 
         // Create voltage levels rule
-        List<AbstractFilter> voltageLevels = filters.stream()
+        List<AbstractFilter> voltageLevels = genericFilters.stream()
             .filter(abstractFilter -> abstractFilter.getEquipmentType().equals(EquipmentType.VOLTAGE_LEVEL))
             .toList();
         if (!voltageLevels.isEmpty()) {
@@ -205,9 +209,21 @@ public final class GlobalFilterUtils {
      * Builds expert filter from a {@link GlobalFilter global filter} for an {@link EquipmentType equipment type}.
      */
     @Nullable
-    public static ExpertFilter buildExpertFilter(@Nonnull final GlobalFilter globalFilter, @Nonnull final EquipmentType equipmentType,
+    public static ExpertFilter buildExpertFilter(@Nonnull final GlobalFilter globalFilter,
+                                                 @Nonnull final EquipmentType equipmentType,
                                                  @Nonnull final FilterLoader filterLoader) {
         final List<AbstractExpertRule> andRules = new ArrayList<>();
+
+        // Generic filter have priority on other filter types
+        if (CollectionUtils.isNotEmpty(globalFilter.getGenericFilter())) {
+            AbstractExpertRule genericRule = buildGenericFilterRule(globalFilter.getGenericFilter(), equipmentType, filterLoader);
+            if (genericRule != null) {
+                andRules.add(genericRule);
+            } else {
+                return null;
+            }
+        }
+
         if (globalFilter.getNominalV() != null) {
             buildNominalVoltageRules(globalFilter.getNominalV(), equipmentType).ifPresent(andRules::add);
         }
@@ -217,12 +233,6 @@ public final class GlobalFilterUtils {
         if (globalFilter.getSubstationProperty() != null) {
             // custom extension with apps-metadata server
             buildSubstationPropertyRules(globalFilter.getSubstationProperty(), equipmentType).ifPresent(andRules::add);
-        }
-        if (globalFilter.getGenericFilter() != null) {
-            AbstractExpertRule genericRule = buildGenericFilterRule(globalFilter.getGenericFilter(), equipmentType, filterLoader);
-            if (genericRule != null) {
-                andRules.add(genericRule);
-            }
         }
         return ExpertFilterUtils.buildAndCombination(andRules)
                 .map(rule -> new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType, rule))
@@ -281,33 +291,26 @@ public final class GlobalFilterUtils {
         return FiltersUtils.combineFilterResults(allFilterResults, !genericFilters.isEmpty());
     }
 
-    /** When tab we are filtering on includes several equipment types, and we have generic filters,
+    /** When tab we are filtering on several equipment types, and we have generic filters,
      * we consider only equipment types that have one or more generic filter the other types are excluded
      * Substation and Voltage level types include all equipment types, only if there is no other equipment
      * type filter
      * **/
-    @Nonnull
-    public static List<EquipmentType> filterEquipmentTypes(@Nonnull final List<EquipmentType> equipmentTypes,
-                                                    final List<UUID>genericFiltersUuids, @Nonnull final FilterLoader filterLoader) {
+    public static boolean shouldProcessEquipmentType(@Nonnull final EquipmentType equipmentType,
+                                               @Nonnull final List<AbstractFilter>genericFilters) {
 
-        if (!CollectionUtils.isEmpty(genericFiltersUuids)) {
-            List<AbstractFilter> genericFilters = filterLoader.getFilters(genericFiltersUuids);
-
+        if (!CollectionUtils.isEmpty(genericFilters)) {
             // Substation or voltage level generic filter include all type of equipments
             // but if the is any filter on other equipment we do not consider this condition
             if (genericFilters.stream().noneMatch(filter -> !filter.getEquipmentType().equals(EquipmentType.VOLTAGE_LEVEL)
                 && !filter.getEquipmentType().equals(EquipmentType.SUBSTATION))) {
-                return equipmentTypes;
+                return true;
             }
 
             // if no voltage level or substation filters keep only equipment types that have at least one generic filter
-            return equipmentTypes.stream().filter(equipmentType -> !genericFilters.stream()
-                .filter(filter -> filter.getEquipmentType().equals(equipmentType))
-                .toList().isEmpty()).toList();
-        } else {
-            // keep all equipment types if no generic filters
-            return equipmentTypes;
+            return genericFilters.stream().anyMatch(filter -> filter.getEquipmentType().equals(equipmentType));
         }
+        return true;
     }
 
     /**
@@ -320,9 +323,7 @@ public final class GlobalFilterUtils {
             @Nonnull final List<EquipmentType> equipmentTypes, @Nonnull final FilterLoader filterLoader) {
         Map<EquipmentType, List<String>> result = new EnumMap<>(EquipmentType.class);
 
-        List<EquipmentType> filteredEquipmentTypes = filterEquipmentTypes(equipmentTypes, globalFilter.getGenericFilter(), filterLoader);
-
-        for (final EquipmentType equipmentType : filteredEquipmentTypes) {
+        for (final EquipmentType equipmentType : equipmentTypes) {
             final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, genericFilters, equipmentType, filterLoader);
             if (!filteredIds.isEmpty()) {
                 result.put(equipmentType, filteredIds);
