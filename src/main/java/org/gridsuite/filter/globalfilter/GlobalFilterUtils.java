@@ -291,10 +291,12 @@ public final class GlobalFilterUtils {
         return FiltersUtils.combineFilterResults(allFilterResults, !genericFilters.isEmpty());
     }
 
-    /** When tab we are filtering on several equipment types, and we have generic filters,
-     * we consider only equipment types that have one or more generic filter the other types are excluded
+    /** When we are filtering on several equipment types, and we have generic filters,
+     * we consider only equipment types that have one or more generic filter. The other types are excluded.
      * Substation and Voltage level types include all equipment types, only if there is no other equipment
-     * type filter
+     * type filters
+     * @param equipmentType : equipment type that should be processed
+     * @param genericFilters : generic filters list
      * **/
     public static boolean shouldProcessEquipmentType(@Nonnull final EquipmentType equipmentType,
                                                @Nonnull final List<AbstractFilter>genericFilters) {
@@ -307,7 +309,7 @@ public final class GlobalFilterUtils {
                 return true;
             }
 
-            // keep only equipment types that have at least one corresponding generic filter
+            // equipment type  should have at least one corresponding generic filter
             return genericFilters.stream().anyMatch(filter -> filter.getEquipmentType().equals(equipmentType));
         }
         return true;
