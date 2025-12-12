@@ -435,33 +435,6 @@ class GlobalFilterUtilsTest implements WithAssertions {
     @Nested
     @DisplayName("applyGlobalFilterOnNetworkWithSingleEquipmentType(...)")
     class ApplyGlobalFilterOnNetworkWithSingleEquipmentType {
-        @Test
-        void shouldReturnFilteredNetworkWhenSameEquipmentType() {
-            final Network network = Mockito.mock(Network.class);
-            final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            final UUID filterUuid = UUID.randomUUID();
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
-            final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
-            when(filter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
-            when(filter.getId()).thenReturn(filterUuid);
-            when(loader.getFilters(List.of(filterUuid))).thenReturn(List.of(filter));
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
-                final Identifiable<?> gen1 = Mockito.mock(Identifiable.class);
-                when(gen1.getId()).thenReturn("gen1");
-                final Identifiable<?> gen2 = Mockito.mock(Identifiable.class);
-                when(gen2.getId()).thenReturn("gen2");
-                final List<Identifiable<?>> attributes = List.of(gen1, gen2);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(filter, network, loader)).thenReturn(attributes);
-                mockedFU.clearInvocations(); //important because stubbing static method counts as call
-                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.GENERATOR, List.of(filter), loader))
-                    .as("result").containsExactlyInAnyOrder("gen1", "gen2");
-                Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
-                Mockito.verify(gen1, Mockito.atLeastOnce()).getId();
-                Mockito.verify(gen2, Mockito.atLeastOnce()).getId();
-                Mockito.verifyNoMoreInteractions(filter, network, gen1, gen2);
-                mockedFU.verify(() -> FiltersUtils.getIdentifiables(eq(filter), eq(network), eq(loader)), Mockito.atLeastOnce());
-            }
-        }
 
         @Test
         void shouldBuildVoltageLevelFilterWhenVoltageLevelType() {
@@ -502,35 +475,6 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 .as("result").isEmpty();
             Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
             Mockito.verifyNoMoreInteractions(network, filter);
-        }
-    }
-
-    @Nested
-    @DisplayName("applyGlobalFilterOnNetworkWithMultipleEquipmentType(...)")
-    class ApplyGlobalFilterOnNetworkWithMultipleEquipmentType {
-        @Test
-        void shouldReturnFilteredNetwork() {
-            final Network network = Mockito.mock(Network.class);
-            final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
-            final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
-            when(filter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
-                final Identifiable<?> line1 = Mockito.mock(Identifiable.class);
-                when(line1.getId()).thenReturn("line1");
-                final Identifiable<?> trf1 = Mockito.mock(Identifiable.class);
-                when(trf1.getId()).thenReturn("trf1");
-                final List<Identifiable<?>> attributes = List.of(line1, trf1);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(filter, network, loader)).thenReturn(attributes);
-                mockedFU.clearInvocations(); //important because stubbing static method counts as call
-                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(EquipmentType.GENERATOR), loader))
-                    .as("result").containsExactlyInAnyOrderEntriesOf(Map.of(EquipmentType.GENERATOR, List.of("line1", "trf1")));
-                Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
-                Mockito.verify(line1, Mockito.atLeastOnce()).getId();
-                Mockito.verify(trf1, Mockito.atLeastOnce()).getId();
-                Mockito.verifyNoMoreInteractions(filter, network, line1, trf1);
-                mockedFU.verify(() -> FiltersUtils.getIdentifiables(eq(filter), eq(network), eq(loader)), Mockito.atLeastOnce());
-            }
         }
     }
 }

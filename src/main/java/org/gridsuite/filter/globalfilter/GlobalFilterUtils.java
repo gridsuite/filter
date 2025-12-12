@@ -322,7 +322,6 @@ public final class GlobalFilterUtils {
             genericFilters = filterLoader.getFilters(globalFilter.getGenericFilter());
         }
 
-
         for (final EquipmentType equipmentType : equipmentTypes) {
             final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, equipmentType, genericFilters, filterLoader);
             if (!filteredIds.isEmpty()) {
