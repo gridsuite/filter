@@ -143,16 +143,14 @@ public final class GlobalFilterUtils {
     /**
      * {@link FilterLoader#getFilters(List) Loads} generic filters by their {@link UUID UUIDs},
      * then builds {@link AbstractExpertRule expert rule}, taking into account the {@link EquipmentType equipment type}.
-     * @param genericFilterIds the generic filter {@link UUID UUIDs} to load and build rules for
+     * @param genericFilters the generic filters to build rules for
      * @return the {@link List list} of {@link AbstractExpertRule expert rules} built from the loaded generic filters.
      */
-    public static AbstractExpertRule buildGenericFilterRule(@Nonnull final List<UUID> genericFilterIds,
-                                                            @Nonnull final EquipmentType actualType,
-                                                            @Nonnull final FilterLoader filterLoader) {
+    public static AbstractExpertRule buildGenericFilterRule(@Nonnull final List<AbstractFilter> genericFilters,
+                                                            @Nonnull final EquipmentType actualType) {
         /* note: We can't do a FilterUuidExpertRule IS_PART_OF rule here because we need to know the equipment type
          * the filter is intended to deduce on what field to apply the rule. */
-        final List<AbstractExpertRule> rules = new ArrayList<>(genericFilterIds.size());
-        List<AbstractFilter> genericFilters = filterLoader.getFilters(genericFilterIds);
+        final List<AbstractExpertRule> rules = new ArrayList<>();
 
         if (!shouldProcessEquipmentType(actualType, genericFilters)) {
             return null;
@@ -211,12 +209,12 @@ public final class GlobalFilterUtils {
     @Nullable
     public static ExpertFilter buildExpertFilter(@Nonnull final GlobalFilter globalFilter,
                                                  @Nonnull final EquipmentType equipmentType,
-                                                 @Nonnull final FilterLoader filterLoader) {
+                                                 @Nonnull final List<AbstractFilter> genericFilters) {
         final List<AbstractExpertRule> andRules = new ArrayList<>();
 
         // Generic filter have priority on other filter types
-        if (CollectionUtils.isNotEmpty(globalFilter.getGenericFilter())) {
-            AbstractExpertRule genericRule = buildGenericFilterRule(globalFilter.getGenericFilter(), equipmentType, filterLoader);
+        if (CollectionUtils.isNotEmpty(genericFilters)) {
+            AbstractExpertRule genericRule = buildGenericFilterRule(genericFilters, equipmentType);
             if (genericRule != null) {
                 andRules.add(genericRule);
             } else {
@@ -268,12 +266,15 @@ public final class GlobalFilterUtils {
      */
     @Nonnull
     public static List<String> applyGlobalFilterOnNetwork(@Nonnull final Network network,
-                                                          @Nonnull final GlobalFilter globalFilter, @Nonnull final List<AbstractFilter> genericFilters,
-                                                          @Nonnull final EquipmentType equipmentType, @Nonnull final FilterLoader filterLoader) {
+                                                          @Nonnull final GlobalFilter globalFilter,
+                                                          @Nonnull final List<AbstractFilter> genericFilters,
+                                                          @Nonnull final EquipmentType equipmentType,
+                                                          final List<AbstractFilter> genericFiltersCache,
+                                                          @Nonnull final FilterLoader filterLoader) {
         List<List<String>> allFilterResults = new ArrayList<>(1 + genericFilters.size());
 
         // Extract IDs from expert filter
-        final ExpertFilter expertFilter = buildExpertFilter(globalFilter, equipmentType, filterLoader);
+        final ExpertFilter expertFilter = buildExpertFilter(globalFilter, equipmentType, genericFiltersCache);
         if (expertFilter != null) {
             allFilterResults.add(filterNetwork(expertFilter, network, filterLoader));
         }
@@ -325,8 +326,14 @@ public final class GlobalFilterUtils {
             @Nonnull final List<EquipmentType> equipmentTypes, @Nonnull final FilterLoader filterLoader) {
         Map<EquipmentType, List<String>> result = new EnumMap<>(EquipmentType.class);
 
+        List<AbstractFilter> genericFiltersCache = null;
+        if (CollectionUtils.isNotEmpty(globalFilter.getGenericFilter())) {
+            genericFiltersCache = filterLoader.getFilters(globalFilter.getGenericFilter());
+        }
+
+
         for (final EquipmentType equipmentType : equipmentTypes) {
-            final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, genericFilters, equipmentType, filterLoader);
+            final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, genericFilters, equipmentType, genericFiltersCache, filterLoader);
             if (!filteredIds.isEmpty()) {
                 result.put(equipmentType, filteredIds);
             }
