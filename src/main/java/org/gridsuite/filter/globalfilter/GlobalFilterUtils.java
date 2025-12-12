@@ -300,8 +300,8 @@ public final class GlobalFilterUtils {
                                                @Nonnull final List<AbstractFilter>genericFilters) {
 
         if (!CollectionUtils.isEmpty(genericFilters)) {
-            // Substation or voltage level generic filter include all type of equipments
-            // but if the is any filter on other equipment we do not consider this condition
+            // Substation and voltage level generic filters include all types of equipments
+            // but if there is any filter on another equipment we do not consider this condition
             if (genericFilters.stream().noneMatch(filter -> !filter.getEquipmentType().equals(EquipmentType.VOLTAGE_LEVEL)
                 && !filter.getEquipmentType().equals(EquipmentType.SUBSTATION))) {
                 return true;
