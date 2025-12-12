@@ -307,7 +307,7 @@ public final class GlobalFilterUtils {
                 return true;
             }
 
-            // if no voltage level or substation filters keep only equipment types that have at least one generic filter
+            // keep only equipment types that have at least one corresponding generic filter
             return genericFilters.stream().anyMatch(filter -> filter.getEquipmentType().equals(equipmentType));
         }
         return true;
