@@ -29,8 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -475,6 +474,53 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 .as("result").isEmpty();
             Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
             Mockito.verifyNoMoreInteractions(network, filter);
+        }
+    }
+
+    @Nested
+    @DisplayName("buildGenericFilterRule(...)")
+    class buildGenericFilterRuleTests {
+        @Test
+        void testSameEquipmentType() {
+            List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
+            AbstractFilter filter1 = Mockito.mock(AbstractFilter.class);
+            AbstractFilter filter2 = Mockito.mock(AbstractFilter.class);
+            when(filter1.getEquipmentType()).thenReturn(EquipmentType.LINE);
+            when(filter2.getEquipmentType()).thenReturn(EquipmentType.LINE);
+            when(filter1.getId()).thenReturn(filterUuids.get(0));
+            when(filter2.getId()).thenReturn(filterUuids.get(1));
+
+            List<AbstractFilter> filters = Arrays.asList(filter1, filter2);
+            assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.LINE));
+        }
+        @Test
+        void testSubstationAndVoltageLevelOnAnyEquipmentType() {
+            List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
+            AbstractFilter filter1 = Mockito.mock(AbstractFilter.class);
+            AbstractFilter filter2 = Mockito.mock(AbstractFilter.class);
+            when(filter1.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
+            when(filter2.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
+            when(filter1.getId()).thenReturn(filterUuids.get(0));
+            when(filter2.getId()).thenReturn(filterUuids.get(1));
+
+            List<AbstractFilter> filters = Arrays.asList(filter1, filter2);
+            assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.LINE));
+            assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.GENERATOR));
+            assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.TWO_WINDINGS_TRANSFORMER));
+        }
+
+        @Test
+        void testNotSameEquipmentType() {
+            List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
+            AbstractFilter filter1 = Mockito.mock(AbstractFilter.class);
+            AbstractFilter filter2 = Mockito.mock(AbstractFilter.class);
+            when(filter1.getEquipmentType()).thenReturn(EquipmentType.LINE);
+            when(filter2.getEquipmentType()).thenReturn(EquipmentType.TWO_WINDINGS_TRANSFORMER);
+            when(filter1.getId()).thenReturn(filterUuids.get(0));
+            when(filter2.getId()).thenReturn(filterUuids.get(1));
+
+            List<AbstractFilter> filters = Arrays.asList(filter1, filter2);
+            assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.GENERATOR));
         }
     }
 }
