@@ -479,7 +479,8 @@ class GlobalFilterUtilsTest implements WithAssertions {
 
     @Nested
     @DisplayName("buildGenericFilterRule(...)")
-    class buildGenericFilterRuleTests {
+    class BuildGenericFilterRuleTests {
+
         @Test
         void testSameEquipmentType() {
             List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
@@ -493,6 +494,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             List<AbstractFilter> filters = Arrays.asList(filter1, filter2);
             assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.LINE));
         }
+
         @Test
         void testSubstationAndVoltageLevelOnAnyEquipmentType() {
             List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
