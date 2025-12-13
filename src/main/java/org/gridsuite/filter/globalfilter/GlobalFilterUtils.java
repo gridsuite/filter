@@ -141,10 +141,9 @@ public final class GlobalFilterUtils {
     }
 
     /**
-     * {@link FilterLoader#getFilters(List) Loads} generic filters by their {@link UUID UUIDs},
-     * then builds {@link AbstractExpertRule expert rule}, taking into account the {@link EquipmentType equipment type}.
+     * builds AbstractExpertRule expert rule
      * @param genericFilters the generic filters to build rules for
-     * @return the {@link List list} of {@link AbstractExpertRule expert rules} built from the loaded generic filters.
+     * @return {@link AbstractExpertRule expert rules} built from the loaded generic filters.
      */
     public static AbstractExpertRule buildGenericFilterRule(@Nonnull final List<AbstractFilter> genericFilters,
                                                             @Nonnull final EquipmentType actualType) {
@@ -321,7 +320,6 @@ public final class GlobalFilterUtils {
         if (CollectionUtils.isNotEmpty(globalFilter.getGenericFilter())) {
             genericFilters = filterLoader.getFilters(globalFilter.getGenericFilter());
         }
-
 
         for (final EquipmentType equipmentType : equipmentTypes) {
             final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, equipmentType, genericFilters, filterLoader);
