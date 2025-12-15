@@ -14,6 +14,7 @@ import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FiltersUtils;
 import org.gridsuite.filter.utils.UuidUtils;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
+import org.gridsuite.filter.utils.expertfilter.DataType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.DisplayName;
@@ -456,7 +457,11 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final Identifiable<?> gen2 = Mockito.mock(Identifiable.class);
                 when(gen2.getId()).thenReturn("gen2");
                 final List<Identifiable<?>> attributes = List.of(gen1, gen2);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilter isPartOfFilter) ->
+                    isPartOfFilter != null &&
+                    isPartOfFilter.getRules().getDataType() == DataType.FILTER_UUID &&
+                   ((FilterUuidExpertRule) isPartOfFilter.getRules()).getValues().contains(filterUuid.toString())
+                ), eq(network), eq(loader))).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
 
                 // call test method and check result
@@ -549,11 +554,13 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final List<Identifiable<?>> transAttributes = List.of(trf1);
                 mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilter isPartOfFilter) ->
                         isPartOfFilter != null &&
-                        isPartOfFilter.getEquipmentType().equals(EquipmentType.LINE)
+                        isPartOfFilter.getRules().getOperator() == OperatorType.IS_PART_OF &&
+                        ((FilterUuidExpertRule) isPartOfFilter.getRules()).getValues().contains(filterLineUuid.toString())
                 ), eq(network), eq(loader))).thenReturn(lineAttributes);
                 mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilter isPartOfFilter) ->
                         isPartOfFilter != null &&
-                        isPartOfFilter.getEquipmentType().equals(EquipmentType.TWO_WINDINGS_TRANSFORMER)
+                        isPartOfFilter.getRules().getOperator() == OperatorType.IS_PART_OF &&
+                        ((FilterUuidExpertRule) isPartOfFilter.getRules()).getValues().contains(filterTransUuid.toString())
                 ), eq(network), eq(loader))).thenReturn(transAttributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
 
