@@ -52,7 +52,7 @@ public final class ExpertFilterUtils {
                 case BUS -> getBusFieldValue(field, (Bus) identifiable);
                 case BUSBAR_SECTION -> getBusBarSectionFieldValue(field, (BusbarSection) identifiable);
                 case BATTERY -> getBatteryFieldValue(field, propertyName, (Battery) identifiable);
-                case SUBSTATION -> getSubstationFieldValue(field, (Substation) identifiable);
+                case SUBSTATION -> getSubstationFieldValue(field, propertyName, (Substation) identifiable);
                 case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, propertyName, (TwoWindingsTransformer) identifiable);
                 case STATIC_VAR_COMPENSATOR -> getStaticVarCompensatorFieldValue(field, propertyName, (StaticVarCompensator) identifiable);
                 case DANGLING_LINE -> getDanglingLinesFieldValue(field, propertyName, (DanglingLine) identifiable);
@@ -313,9 +313,10 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getSubstationFieldValue(FieldType field, Substation substation) {
+    private static String getSubstationFieldValue(FieldType field, String propertyName, Substation substation) {
         return switch (field) {
             case COUNTRY -> String.valueOf(substation.getCountry().orElse(null));
+            case SUBSTATION_PROPERTIES -> substation.getProperty(propertyName);
             default ->
                 throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + substation.getType() + "]");
         };
