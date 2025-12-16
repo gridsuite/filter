@@ -100,6 +100,7 @@ public final class GlobalFilterUtils {
     public static List<FieldType> getSubstationPropertiesFieldTypes(@Nonnull final EquipmentType equipmentType) {
         return switch (equipmentType) {
             case LINE, HVDC_LINE -> List.of(FieldType.SUBSTATION_PROPERTIES_1, FieldType.SUBSTATION_PROPERTIES_2);
+            case SUBSTATION -> List.of(FieldType.FREE_PROPERTIES);
             default -> List.of(FieldType.SUBSTATION_PROPERTIES);
         };
     }
