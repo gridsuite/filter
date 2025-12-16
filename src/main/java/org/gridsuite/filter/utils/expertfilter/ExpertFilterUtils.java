@@ -317,7 +317,7 @@ public final class ExpertFilterUtils {
         return switch (field) {
             case COUNTRY -> String.valueOf(substation.getCountry().orElse(null));
             default ->
-                    throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + substation.getType() + "]");
+                throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + substation.getType() + "]");
         };
     }
 

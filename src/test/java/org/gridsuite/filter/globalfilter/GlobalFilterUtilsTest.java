@@ -285,7 +285,8 @@ class GlobalFilterUtilsTest implements WithAssertions {
         return Stream.of(
             // Substation properties
             Arguments.of(EquipmentType.LINE, List.of(FieldType.SUBSTATION_PROPERTIES_1, FieldType.SUBSTATION_PROPERTIES_2)),
-            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.SUBSTATION_PROPERTIES))
+            Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.SUBSTATION_PROPERTIES)),
+            Arguments.of(EquipmentType.SUBSTATION, List.of(FieldType.FREE_PROPERTIES))
         );
     }
 
