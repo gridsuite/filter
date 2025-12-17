@@ -155,12 +155,12 @@ class PropertiesExpertRuleTest {
 
         return Stream.of(
                 // --- IN --- //
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "cvgRegion", List.of("Lille", "PARIS"), substation, true),
-                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "cvgRegion", List.of("Paris"), substation, false),
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Lille", "PARIS"), substation, true),
+                Arguments.of(IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Paris"), substation, false),
 
                 // --- NOT_IN --- //
-                Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "cvgRegion", List.of("LILLE", "PARIS"), substation, false),
-                Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "cvgRegion", List.of("Paris"), substation, true)
+                Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Lille", "PARIS"), substation, false),
+                Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Paris"), substation, true)
         );
     }
 
