@@ -138,25 +138,25 @@ class GlobalFilterUtilsTest implements WithAssertions {
     class BuildNominalVoltageRules {
         @ParameterizedTest
         @MethodSource("expertRulesData")
-        void shouldCreateExpertRules(final List<String> nominalVoltages) {
+        void shouldCreateExpertRules(final List<List<Integer>> voltageRanges) {
             testVariableOrCombinationRules(
-                GlobalFilterUtils.buildNominalVoltageRules(nominalVoltages, EquipmentType.VOLTAGE_LEVEL),
-                nominalVoltages.size(),
+                GlobalFilterUtils.buildNominalVoltageRules(voltageRanges, EquipmentType.VOLTAGE_LEVEL),
+                voltageRanges.size(),
                 NumberExpertRule.class,
                 createAssertArray(
-                    ner -> assertThat(ner.getValue()).as("value").hasToString(nominalVoltages.getFirst()),
+                    ner -> assertThat(ner.getValues()).as("values").containsExactlyInAnyOrderElementsOf(voltageRanges.getFirst().stream().map(Integer::doubleValue).toList()),
                     ner -> assertThat(ner.getField()).as("field").isEqualTo(FieldType.NOMINAL_VOLTAGE),
-                    ner -> assertThat(ner.getOperator()).as("operator").isEqualTo(OperatorType.EQUALS)
+                    ner -> assertThat(ner.getOperator()).as("operator").isEqualTo(OperatorType.BETWEEN)
                 ),
-                nominalVoltages.stream().map(nv -> NumberExpertRule.builder().value(Double.valueOf(nv))
-                    .field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.EQUALS).build()).collect(Collectors.toUnmodifiableList()));
+                voltageRanges.stream().map(vr -> NumberExpertRule.builder().values(vr.stream().map(Integer::doubleValue).collect(Collectors.toSet()))
+                    .field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.BETWEEN).build()).collect(Collectors.toUnmodifiableList()));
         }
 
         private static Stream<Arguments> expertRulesData() {
             return Stream.of(
                 Arguments.of(List.of()),
-                Arguments.of(List.of("300.0")),
-                Arguments.of(List.of("400.0", "225.0"))
+                Arguments.of(List.of(List.of(225, 400))),
+                Arguments.of(List.of(List.of(225, 400), List.of(300, 350)))
             );
         }
     }
@@ -316,7 +316,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                     List.of(new IdentifierListFilterEquipmentAttributes("GEN1", 50.),
                         new IdentifierListFilterEquipmentAttributes("GEN2", 50.)
                 )));
-            final GlobalFilter globalFilter = new GlobalFilter(List.of("380", "225"), List.of(Country.FR, Country.BE), filterUuids, Map.of());
+            final GlobalFilter globalFilter = new GlobalFilter(List.of(List.of(380, 400), List.of(225, 230)), List.of(Country.FR, Country.BE), filterUuids, Map.of());
             assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, filters))
                 .as("result").isNotNull();
         }
@@ -329,7 +329,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                     List.of(new IdentifierListFilterEquipmentAttributes("GEN1", 50.),
                         new IdentifierListFilterEquipmentAttributes("GEN2", 50.)
                     )));
-            final GlobalFilter globalFilter = new GlobalFilter(List.of("380", "225"), List.of(Country.FR, Country.BE), filterUuids, Map.of());
+            final GlobalFilter globalFilter = new GlobalFilter(List.of(List.of(380, 400), List.of(225, 230)), List.of(Country.FR, Country.BE), filterUuids, Map.of());
             assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, filters))
                 .as("result").isNotNull();
         }
