@@ -49,6 +49,8 @@ import java.util.UUID;
 @SuperBuilder
 public abstract class AbstractExpertRule {
 
+    private UUID id;
+
     private CombinatorType combinator;
 
     private FieldType field;
