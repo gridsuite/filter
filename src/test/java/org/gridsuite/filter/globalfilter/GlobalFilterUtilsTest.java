@@ -77,11 +77,10 @@ class GlobalFilterUtilsTest implements WithAssertions {
         @Test
         void testNoGenericFilters() {
             List<AbstractFilter> genericFilters = Collections.emptyList();
-            List<AbstractFilter> substationOrVoltageLevelFilters = Collections.emptyList();
 
             // Expect all equipment types to be returned
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters, substationOrVoltageLevelFilters));
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.GENERATOR, genericFilters, substationOrVoltageLevelFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.GENERATOR, genericFilters));
         }
 
         @Test
@@ -98,19 +97,17 @@ class GlobalFilterUtilsTest implements WithAssertions {
             Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(
                 subStationFilter, voltageLevelfilter));
 
-            List<AbstractFilter> genericFilters = List.of();
-            List<AbstractFilter> substationOrVoltageLevelFilters = loader.getFilters(genericFiltersUuids);
+            List<AbstractFilter> genericFilters = loader.getFilters(genericFiltersUuids);
 
             // Expect all equipment types to be returned
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters, substationOrVoltageLevelFilters));
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.TWO_WINDINGS_TRANSFORMER, genericFilters, substationOrVoltageLevelFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.TWO_WINDINGS_TRANSFORMER, genericFilters));
         }
 
         @Test
         void testFiltersOnOtherEquipmentTypes() {
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            List<UUID> genericFiltersUuids = List.of(UUID.randomUUID());
-            List<UUID> substationOrVoltageLevelFiltersUuids = List.of(UUID.randomUUID());
+            List<UUID> genericFiltersUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
 
             // Mock the return values for your generic filters
             final AbstractFilter lineFilter = Mockito.mock(AbstractFilter.class);
@@ -119,15 +116,14 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final AbstractFilter voltageLevelFilter = Mockito.mock(AbstractFilter.class);
             Mockito.when(voltageLevelFilter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
 
-            Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(lineFilter));
-            Mockito.when(loader.getFilters(substationOrVoltageLevelFiltersUuids)).thenReturn(List.of(voltageLevelFilter));
+            Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(
+                    lineFilter, voltageLevelFilter));
 
             List<AbstractFilter> genericFilters = loader.getFilters(genericFiltersUuids);
-            List<AbstractFilter> substationOrVoltageLevelFilters = loader.getFilters(substationOrVoltageLevelFiltersUuids);
 
             // Expect only TYPE_A to be returned
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters, substationOrVoltageLevelFilters));
-            assertFalse(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.GENERATOR, genericFilters, substationOrVoltageLevelFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
+            assertFalse(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.GENERATOR, genericFilters));
         }
     }
 

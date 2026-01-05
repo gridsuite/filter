@@ -209,7 +209,7 @@ public final class GlobalFilterUtils {
         final List<AbstractExpertRule> andRules = new ArrayList<>();
 
         // Generic filter have a priority on other filter types
-        if (!shouldProcessEquipmentType(equipmentType, genericFilters, substationOrVoltageLevelFilters)) {
+        if (!shouldProcessEquipmentType(equipmentType, genericFilters)) {
             return null;
         }
 
@@ -301,12 +301,11 @@ public final class GlobalFilterUtils {
      * @return false if the global filter should not be processed because of the generic filters equipment types
      */
     public static boolean shouldProcessEquipmentType(@Nonnull final EquipmentType equipmentType,
-                                                     @Nonnull final List<AbstractFilter> genericFilters,
-                                                     @Nonnull final List<AbstractFilter> substationOrVoltageLevelFilters) {
+                                                     @Nonnull final List<AbstractFilter> genericFilters) {
 
         // The current equipment type will be process IF
         // list genericFilters is empty
-        if (CollectionUtils.isEmpty(genericFilters) && CollectionUtils.isEmpty(substationOrVoltageLevelFilters)) {
+        if (CollectionUtils.isEmpty(genericFilters)) {
             return true;
         } else {
             // OR (list genericFilters is not empty AND
