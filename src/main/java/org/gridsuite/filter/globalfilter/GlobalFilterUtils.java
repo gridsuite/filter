@@ -204,16 +204,24 @@ public final class GlobalFilterUtils {
     @Nullable
     public static ExpertFilter buildExpertFilter(@Nonnull final GlobalFilter globalFilter,
                                                  @Nonnull final EquipmentType equipmentType,
-                                                 @Nonnull final List<AbstractFilter> genericFilters) {
+                                                 @Nonnull final List<AbstractFilter> genericFilters,
+                                                 @Nonnull final List<AbstractFilter> substationOrVoltageLevelFilters) {
         final List<AbstractExpertRule> andRules = new ArrayList<>();
 
         // Generic filter have a priority on other filter types
-        if (!shouldProcessEquipmentType(equipmentType, genericFilters)) {
+        if (!shouldProcessEquipmentType(equipmentType, genericFilters, substationOrVoltageLevelFilters)) {
             return null;
         }
 
         if (CollectionUtils.isNotEmpty(genericFilters)) {
             AbstractExpertRule genericRule = buildGenericFilterRule(genericFilters, equipmentType);
+            if (genericRule != null) {
+                andRules.add(genericRule);
+            }
+        }
+
+        if (CollectionUtils.isNotEmpty(substationOrVoltageLevelFilters)) {
+            AbstractExpertRule genericRule = buildGenericFilterRule(substationOrVoltageLevelFilters, equipmentType);
             if (genericRule != null) {
                 andRules.add(genericRule);
             }
@@ -261,17 +269,20 @@ public final class GlobalFilterUtils {
     /**
      * Extracts filtered {@link Identifiable#getId() equipment ID}s by applying {@link ExpertFilter expert}
      * and {@link AbstractFilter generic filter}s.
+     * @param genericFilters loaded filters from globalFilter.getGenericFilter() (cache)
+     * @param substationOrVoltageLevelFilters loaded filters from globalFilter.getSubstationOrVoltageLevelFilter() (cache)
      */
     @Nonnull
     public static List<String> applyGlobalFilterOnNetwork(@Nonnull final Network network,
                                                           @Nonnull final GlobalFilter globalFilter,
                                                           @Nonnull final EquipmentType equipmentType,
                                                           final List<AbstractFilter> genericFilters,
+                                                          final List<AbstractFilter> substationOrVoltageLevelFilters,
                                                           @Nonnull final FilterLoader filterLoader) {
         List<String> allFilterResults = null;
 
         // Extract IDs from expert filter
-        final ExpertFilter expertFilter = buildExpertFilter(globalFilter, equipmentType, genericFilters);
+        final ExpertFilter expertFilter = buildExpertFilter(globalFilter, equipmentType, genericFilters, substationOrVoltageLevelFilters);
         if (expertFilter != null) {
             allFilterResults = filterNetwork(expertFilter, network, filterLoader);
         }
@@ -287,13 +298,15 @@ public final class GlobalFilterUtils {
      * type filters
      * @param equipmentType : equipment type that should be processed
      * @param genericFilters : generic filters list
-     * **/
+     * @return false if the global filter should not be processed because of the generic filters equipment types
+     */
     public static boolean shouldProcessEquipmentType(@Nonnull final EquipmentType equipmentType,
-                                                     @Nonnull final List<AbstractFilter>genericFilters) {
+                                                     @Nonnull final List<AbstractFilter> genericFilters,
+                                                     @Nonnull final List<AbstractFilter> substationOrVoltageLevelFilters) {
 
         // The current equipment type will be process IF
         // list genericFilters is empty
-        if (CollectionUtils.isEmpty(genericFilters)) {
+        if (CollectionUtils.isEmpty(genericFilters) && CollectionUtils.isEmpty(substationOrVoltageLevelFilters)) {
             return true;
         } else {
             // OR (list genericFilters is not empty AND
@@ -322,13 +335,25 @@ public final class GlobalFilterUtils {
                                                                               @Nonnull final FilterLoader filterLoader) {
         Map<EquipmentType, List<String>> result = new EnumMap<>(EquipmentType.class);
 
-        List<AbstractFilter> genericFilters = null;
+        List<AbstractFilter> genericFilters = List.of();
         if (CollectionUtils.isNotEmpty(globalFilter.getGenericFilter())) {
             genericFilters = filterLoader.getFilters(globalFilter.getGenericFilter());
         }
 
+        List<AbstractFilter> substationOrVoltageLevelFilters = List.of();
+        if (CollectionUtils.isNotEmpty(globalFilter.getSubstationOrVoltageLevelFilter())) {
+            substationOrVoltageLevelFilters = filterLoader.getFilters(globalFilter.getSubstationOrVoltageLevelFilter());
+        }
+
         for (final EquipmentType equipmentType : equipmentTypes) {
-            final List<String> filteredIds = applyGlobalFilterOnNetwork(network, globalFilter, equipmentType, genericFilters, filterLoader);
+            final List<String> filteredIds = applyGlobalFilterOnNetwork(
+                    network,
+                    globalFilter,
+                    equipmentType,
+                    genericFilters,
+                    substationOrVoltageLevelFilters,
+                    filterLoader
+            );
             if (!filteredIds.isEmpty()) {
                 result.put(equipmentType, filteredIds);
             }

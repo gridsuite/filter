@@ -77,10 +77,11 @@ class GlobalFilterUtilsTest implements WithAssertions {
         @Test
         void testNoGenericFilters() {
             List<AbstractFilter> genericFilters = Collections.emptyList();
+            List<AbstractFilter> substationOrVoltageLevelFilters = Collections.emptyList();
 
             // Expect all equipment types to be returned
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.GENERATOR, genericFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters, substationOrVoltageLevelFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.GENERATOR, genericFilters, substationOrVoltageLevelFilters));
         }
 
         @Test
@@ -97,17 +98,19 @@ class GlobalFilterUtilsTest implements WithAssertions {
             Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(
                 subStationFilter, voltageLevelfilter));
 
-            List<AbstractFilter> genericFilters = loader.getFilters(genericFiltersUuids);
+            List<AbstractFilter> genericFilters = List.of();
+            List<AbstractFilter> substationOrVoltageLevelFilters = loader.getFilters(genericFiltersUuids);
 
             // Expect all equipment types to be returned
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.TWO_WINDINGS_TRANSFORMER, genericFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters, substationOrVoltageLevelFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.TWO_WINDINGS_TRANSFORMER, genericFilters, substationOrVoltageLevelFilters));
         }
 
         @Test
         void testFiltersOnOtherEquipmentTypes() {
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            List<UUID> genericFiltersUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
+            List<UUID> genericFiltersUuids = List.of(UUID.randomUUID());
+            List<UUID> substationOrVoltageLevelFiltersUuids = List.of(UUID.randomUUID());
 
             // Mock the return values for your generic filters
             final AbstractFilter lineFilter = Mockito.mock(AbstractFilter.class);
@@ -116,14 +119,15 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final AbstractFilter voltageLevelFilter = Mockito.mock(AbstractFilter.class);
             Mockito.when(voltageLevelFilter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
 
-            Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(
-                lineFilter, voltageLevelFilter));
+            Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(lineFilter));
+            Mockito.when(loader.getFilters(substationOrVoltageLevelFiltersUuids)).thenReturn(List.of(voltageLevelFilter));
 
             List<AbstractFilter> genericFilters = loader.getFilters(genericFiltersUuids);
+            List<AbstractFilter> substationOrVoltageLevelFilters = loader.getFilters(substationOrVoltageLevelFiltersUuids);
 
             // Expect only TYPE_A to be returned
-            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
-            assertFalse(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.GENERATOR, genericFilters));
+            assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters, substationOrVoltageLevelFilters));
+            assertFalse(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.GENERATOR, genericFilters, substationOrVoltageLevelFilters));
         }
     }
 
@@ -295,16 +299,16 @@ class GlobalFilterUtilsTest implements WithAssertions {
     class BuildExpertFilter {
         @Test
         void shouldReturnNullWhenNoExpertFiltersProvided() {
-            final GlobalFilter globalFilter = new GlobalFilter(null, null, null, null);
-            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, List.of()))
+            final GlobalFilter globalFilter = new GlobalFilter(null, null, null, null, null);
+            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, List.of(), List.of()))
                     .as("result").isNull();
         }
 
         @Test
         void shouldReturnNullWhenNoRules() {
-            final GlobalFilter globalFilter = new GlobalFilter(List.of(), List.of(), List.of(), Map.of());
+            final GlobalFilter globalFilter = new GlobalFilter(List.of(), List.of(), List.of(), List.of(), Map.of());
             assertTrue(globalFilter.isEmpty());
-            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, List.of()))
+            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, List.of(), List.of()))
                 .as("result").isNull();
         }
 
@@ -316,8 +320,8 @@ class GlobalFilterUtilsTest implements WithAssertions {
                     List.of(new IdentifierListFilterEquipmentAttributes("GEN1", 50.),
                         new IdentifierListFilterEquipmentAttributes("GEN2", 50.)
                 )));
-            final GlobalFilter globalFilter = new GlobalFilter(List.of("380", "225"), List.of(Country.FR, Country.BE), filterUuids, Map.of());
-            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, filters))
+            final GlobalFilter globalFilter = new GlobalFilter(List.of("380", "225"), List.of(Country.FR, Country.BE), filterUuids, List.of(), Map.of());
+            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, filters, List.of()))
                 .as("result").isNotNull();
         }
 
@@ -329,8 +333,8 @@ class GlobalFilterUtilsTest implements WithAssertions {
                     List.of(new IdentifierListFilterEquipmentAttributes("GEN1", 50.),
                         new IdentifierListFilterEquipmentAttributes("GEN2", 50.)
                     )));
-            final GlobalFilter globalFilter = new GlobalFilter(List.of("380", "225"), List.of(Country.FR, Country.BE), filterUuids, Map.of());
-            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, filters))
+            final GlobalFilter globalFilter = new GlobalFilter(List.of("380", "225"), List.of(Country.FR, Country.BE), filterUuids, List.of(), Map.of());
+            assertThat(GlobalFilterUtils.buildExpertFilter(globalFilter, EquipmentType.GENERATOR, List.of(), filters))
                 .as("result").isNotNull();
         }
     }
@@ -497,7 +501,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final List<Identifiable<?>> attributes = List.of(line1, line2);
                 mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
-                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.LINE, List.of(filter), loader))
+                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.LINE, List.of(filter), List.of(), loader))
                     .as("result").containsExactlyInAnyOrder("line1", "line2");
                 Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
                 Mockito.verify(filter, Mockito.atLeastOnce()).getId();
@@ -515,7 +519,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
             final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.LOAD);
-            assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.GENERATOR, List.of(filter), loader))
+            assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.GENERATOR, List.of(filter), List.of(), loader))
                 .as("result").isEmpty();
             Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
             Mockito.verifyNoMoreInteractions(network, filter);
