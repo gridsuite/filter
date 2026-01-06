@@ -162,6 +162,14 @@ public final class GlobalFilterUtils {
             }
         }
 
+        // Create and rule from rules
+        return ExpertFilterUtils.buildAndCombination(rules).orElse(null);
+    }
+
+    public static AbstractExpertRule buildSubstationOrVoltageLevelFilterRule(@Nonnull final List<AbstractFilter> genericFilters,
+                                                                             @Nonnull final EquipmentType actualType) {
+        final List<AbstractExpertRule> rules = new ArrayList<>();
+
         // Create one rule for substations and voltage levels (combined with Or)
         List<AbstractExpertRule> subsStationsAndVoltageLevelsRules = new ArrayList<>();
 
@@ -221,7 +229,7 @@ public final class GlobalFilterUtils {
         }
 
         if (CollectionUtils.isNotEmpty(substationOrVoltageLevelFilters)) {
-            AbstractExpertRule genericRule = buildGenericFilterRule(substationOrVoltageLevelFilters, equipmentType);
+            AbstractExpertRule genericRule = buildSubstationOrVoltageLevelFilterRule(substationOrVoltageLevelFilters, equipmentType);
             if (genericRule != null) {
                 andRules.add(genericRule);
             }
