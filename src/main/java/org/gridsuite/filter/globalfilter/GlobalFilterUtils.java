@@ -162,7 +162,6 @@ public final class GlobalFilterUtils {
             }
         }
 
-        // Create and rule from rules
         return ExpertFilterUtils.buildAndCombination(rules).orElse(null);
     }
 

@@ -509,6 +509,34 @@ class GlobalFilterUtilsTest implements WithAssertions {
         }
 
         @Test
+        void shouldBuildSubstationFilterWhenSubstationType() {
+            final Network network = Mockito.mock(Network.class);
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
+            when(filter.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
+            final UUID filterUuid = UuidUtils.createUUID(0);
+            when(filter.getId()).thenReturn(filterUuid);
+            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+                final Identifiable<?> line1 = Mockito.mock(Identifiable.class);
+                when(line1.getId()).thenReturn("line1");
+                final Identifiable<?> line2 = Mockito.mock(Identifiable.class);
+                when(line2.getId()).thenReturn("line2");
+                final List<Identifiable<?>> attributes = List.of(line1, line2);
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
+                mockedFU.clearInvocations(); //important because stubbing static method counts as call
+                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.LINE, List.of(), List.of(filter), loader))
+                    .as("result").containsExactlyInAnyOrder("line1", "line2");
+                Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
+                Mockito.verify(filter, Mockito.atLeastOnce()).getId();
+                Mockito.verify(line1, Mockito.atLeastOnce()).getId();
+                Mockito.verify(line2, Mockito.atLeastOnce()).getId();
+                Mockito.verifyNoMoreInteractions(filter, network, line1, line2);
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader)), Mockito.atLeastOnce());
+            }
+        }
+
+        @Test
         void shouldReturnEmptyWhenDifferentEquipmentType() {
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
             final Network network = Mockito.mock(Network.class);
