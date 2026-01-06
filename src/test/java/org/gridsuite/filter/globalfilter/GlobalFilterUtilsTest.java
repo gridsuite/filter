@@ -497,7 +497,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final List<Identifiable<?>> attributes = List.of(line1, line2);
                 mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
-                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.LINE, List.of(filter), List.of(), loader))
+                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.LINE, List.of(), List.of(filter), loader))
                     .as("result").containsExactlyInAnyOrder("line1", "line2");
                 Mockito.verify(filter, Mockito.atLeastOnce()).getEquipmentType();
                 Mockito.verify(filter, Mockito.atLeastOnce()).getId();
@@ -612,9 +612,9 @@ class GlobalFilterUtilsTest implements WithAssertions {
             when(filter2.getId()).thenReturn(filterUuids.get(1));
 
             List<AbstractFilter> filters = Arrays.asList(filter1, filter2);
-            assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.LINE));
-            assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.GENERATOR));
-            assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.TWO_WINDINGS_TRANSFORMER));
+            assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.LINE));
+            assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.GENERATOR));
+            assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.TWO_WINDINGS_TRANSFORMER));
         }
 
         @Test
