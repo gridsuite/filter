@@ -643,6 +643,9 @@ class GlobalFilterUtilsTest implements WithAssertions {
             assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.LINE));
             assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.GENERATOR));
             assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.TWO_WINDINGS_TRANSFORMER));
+            assertNotNull(GlobalFilterUtils.buildSubstationOrVoltageLevelFilterRule(filters, EquipmentType.LINE));
+            assertNotNull(GlobalFilterUtils.buildSubstationOrVoltageLevelFilterRule(filters, EquipmentType.GENERATOR));
+            assertNotNull(GlobalFilterUtils.buildSubstationOrVoltageLevelFilterRule(filters, EquipmentType.TWO_WINDINGS_TRANSFORMER));
         }
 
         @Test
