@@ -481,23 +481,6 @@ class GlobalFilterUtilsTest implements WithAssertions {
         }
 
         @Test
-        void shouldReturnNothingWhenEquipmentTypeDoesntMatchWithFilter() {
-            final Network network = Mockito.mock(Network.class);
-            final FilterLoader loader = Mockito.mock(FilterLoader.class);
-
-            final AbstractFilter genericFilter = Mockito.mock(AbstractFilter.class);
-            when(genericFilter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
-
-            final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
-
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
-                // call test method and check result
-                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(EquipmentType.SUBSTATION), loader))
-                    .as("result").containsExactlyInAnyOrderEntriesOf(Map.of());
-            }
-        }
-
-        @Test
         void shouldBuildVoltageLevelFilterWhenVoltageLevelType() {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
@@ -585,9 +568,16 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final UUID filterTransUuid = UuidUtils.createUUID(1);
             when(filterTrans.getId()).thenReturn(filterTransUuid);
 
+            final AbstractFilter filterSubstation = Mockito.mock(AbstractFilter.class);
+            when(filterSubstation.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
+            final UUID filterSubstationUuid = UuidUtils.createUUID(2);
+            when(filterSubstation.getId()).thenReturn(filterSubstationUuid);
+
             final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
             List<UUID> genericFilterUuids = List.of(filterLineUuid, filterTransUuid);
             when(globalFilter.getGenericFilter()).thenReturn(genericFilterUuids);
+            List<UUID> substationOrVoltageLevelFilteUuids = List.of(filterSubstationUuid);
+            when(globalFilter.getSubstationOrVoltageLevelFilter()).thenReturn(substationOrVoltageLevelFilteUuids);
 
             when(loader.getFilters(genericFilterUuids)).thenReturn(List.of(filterLine, filterTrans));
 
