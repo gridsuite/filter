@@ -481,6 +481,23 @@ class GlobalFilterUtilsTest implements WithAssertions {
         }
 
         @Test
+        void shouldReturnNothingWhenEquipmentTypeDoesntMatchWithFilter() {
+            final Network network = Mockito.mock(Network.class);
+            final FilterLoader loader = Mockito.mock(FilterLoader.class);
+
+            final AbstractFilter genericFilter = Mockito.mock(AbstractFilter.class);
+            when(genericFilter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
+
+            final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
+
+            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+                // call test method and check result
+                assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, List.of(EquipmentType.SUBSTATION), loader))
+                    .as("result").containsExactlyInAnyOrderEntriesOf(Map.of());
+            }
+        }
+
+        @Test
         void shouldBuildVoltageLevelFilterWhenVoltageLevelType() {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);

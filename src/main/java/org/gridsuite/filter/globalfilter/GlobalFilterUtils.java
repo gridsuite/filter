@@ -70,7 +70,6 @@ public final class GlobalFilterUtils {
                  SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, SUBSTATION,
                  THREE_WINDINGS_TRANSFORMER, TWO_WINDINGS_TRANSFORMER, VOLTAGE_LEVEL, LCC_CONVERTER_STATION, VSC_CONVERTER_STATION -> List.of(FieldType.COUNTRY);
             case LINE, HVDC_LINE -> List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2);
-            default -> List.of();
         };
     }
 
