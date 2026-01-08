@@ -45,7 +45,7 @@ public final class GlobalFilterUtils {
      */
     @Nonnull
     public static Optional<AbstractExpertRule> buildNominalVoltageRules(
-        @Nonnull final List<List<Integer>> voltageRanges, @Nonnull final EquipmentType equipmentType) {
+            @Nonnull final List<List<Integer>> voltageRanges, @Nonnull final EquipmentType equipmentType) {
         final List<FieldType> fields = getNominalVoltageFieldType(equipmentType);
         return ExpertFilterUtils.buildOrCombination(voltageRanges.stream()
             .filter(CollectionUtils::isNotEmpty)
