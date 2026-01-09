@@ -29,8 +29,9 @@ import java.util.UUID;
 @FieldNameConstants
 // TODO convert to record when loadflow-server and computation lib stop to extends it
 public class GlobalFilter {
-    private List<String> nominalV;
+    private List<List<Integer>> voltageRanges;
     private List<Country> countryCode;
+    private List<UUID> substationOrVoltageLevelFilter; // list of generic filters containing only voltage level and substation filters
     private List<UUID> genericFilter;
     private Map<String, List<String>> substationProperty;
 
@@ -38,9 +39,10 @@ public class GlobalFilter {
      * @return {@code true} if all filter parameters are empty, else {@code false}.
      */
     public boolean isEmpty() {
-        return CollectionUtils.isEmpty(this.nominalV)
+        return CollectionUtils.isEmpty(this.voltageRanges)
             && CollectionUtils.isEmpty(this.countryCode)
             && CollectionUtils.isEmpty(this.genericFilter)
+            && CollectionUtils.isEmpty(this.substationOrVoltageLevelFilter)
             && (MapUtils.isEmpty(this.substationProperty) || this.substationProperty.values().stream().allMatch(CollectionUtils::isEmpty));
     }
 }
