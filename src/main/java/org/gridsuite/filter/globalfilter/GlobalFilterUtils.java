@@ -21,7 +21,6 @@ import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public final class GlobalFilterUtils {
@@ -42,21 +41,20 @@ public final class GlobalFilterUtils {
 
     /**
      * Builds nominal voltage rules combining all relevant field types
-     * @see GlobalFilter#getNominalV()
+     * @see GlobalFilter#getVoltageRanges()
      */
     @Nonnull
     public static Optional<AbstractExpertRule> buildNominalVoltageRules(
-            @Nonnull final List<String> nominalVoltages, @Nonnull final EquipmentType equipmentType) {
+            @Nonnull final List<List<Integer>> voltageRanges, @Nonnull final EquipmentType equipmentType) {
         final List<FieldType> fields = getNominalVoltageFieldType(equipmentType);
-        return ExpertFilterUtils.buildOrCombination(nominalVoltages.stream()
-            .filter(Predicate.not(String::isBlank))
-            .map(Double::valueOf)
-            .<AbstractExpertRule>mapMulti((value, accumulator) -> {
+        return ExpertFilterUtils.buildOrCombination(voltageRanges.stream()
+            .filter(CollectionUtils::isNotEmpty)
+            .<AbstractExpertRule>mapMulti((range, accumulator) -> {
                 for (final FieldType field : fields) {
                     accumulator.accept(NumberExpertRule.builder()
-                        .value(value)
+                        .values(range.stream().map(Integer::doubleValue).collect(Collectors.toSet()))
                         .field(field)
-                        .operator(OperatorType.EQUALS)
+                        .operator(OperatorType.BETWEEN)
                         .build());
                 }
             }).toList());
@@ -232,8 +230,8 @@ public final class GlobalFilterUtils {
             }
         }
 
-        if (globalFilter.getNominalV() != null) {
-            buildNominalVoltageRules(globalFilter.getNominalV(), equipmentType).ifPresent(andRules::add);
+        if (CollectionUtils.isNotEmpty(globalFilter.getVoltageRanges())) {
+            buildNominalVoltageRules(globalFilter.getVoltageRanges(), equipmentType).ifPresent(andRules::add);
         }
         if (globalFilter.getCountryCode() != null) {
             buildCountryCodeRules(globalFilter.getCountryCode(), equipmentType).ifPresent(andRules::add);
