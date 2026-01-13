@@ -4,6 +4,7 @@ import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.PropertiesExpertRule;
+import org.gridsuite.filter.utils.NullishFilterLoader;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ class PropertiesExpertRuleTest {
 
     @BeforeEach
     void setUp() {
-        filterLoader = uuids -> null;
+        filterLoader = new NullishFilterLoader();
     }
 
     @ParameterizedTest
