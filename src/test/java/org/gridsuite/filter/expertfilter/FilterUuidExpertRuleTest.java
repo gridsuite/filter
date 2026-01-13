@@ -2,6 +2,7 @@ package org.gridsuite.filter.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
+import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRule;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
@@ -79,7 +80,17 @@ class FilterUuidExpertRuleTest {
 
     @BeforeEach
     void setUp() {
-        filterLoader = uuids -> List.of();
+        filterLoader = new FilterLoader() {
+            @Override
+            public List<AbstractFilter> getFilters(List <UUID> uuids) {
+                return List.of();
+            }
+
+            @Override
+            public Optional<AbstractFilter> getFilter(UUID uuid) {
+                return Optional.empty();
+            }
+        };
     }
 
     @ParameterizedTest

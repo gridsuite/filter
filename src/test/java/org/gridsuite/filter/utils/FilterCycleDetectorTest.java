@@ -57,7 +57,17 @@ class FilterCycleDetectorTest {
         ExpertFilter filterB = new ExpertFilter(filterIdB, new Date(), EquipmentType.LINE, combB);
 
         Map<UUID, AbstractFilter> filters = Map.of(filterIdA, filterA, filterIdB, filterB);
-        FilterLoader loader = ids -> ids.stream().map(filters::get).toList();
+        FilterLoader loader = new FilterLoader() {
+            @Override
+            public List<AbstractFilter> getFilters(List<UUID> uuids) {
+                return uuids.stream().map(filters::get).toList();
+            }
+
+            @Override
+            public Optional<AbstractFilter> getFilter(UUID uuid) {
+                return Optional.of(filters.get(uuid));
+            }
+        };
 
         FilterCycleException ex = assertThrows(FilterCycleException.class, () -> FilterCycleDetector.checkNoCycle(filterA, loader));
         assertEquals("Cycle detected in filters", ex.getMessage());
@@ -90,7 +100,17 @@ class FilterCycleDetectorTest {
                 CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(List.of()).build());
 
         Map<UUID, AbstractFilter> filters = Map.of(filterIdA, filterA, filterIdB, filterB, filterIdC, filterC);
-        FilterLoader loader = ids -> ids.stream().map(filters::get).toList();
+        FilterLoader loader = new FilterLoader() {
+            @Override
+            public List<AbstractFilter> getFilters(List<UUID> uuids) {
+                return uuids.stream().map(filters::get).toList();
+            }
+
+            @Override
+            public Optional<AbstractFilter> getFilter(UUID uuid) {
+                return Optional.of(filters.get(uuid));
+            }
+        };
 
         try {
             FilterCycleDetector.checkNoCycle(filterA, loader);

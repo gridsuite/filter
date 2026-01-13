@@ -10,6 +10,7 @@ import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.test.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.api.WithAssertions;
+import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
  */
 class FiltersUtilsTest implements WithAssertions {
-    private final FilterLoader filterLoader = uuids -> null;
+    private final FilterLoader filterLoader = new NullishFilterLoader();
 
     private static Network prepareNetwork() {
         Network network = EurostagTutorialExample1Factory.createWithMoreGenerators();
@@ -533,7 +534,17 @@ class FiltersUtilsTest implements WithAssertions {
             EquipmentType.GENERATOR,
             filterEquipmentAttributes);
 
-        FilterLoader filterLoader1 = uuids -> List.of(identifierListFilter);
+        FilterLoader filterLoader1 = new FilterLoader() {
+            @Override
+            public List<AbstractFilter> getFilters(List<UUID> uuids) {
+                return List.of(identifierListFilter);
+            }
+
+            @Override
+            public Optional<AbstractFilter> getFilter(UUID uuid) {
+                return Optional.of(identifierListFilter);
+            }
+        };
 
         List<FilterEquipments> filterEquipments = FilterServiceUtils.getFilterEquipmentsFromUuid(network, uuid1, filterLoader1);
         assertEquals(1, filterEquipments.size());
