@@ -4,11 +4,11 @@ import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import org.assertj.core.api.*;
-import org.gridsuite.filter.AbstractFilter;
+import org.gridsuite.filter.AbstractFilterDto;
 import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.expertfilter.ExpertFilter;
+import org.gridsuite.filter.expertfilter.ExpertFilterDto;
 import org.gridsuite.filter.expertfilter.expertrule.*;
-import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
+import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterDto;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FiltersUtils;
@@ -48,10 +48,10 @@ import static org.mockito.Mockito.when;
  *           ↳ getSubstationPropertiesFieldTypes
  */
 class GlobalFilterUtilsTest implements WithAssertions {
-    private static <T extends AbstractExpertRule> void testVariableOrCombinationRules(final Optional<AbstractExpertRule> result, final int inputSize,
-                                                                                      final Class<T> ruleClass, final ThrowingConsumer<T>[] singleRuleAsserts,
-                                                                                      final Iterable<T> multiAssertElements) {
-        final OptionalAssert<AbstractExpertRule> assertion = Assertions.assertThat(result).as("result");
+    private static <T extends AbstractExpertRuleDto> void testVariableOrCombinationRules(final Optional<AbstractExpertRuleDto> result, final int inputSize,
+                                                                                         final Class<T> ruleClass, final ThrowingConsumer<T>[] singleRuleAsserts,
+                                                                                         final Iterable<T> multiAssertElements) {
+        final OptionalAssert<AbstractExpertRuleDto> assertion = Assertions.assertThat(result).as("result");
         if (inputSize <= 0) {
             assertion.isEmpty();
         } else {
@@ -61,10 +61,10 @@ class GlobalFilterUtilsTest implements WithAssertions {
                     .as("expert rule")
                     .satisfies(singleRuleAsserts);
             } else {
-                assertion.get(InstanceOfAssertFactories.type(CombinatorExpertRule.class))
+                assertion.get(InstanceOfAssertFactories.type(CombinatorExpertRuleDto.class))
                     .as("combinator expert rule")
                     .satisfies(cer -> Assertions.assertThat(cer.getCombinator()).as("combinator").isEqualTo(CombinatorType.OR))
-                    .extracting(CombinatorExpertRule::getRules, InstanceOfAssertFactories.list(AbstractExpertRule.class)).as("expert rules")
+                    .extracting(CombinatorExpertRuleDto::getRules, InstanceOfAssertFactories.list(AbstractExpertRuleDto.class)).as("expert rules")
                     .containsExactlyInAnyOrderElementsOf(multiAssertElements);
             }
         }
@@ -76,7 +76,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
 
         @Test
         void testNoGenericFilters() {
-            List<AbstractFilter> genericFilters = Collections.emptyList();
+            List<AbstractFilterDto> genericFilters = Collections.emptyList();
 
             // Expect all equipment types to be returned
             assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
@@ -89,15 +89,15 @@ class GlobalFilterUtilsTest implements WithAssertions {
             List<UUID> genericFiltersUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
 
             // Mock the return values for your generic filters
-            final AbstractFilter subStationFilter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto subStationFilter = Mockito.mock(AbstractFilterDto.class);
             Mockito.when(subStationFilter.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
-            final AbstractFilter voltageLevelfilter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto voltageLevelfilter = Mockito.mock(AbstractFilterDto.class);
             Mockito.when(voltageLevelfilter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
 
             Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(
                 subStationFilter, voltageLevelfilter));
 
-            List<AbstractFilter> genericFilters = loader.getFilters(genericFiltersUuids);
+            List<AbstractFilterDto> genericFilters = loader.getFilters(genericFiltersUuids);
 
             // Expect all equipment types to be returned
             assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
@@ -110,16 +110,16 @@ class GlobalFilterUtilsTest implements WithAssertions {
             List<UUID> genericFiltersUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
 
             // Mock the return values for your generic filters
-            final AbstractFilter lineFilter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto lineFilter = Mockito.mock(AbstractFilterDto.class);
             Mockito.when(lineFilter.getEquipmentType()).thenReturn(EquipmentType.LINE);
 
-            final AbstractFilter voltageLevelFilter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto voltageLevelFilter = Mockito.mock(AbstractFilterDto.class);
             Mockito.when(voltageLevelFilter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
 
             Mockito.when(loader.getFilters(genericFiltersUuids)).thenReturn(List.of(
                     lineFilter, voltageLevelFilter));
 
-            List<AbstractFilter> genericFilters = loader.getFilters(genericFiltersUuids);
+            List<AbstractFilterDto> genericFilters = loader.getFilters(genericFiltersUuids);
 
             // Expect only TYPE_A to be returned
             assertTrue(GlobalFilterUtils.shouldProcessEquipmentType(EquipmentType.LINE, genericFilters));
@@ -142,13 +142,13 @@ class GlobalFilterUtilsTest implements WithAssertions {
             testVariableOrCombinationRules(
                 GlobalFilterUtils.buildNominalVoltageRules(voltageRanges, EquipmentType.VOLTAGE_LEVEL),
                 voltageRanges.size(),
-                NumberExpertRule.class,
+                NumberExpertRuleDto.class,
                 createAssertArray(
                     ner -> assertThat(ner.getValues()).as("values").containsExactlyInAnyOrderElementsOf(voltageRanges.getFirst().stream().map(Integer::doubleValue).toList()),
                     ner -> assertThat(ner.getField()).as("field").isEqualTo(FieldType.NOMINAL_VOLTAGE),
                     ner -> assertThat(ner.getOperator()).as("operator").isEqualTo(OperatorType.BETWEEN)
                 ),
-                voltageRanges.stream().map(vr -> NumberExpertRule.builder().values(vr.stream().map(Integer::doubleValue).collect(Collectors.toSet()))
+                voltageRanges.stream().map(vr -> NumberExpertRuleDto.builder().values(vr.stream().map(Integer::doubleValue).collect(Collectors.toSet()))
                     .field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.BETWEEN).build()).collect(Collectors.toUnmodifiableList()));
         }
 
@@ -170,13 +170,13 @@ class GlobalFilterUtilsTest implements WithAssertions {
             testVariableOrCombinationRules(
                 GlobalFilterUtils.buildCountryCodeRules(countries, EquipmentType.VOLTAGE_LEVEL),
                 countries.size(),
-                EnumExpertRule.class,
+                EnumExpertRuleDto.class,
                 createAssertArray(
                     ner -> assertThat(ner.getValue()).as("value").hasToString(countries.getFirst().name()),
                     ner -> assertThat(ner.getField()).as("field").isEqualTo(FieldType.COUNTRY),
                     ner -> assertThat(ner.getOperator()).as("operator").isEqualTo(OperatorType.EQUALS)
                 ),
-                (List<EnumExpertRule>) countries.stream().map(c -> EnumExpertRule.builder().value(c.name())
+                (List<EnumExpertRuleDto>) countries.stream().map(c -> EnumExpertRuleDto.builder().value(c.name())
                     .field(FieldType.COUNTRY).operator(OperatorType.EQUALS).build()).toList());
         }
 
@@ -198,7 +198,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             testVariableOrCombinationRules(
                 GlobalFilterUtils.buildSubstationPropertyRules(properties, EquipmentType.VOLTAGE_LEVEL),
                 properties.size(),
-                PropertiesExpertRule.class,
+                PropertiesExpertRuleDto.class,
                 createAssertArray(
                     per -> assertThat(per.getCombinator()).as("combinator").isEqualTo(CombinatorType.OR),
                     per -> assertThat(per.getOperator()).as("operator").isEqualTo(OperatorType.IN),
@@ -206,7 +206,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                     per -> assertThat(per.getPropertyName()).as("property name").isEqualTo("prop1"),
                     per -> assertThat(per.getPropertyValues()).as("property values").containsExactlyInAnyOrderElementsOf(properties.values().iterator().next())
                 ),
-                (List<PropertiesExpertRule>) properties.entrySet().stream().map(e -> PropertiesExpertRule.builder().combinator(CombinatorType.OR)
+                (List<PropertiesExpertRuleDto>) properties.entrySet().stream().map(e -> PropertiesExpertRuleDto.builder().combinator(CombinatorType.OR)
                     .operator(OperatorType.IN).field(FieldType.SUBSTATION_PROPERTIES).propertyName(e.getKey()).propertyValues(e.getValue()).build()).toList());
         }
 
@@ -311,8 +311,8 @@ class GlobalFilterUtilsTest implements WithAssertions {
         @Test
         void shouldReturnResult() {
             List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
-            List<AbstractFilter> filters = List.of(
-                new IdentifierListFilter(UUID.randomUUID(), new Date(), EquipmentType.GENERATOR,
+            List<AbstractFilterDto> filters = List.of(
+                new IdentifierListFilterDto(UUID.randomUUID(), new Date(), EquipmentType.GENERATOR,
                     List.of(new IdentifierListFilterEquipmentAttributes("GEN1", 50.),
                         new IdentifierListFilterEquipmentAttributes("GEN2", 50.)
                 )));
@@ -324,8 +324,8 @@ class GlobalFilterUtilsTest implements WithAssertions {
         @Test
         void shouldReturnResultWithGenericFilterTypeDifferentFromEquipmentType() {
             List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
-            List<AbstractFilter> filters = List.of(
-                new IdentifierListFilter(UUID.randomUUID(), new Date(), EquipmentType.VOLTAGE_LEVEL,
+            List<AbstractFilterDto> filters = List.of(
+                new IdentifierListFilterDto(UUID.randomUUID(), new Date(), EquipmentType.VOLTAGE_LEVEL,
                     List.of(new IdentifierListFilterEquipmentAttributes("GEN1", 50.),
                         new IdentifierListFilterEquipmentAttributes("GEN2", 50.)
                     )));
@@ -342,7 +342,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
         void shouldReturnIdsFromFilteredNetwork() {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filter = Mockito.mock(AbstractFilterDto.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
             try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> i1 = Mockito.mock(Identifiable.class);
@@ -371,7 +371,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
         void shouldReturnFilteredNetworkWhenSameEquipmentType() {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filter = Mockito.mock(AbstractFilterDto.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
             try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> gen1 = Mockito.mock(Identifiable.class);
@@ -396,7 +396,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
         void shouldBuildVoltageLevelFilterWhenVoltageLevelType() {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filter = Mockito.mock(AbstractFilterDto.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
             final UUID filterUuid = UuidUtils.createUUID(0);
             when(filter.getId()).thenReturn(filterUuid);
@@ -406,7 +406,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final Identifiable<?> line2 = Mockito.mock(Identifiable.class);
                 when(line2.getId()).thenReturn("line2");
                 final List<Identifiable<?>> attributes = List.of(line1, line2);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilterDto.class), eq(network), eq(loader))).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
                 assertThat(GlobalFilterUtils.applyFilterOnNetwork(filter, EquipmentType.LINE, network, loader))
                     .as("result").containsExactlyInAnyOrder("line1", "line2");
@@ -415,7 +415,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 Mockito.verify(line1, Mockito.atLeastOnce()).getId();
                 Mockito.verify(line2, Mockito.atLeastOnce()).getId();
                 Mockito.verifyNoMoreInteractions(filter, network, loader, line1, line2);
-                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader)), Mockito.atLeastOnce());
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilterDto.class), eq(network), eq(loader)), Mockito.atLeastOnce());
                 mockedFU.verifyNoMoreInteractions(); //check if forget to mock a method
             }
         }
@@ -424,7 +424,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
         void shouldReturnEmptyWhenDifferentEquipmentType() {
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
             final Network network = Mockito.mock(Network.class);
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filter = Mockito.mock(AbstractFilterDto.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.LOAD);
             assertThat(GlobalFilterUtils.applyFilterOnNetwork(filter, EquipmentType.GENERATOR, network, loader))
                 .as("result").isEmpty();
@@ -441,7 +441,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
 
-            final AbstractFilter genericFilter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto genericFilter = Mockito.mock(AbstractFilterDto.class);
             when(genericFilter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
             final UUID filterUuid = UuidUtils.createUUID(0);
             when(genericFilter.getId()).thenReturn(filterUuid);
@@ -458,10 +458,10 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final Identifiable<?> gen2 = Mockito.mock(Identifiable.class);
                 when(gen2.getId()).thenReturn("gen2");
                 final List<Identifiable<?>> attributes = List.of(gen1, gen2);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilter isPartOfFilter) ->
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilterDto isPartOfFilter) ->
                     isPartOfFilter != null &&
                     isPartOfFilter.getRules().getDataType() == DataType.FILTER_UUID &&
-                   ((FilterUuidExpertRule) isPartOfFilter.getRules()).getValues().contains(filterUuid.toString())
+                   ((FilterUuidExpertRuleDto) isPartOfFilter.getRules()).getValues().contains(filterUuid.toString())
                 ), eq(network), eq(loader))).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
 
@@ -476,7 +476,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 Mockito.verify(gen1, Mockito.atLeastOnce()).getId();
                 Mockito.verify(gen2, Mockito.atLeastOnce()).getId();
                 Mockito.verifyNoMoreInteractions(genericFilter, network, gen1, gen2);
-                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader)), Mockito.atLeastOnce());
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilterDto.class), eq(network), eq(loader)), Mockito.atLeastOnce());
             }
         }
 
@@ -484,7 +484,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
         void shouldBuildVoltageLevelFilterWhenVoltageLevelType() {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filter = Mockito.mock(AbstractFilterDto.class);
             final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
             final UUID filterUuid = UuidUtils.createUUID(0);
@@ -495,7 +495,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final Identifiable<?> line2 = Mockito.mock(Identifiable.class);
                 when(line2.getId()).thenReturn("line2");
                 final List<Identifiable<?>> attributes = List.of(line1, line2);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilterDto.class), eq(network), eq(loader))).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
                 assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.LINE, List.of(), List.of(filter), loader))
                     .as("result").containsExactlyInAnyOrder("line1", "line2");
@@ -504,7 +504,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 Mockito.verify(line1, Mockito.atLeastOnce()).getId();
                 Mockito.verify(line2, Mockito.atLeastOnce()).getId();
                 Mockito.verifyNoMoreInteractions(filter, network, line1, line2);
-                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader)), Mockito.atLeastOnce());
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilterDto.class), eq(network), eq(loader)), Mockito.atLeastOnce());
             }
         }
 
@@ -512,7 +512,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
         void shouldBuildSubstationFilterWhenSubstationType() {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filter = Mockito.mock(AbstractFilterDto.class);
             final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
             final UUID filterUuid = UuidUtils.createUUID(0);
@@ -523,7 +523,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final Identifiable<?> line2 = Mockito.mock(Identifiable.class);
                 when(line2.getId()).thenReturn("line2");
                 final List<Identifiable<?>> attributes = List.of(line1, line2);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader))).thenReturn(attributes);
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(any(ExpertFilterDto.class), eq(network), eq(loader))).thenReturn(attributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
                 assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.LINE, List.of(), List.of(filter), loader))
                     .as("result").containsExactlyInAnyOrder("line1", "line2");
@@ -532,7 +532,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 Mockito.verify(line1, Mockito.atLeastOnce()).getId();
                 Mockito.verify(line2, Mockito.atLeastOnce()).getId();
                 Mockito.verifyNoMoreInteractions(filter, network, line1, line2);
-                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader)), Mockito.atLeastOnce());
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilterDto.class), eq(network), eq(loader)), Mockito.atLeastOnce());
             }
         }
 
@@ -540,7 +540,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
         void shouldReturnEmptyWhenDifferentEquipmentType() {
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
             final Network network = Mockito.mock(Network.class);
-            final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filter = Mockito.mock(AbstractFilterDto.class);
             final GlobalFilter globalFilter = Mockito.mock(GlobalFilter.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.LOAD);
             assertThat(GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, EquipmentType.GENERATOR, List.of(filter), List.of(), loader))
@@ -558,17 +558,17 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final Network network = Mockito.mock(Network.class);
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
 
-            final AbstractFilter filterLine = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filterLine = Mockito.mock(AbstractFilterDto.class);
             when(filterLine.getEquipmentType()).thenReturn(EquipmentType.LINE);
             final UUID filterLineUuid = UuidUtils.createUUID(0);
             when(filterLine.getId()).thenReturn(filterLineUuid);
 
-            final AbstractFilter filterTrans = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filterTrans = Mockito.mock(AbstractFilterDto.class);
             when(filterTrans.getEquipmentType()).thenReturn(EquipmentType.TWO_WINDINGS_TRANSFORMER);
             final UUID filterTransUuid = UuidUtils.createUUID(1);
             when(filterTrans.getId()).thenReturn(filterTransUuid);
 
-            final AbstractFilter filterSubstation = Mockito.mock(AbstractFilter.class);
+            final AbstractFilterDto filterSubstation = Mockito.mock(AbstractFilterDto.class);
             when(filterSubstation.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
             final UUID filterSubstationUuid = UuidUtils.createUUID(2);
             when(filterSubstation.getId()).thenReturn(filterSubstationUuid);
@@ -588,15 +588,15 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 final Identifiable<?> trf1 = Mockito.mock(Identifiable.class);
                 when(trf1.getId()).thenReturn("trf1");
                 final List<Identifiable<?>> transAttributes = List.of(trf1);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilter isPartOfFilter) ->
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilterDto isPartOfFilter) ->
                         isPartOfFilter != null &&
                         isPartOfFilter.getRules().getOperator() == OperatorType.IS_PART_OF &&
-                        ((FilterUuidExpertRule) isPartOfFilter.getRules()).getValues().contains(filterLineUuid.toString())
+                        ((FilterUuidExpertRuleDto) isPartOfFilter.getRules()).getValues().contains(filterLineUuid.toString())
                 ), eq(network), eq(loader))).thenReturn(lineAttributes);
-                mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilter isPartOfFilter) ->
+                mockedFU.when(() -> FiltersUtils.getIdentifiables(argThat((ExpertFilterDto isPartOfFilter) ->
                         isPartOfFilter != null &&
                         isPartOfFilter.getRules().getOperator() == OperatorType.IS_PART_OF &&
-                        ((FilterUuidExpertRule) isPartOfFilter.getRules()).getValues().contains(filterTransUuid.toString())
+                        ((FilterUuidExpertRuleDto) isPartOfFilter.getRules()).getValues().contains(filterTransUuid.toString())
                 ), eq(network), eq(loader))).thenReturn(transAttributes);
                 mockedFU.clearInvocations(); //important because stubbing static method counts as call
 
@@ -613,7 +613,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                 Mockito.verify(line1, Mockito.atLeastOnce()).getId();
                 Mockito.verify(trf1, Mockito.atLeastOnce()).getId();
                 Mockito.verifyNoMoreInteractions(filterLine, filterTrans, network, line1, trf1);
-                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilter.class), eq(network), eq(loader)), Mockito.atLeastOnce());
+                mockedFU.verify(() -> FiltersUtils.getIdentifiables(any(ExpertFilterDto.class), eq(network), eq(loader)), Mockito.atLeastOnce());
             }
         }
     }
@@ -625,28 +625,28 @@ class GlobalFilterUtilsTest implements WithAssertions {
         @Test
         void testSameEquipmentType() {
             List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
-            AbstractFilter filter1 = Mockito.mock(AbstractFilter.class);
-            AbstractFilter filter2 = Mockito.mock(AbstractFilter.class);
+            AbstractFilterDto filter1 = Mockito.mock(AbstractFilterDto.class);
+            AbstractFilterDto filter2 = Mockito.mock(AbstractFilterDto.class);
             when(filter1.getEquipmentType()).thenReturn(EquipmentType.LINE);
             when(filter2.getEquipmentType()).thenReturn(EquipmentType.LINE);
             when(filter1.getId()).thenReturn(filterUuids.get(0));
             when(filter2.getId()).thenReturn(filterUuids.get(1));
 
-            List<AbstractFilter> filters = Arrays.asList(filter1, filter2);
+            List<AbstractFilterDto> filters = Arrays.asList(filter1, filter2);
             assertNotNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.LINE));
         }
 
         @Test
         void testSubstationAndVoltageLevelOnAnyEquipmentType() {
             List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
-            AbstractFilter filter1 = Mockito.mock(AbstractFilter.class);
-            AbstractFilter filter2 = Mockito.mock(AbstractFilter.class);
+            AbstractFilterDto filter1 = Mockito.mock(AbstractFilterDto.class);
+            AbstractFilterDto filter2 = Mockito.mock(AbstractFilterDto.class);
             when(filter1.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
             when(filter2.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
             when(filter1.getId()).thenReturn(filterUuids.get(0));
             when(filter2.getId()).thenReturn(filterUuids.get(1));
 
-            List<AbstractFilter> filters = Arrays.asList(filter1, filter2);
+            List<AbstractFilterDto> filters = Arrays.asList(filter1, filter2);
             assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.LINE));
             assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.GENERATOR));
             assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.TWO_WINDINGS_TRANSFORMER));
@@ -658,14 +658,14 @@ class GlobalFilterUtilsTest implements WithAssertions {
         @Test
         void testNotSameEquipmentType() {
             List<UUID> filterUuids = List.of(UUID.randomUUID(), UUID.randomUUID());
-            AbstractFilter filter1 = Mockito.mock(AbstractFilter.class);
-            AbstractFilter filter2 = Mockito.mock(AbstractFilter.class);
+            AbstractFilterDto filter1 = Mockito.mock(AbstractFilterDto.class);
+            AbstractFilterDto filter2 = Mockito.mock(AbstractFilterDto.class);
             when(filter1.getEquipmentType()).thenReturn(EquipmentType.LINE);
             when(filter2.getEquipmentType()).thenReturn(EquipmentType.TWO_WINDINGS_TRANSFORMER);
             when(filter1.getId()).thenReturn(filterUuids.get(0));
             when(filter2.getId()).thenReturn(filterUuids.get(1));
 
-            List<AbstractFilter> filters = Arrays.asList(filter1, filter2);
+            List<AbstractFilterDto> filters = Arrays.asList(filter1, filter2);
             assertNull(GlobalFilterUtils.buildGenericFilterRule(filters, EquipmentType.GENERATOR));
         }
     }

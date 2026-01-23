@@ -10,8 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.iidm.network.TopologyKind;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.gridsuite.filter.AbstractFilter;
-import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
+import org.gridsuite.filter.AbstractFilterDto;
+import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRuleDto;
+import org.gridsuite.filter.model.Filter;
+import org.gridsuite.filter.model.expertfilter.ExpertFilter;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 
@@ -26,14 +28,14 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ExpertFilter extends AbstractFilter {
+public class ExpertFilterDto extends AbstractFilterDto {
 
-    private AbstractExpertRule rules;
+    private AbstractExpertRuleDto rules;
 
     @Setter
     private TopologyKind topologyKind;
 
-    public ExpertFilter(UUID id, Date modificationDate, EquipmentType equipmentType, AbstractExpertRule rules) {
+    public ExpertFilterDto(UUID id, Date modificationDate, EquipmentType equipmentType, AbstractExpertRuleDto rules) {
         super(id, modificationDate, equipmentType);
         this.rules = rules;
     }
@@ -42,5 +44,13 @@ public class ExpertFilter extends AbstractFilter {
     @Override
     public FilterType getType() {
         return FilterType.EXPERT;
+    }
+
+    @Override
+    public Filter toModel() {
+        return ExpertFilter.builder()
+            .equipmentType(equipmentType)
+            .rule(rules.toModel())
+            .build();
     }
 }

@@ -1,40 +1,30 @@
-package org.gridsuite.filter.expertfilter;
+package org.gridsuite.filter.model.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
-import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.expertfilter.expertrule.BooleanExpertRuleDto;
+import org.gridsuite.filter.model.expertfilter.rules.BooleanExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
-import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.stream.Stream;
 
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
+import static org.gridsuite.filter.model.expertfilter.OperatorType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BooleanExpertRuleTest {
-    private FilterLoader filterLoader;
-
-    @BeforeEach
-    void setUp() {
-        filterLoader = uuids -> null;
-    }
 
     @ParameterizedTest
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
-        BooleanExpertRuleDto rule = BooleanExpertRuleDto.builder().operator(operator).field(field).build();
-        assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+        BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).build();
+        assertThrows(expectedException, () -> rule.evaluate(equipment));
     }
 
     static Stream<Arguments> provideArgumentsForTestWithException() {
@@ -110,8 +100,8 @@ class BooleanExpertRuleTest {
         "provideArgumentsForHvdcLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) {
-        BooleanExpertRuleDto rule = BooleanExpertRuleDto.builder().operator(operator).field(field).value(value).build();
-        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+        BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).value(value).build();
+        assertEquals(expected, rule.evaluate(equipment));
     }
 
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {

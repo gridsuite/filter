@@ -34,15 +34,15 @@ class CombinatorExpertRuleTest {
 
     @Test
     void testStringValue() {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(null).build();
+        CombinatorExpertRuleDto rule = CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(null).build();
         assertNull(rule.getStringValue());
         assertEquals(DataType.COMBINATOR, rule.getDataType());
     }
 
     @ParameterizedTest
     @MethodSource({"provideArgumentsForTest"})
-    void testEvaluateRule(CombinatorType combinatorType, List<AbstractExpertRule> rules, Identifiable<?> equipment, boolean expected) {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinator(combinatorType).rules(rules).build();
+    void testEvaluateRule(CombinatorType combinatorType, List<AbstractExpertRuleDto> rules, Identifiable<?> equipment, boolean expected) {
+        CombinatorExpertRuleDto rule = CombinatorExpertRuleDto.builder().combinator(combinatorType).rules(rules).build();
         assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
@@ -58,49 +58,49 @@ class CombinatorExpertRuleTest {
         return Stream.of(
                 // --- Single rule AND --- //
                 Arguments.of(CombinatorType.AND, List.of(
-                    EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build()
+                    EnumExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build()
                 ), gen, true),
                 Arguments.of(CombinatorType.AND, List.of(
-                    EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build()
+                    EnumExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build()
                 ), gen, false),
                 // --- Rule tree AND --- //
                 Arguments.of(CombinatorType.AND, List.of(
-                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build(),
-                        CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(List.of(
-                                StringExpertRule.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
-                                NumberExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.MIN_P).value(-500.0).build()
+                        EnumExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build(),
+                        CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(List.of(
+                                StringExpertRuleDto.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
+                                NumberExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.MIN_P).value(-500.0).build()
                             )
                         ).build()
                 ), gen, true),
                 Arguments.of(CombinatorType.AND, List.of(
-                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build(),
-                        CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(List.of(
-                                StringExpertRule.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
-                                NumberExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.MIN_P).value(-400.0).build()
+                        EnumExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build(),
+                        CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(List.of(
+                                StringExpertRuleDto.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
+                                NumberExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.MIN_P).value(-400.0).build()
                             )
                         ).build()
                 ), gen, false),
                 // --- Single rule OR --- //
                 Arguments.of(CombinatorType.OR, List.of(
-                    EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build()
+                    EnumExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build()
                 ), gen, true),
                 Arguments.of(CombinatorType.OR, List.of(
-                    EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build()
+                    EnumExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build()
                 ), gen, false),
                 // --- Rule tree OR --- //
                 Arguments.of(CombinatorType.OR, List.of(
-                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build(),
-                        CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
-                                StringExpertRule.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
-                                BooleanExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.VOLTAGE_REGULATOR_ON).value(false).build()
+                        EnumExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build(),
+                        CombinatorExpertRuleDto.builder().combinator(CombinatorType.OR).rules(List.of(
+                                StringExpertRuleDto.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
+                                BooleanExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.VOLTAGE_REGULATOR_ON).value(false).build()
                             )
                         ).build()
                 ), gen, true),
                 Arguments.of(CombinatorType.OR, List.of(
-                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build(),
-                        CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
-                                StringExpertRule.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN_2").build(),
-                                BooleanExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.VOLTAGE_REGULATOR_ON).value(false).build()
+                        EnumExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build(),
+                        CombinatorExpertRuleDto.builder().combinator(CombinatorType.OR).rules(List.of(
+                                StringExpertRuleDto.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN_2").build(),
+                                BooleanExpertRuleDto.builder().operator(OperatorType.EQUALS).field(FieldType.VOLTAGE_REGULATOR_ON).value(false).build()
                             )
                         ).build()
                 ), gen, false)

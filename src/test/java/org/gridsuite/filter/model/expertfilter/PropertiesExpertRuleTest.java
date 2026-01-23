@@ -1,12 +1,9 @@
-package org.gridsuite.filter.expertfilter;
+package org.gridsuite.filter.model.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
-import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.expertfilter.expertrule.PropertiesExpertRuleDto;
+import org.gridsuite.filter.model.expertfilter.rules.PropertiesExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
-import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,43 +11,34 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
+import static org.gridsuite.filter.model.expertfilter.OperatorType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PropertiesExpertRuleTest {
-    private FilterLoader filterLoader;
-
-    @BeforeEach
-    void setUp() {
-        filterLoader = uuids -> null;
-    }
 
     @ParameterizedTest
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String propertyName, List<String> propertyValues, Class<Throwable> expectedException) {
-        PropertiesExpertRuleDto rule = PropertiesExpertRuleDto.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
-        assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).value(propertyValues).build();
+        assertThrows(expectedException, () -> rule.evaluate(equipment));
     }
 
     @Test
     void testPropertiesValue() {
-        PropertiesExpertRuleDto rule = PropertiesExpertRuleDto.builder().operator(IN).field(FieldType.FREE_PROPERTIES).propertyName("property")
-            .propertyValues(Collections.singletonList("value1")).build();
-        assertEquals(Collections.singletonList("value1"), rule.getPropertyValues());
-        assertEquals("property", rule.getStringValue());
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(IN).field(FieldType.FREE_PROPERTIES).propertyName("property")
+            .value(Collections.singletonList("value1")).build();
+        assertEquals(Collections.singletonList("value1"), rule.getValue());
         assertEquals(FieldType.FREE_PROPERTIES, rule.getField());
         assertEquals(IN, rule.getOperator());
-        rule = PropertiesExpertRuleDto.builder().operator(NOT_IN).field(FieldType.FREE_PROPERTIES).propertyName("property2")
-            .propertyValues(Collections.singletonList("value2")).build();
-        assertEquals(Collections.singletonList("value2"), rule.getPropertyValues());
-        assertEquals("property2", rule.getStringValue());
+        rule = PropertiesExpertRule.builder().operator(NOT_IN).field(FieldType.FREE_PROPERTIES).propertyName("property2")
+            .value(Collections.singletonList("value2")).build();
+        assertEquals(Collections.singletonList("value2"), rule.getValue());
         assertEquals(FieldType.FREE_PROPERTIES, rule.getField());
         assertEquals(NOT_IN, rule.getOperator());
     }
@@ -143,8 +131,8 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
-        PropertiesExpertRuleDto rule = PropertiesExpertRuleDto.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
-        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).value(propertyValues).build();
+        assertEquals(expected, rule.evaluate(equipment));
     }
 
     private static Stream<Arguments> provideArgumentsForSubstationTest() {

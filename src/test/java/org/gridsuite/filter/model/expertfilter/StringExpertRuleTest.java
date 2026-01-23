@@ -1,51 +1,31 @@
-package org.gridsuite.filter.expertfilter;
+package org.gridsuite.filter.model.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
-import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.expertfilter.expertrule.StringExpertRuleDto;
+import org.gridsuite.filter.model.expertfilter.rules.StringExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
-import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
+import static org.gridsuite.filter.model.expertfilter.OperatorType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StringExpertRuleTest {
-    private FilterLoader filterLoader;
-
-    @BeforeEach
-    void setUp() {
-        filterLoader = uuids -> null;
-    }
-
-    @Test
-    void testStringValue() {
-        StringExpertRuleDto rule = StringExpertRuleDto.builder().operator(IN).field(FieldType.ID).value(null).values(new TreeSet<>(Set.of("A", "B"))).build();
-        assertEquals("A,B", rule.getStringValue());
-        rule = StringExpertRuleDto.builder().operator(IS).field(FieldType.ID).value("C").values(null).build();
-        assertEquals("C", rule.getStringValue());
-    }
 
     @ParameterizedTest
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
-        StringExpertRuleDto rule = StringExpertRuleDto.builder().operator(operator).field(field).build();
-        assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+        StringExpertRule rule = StringExpertRule.builder().operator(operator).field(field).build();
+        assertThrows(expectedException, () -> rule.evaluate(equipment));
     }
 
     static Stream<Arguments> provideArgumentsForTestWithException() {
@@ -127,9 +107,9 @@ class StringExpertRuleTest {
         "provideArgumentsForHvdcLineTest",
         "provideArgumentsForHvdcConverterStationTest",
     })
-    void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
-        StringExpertRuleDto rule = StringExpertRuleDto.builder().operator(operator).field(field).value(value).values(values).build();
-        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+    void testEvaluateRule(OperatorType operator, FieldType field, String value, Identifiable<?> equipment, boolean expected) {
+        StringExpertRule rule = StringExpertRule.builder().operator(operator).field(field).value(value).build();
+        assertEquals(expected, rule.evaluate(equipment));
     }
 
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {

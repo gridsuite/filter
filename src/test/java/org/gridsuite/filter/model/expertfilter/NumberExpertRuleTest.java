@@ -1,4 +1,4 @@
-package org.gridsuite.filter.expertfilter;
+package org.gridsuite.filter.model.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
@@ -6,17 +6,13 @@ import com.powsybl.iidm.network.extensions.GeneratorStartup;
 import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import com.powsybl.iidm.network.impl.extensions.IdentifiableShortCircuitImpl;
-import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.expertfilter.expertrule.NumberExpertRuleDto;
+import org.gridsuite.filter.model.expertfilter.rules.NumberExpertRule;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
-import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -26,20 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 class NumberExpertRuleTest {
-    private FilterLoader filterLoader;
-
-    @BeforeEach
-    void setUp() {
-        filterLoader = uuids -> null;
-    }
 
     @ParameterizedTest
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
-        NumberExpertRuleDto rule = NumberExpertRuleDto.builder().operator(operator).field(field).build();
-        assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+        NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).build();
+        assertThrows(expectedException, () -> rule.evaluate(equipment));
     }
 
     private static Stream<Arguments> provideArgumentsForTestWithException() {
@@ -113,9 +103,9 @@ class NumberExpertRuleTest {
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
     })
-    void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
-        NumberExpertRuleDto rule = NumberExpertRuleDto.builder().operator(operator).field(field).value(value).values(values).build();
-        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+    void testEvaluateRule(OperatorType operator, FieldType field, Double value, Identifiable<?> equipment, boolean expected) {
+        NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).value(value).build();
+        assertEquals(expected, rule.evaluate(equipment));
     }
 
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {

@@ -4,55 +4,54 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.gridsuite.filter.expertfilter.expertrule;
+package org.gridsuite.filter.model.expertfilter.rules;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
-import org.gridsuite.filter.utils.expertfilter.DataType;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
  */
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @ToString(callSuper = true)
 @SuperBuilder
-public class CombinatorExpertRule extends AbstractExpertRule {
+public class CombinatorExpertRule implements ExpertRule {
+    private CombinatorType combinator;
+
+    private List<ExpertRule> rules;
+
     @Override
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public DataType getDataType() {
-        return DataType.COMBINATOR;
+    public void init(Network network) {
+        rules.forEach(rule -> rule.init(network));
     }
 
     @Override
-    public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
+    public boolean evaluate(Identifiable<?> identifiable) {
         // As long as there are rules, we go down the tree
-        if (CombinatorType.AND == this.getCombinator()) {
-            for (AbstractExpertRule rule : this.getRules()) {
+        if (CombinatorType.AND == getCombinator()) {
+            for (ExpertRule rule : this.getRules()) {
                 // Recursively evaluate the rule
-                if (!rule.evaluateRule(identifiable, filterLoader, cachedUuidFilters)) {
+                if (!rule.evaluate(identifiable)) {
                     // If any rule is false, the whole combination is false
                     return false;
                 }
             }
             return true;
-        } else if (CombinatorType.OR == this.getCombinator()) {
-            for (AbstractExpertRule rule : this.getRules()) {
+        } else if (CombinatorType.OR == getCombinator()) {
+            for (ExpertRule rule : getRules()) {
                 // Recursively evaluate the rule
-                if (rule.evaluateRule(identifiable, filterLoader, cachedUuidFilters)) {
+                if (rule.evaluate(identifiable)) {
                     // If any rule is true, the whole combination is true
                     return true;
                 }
@@ -61,10 +60,5 @@ public class CombinatorExpertRule extends AbstractExpertRule {
         } else {
             throw new PowsyblException(this.getCombinator() + " combinator type is not implemented with expert filter");
         }
-    }
-
-    @Override
-    public String getStringValue() {
-        return null;
     }
 }

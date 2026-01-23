@@ -6,13 +6,13 @@
  */
 package org.gridsuite.filter.utils;
 
-import org.gridsuite.filter.AbstractFilter;
+import org.gridsuite.filter.AbstractFilterDto;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.exception.FilterCycleException;
-import org.gridsuite.filter.expertfilter.ExpertFilter;
-import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRule;
+import org.gridsuite.filter.expertfilter.ExpertFilterDto;
+import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRuleDto;
+import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRuleDto;
+import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRuleDto;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.FilterCycleDetector;
@@ -34,29 +34,29 @@ class FilterCycleDetectorTest {
         UUID filterIdA = UUID.randomUUID();
         UUID filterIdB = UUID.randomUUID();
 
-        AbstractExpertRule ruleA = FilterUuidExpertRule.builder()
+        AbstractExpertRuleDto ruleA = FilterUuidExpertRuleDto.builder()
                 .field(FieldType.ID)
                 .operator(OperatorType.IS_PART_OF)
                 .values(Set.of(filterIdB.toString()))
                 .build();
-        CombinatorExpertRule combA = CombinatorExpertRule.builder()
+        CombinatorExpertRuleDto combA = CombinatorExpertRuleDto.builder()
                 .combinator(CombinatorType.AND)
                 .rules(List.of(ruleA))
                 .build();
-        ExpertFilter filterA = new ExpertFilter(filterIdA, new Date(), EquipmentType.LINE, combA);
+        ExpertFilterDto filterA = new ExpertFilterDto(filterIdA, new Date(), EquipmentType.LINE, combA);
 
-        AbstractExpertRule ruleB = FilterUuidExpertRule.builder()
+        AbstractExpertRuleDto ruleB = FilterUuidExpertRuleDto.builder()
                 .field(FieldType.ID)
                 .operator(OperatorType.IS_PART_OF)
                 .values(Set.of(filterIdA.toString()))
                 .build();
-        CombinatorExpertRule combB = CombinatorExpertRule.builder()
+        CombinatorExpertRuleDto combB = CombinatorExpertRuleDto.builder()
                 .combinator(CombinatorType.AND)
                 .rules(List.of(ruleB))
                 .build();
-        ExpertFilter filterB = new ExpertFilter(filterIdB, new Date(), EquipmentType.LINE, combB);
+        ExpertFilterDto filterB = new ExpertFilterDto(filterIdB, new Date(), EquipmentType.LINE, combB);
 
-        Map<UUID, AbstractFilter> filters = Map.of(filterIdA, filterA, filterIdB, filterB);
+        Map<UUID, AbstractFilterDto> filters = Map.of(filterIdA, filterA, filterIdB, filterB);
         FilterLoader loader = ids -> ids.stream().map(filters::get).toList();
 
         FilterCycleException ex = assertThrows(FilterCycleException.class, () -> FilterCycleDetector.checkNoCycle(filterA, loader));
@@ -70,26 +70,26 @@ class FilterCycleDetectorTest {
         UUID filterIdB = UUID.randomUUID();
         UUID filterIdC = UUID.randomUUID();
 
-        AbstractExpertRule ruleA = FilterUuidExpertRule.builder()
+        AbstractExpertRuleDto ruleA = FilterUuidExpertRuleDto.builder()
                 .field(FieldType.ID)
                 .operator(OperatorType.IS_PART_OF)
                 .values(Set.of(filterIdB.toString()))
                 .build();
-        ExpertFilter filterA = new ExpertFilter(filterIdA, new Date(), EquipmentType.LINE,
-                CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(List.of(ruleA)).build());
+        ExpertFilterDto filterA = new ExpertFilterDto(filterIdA, new Date(), EquipmentType.LINE,
+                CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(List.of(ruleA)).build());
 
-        AbstractExpertRule ruleB = FilterUuidExpertRule.builder()
+        AbstractExpertRuleDto ruleB = FilterUuidExpertRuleDto.builder()
                 .field(FieldType.ID)
                 .operator(OperatorType.IS_PART_OF)
                 .values(Set.of(filterIdC.toString()))
                 .build();
-        ExpertFilter filterB = new ExpertFilter(filterIdB, new Date(), EquipmentType.LINE,
-                CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(List.of(ruleB)).build());
+        ExpertFilterDto filterB = new ExpertFilterDto(filterIdB, new Date(), EquipmentType.LINE,
+                CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(List.of(ruleB)).build());
 
-        ExpertFilter filterC = new ExpertFilter(filterIdC, new Date(), EquipmentType.LINE,
-                CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(List.of()).build());
+        ExpertFilterDto filterC = new ExpertFilterDto(filterIdC, new Date(), EquipmentType.LINE,
+                CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(List.of()).build());
 
-        Map<UUID, AbstractFilter> filters = Map.of(filterIdA, filterA, filterIdB, filterB, filterIdC, filterC);
+        Map<UUID, AbstractFilterDto> filters = Map.of(filterIdA, filterA, filterIdB, filterB, filterIdC, filterC);
         FilterLoader loader = ids -> ids.stream().map(filters::get).toList();
 
         try {

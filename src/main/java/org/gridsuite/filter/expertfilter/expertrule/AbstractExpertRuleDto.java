@@ -10,21 +10,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.powsybl.iidm.network.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
+import org.gridsuite.filter.model.expertfilter.rules.ExpertRule;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.DataType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
@@ -34,20 +30,20 @@ import java.util.UUID;
         property = "dataType",
         include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = StringExpertRule.class, name = "STRING"),
-    @JsonSubTypes.Type(value = BooleanExpertRule.class, name = "BOOLEAN"),
-    @JsonSubTypes.Type(value = EnumExpertRule.class, name = "ENUM"),
-    @JsonSubTypes.Type(value = NumberExpertRule.class, name = "NUMBER"),
-    @JsonSubTypes.Type(value = CombinatorExpertRule.class, name = "COMBINATOR"),
-    @JsonSubTypes.Type(value = FilterUuidExpertRule.class, name = "FILTER_UUID"),
-    @JsonSubTypes.Type(value = PropertiesExpertRule.class, name = "PROPERTIES"),
+    @JsonSubTypes.Type(value = StringExpertRuleDto.class, name = "STRING"),
+    @JsonSubTypes.Type(value = BooleanExpertRuleDto.class, name = "BOOLEAN"),
+    @JsonSubTypes.Type(value = EnumExpertRuleDto.class, name = "ENUM"),
+    @JsonSubTypes.Type(value = NumberExpertRuleDto.class, name = "NUMBER"),
+    @JsonSubTypes.Type(value = CombinatorExpertRuleDto.class, name = "COMBINATOR"),
+    @JsonSubTypes.Type(value = FilterUuidExpertRuleDto.class, name = "FILTER_UUID"),
+    @JsonSubTypes.Type(value = PropertiesExpertRuleDto.class, name = "PROPERTIES"),
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @SuperBuilder
-public abstract class AbstractExpertRule {
+public abstract class AbstractExpertRuleDto {
 
     private CombinatorType combinator;
 
@@ -55,12 +51,12 @@ public abstract class AbstractExpertRule {
 
     private OperatorType operator;
 
-    private List<AbstractExpertRule> rules;
-
-    public abstract boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters);
+    private List<AbstractExpertRuleDto> rules;
 
     public abstract DataType getDataType();
 
     @JsonIgnore
     public abstract String getStringValue();
+
+    abstract public ExpertRule toModel();
 }

@@ -11,10 +11,10 @@ import com.powsybl.iidm.network.test.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.api.WithAssertions;
 import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.expertfilter.ExpertFilter;
-import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.StringExpertRule;
+import org.gridsuite.filter.expertfilter.ExpertFilterDto;
+import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRuleDto;
+import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRuleDto;
+import org.gridsuite.filter.expertfilter.expertrule.StringExpertRuleDto;
 import org.gridsuite.filter.identifierlistfilter.*;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
@@ -61,7 +61,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("P1", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.SUBSTATION,
@@ -73,11 +73,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("P1", identifiables.get(0).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.SUBSTATION,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("P1").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("P1").build());
         assertEquals(FilterType.EXPERT, expertFilter.getType());
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
@@ -92,7 +92,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("VLGEN", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.VOLTAGE_LEVEL,
@@ -103,11 +103,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("VLGEN", identifiables.get(0).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.VOLTAGE_LEVEL,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("VLGEN").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("VLGEN").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
@@ -123,7 +123,7 @@ class FiltersUtilsTest implements WithAssertions {
             new IdentifierListFilterEquipmentAttributes("NHV1_NHV2_1", 30.),
             new IdentifierListFilterEquipmentAttributes("NHV1_NHV2_2", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.LINE,
@@ -135,11 +135,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("NHV1_NHV2_2", identifiables.get(1).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.LINE,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("NHV1_NHV2_2").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("NHV1_NHV2_2").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
@@ -154,7 +154,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("NHV2_NLOAD", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.TWO_WINDINGS_TRANSFORMER,
@@ -165,11 +165,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("NHV2_NLOAD", identifiables.get(0).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.TWO_WINDINGS_TRANSFORMER,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("NHV2_NLOAD").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("NHV2_NLOAD").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
@@ -181,11 +181,11 @@ class FiltersUtilsTest implements WithAssertions {
         final Network network5 = ThreeWindingsTransformerNetworkFactory.create();
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.THREE_WINDINGS_TRANSFORMER,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("3WT").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("3WT").build());
 
         List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(expertFilter, network5, filterLoader);
         assertEquals(1, identifiables.size());
@@ -202,7 +202,7 @@ class FiltersUtilsTest implements WithAssertions {
             new IdentifierListFilterEquipmentAttributes("GEN", 30.),
             new IdentifierListFilterEquipmentAttributes("GEN2", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.GENERATOR,
@@ -214,11 +214,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("GEN2", identifiables.get(1).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.GENERATOR,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("GEN").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("GEN").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(2, identifiables.size());
@@ -234,7 +234,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("LOAD", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.LOAD,
@@ -245,11 +245,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("LOAD", identifiables.get(0).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.LOAD,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("LOAD").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("LOAD").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
@@ -264,7 +264,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("battery1", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.BATTERY,
@@ -274,11 +274,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals(0, identifiables.size());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.BATTERY,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("battery1").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("battery1").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(0, identifiables.size());
@@ -292,7 +292,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("SHUNT", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.SHUNT_COMPENSATOR,
@@ -303,11 +303,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("SHUNT", identifiables.get(0).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.SHUNT_COMPENSATOR,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("SHUNT").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("SHUNT").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network4, filterLoader);
         assertEquals(1, identifiables.size());
@@ -323,7 +323,7 @@ class FiltersUtilsTest implements WithAssertions {
             new IdentifierListFilterEquipmentAttributes("SVC2", 30.),
             new IdentifierListFilterEquipmentAttributes("SVC3", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.STATIC_VAR_COMPENSATOR,
@@ -335,11 +335,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("SVC3", identifiables.get(1).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.STATIC_VAR_COMPENSATOR,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("SVC").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("SVC").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network3, filterLoader);
         assertEquals(2, identifiables.size());
@@ -355,7 +355,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("danglineLine1", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.DANGLING_LINE,
@@ -365,11 +365,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals(0, identifiables.size());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.DANGLING_LINE,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("danglineLine1").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("danglineLine1").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(0, identifiables.size());
@@ -383,7 +383,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("busbarSection1", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.BUSBAR_SECTION,
@@ -393,11 +393,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals(0, identifiables.size());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.BUSBAR_SECTION,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("busbarSection1").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("busbarSection1").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(0, identifiables.size());
@@ -408,11 +408,11 @@ class FiltersUtilsTest implements WithAssertions {
         final Network network = prepareNetwork();
 
         // expert filter only for bus
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.BUS,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("NGEN").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("NGEN").build());
 
         List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(1, identifiables.size());
@@ -427,7 +427,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("lcc1", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.LCC_CONVERTER_STATION,
@@ -437,11 +437,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals(0, identifiables.size());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.LCC_CONVERTER_STATION,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("lcc1").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("lcc1").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(0, identifiables.size());
@@ -455,7 +455,7 @@ class FiltersUtilsTest implements WithAssertions {
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
             new IdentifierListFilterEquipmentAttributes("L", 30.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.HVDC_LINE,
@@ -466,11 +466,11 @@ class FiltersUtilsTest implements WithAssertions {
         assertEquals("L", identifiables.get(0).getId());
 
         // expert filter
-        ExpertFilter expertFilter = new ExpertFilter(
+        ExpertFilterDto expertFilter = new ExpertFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.HVDC_LINE,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("L").build());
+            StringExpertRuleDto.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.IS).value("L").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network2, filterLoader);
         assertEquals(1, identifiables.size());  // expert filter for HVDC line is now implemented
@@ -487,7 +487,7 @@ class FiltersUtilsTest implements WithAssertions {
             new IdentifierListFilterEquipmentAttributes("GEN2", 50.),
             new IdentifierListFilterEquipmentAttributes("notFound2", 5.));
 
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.GENERATOR,
@@ -527,7 +527,7 @@ class FiltersUtilsTest implements WithAssertions {
             new IdentifierListFilterEquipmentAttributes("GEN2", 30.));
 
         UUID uuid1 = UUID.randomUUID();
-        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+        IdentifierListFilterDto identifierListFilter = new IdentifierListFilterDto(
             uuid1,
             new Date(),
             EquipmentType.GENERATOR,
@@ -548,10 +548,10 @@ class FiltersUtilsTest implements WithAssertions {
     @Test
     void testEquipmentNameFilterNoMatch() {
         final Network network2 = prepareHvdcNetwork();
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(StringExpertRule.builder().field(NAME).operator(IS).value("unexisting name").build());
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter vscConverterStationFilter = new ExpertFilter(UUID.randomUUID(), new Date(),
+        List<AbstractExpertRuleDto> rules = new ArrayList<>();
+        rules.add(StringExpertRuleDto.builder().field(NAME).operator(IS).value("unexisting name").build());
+        AbstractExpertRuleDto parentRule = CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(rules).build();
+        ExpertFilterDto vscConverterStationFilter = new ExpertFilterDto(UUID.randomUUID(), new Date(),
             EquipmentType.VSC_CONVERTER_STATION, parentRule);
 
         assertNotNull(vscConverterStationFilter.getRules());
@@ -565,10 +565,10 @@ class FiltersUtilsTest implements WithAssertions {
     @Test
     void testEquipmentNameFilterWithMatch() {
         final Network network2 = prepareHvdcNetwork();
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(StringExpertRule.builder().field(NAME).operator(IS).value("Converter1").build());
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter vscConverterStationFilter = new ExpertFilter(UUID.randomUUID(), new Date(),
+        List<AbstractExpertRuleDto> rules = new ArrayList<>();
+        rules.add(StringExpertRuleDto.builder().field(NAME).operator(IS).value("Converter1").build());
+        AbstractExpertRuleDto parentRule = CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(rules).build();
+        ExpertFilterDto vscConverterStationFilter = new ExpertFilterDto(UUID.randomUUID(), new Date(),
             EquipmentType.VSC_CONVERTER_STATION, parentRule);
 
         assertNotNull(vscConverterStationFilter.getRules());
@@ -581,10 +581,10 @@ class FiltersUtilsTest implements WithAssertions {
     @Test
     void testEquipmentNameFilterWithNullValueInEquipments() {
         final Network network = prepareNetwork();
-        List<AbstractExpertRule> rules = new ArrayList<>();
-        rules.add(StringExpertRule.builder().field(NAME).operator(IS).value("some name").build());
-        AbstractExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
-        ExpertFilter voltageLevelFilter = new ExpertFilter(UUID.randomUUID(), new Date(),
+        List<AbstractExpertRuleDto> rules = new ArrayList<>();
+        rules.add(StringExpertRuleDto.builder().field(NAME).operator(IS).value("some name").build());
+        AbstractExpertRuleDto parentRule = CombinatorExpertRuleDto.builder().combinator(CombinatorType.AND).rules(rules).build();
+        ExpertFilterDto voltageLevelFilter = new ExpertFilterDto(UUID.randomUUID(), new Date(),
             EquipmentType.VOLTAGE_LEVEL, parentRule);
 
         assertNotNull(voltageLevelFilter.getRules());

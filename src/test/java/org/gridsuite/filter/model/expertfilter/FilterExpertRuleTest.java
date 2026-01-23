@@ -1,4 +1,4 @@
-package org.gridsuite.filter.expertfilter;
+package org.gridsuite.filter.model.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
@@ -15,11 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
@@ -28,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-class FilterUuidExpertRuleTest {
+class FilterExpertRuleTest {
     private static final UUID FILTER_GENERATOR_1_UUID = UUID.fromString("7928181c-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_GENERATOR_2_UUID = UUID.fromString("7928181d-7977-4592-ba19-88027e4254e4");
     private static final UUID FILTER_VOLTAGE_LEVEL_GENERATOR_1_UUID = UUID.fromString("7928181e-7977-4592-ba19-88027e4254e4");

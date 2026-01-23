@@ -7,13 +7,13 @@
 
 package org.gridsuite.filter.utils.expertfilter;
 
-import org.gridsuite.filter.AbstractFilter;
+import org.gridsuite.filter.AbstractFilterDto;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.exception.FilterCycleException;
-import org.gridsuite.filter.expertfilter.ExpertFilter;
-import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRule;
+import org.gridsuite.filter.expertfilter.ExpertFilterDto;
+import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRuleDto;
+import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRuleDto;
+import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRuleDto;
 
 import java.util.*;
 
@@ -32,11 +32,11 @@ public final class FilterCycleDetector {
      * @param filter       the starting filter
      * @param filterLoader loader used to retrieve referenced filters
      */
-    public static void checkNoCycle(AbstractFilter filter, FilterLoader filterLoader) {
+    public static void checkNoCycle(AbstractFilterDto filter, FilterLoader filterLoader) {
         checkNoCycle(filter, filterLoader, new ArrayList<>());
     }
 
-    private static void checkNoCycle(AbstractFilter filter, FilterLoader loader,
+    private static void checkNoCycle(AbstractFilterDto filter, FilterLoader loader,
                                      List<UUID> visiting) {
         UUID id = filter.getId();
         if (id != null) {
@@ -48,7 +48,7 @@ public final class FilterCycleDetector {
             visiting.addLast(id);
         }
 
-        if (filter instanceof ExpertFilter expertFilter) {
+        if (filter instanceof ExpertFilterDto expertFilter) {
             checkRule(expertFilter.getRules(), loader, visiting);
         }
 
@@ -57,23 +57,23 @@ public final class FilterCycleDetector {
         }
     }
 
-    private static void checkRule(AbstractExpertRule rule, FilterLoader loader,
+    private static void checkRule(AbstractExpertRuleDto rule, FilterLoader loader,
                                   List<UUID> visiting) {
         switch (rule) {
-            case CombinatorExpertRule combinatorRule -> {
-                List<AbstractExpertRule> rules = combinatorRule.getRules();
+            case CombinatorExpertRuleDto combinatorRule -> {
+                List<AbstractExpertRuleDto> rules = combinatorRule.getRules();
                 if (rules != null) {
-                    for (AbstractExpertRule r : rules) {
+                    for (AbstractExpertRuleDto r : rules) {
                         checkRule(r, loader, visiting);
                     }
                 }
             }
-            case FilterUuidExpertRule uuidRule -> {
+            case FilterUuidExpertRuleDto uuidRule -> {
                 Set<String> values = uuidRule.getValues();
                 if (values != null) {
                     for (String value : values) {
                         UUID refId = UUID.fromString(value);
-                        List<AbstractFilter> referenced = loader.getFilters(List.of(refId));
+                        List<AbstractFilterDto> referenced = loader.getFilters(List.of(refId));
                         if (!referenced.isEmpty() && referenced.getFirst() != null) {
                             checkNoCycle(referenced.getFirst(), loader, visiting);
                         }

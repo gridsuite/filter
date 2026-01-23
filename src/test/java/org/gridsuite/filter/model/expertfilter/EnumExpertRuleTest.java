@@ -1,43 +1,33 @@
-package org.gridsuite.filter.expertfilter;
+package org.gridsuite.filter.model.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
-import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.expertfilter.expertrule.EnumExpertRuleDto;
+import org.gridsuite.filter.model.expertfilter.rules.EnumExpertRule;
 import org.gridsuite.filter.utils.RegulationType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
-import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.utils.expertfilter.RatioRegulationModeType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
+import static org.gridsuite.filter.model.expertfilter.OperatorType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EnumExpertRuleTest {
-    private FilterLoader filterLoader;
-
-    @BeforeEach
-    void setUp() {
-        filterLoader = uuids -> null;
-    }
 
     @ParameterizedTest
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String value, Set<String> values, Class<Throwable> expectedException) {
-        EnumExpertRuleDto rule = EnumExpertRuleDto.builder().operator(operator).field(field).value(value).values(values).build();
-        assertThrows(expectedException, () -> rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String value, Class<Throwable> expectedException) {
+        EnumExpertRule rule = EnumExpertRule.builder().operator(operator).field(field).value(value).build();
+        assertThrows(expectedException, () -> rule.evaluate(equipment));
     }
 
     private static Stream<Arguments> provideArgumentsForTestWithException() {
@@ -89,29 +79,29 @@ class EnumExpertRuleTest {
 
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
-                Arguments.of(EQUALS, FieldType.RATED_S, network, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, voltageLevel, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.P0, generator, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, load, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, shuntCompensator, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, bus, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, battery, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, substation, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.P0, twoWindingsTransformer, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, svar, null, null, PowsyblException.class),
-                Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, network, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, voltageLevel, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.P0, generator, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, load, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, shuntCompensator, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, bus, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, busbarSection, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, battery, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, substation, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.P0, twoWindingsTransformer, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, svar, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, null, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
-                Arguments.of(IS, FieldType.ENERGY_SOURCE, generator, null, null, PowsyblException.class),
-                Arguments.of(IS, FieldType.RATIO_REGULATION_MODE, twoWindingsTransformer, null, null, PowsyblException.class),
-                Arguments.of(IS, FieldType.PHASE_REGULATION_MODE, twoWindingsTransformer, null, null, PowsyblException.class),
+                Arguments.of(IS, FieldType.ENERGY_SOURCE, generator, null, PowsyblException.class),
+                Arguments.of(IS, FieldType.RATIO_REGULATION_MODE, twoWindingsTransformer, null, PowsyblException.class),
+                Arguments.of(IS, FieldType.PHASE_REGULATION_MODE, twoWindingsTransformer, null, PowsyblException.class),
 
                 // --- Test an unsupported equipment type for field type RATIO_REGULATION_MODE --- //
-                Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, battery, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, battery, null, PowsyblException.class),
 
                 // --- Test an unsupported equipment type for field type PHASE_REGULATION_MODE --- //
-                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, shuntCompensator, null, null, PowsyblException.class)
+                Arguments.of(EQUALS, FieldType.PHASE_REGULATION_MODE, shuntCompensator, null, PowsyblException.class)
                 );
     }
 
@@ -132,9 +122,9 @@ class EnumExpertRuleTest {
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
     })
-    void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
-        EnumExpertRuleDto rule = EnumExpertRuleDto.builder().operator(operator).field(field).value(value).values(values).build();
-        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+    void testEvaluateRule(OperatorType operator, FieldType field, String value, Identifiable<?> equipment, boolean expected) {
+        EnumExpertRule rule = EnumExpertRule.builder().operator(operator).field(field).value(value).build();
+        assertEquals(expected, rule.evaluate(equipment));
     }
 
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {
@@ -155,19 +145,19 @@ class EnumExpertRuleTest {
         return Stream.of(
                 // --- EQUALS --- //
                 // Generator fields
-                Arguments.of(EQUALS, FieldType.ENERGY_SOURCE, EnergySource.HYDRO.name(), null, gen, true),
-                Arguments.of(EQUALS, FieldType.ENERGY_SOURCE, EnergySource.THERMAL.name(), null, gen, false),
+                Arguments.of(EQUALS, FieldType.ENERGY_SOURCE, EnergySource.HYDRO.name(), gen, true),
+                Arguments.of(EQUALS, FieldType.ENERGY_SOURCE, EnergySource.THERMAL.name(), gen, false),
                 // VoltageLevel fields
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, gen, true),
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, gen, false),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), gen, true),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), gen, false),
 
                 // --- NOT_EQUALS --- //
                 // Generator fields
-                Arguments.of(NOT_EQUALS, FieldType.ENERGY_SOURCE, EnergySource.THERMAL.name(), null, gen, true),
-                Arguments.of(NOT_EQUALS, FieldType.ENERGY_SOURCE, EnergySource.HYDRO.name(), null, gen, false),
+                Arguments.of(NOT_EQUALS, FieldType.ENERGY_SOURCE, EnergySource.THERMAL.name(), gen, true),
+                Arguments.of(NOT_EQUALS, FieldType.ENERGY_SOURCE, EnergySource.HYDRO.name(), gen, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, gen, true),
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, gen, false),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), gen, true),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), gen, false),
 
                 // --- IN --- //
                 // Generator fields
@@ -205,17 +195,17 @@ class EnumExpertRuleTest {
         return Stream.of(
                 // --- EQUALS --- //
                 // VoltageLevel fields
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, load, true),
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, load, false),
-                Arguments.of(EQUALS, FieldType.LOAD_TYPE, LoadType.AUXILIARY.name(), null, load, true),
-                Arguments.of(EQUALS, FieldType.LOAD_TYPE, LoadType.UNDEFINED.name(), null, load, false),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), load,, true),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), load,, false),
+                Arguments.of(EQUALS, FieldType.LOAD_TYPE, LoadType.AUXILIARY.name(), load,, true),
+                Arguments.of(EQUALS, FieldType.LOAD_TYPE, LoadType.UNDEFINED.name(), load,, false),
 
                 // --- NOT_EQUALS --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, load, true),
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, load, false),
-                Arguments.of(NOT_EQUALS, FieldType.LOAD_TYPE, LoadType.AUXILIARY.name(), null, load, false),
-                Arguments.of(NOT_EQUALS, FieldType.LOAD_TYPE, LoadType.FICTITIOUS.name(), null, load, true),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), load,, true),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), load,, false),
+                Arguments.of(NOT_EQUALS, FieldType.LOAD_TYPE, LoadType.AUXILIARY.name(), load,, false),
+                Arguments.of(NOT_EQUALS, FieldType.LOAD_TYPE, LoadType.FICTITIOUS.name(), load,, true),
 
                 // --- IN --- //
                  // VoltageLevel fields
@@ -245,13 +235,13 @@ class EnumExpertRuleTest {
         return Stream.of(
                 // --- EQUALS --- //
                 // VoltageLevel fields
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, bus, true),
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, bus, false),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), bus, true),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), bus, false),
 
                 // --- NOT_EQUALS --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, bus, true),
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, bus, false),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), bus, true),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), bus, false),
 
                 // --- IN --- //
                 // VoltageLevel fields
@@ -281,13 +271,13 @@ class EnumExpertRuleTest {
         return Stream.of(
                 // --- EQUALS --- //
                 // VoltageLevel fields
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, busbarSection, true),
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, busbarSection, false),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), busbarSection, true),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), busbarSection, false),
 
                 // --- NOT_EQUALS --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, busbarSection, true),
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, busbarSection, false),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), busbarSection, true),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), busbarSection, false),
 
                 // --- IN --- //
                 // VoltageLevel fields
@@ -345,21 +335,21 @@ class EnumExpertRuleTest {
         return Stream.of(
                 // --- EQUALS --- //
                 // VoltageLevel fields
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, shuntCompensator, true),
-                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, shuntCompensator, false),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(),shuntCompensator, true),
+                Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(),shuntCompensator, false),
 
                 // Shunt Compensator fields
-                Arguments.of(EQUALS, FieldType.SHUNT_COMPENSATOR_TYPE, "REACTOR", null, shuntCompensator, true),
-                Arguments.of(EQUALS, FieldType.SHUNT_COMPENSATOR_TYPE, "CAPACITOR", null, shuntCompensator, false),
+                Arguments.of(EQUALS, FieldType.SHUNT_COMPENSATOR_TYPE, "REACTOR",shuntCompensator, true),
+                Arguments.of(EQUALS, FieldType.SHUNT_COMPENSATOR_TYPE, "CAPACITOR",shuntCompensator, false),
 
                 // --- NOT_EQUALS --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, shuntCompensator, true),
-                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, shuntCompensator, false),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(),shuntCompensator, true),
+                Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(),shuntCompensator, false),
 
                 // Shunt Compensator fields
-                Arguments.of(NOT_EQUALS, FieldType.SHUNT_COMPENSATOR_TYPE, "CAPACITOR", null, shuntCompensator, true),
-                Arguments.of(NOT_EQUALS, FieldType.SHUNT_COMPENSATOR_TYPE, "REACTOR", null, shuntCompensator, false),
+                Arguments.of(NOT_EQUALS, FieldType.SHUNT_COMPENSATOR_TYPE, "CAPACITOR",shuntCompensator, true),
+                Arguments.of(NOT_EQUALS, FieldType.SHUNT_COMPENSATOR_TYPE, "REACTOR",shuntCompensator, false),
 
                 // --- IN --- //
                 // VoltageLevel fields
