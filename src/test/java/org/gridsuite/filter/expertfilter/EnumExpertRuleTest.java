@@ -5,6 +5,7 @@ import com.powsybl.iidm.network.*;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.EnumExpertRule;
 import org.gridsuite.filter.utils.RegulationType;
+import org.gridsuite.filter.utils.NullishFilterLoader;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.utils.expertfilter.RatioRegulationModeType;
@@ -28,7 +29,7 @@ class EnumExpertRuleTest {
 
     @BeforeEach
     void setUp() {
-        filterLoader = uuids -> null;
+        filterLoader = new NullishFilterLoader();
     }
 
     @ParameterizedTest
