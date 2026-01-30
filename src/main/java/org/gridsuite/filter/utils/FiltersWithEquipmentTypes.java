@@ -7,7 +7,7 @@
 
 package org.gridsuite.filter.utils;
 
-import org.gridsuite.filter.IFilterAttributes;
+import org.gridsuite.filter.identifierlistfilter.FilterAttributes;
 
 import java.util.List;
 
@@ -16,6 +16,6 @@ import java.util.List;
  *
  * @author Florent MILLOT <florent.millot@rte-france.com>
  */
-public record FiltersWithEquipmentTypes(List<IFilterAttributes> filters,
+public record FiltersWithEquipmentTypes(List<FilterAttributes> filters,
                                         List<EquipmentTypesByFilterId> selectedEquipmentTypesByFilter) {
 }
