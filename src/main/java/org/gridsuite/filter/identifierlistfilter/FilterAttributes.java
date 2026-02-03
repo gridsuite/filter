@@ -10,6 +10,7 @@ package org.gridsuite.filter.identifierlistfilter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.IFilterAttributes;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder
 public class FilterAttributes implements IFilterAttributes {
     UUID id;
     Date modificationDate;

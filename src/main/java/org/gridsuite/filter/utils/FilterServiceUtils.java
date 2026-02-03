@@ -10,10 +10,7 @@ import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
 import org.gridsuite.filter.*;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
-import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
-import org.gridsuite.filter.identifierlistfilter.FilteredIdentifiables;
-import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
-import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
+import org.gridsuite.filter.identifierlistfilter.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,14 +63,11 @@ public final class FilterServiceUtils {
         Map<String, IdentifiableAttributes> result = new TreeMap<>();
         Map<String, IdentifiableAttributes> notFound = new TreeMap<>();
 
-        filtersWithEquipmentTypes.filters().forEach((IFilterAttributes filterAttributes) -> {
-                UUID filterUuid = filterAttributes.getId();
-                Optional<AbstractFilter> filterList = filterLoader.getFilter(filterUuid);
-                if (filterList.isEmpty()) {
-                    return;
-                }
-                AbstractFilter filter = filterList.get();
+        List<AbstractFilter> abstractFilters = filterLoader.getFilters(filtersWithEquipmentTypes.filters().stream().map(FilterAttributes::getId).toList());
+
+        abstractFilters.forEach(filter -> {
                 Objects.requireNonNull(filter);
+                UUID filterUuid = filter.getId();
                 EquipmentType filterEquipmentType = filter.getEquipmentType();
                 FilteredIdentifiables filteredIdentifiables = filter.toFilteredIdentifiables(FilterServiceUtils.getIdentifiableAttributes(filter, network, filterLoader));
 
