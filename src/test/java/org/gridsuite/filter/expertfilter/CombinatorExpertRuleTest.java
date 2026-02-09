@@ -6,7 +6,6 @@ import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.IdentifiableType;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.*;
-import org.gridsuite.filter.utils.NullishFilterLoader;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.DataType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
@@ -30,7 +29,7 @@ class CombinatorExpertRuleTest {
 
     @BeforeEach
     void setUp() {
-        filterLoader = new NullishFilterLoader();
+        filterLoader = uuids -> null;
     }
 
     @Test

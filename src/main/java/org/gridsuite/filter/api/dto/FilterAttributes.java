@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package org.gridsuite.filter.identifierlistfilter;
+package org.gridsuite.filter.api.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
