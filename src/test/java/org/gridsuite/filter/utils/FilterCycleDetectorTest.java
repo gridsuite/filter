@@ -63,10 +63,6 @@ class FilterCycleDetectorTest {
                 return uuids.stream().map(filters::get).toList();
             }
 
-            @Override
-            public Optional<AbstractFilter> getFilter(UUID uuid) {
-                return Optional.of(filters.get(uuid));
-            }
         };
 
         FilterCycleException ex = assertThrows(FilterCycleException.class, () -> FilterCycleDetector.checkNoCycle(filterA, loader));
@@ -106,10 +102,6 @@ class FilterCycleDetectorTest {
                 return uuids.stream().map(filters::get).toList();
             }
 
-            @Override
-            public Optional<AbstractFilter> getFilter(UUID uuid) {
-                return Optional.of(filters.get(uuid));
-            }
         };
 
         try {

@@ -540,10 +540,6 @@ class FiltersUtilsTest implements WithAssertions {
                 return List.of(identifierListFilter);
             }
 
-            @Override
-            public Optional<AbstractFilter> getFilter(UUID uuid) {
-                return Optional.of(identifierListFilter);
-            }
         };
 
         List<FilterEquipments> filterEquipments = FilterServiceUtils.getFilterEquipmentsFromUuid(network, uuid1, filterLoader1);

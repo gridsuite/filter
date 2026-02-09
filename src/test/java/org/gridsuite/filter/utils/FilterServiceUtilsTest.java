@@ -45,10 +45,6 @@ class FilterServiceUtilsTest {
                 return List.of(lineFilter);
             }
 
-            @Override
-            public Optional<AbstractFilter> getFilter(UUID uuid) {
-                return Optional.of(lineFilter);
-            }
         });
         List<IdentifiableAttributes> expected = new ArrayList<>();
         expected.add(new IdentifiableAttributes("NHV1_NHV2_1", IdentifiableType.LINE, null));
@@ -87,10 +83,6 @@ class FilterServiceUtilsTest {
                 return List.of(substationFilter);
             }
 
-            @Override
-            public Optional<AbstractFilter> getFilter(UUID uuid) {
-                return Optional.of(substationFilter);
-            }
         });
 
         List<IdentifiableAttributes> expected = new ArrayList<>();

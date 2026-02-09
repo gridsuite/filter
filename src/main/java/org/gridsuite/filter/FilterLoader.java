@@ -7,7 +7,6 @@
 package org.gridsuite.filter;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -15,6 +14,4 @@ import java.util.UUID;
  */
 public interface FilterLoader {
     List<AbstractFilter> getFilters(List<UUID> uuids);
-
-    Optional<AbstractFilter> getFilter(UUID uuid);
 }

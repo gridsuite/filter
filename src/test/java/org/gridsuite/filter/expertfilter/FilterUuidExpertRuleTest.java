@@ -86,10 +86,6 @@ class FilterUuidExpertRuleTest {
                 return List.of();
             }
 
-            @Override
-            public Optional<AbstractFilter> getFilter(UUID uuid) {
-                return Optional.empty();
-            }
         };
     }
 
