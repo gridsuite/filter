@@ -4,8 +4,6 @@ import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.impl.NetworkFactoryImpl;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
-import org.gridsuite.filter.AbstractFilter;
-import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
@@ -39,13 +37,7 @@ class FilterServiceUtilsTest {
         filterAttributes.setId(filterId);
         FiltersWithEquipmentTypes filtersBody = new FiltersWithEquipmentTypes(List.of(filterAttributes), List.of());
         Network network = EurostagTutorialExample1Factory.createWithMoreGenerators(new NetworkFactoryImpl());
-        FilteredIdentifiables result = FilterServiceUtils.evaluateFiltersWithEquipmentTypes(filtersBody, network, new FilterLoader() {
-            @Override
-            public List<AbstractFilter> getFilters(List<UUID> uuids) {
-                return List.of(lineFilter);
-            }
-
-        });
+        FilteredIdentifiables result = FilterServiceUtils.evaluateFiltersWithEquipmentTypes(filtersBody, network, uuids -> List.of(lineFilter));
         List<IdentifiableAttributes> expected = new ArrayList<>();
         expected.add(new IdentifiableAttributes("NHV1_NHV2_1", IdentifiableType.LINE, null));
         expected.add(new IdentifiableAttributes("NHV1_NHV2_2", IdentifiableType.LINE, null));
@@ -77,13 +69,7 @@ class FilterServiceUtilsTest {
         EquipmentTypesByFilterId equipmentTypesByFilterId = new EquipmentTypesByFilterId(filterId, Set.of(IdentifiableType.LINE, IdentifiableType.GENERATOR));
         FiltersWithEquipmentTypes filtersBody = new FiltersWithEquipmentTypes(List.of(filterAttributes), List.of(equipmentTypesByFilterId));
         Network network = EurostagTutorialExample1Factory.createWithMoreGenerators(new NetworkFactoryImpl());
-        FilteredIdentifiables result = FilterServiceUtils.evaluateFiltersWithEquipmentTypes(filtersBody, network, new FilterLoader() {
-            @Override
-            public List<AbstractFilter> getFilters(List<UUID> uuids) {
-                return List.of(substationFilter);
-            }
-
-        });
+        FilteredIdentifiables result = FilterServiceUtils.evaluateFiltersWithEquipmentTypes(filtersBody, network, uuids -> List.of(substationFilter));
 
         List<IdentifiableAttributes> expected = new ArrayList<>();
         // Lines connected to NHV1 substation in the sample network
