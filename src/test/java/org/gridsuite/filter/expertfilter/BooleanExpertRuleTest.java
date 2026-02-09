@@ -5,7 +5,6 @@ import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.BooleanExpertRule;
-import org.gridsuite.filter.utils.NullishFilterLoader;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +25,7 @@ class BooleanExpertRuleTest {
 
     @BeforeEach
     void setUp() {
-        filterLoader = new NullishFilterLoader();
+        filterLoader = uuids -> null;
     }
 
     @ParameterizedTest
