@@ -8,9 +8,14 @@ package org.gridsuite.filter.utils;
 
 import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
-import org.gridsuite.filter.*;
+import org.gridsuite.filter.AbstractFilter;
+import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.api.dto.EquipmentTypesByFilterId;
+import org.gridsuite.filter.api.dto.FilterAttributes;
+import org.gridsuite.filter.api.dto.FiltersWithEquipmentTypes;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.*;
+import org.gridsuite.filter.internal.utils.FilterWithEquipmentTypesUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,18 +43,6 @@ public final class FilterServiceUtils {
                 .map(identifiable -> new IdentifiableAttributes(identifiable.getId(), identifiable.getType(), null))
                 .toList();
         }
-    }
-
-    public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, List<UUID> uuids, FilterLoader filterLoader) {
-        return getFilterEquipmentsFromUuid(network, uuids, filterLoader, Set.of());
-    }
-
-    public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, List<UUID> uuids, FilterLoader filterLoader, Set<FilterType> filterTypesToExclude) {
-        List<AbstractFilter> filters = filterLoader.getFilters(uuids);
-        return filters.stream()
-            .filter(filter -> filter != null && !filterTypesToExclude.contains(filter.getType()))
-            .map(filter -> filter.toFilterEquipments(FilterServiceUtils.getIdentifiableAttributes(filter, network, filterLoader)))
-            .toList();
     }
 
     public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, UUID uuid, FilterLoader filterLoader) {
@@ -90,7 +83,7 @@ public final class FilterServiceUtils {
                                     + " : substation and voltage level filters should contain an equipment types list")
                             );
 
-                        // This list is the result of the original filter and so necessarily contais a list of IDs of substations or voltage levels
+                        // This list is the result of the original filter and so necessarily contains a list of IDs of substations or voltage levels
                         Set<String> filteredEquipmentIds = filteredIdentifiables.equipmentIds().stream().map(IdentifiableAttributes::getId).collect(Collectors.toSet());
                         List<ExpertFilter> filters = FilterWithEquipmentTypesUtils.createFiltersForSubEquipments(filterEquipmentType,
                             filteredEquipmentIds,
