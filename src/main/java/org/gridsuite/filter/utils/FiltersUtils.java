@@ -77,8 +77,8 @@ public final class FiltersUtils {
         return new ArrayList<>(stream.toList());
     }
 
-    private static List<Identifiable<?>> getDanglingLineList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
-        Stream<Injection<DanglingLine>> stream = getInjectionList(network.getDanglingLineStream().map(dl -> dl), filter, filterLoader);
+    private static List<Identifiable<?>> getBoundaryLineList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
+        Stream<Injection<BoundaryLine>> stream = getInjectionList(network.getBoundaryLineStream().map(bl -> bl), filter, filterLoader);
         return new ArrayList<>(stream.toList());
     }
 
@@ -229,7 +229,7 @@ public final class FiltersUtils {
             case LCC_CONVERTER_STATION -> getLccConverterStationList(network, filter, filterLoader);
             case VSC_CONVERTER_STATION -> getVscConverterStationList(network, filter, filterLoader);
             case HVDC_LINE -> getHvdcList(network, filter, filterLoader);
-            case DANGLING_LINE -> getDanglingLineList(network, filter, filterLoader);
+            case BOUNDARY_LINE -> getBoundaryLineList(network, filter, filterLoader);
             case LINE -> getLineList(network, filter, filterLoader);
             case TWO_WINDINGS_TRANSFORMER -> get2WTransformerList(network, filter, filterLoader);
             case THREE_WINDINGS_TRANSFORMER -> get3WTransformerList(network, filter, filterLoader);

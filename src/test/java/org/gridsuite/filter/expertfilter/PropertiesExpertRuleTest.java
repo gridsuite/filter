@@ -138,7 +138,7 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForShuntCompensatorTest",
         "provideArgumentsForLineTest",
         "provideArgumentsForStaticVarCompensatorTest",
-        "provideArgumentsForDanglingLineTest",
+        "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
     })
@@ -526,10 +526,10 @@ class PropertiesExpertRuleTest {
         );
     }
 
-    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
-        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
-        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
-        Mockito.when(danglingLine.getProperty("propertyNameDL")).thenReturn("PropertyValueDL");
+    private static Stream<Arguments> provideArgumentsForBoundaryLineTest() {
+        BoundaryLine boundaryLine = Mockito.mock(BoundaryLine.class);
+        Mockito.when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        Mockito.when(boundaryLine.getProperty("propertyNameBL")).thenReturn("PropertyValueBL");
 
         Substation substation = Mockito.mock(Substation.class);
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
@@ -537,24 +537,24 @@ class PropertiesExpertRuleTest {
         Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+        Mockito.when(boundaryLine.getTerminal()).thenReturn(terminal);
         Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
 
         return Stream.of(
             // --- IN --- //
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL"), danglingLine, true),
-            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL2"), danglingLine, false),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), danglingLine, true),
-            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), danglingLine, false),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), danglingLine, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), danglingLine, false),
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameBL", List.of("propertyValueBL"), boundaryLine, true),
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameBL", List.of("propertyValueBL2"), boundaryLine, false),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), boundaryLine, true),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), boundaryLine, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), boundaryLine, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), boundaryLine, false),
             // --- NOT_IN --- //
-            Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL"), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameDL", List.of("propertyValueDL2"), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), danglingLine, true)
+            Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameBL", List.of("propertyValueBL"), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameBL", List.of("propertyValueBL2"), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), boundaryLine, true)
         );
     }
 

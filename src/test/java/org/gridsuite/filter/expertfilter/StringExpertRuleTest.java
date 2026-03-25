@@ -122,7 +122,7 @@ class StringExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingsTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
-        "provideArgumentsForDanglingLineTest",
+        "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingsTransformerTest",
         "provideArgumentsForHvdcLineTest",
         "provideArgumentsForHvdcConverterStationTest",
@@ -1278,157 +1278,157 @@ class StringExpertRuleTest {
             );
     }
 
-    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
+    private static Stream<Arguments> provideArgumentsForBoundaryLineTest() {
 
-        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
-        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
+        BoundaryLine boundaryLine = Mockito.mock(BoundaryLine.class);
+        Mockito.when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
         // Common fields
-        Mockito.when(danglingLine.getId()).thenReturn("ID");
-        Mockito.when(danglingLine.getOptionalName()).thenReturn(Optional.of("NAME"));
+        Mockito.when(boundaryLine.getId()).thenReturn("ID");
+        Mockito.when(boundaryLine.getOptionalName()).thenReturn(Optional.of("NAME"));
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Mockito.when(voltageLevel.getId()).thenReturn("VL");
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
-        Mockito.when(danglingLine.getPairingKey()).thenReturn("pairingKey");
+        Mockito.when(boundaryLine.getTerminal()).thenReturn(terminal);
+        Mockito.when(boundaryLine.getPairingKey()).thenReturn("pairingKey");
 
         TieLine tieLine = Mockito.mock(TieLine.class);
         Mockito.when(tieLine.getId()).thenReturn("tieLineId");
-        Mockito.when(danglingLine.getTieLine()).thenReturn(Optional.of(tieLine));
+        Mockito.when(boundaryLine.getTieLine()).thenReturn(Optional.of(tieLine));
 
         // for testing none EXISTS
-        DanglingLine danglingLine1 = Mockito.mock(DanglingLine.class);
-        Mockito.when(danglingLine1.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
-        Mockito.when(danglingLine1.getOptionalName()).thenReturn(Optional.of(""));
+        BoundaryLine boundaryLine1 = Mockito.mock(BoundaryLine.class);
+        Mockito.when(boundaryLine1.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        Mockito.when(boundaryLine1.getOptionalName()).thenReturn(Optional.of(""));
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Terminal terminal1 = Mockito.mock(Terminal.class);
         Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(danglingLine1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(boundaryLine1.getTerminal()).thenReturn(terminal1);
 
         return Stream.of(
             // --- IS --- //
             // Common fields
-            Arguments.of(IS, FieldType.ID, "id", null, danglingLine, true),
-            Arguments.of(IS, FieldType.ID, "id_1", null, danglingLine, false),
-            Arguments.of(IS, FieldType.NAME, "name", null, danglingLine, true),
-            Arguments.of(IS, FieldType.NAME, "name_1", null, danglingLine, false),
+            Arguments.of(IS, FieldType.ID, "id", null, boundaryLine, true),
+            Arguments.of(IS, FieldType.ID, "id_1", null, boundaryLine, false),
+            Arguments.of(IS, FieldType.NAME, "name", null, boundaryLine, true),
+            Arguments.of(IS, FieldType.NAME, "name_1", null, boundaryLine, false),
             // VoltageLevel fields
-            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, danglingLine, true),
-            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, danglingLine, false),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, boundaryLine, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, boundaryLine, false),
 
             // Tie Lines
-            Arguments.of(IS, FieldType.PAIRING_KEY, "pairingKey1", null, danglingLine, false),
-            Arguments.of(IS, FieldType.PAIRING_KEY, "pairingKey", null, danglingLine, true),
-            Arguments.of(IS, FieldType.TIE_LINE_ID, "tieLineId1", null, danglingLine, false),
-            Arguments.of(IS, FieldType.TIE_LINE_ID, "tieLineId", null, danglingLine, true),
+            Arguments.of(IS, FieldType.PAIRING_KEY, "pairingKey1", null, boundaryLine, false),
+            Arguments.of(IS, FieldType.PAIRING_KEY, "pairingKey", null, boundaryLine, true),
+            Arguments.of(IS, FieldType.TIE_LINE_ID, "tieLineId1", null, boundaryLine, false),
+            Arguments.of(IS, FieldType.TIE_LINE_ID, "tieLineId", null, boundaryLine, true),
 
             // --- CONTAINS --- //
             // Common fields
-            Arguments.of(CONTAINS, FieldType.ID, "i", null, danglingLine, true),
-            Arguments.of(CONTAINS, FieldType.ID, "ii", null, danglingLine, false),
-            Arguments.of(CONTAINS, FieldType.NAME, "nam", null, danglingLine, true),
-            Arguments.of(CONTAINS, FieldType.NAME, "namm", null, danglingLine, false),
+            Arguments.of(CONTAINS, FieldType.ID, "i", null, boundaryLine, true),
+            Arguments.of(CONTAINS, FieldType.ID, "ii", null, boundaryLine, false),
+            Arguments.of(CONTAINS, FieldType.NAME, "nam", null, boundaryLine, true),
+            Arguments.of(CONTAINS, FieldType.NAME, "namm", null, boundaryLine, false),
             // VoltageLevel fields
-            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, danglingLine, true),
-            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, danglingLine, false),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, boundaryLine, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, boundaryLine, false),
 
             // Tie Lines
-            Arguments.of(CONTAINS, FieldType.PAIRING_KEY, "K", null, danglingLine, true),
-            Arguments.of(CONTAINS, FieldType.PAIRING_KEY, "O", null, danglingLine, false),
-            Arguments.of(CONTAINS, FieldType.TIE_LINE_ID, "L", null, danglingLine, true),
-            Arguments.of(CONTAINS, FieldType.TIE_LINE_ID, "O", null, danglingLine, false),
+            Arguments.of(CONTAINS, FieldType.PAIRING_KEY, "K", null, boundaryLine, true),
+            Arguments.of(CONTAINS, FieldType.PAIRING_KEY, "O", null, boundaryLine, false),
+            Arguments.of(CONTAINS, FieldType.TIE_LINE_ID, "L", null, boundaryLine, true),
+            Arguments.of(CONTAINS, FieldType.TIE_LINE_ID, "O", null, boundaryLine, false),
 
             // --- BEGINS_WITH --- //
             // Common fields
-            Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, danglingLine, true),
-            Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, danglingLine, false),
-            Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, danglingLine, true),
-            Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, danglingLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, boundaryLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, boundaryLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, boundaryLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, boundaryLine, false),
             // VoltageLevel fields
-            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, danglingLine, true),
-            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, danglingLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, boundaryLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, boundaryLine, false),
             // Tie Lines
-            Arguments.of(BEGINS_WITH, FieldType.PAIRING_KEY, "p", null, danglingLine, true),
-            Arguments.of(BEGINS_WITH, FieldType.PAIRING_KEY, "a", null, danglingLine, false),
-            Arguments.of(BEGINS_WITH, FieldType.TIE_LINE_ID, "t", null, danglingLine, true),
-            Arguments.of(BEGINS_WITH, FieldType.TIE_LINE_ID, "e", null, danglingLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.PAIRING_KEY, "p", null, boundaryLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.PAIRING_KEY, "a", null, boundaryLine, false),
+            Arguments.of(BEGINS_WITH, FieldType.TIE_LINE_ID, "t", null, boundaryLine, true),
+            Arguments.of(BEGINS_WITH, FieldType.TIE_LINE_ID, "e", null, boundaryLine, false),
 
             // --- ENDS_WITH --- //
             // Common fields
-            Arguments.of(ENDS_WITH, FieldType.ID, "d", null, danglingLine, true),
-            Arguments.of(ENDS_WITH, FieldType.ID, "e", null, danglingLine, false),
-            Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, danglingLine, true),
-            Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, danglingLine, false),
+            Arguments.of(ENDS_WITH, FieldType.ID, "d", null, boundaryLine, true),
+            Arguments.of(ENDS_WITH, FieldType.ID, "e", null, boundaryLine, false),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, boundaryLine, true),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, boundaryLine, false),
             // VoltageLevel fields
-            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, danglingLine, true),
-            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, danglingLine, false),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, boundaryLine, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, boundaryLine, false),
             // Tie Lines
-            Arguments.of(ENDS_WITH, FieldType.PAIRING_KEY, "y", null, danglingLine, true),
-            Arguments.of(ENDS_WITH, FieldType.PAIRING_KEY, "a", null, danglingLine, false),
-            Arguments.of(ENDS_WITH, FieldType.TIE_LINE_ID, "d", null, danglingLine, true),
-            Arguments.of(ENDS_WITH, FieldType.TIE_LINE_ID, "z", null, danglingLine, false),
+            Arguments.of(ENDS_WITH, FieldType.PAIRING_KEY, "y", null, boundaryLine, true),
+            Arguments.of(ENDS_WITH, FieldType.PAIRING_KEY, "a", null, boundaryLine, false),
+            Arguments.of(ENDS_WITH, FieldType.TIE_LINE_ID, "d", null, boundaryLine, true),
+            Arguments.of(ENDS_WITH, FieldType.TIE_LINE_ID, "z", null, boundaryLine, false),
 
             // --- EXISTS --- //
             // Common fields
-            Arguments.of(EXISTS, FieldType.ID, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.ID, null, null, danglingLine1, false),
-            Arguments.of(EXISTS, FieldType.NAME, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.NAME, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.ID, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.ID, null, null, boundaryLine1, false),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, boundaryLine1, false),
             // VoltageLevel fields
-            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, boundaryLine1, false),
             // Tie Lines
-            Arguments.of(EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine1, false),
-            Arguments.of(EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.PAIRING_KEY, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.PAIRING_KEY, null, null, boundaryLine1, false),
+            Arguments.of(EXISTS, FieldType.TIE_LINE_ID, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.TIE_LINE_ID, null, null, boundaryLine1, false),
 
             // --- NOT_EXISTS --- //
             // Common fields
-            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, danglingLine1, true),
-            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, danglingLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, boundaryLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, boundaryLine1, true),
             // VoltageLevel fields
-            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, danglingLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, boundaryLine1, true),
             // Tie Lines
-            Arguments.of(NOT_EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.PAIRING_KEY, null, null, danglingLine1, true),
-            Arguments.of(NOT_EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.TIE_LINE_ID, null, null, danglingLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.PAIRING_KEY, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.PAIRING_KEY, null, null, boundaryLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.TIE_LINE_ID, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.TIE_LINE_ID, null, null, boundaryLine1, true),
 
             // --- IN --- //
             // Common fields
-            Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), danglingLine, true),
-            Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), danglingLine, false),
-            Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), danglingLine, true),
-            Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), danglingLine, false),
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), boundaryLine, true),
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), boundaryLine, false),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), boundaryLine, true),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), boundaryLine, false),
             // VoltageLevel fields
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, true),
-            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), danglingLine, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), boundaryLine, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), boundaryLine, false),
             // Tie Lines
-            Arguments.of(IN, FieldType.PAIRING_KEY, null, Set.of("pairingKey", "VL_2"), danglingLine, true),
-            Arguments.of(IN, FieldType.PAIRING_KEY, null, Set.of("test", "VL_2"), danglingLine, false),
-            Arguments.of(IN, FieldType.TIE_LINE_ID, null, Set.of("tieLineId", "VL_2"), danglingLine, true),
-            Arguments.of(IN, FieldType.TIE_LINE_ID, null, Set.of("test", "VL_2"), danglingLine, false),
+            Arguments.of(IN, FieldType.PAIRING_KEY, null, Set.of("pairingKey", "VL_2"), boundaryLine, true),
+            Arguments.of(IN, FieldType.PAIRING_KEY, null, Set.of("test", "VL_2"), boundaryLine, false),
+            Arguments.of(IN, FieldType.TIE_LINE_ID, null, Set.of("tieLineId", "VL_2"), boundaryLine, true),
+            Arguments.of(IN, FieldType.TIE_LINE_ID, null, Set.of("test", "VL_2"), boundaryLine, false),
 
             // --- NOT_IN --- //
             // Common fields
-            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), danglingLine, false),
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), boundaryLine, false),
             // VoltageLevel fields
-            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), danglingLine, false),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), boundaryLine, false),
             // Tie Lines
-            Arguments.of(NOT_IN, FieldType.PAIRING_KEY, null, Set.of("pairingKey", "VL_2"), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.PAIRING_KEY, null, Set.of("test", "VL_2"), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.TIE_LINE_ID, null, Set.of("tieLineId", "VL_2"), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.TIE_LINE_ID, null, Set.of("test", "VL_2"), danglingLine, true)
+            Arguments.of(NOT_IN, FieldType.PAIRING_KEY, null, Set.of("pairingKey", "VL_2"), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.PAIRING_KEY, null, Set.of("test", "VL_2"), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.TIE_LINE_ID, null, Set.of("tieLineId", "VL_2"), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.TIE_LINE_ID, null, Set.of("test", "VL_2"), boundaryLine, true)
 
         );
     }

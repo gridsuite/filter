@@ -55,7 +55,7 @@ public final class ExpertFilterUtils {
                 case SUBSTATION -> getSubstationFieldValue(field, (Substation) identifiable);
                 case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, propertyName, (TwoWindingsTransformer) identifiable);
                 case STATIC_VAR_COMPENSATOR -> getStaticVarCompensatorFieldValue(field, propertyName, (StaticVarCompensator) identifiable);
-                case DANGLING_LINE -> getDanglingLinesFieldValue(field, propertyName, (DanglingLine) identifiable);
+                case BOUNDARY_LINE -> getBoundaryLinesFieldValue(field, propertyName, (BoundaryLine) identifiable);
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
                 case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
                 case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, (HvdcConverterStation<?>) identifiable);
@@ -575,26 +575,26 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getDanglingLinesFieldValue(FieldType field, String propertyName, DanglingLine danglingLine) {
+    private static String getBoundaryLinesFieldValue(FieldType field, String propertyName, BoundaryLine boundaryLine) {
         return switch (field) {
-            case CONNECTED -> getTerminalFieldValue(field, danglingLine.getTerminal());
+            case CONNECTED -> getTerminalFieldValue(field, boundaryLine.getTerminal());
             case COUNTRY,
                     VOLTAGE_LEVEL_ID,
                     NOMINAL_VOLTAGE,
-                    SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, danglingLine.getTerminal().getVoltageLevel());
+                    SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, boundaryLine.getTerminal().getVoltageLevel());
             case VOLTAGE_LEVEL_PROPERTIES,
-                    SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, danglingLine.getTerminal().getVoltageLevel());
-            case P0 -> String.valueOf(danglingLine.getP0());
-            case Q0 -> String.valueOf(danglingLine.getQ0());
-            case SERIE_RESISTANCE -> String.valueOf(danglingLine.getR());
-            case SERIE_REACTANCE -> String.valueOf(danglingLine.getX());
-            case SHUNT_SUSCEPTANCE -> String.valueOf(danglingLine.getB());
-            case SHUNT_CONDUCTANCE -> String.valueOf(danglingLine.getG());
-            case PAIRED -> String.valueOf(danglingLine.isPaired());
-            case PAIRING_KEY -> danglingLine.getPairingKey();
-            case TIE_LINE_ID -> danglingLine.getTieLine().map(TieLine::getId).orElse(null);
+                    SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, boundaryLine.getTerminal().getVoltageLevel());
+            case P0 -> String.valueOf(boundaryLine.getP0());
+            case Q0 -> String.valueOf(boundaryLine.getQ0());
+            case SERIE_RESISTANCE -> String.valueOf(boundaryLine.getR());
+            case SERIE_REACTANCE -> String.valueOf(boundaryLine.getX());
+            case SHUNT_SUSCEPTANCE -> String.valueOf(boundaryLine.getB());
+            case SHUNT_CONDUCTANCE -> String.valueOf(boundaryLine.getG());
+            case PAIRED -> String.valueOf(boundaryLine.isPaired());
+            case PAIRING_KEY -> boundaryLine.getPairingKey();
+            case TIE_LINE_ID -> boundaryLine.getTieLine().map(TieLine::getId).orElse(null);
             default ->
-                throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + danglingLine.getType() + "]");
+                throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + boundaryLine.getType() + "]");
         };
     }
 
@@ -700,7 +700,7 @@ public final class ExpertFilterUtils {
                 case SUBSTATION -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, VOLTAGE_LEVEL,
                      LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, TWO_WINDINGS_TRANSFORMER,
-                     THREE_WINDINGS_TRANSFORMER, DANGLING_LINE -> Stream.of(FieldType.SUBSTATION_ID);
+                     THREE_WINDINGS_TRANSFORMER, BOUNDARY_LINE -> Stream.of(FieldType.SUBSTATION_ID);
                 case LINE, HVDC_LINE
                         -> Stream.of(FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
             };
@@ -708,7 +708,7 @@ public final class ExpertFilterUtils {
             return switch (actualType) {
                 case VOLTAGE_LEVEL -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, SUBSTATION,
-                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, DANGLING_LINE -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, BOUNDARY_LINE -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
                 case LINE, HVDC_LINE, TWO_WINDINGS_TRANSFORMER
                         -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2);
                 case THREE_WINDINGS_TRANSFORMER -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2, FieldType.VOLTAGE_LEVEL_ID_3);
