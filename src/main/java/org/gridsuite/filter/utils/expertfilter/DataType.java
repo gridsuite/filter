@@ -15,6 +15,6 @@ public enum DataType {
     ENUM,
     BOOLEAN,
     COMBINATOR,
-    FILTER_UUID,
+    FILTER,
     PROPERTIES
 }

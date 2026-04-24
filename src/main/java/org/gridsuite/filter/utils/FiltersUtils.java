@@ -240,6 +240,40 @@ public final class FiltersUtils {
         };
     }
 
+    public interface IdentifiablesLoader<I extends Identifiable<I>> {
+        Stream<I> getIdentifiables();
+    }
+
+    public static <I extends Identifiable<I>> Stream<I> getIdentifiablesLoader(Network network, EquipmentType equipmentType, TopologyKind topologyKind) {
+        return (Stream<I>) switch (equipmentType) {
+            case GENERATOR -> network.getGeneratorStream();
+            case LOAD -> network.getLoadStream();
+            case BATTERY -> network.getBatteryStream();
+            case STATIC_VAR_COMPENSATOR -> network.getStaticVarCompensatorStream();
+            case SHUNT_COMPENSATOR -> network.getShuntCompensatorStream();
+            case LCC_CONVERTER_STATION -> network.getLccConverterStationStream();
+            case VSC_CONVERTER_STATION -> network.getVscConverterStationStream();
+            case HVDC_LINE -> network.getHvdcLineStream();
+            case DANGLING_LINE -> network.getDanglingLineStream();
+            case LINE -> network.getLineStream();
+            case TWO_WINDINGS_TRANSFORMER -> network.getTwoWindingsTransformerStream();
+            case THREE_WINDINGS_TRANSFORMER -> network.getThreeWindingsTransformerStream();
+            case BUS -> getBusListNew(network, topologyKind);
+            case BUSBAR_SECTION -> network.getBusbarSectionStream();
+            case VOLTAGE_LEVEL -> network.getVoltageLevelStream();
+            case SUBSTATION -> network.getSubstationStream();
+        };
+    }
+
+    private static Stream<Identifiable<?>> getBusListNew(Network network, TopologyKind topologyKind) {
+        Predicate<VoltageLevel> voltageLevelFilter = vl -> topologyKind == null || vl.getTopologyKind() == topologyKind;
+
+        return network.getVoltageLevelStream()
+                .filter(voltageLevelFilter)
+                .map(VoltageLevel::getBusBreakerView)
+                .flatMap(VoltageLevel.BusBreakerView::getBusStream);
+    }
+
     /**
      * Combines multiple filter results using {@code AND} or {@code OR} logic.
      */
