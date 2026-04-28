@@ -348,17 +348,17 @@ class FiltersUtilsTest implements WithAssertions {
     }
 
     @Test
-    void testDanglingLineFilter() {
+    void testBoundaryLineFilter() {
         final Network network = prepareNetwork();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
-            new IdentifierListFilterEquipmentAttributes("danglineLine1", 30.));
+            new IdentifierListFilterEquipmentAttributes("boundaryLine1", 30.));
 
         IdentifierListFilter identifierListFilter = new IdentifierListFilter(
             UUID.randomUUID(),
             new Date(),
-            EquipmentType.DANGLING_LINE,
+            EquipmentType.BOUNDARY_LINE,
             filterEquipmentAttributes);
 
         List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
@@ -368,8 +368,8 @@ class FiltersUtilsTest implements WithAssertions {
         ExpertFilter expertFilter = new ExpertFilter(
             UUID.randomUUID(),
             new Date(),
-            EquipmentType.DANGLING_LINE,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("danglineLine1").build());
+            EquipmentType.BOUNDARY_LINE,
+            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("bondaryLine1").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
         assertEquals(0, identifiables.size());

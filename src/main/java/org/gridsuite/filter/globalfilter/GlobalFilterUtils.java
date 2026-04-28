@@ -34,7 +34,7 @@ public final class GlobalFilterUtils {
         return switch (equipmentType) {
             case LINE, TWO_WINDINGS_TRANSFORMER, HVDC_LINE -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2);
             case THREE_WINDINGS_TRANSFORMER -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2, FieldType.NOMINAL_VOLTAGE_3);
-            case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, VOLTAGE_LEVEL, DANGLING_LINE, LCC_CONVERTER_STATION, VSC_CONVERTER_STATION -> List.of(FieldType.NOMINAL_VOLTAGE);
+            case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, VOLTAGE_LEVEL, BOUNDARY_LINE, LCC_CONVERTER_STATION, VSC_CONVERTER_STATION -> List.of(FieldType.NOMINAL_VOLTAGE);
             default -> List.of();
         };
     }
@@ -64,7 +64,7 @@ public final class GlobalFilterUtils {
     @Nonnull
     public static List<FieldType> getCountryCodeFieldType(@Nonnull final EquipmentType equipmentType) {
         return switch (equipmentType) {
-            case BATTERY, BUS, BUSBAR_SECTION, DANGLING_LINE, GENERATOR, LOAD,
+            case BATTERY, BUS, BUSBAR_SECTION, BOUNDARY_LINE, GENERATOR, LOAD,
                  SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, SUBSTATION,
                  THREE_WINDINGS_TRANSFORMER, TWO_WINDINGS_TRANSFORMER, VOLTAGE_LEVEL, LCC_CONVERTER_STATION, VSC_CONVERTER_STATION -> List.of(FieldType.COUNTRY);
             case LINE, HVDC_LINE -> List.of(FieldType.COUNTRY_1, FieldType.COUNTRY_2);

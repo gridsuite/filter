@@ -109,7 +109,7 @@ class NumberExpertRuleTest {
         "provideArgumentsForLinesTest",
         "provideArgumentsForTwoWindingTransformerTest",
         "provideArgumentsForStaticVarCompensatorTest",
-        "provideArgumentsForDanglingLineTest",
+        "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
     })
@@ -909,6 +909,41 @@ class NumberExpertRuleTest {
 
             @Override
             public ShuntCompensatorLinearModel setMaximumSectionCount(int i) {
+                return null;
+            }
+
+            @Override
+            public String getProperty(String key, String defaultValue) {
+                return null;
+            }
+
+            @Override
+            public String getProperty(String key) {
+                return null;
+            }
+
+            @Override
+            public boolean hasProperty() {
+                return false;
+            }
+
+            @Override
+            public boolean hasProperty(String key) {
+                return false;
+            }
+
+            @Override
+            public boolean removeProperty(String key) {
+                return false;
+            }
+
+            @Override
+            public String setProperty(String key, String value) {
+                return null;
+            }
+
+            @Override
+            public Set<String> getPropertyNames() {
                 return null;
             }
         });
@@ -3275,237 +3310,237 @@ class NumberExpertRuleTest {
         );
     }
 
-    private static Stream<Arguments> provideArgumentsForDanglingLineTest() {
-        DanglingLine danglingLine = Mockito.mock(DanglingLine.class);
-        Mockito.when(danglingLine.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
-        Mockito.when(danglingLine.getR()).thenReturn(0.1);
-        Mockito.when(danglingLine.getX()).thenReturn(0.2);
-        Mockito.when(danglingLine.getB()).thenReturn(0.3);
-        Mockito.when(danglingLine.getG()).thenReturn(0.4);
-        Mockito.when(danglingLine.getP0()).thenReturn(100.0);
-        Mockito.when(danglingLine.getQ0()).thenReturn(50.0);
+    private static Stream<Arguments> provideArgumentsForBoundaryLineTest() {
+        BoundaryLine boundaryLine = Mockito.mock(BoundaryLine.class);
+        Mockito.when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        Mockito.when(boundaryLine.getR()).thenReturn(0.1);
+        Mockito.when(boundaryLine.getX()).thenReturn(0.2);
+        Mockito.when(boundaryLine.getB()).thenReturn(0.3);
+        Mockito.when(boundaryLine.getG()).thenReturn(0.4);
+        Mockito.when(boundaryLine.getP0()).thenReturn(100.0);
+        Mockito.when(boundaryLine.getQ0()).thenReturn(50.0);
 
         // VoltageLevel fields
         VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
         Terminal terminal = Mockito.mock(Terminal.class);
         Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(danglingLine.getTerminal()).thenReturn(terminal);
+        Mockito.when(boundaryLine.getTerminal()).thenReturn(terminal);
         Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        DanglingLine danglingLine1 = Mockito.mock(DanglingLine.class);
-        Mockito.when(danglingLine1.getType()).thenReturn(IdentifiableType.DANGLING_LINE);
-        Mockito.when(danglingLine1.getB()).thenReturn(Double.NaN);
-        Mockito.when(danglingLine1.getR()).thenReturn(Double.NaN);
-        Mockito.when(danglingLine1.getG()).thenReturn(Double.NaN);
-        Mockito.when(danglingLine1.getX()).thenReturn(Double.NaN);
-        Mockito.when(danglingLine1.getP0()).thenReturn(Double.NaN);
-        Mockito.when(danglingLine1.getQ0()).thenReturn(Double.NaN);
+        BoundaryLine boundaryLine1 = Mockito.mock(BoundaryLine.class);
+        Mockito.when(boundaryLine1.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        Mockito.when(boundaryLine1.getB()).thenReturn(Double.NaN);
+        Mockito.when(boundaryLine1.getR()).thenReturn(Double.NaN);
+        Mockito.when(boundaryLine1.getG()).thenReturn(Double.NaN);
+        Mockito.when(boundaryLine1.getX()).thenReturn(Double.NaN);
+        Mockito.when(boundaryLine1.getP0()).thenReturn(Double.NaN);
+        Mockito.when(boundaryLine1.getQ0()).thenReturn(Double.NaN);
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
         Terminal terminal1 = Mockito.mock(Terminal.class);
         Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(danglingLine1.getTerminal()).thenReturn(terminal1);
+        Mockito.when(boundaryLine1.getTerminal()).thenReturn(terminal1);
         Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
             // --- EQUALS --- //
             // VoltageLevel fields
-            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, danglingLine, true),
-            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, danglingLine, false),
-            // Dangling Line fields
-            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, danglingLine, true),
-            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, danglingLine, true),
-            Arguments.of(EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, danglingLine, true),
-            Arguments.of(EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.4, null, danglingLine, true),
-            Arguments.of(EQUALS, FieldType.P0, 100.0, null, danglingLine, true),
-            Arguments.of(EQUALS, FieldType.Q0, 50.0, null, danglingLine, true),
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, boundaryLine, true),
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, boundaryLine, false),
+            // Boundary Line fields
+            Arguments.of(EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, boundaryLine, true),
+            Arguments.of(EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, boundaryLine, true),
+            Arguments.of(EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, boundaryLine, true),
+            Arguments.of(EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.4, null, boundaryLine, true),
+            Arguments.of(EQUALS, FieldType.P0, 100.0, null, boundaryLine, true),
+            Arguments.of(EQUALS, FieldType.Q0, 50.0, null, boundaryLine, true),
 
             // --- GREATER_OR_EQUALS --- //
             // VoltageLevel fields
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, danglingLine, false),
-            // Dangling Line fields
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, danglingLine, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.1, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.3, null, danglingLine, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.2, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.4, null, danglingLine, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.3, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.4, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.5, null, danglingLine, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.P0, 50.0, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.P0, 100.0, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.P0, 200.0, null, danglingLine, false),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.Q0, 25.0, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.Q0, 50.0, null, danglingLine, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.Q0, 100.0, null, danglingLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, boundaryLine, false),
+            // Boundary Line fields
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, boundaryLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.1, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.3, null, boundaryLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.2, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.4, null, boundaryLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.3, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.4, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.5, null, boundaryLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.P0, 50.0, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.P0, 100.0, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.P0, 200.0, null, boundaryLine, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.Q0, 25.0, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.Q0, 50.0, null, boundaryLine, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.Q0, 100.0, null, boundaryLine, false),
 
             // --- GREATER --- //
             // VoltageLevel fields
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, danglingLine, true),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 13.0, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, danglingLine, false),
-            // Dangling Line fields
-            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.05, null, danglingLine, true),
-            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.1, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.15, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.1, null, danglingLine, true),
-            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.2, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.3, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE, 0.2, null, danglingLine, true),
-            Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE, 0.4, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.SHUNT_CONDUCTANCE, 0.3, null, danglingLine, true),
-            Arguments.of(GREATER, FieldType.SHUNT_CONDUCTANCE, 0.4, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.SHUNT_CONDUCTANCE, 0.5, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.P0, 50.0, null, danglingLine, true),
-            Arguments.of(GREATER, FieldType.P0, 100.0, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.P0, 200.0, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.Q0, 25.0, null, danglingLine, true),
-            Arguments.of(GREATER, FieldType.Q0, 50.0, null, danglingLine, false),
-            Arguments.of(GREATER, FieldType.Q0, 100.0, null, danglingLine, false),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, boundaryLine, true),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 13.0, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, boundaryLine, false),
+            // Boundary Line fields
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.05, null, boundaryLine, true),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.1, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.SERIE_RESISTANCE, 0.15, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.1, null, boundaryLine, true),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.2, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.SERIE_REACTANCE, 0.3, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE, 0.2, null, boundaryLine, true),
+            Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE, 0.4, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.SHUNT_CONDUCTANCE, 0.3, null, boundaryLine, true),
+            Arguments.of(GREATER, FieldType.SHUNT_CONDUCTANCE, 0.4, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.SHUNT_CONDUCTANCE, 0.5, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.P0, 50.0, null, boundaryLine, true),
+            Arguments.of(GREATER, FieldType.P0, 100.0, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.P0, 200.0, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.Q0, 25.0, null, boundaryLine, true),
+            Arguments.of(GREATER, FieldType.Q0, 50.0, null, boundaryLine, false),
+            Arguments.of(GREATER, FieldType.Q0, 100.0, null, boundaryLine, false),
 
             // --- LOWER_OR_EQUALS --- //
             // VoltageLevel fields
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, danglingLine, false),
-            // Dangling Line fields
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, danglingLine, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.1, null, danglingLine, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.3, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.2, null, danglingLine, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.4, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.3, null, danglingLine, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.4, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.5, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.P0, 50.0, null, danglingLine, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.P0, 100.0, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.P0, 200.0, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.Q0, 25.0, null, danglingLine, false),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.Q0, 50.0, null, danglingLine, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.Q0, 100.0, null, danglingLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, boundaryLine, false),
+            // Boundary Line fields
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.05, null, boundaryLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.1, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_RESISTANCE, 0.15, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.1, null, boundaryLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.2, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SERIE_REACTANCE, 0.3, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.2, null, boundaryLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE, 0.4, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.3, null, boundaryLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.4, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_CONDUCTANCE, 0.5, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.P0, 50.0, null, boundaryLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.P0, 100.0, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.P0, 200.0, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.Q0, 25.0, null, boundaryLine, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.Q0, 50.0, null, boundaryLine, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.Q0, 100.0, null, boundaryLine, true),
 
             // --- LOWER --- //
             // VoltageLevel fields
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, danglingLine, true),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 13.0, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 12.0, null, danglingLine, false),
-            // Dangling Line fields
-            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.05, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.1, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.15, null, danglingLine, true),
-            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.1, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.2, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.3, null, danglingLine, true),
-            Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE, 0.2, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE, 0.4, null, danglingLine, true),
-            Arguments.of(LOWER, FieldType.SHUNT_CONDUCTANCE, 0.3, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.SHUNT_CONDUCTANCE, 0.4, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.SHUNT_CONDUCTANCE, 0.5, null, danglingLine, true),
-            Arguments.of(LOWER, FieldType.P0, 50.0, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.P0, 100.0, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.P0, 200.0, null, danglingLine, true),
-            Arguments.of(LOWER, FieldType.Q0, 25.0, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.Q0, 50.0, null, danglingLine, false),
-            Arguments.of(LOWER, FieldType.Q0, 100.0, null, danglingLine, true),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, boundaryLine, true),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 13.0, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 12.0, null, boundaryLine, false),
+            // Boundary Line fields
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.05, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.1, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.SERIE_RESISTANCE, 0.15, null, boundaryLine, true),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.1, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.2, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.SERIE_REACTANCE, 0.3, null, boundaryLine, true),
+            Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE, 0.2, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE, 0.3, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE, 0.4, null, boundaryLine, true),
+            Arguments.of(LOWER, FieldType.SHUNT_CONDUCTANCE, 0.3, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.SHUNT_CONDUCTANCE, 0.4, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.SHUNT_CONDUCTANCE, 0.5, null, boundaryLine, true),
+            Arguments.of(LOWER, FieldType.P0, 50.0, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.P0, 100.0, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.P0, 200.0, null, boundaryLine, true),
+            Arguments.of(LOWER, FieldType.Q0, 25.0, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.Q0, 50.0, null, boundaryLine, false),
+            Arguments.of(LOWER, FieldType.Q0, 100.0, null, boundaryLine, true),
             // --- BETWEEN --- //
             // VoltageLevel fields
-            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), danglingLine, true),
-            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), danglingLine, false),
-            // Dangling Line fields
-            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), danglingLine, true),
-            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), danglingLine, false),
-            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), danglingLine, true),
-            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), danglingLine, false),
-            Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.35), danglingLine, true),
-            Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), danglingLine, false),
-            Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.45), danglingLine, true),
-            Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), danglingLine, false),
-            Arguments.of(BETWEEN, FieldType.P0, null, Set.of(50.0, 150.0), danglingLine, true),
-            Arguments.of(BETWEEN, FieldType.P0, null, Set.of(120.0, 180.0), danglingLine, false),
-            Arguments.of(BETWEEN, FieldType.Q0, null, Set.of(25.0, 75.0), danglingLine, true),
-            Arguments.of(BETWEEN, FieldType.Q0, null, Set.of(120.0, 180.0), danglingLine, false),
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), boundaryLine, true),
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), boundaryLine, false),
+            // Boundary Line fields
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), boundaryLine, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), boundaryLine, false),
+            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), boundaryLine, true),
+            Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), boundaryLine, false),
+            Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.35), boundaryLine, true),
+            Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), boundaryLine, false),
+            Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.45), boundaryLine, true),
+            Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), boundaryLine, false),
+            Arguments.of(BETWEEN, FieldType.P0, null, Set.of(50.0, 150.0), boundaryLine, true),
+            Arguments.of(BETWEEN, FieldType.P0, null, Set.of(120.0, 180.0), boundaryLine, false),
+            Arguments.of(BETWEEN, FieldType.Q0, null, Set.of(25.0, 75.0), boundaryLine, true),
+            Arguments.of(BETWEEN, FieldType.Q0, null, Set.of(120.0, 180.0), boundaryLine, false),
             // --- EXISTS --- //
             // VoltageLevel fields
-            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, boundaryLine1, false),
             //Battery fields
-            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, danglingLine1, false),
-            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE, null, null, danglingLine1, false),
-            Arguments.of(EXISTS, FieldType.SHUNT_SUSCEPTANCE, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.SHUNT_SUSCEPTANCE, null, null, danglingLine1, false),
-            Arguments.of(EXISTS, FieldType.SHUNT_CONDUCTANCE, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.SHUNT_CONDUCTANCE, null, null, danglingLine1, false),
-            Arguments.of(EXISTS, FieldType.P0, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.P0, null, null, danglingLine1, false),
-            Arguments.of(EXISTS, FieldType.Q0, null, null, danglingLine, true),
-            Arguments.of(EXISTS, FieldType.Q0, null, null, danglingLine1, false),
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.SERIE_RESISTANCE, null, null, boundaryLine1, false),
+            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.SERIE_REACTANCE, null, null, boundaryLine1, false),
+            Arguments.of(EXISTS, FieldType.SHUNT_SUSCEPTANCE, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.SHUNT_SUSCEPTANCE, null, null, boundaryLine1, false),
+            Arguments.of(EXISTS, FieldType.SHUNT_CONDUCTANCE, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.SHUNT_CONDUCTANCE, null, null, boundaryLine1, false),
+            Arguments.of(EXISTS, FieldType.P0, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.P0, null, null, boundaryLine1, false),
+            Arguments.of(EXISTS, FieldType.Q0, null, null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.Q0, null, null, boundaryLine1, false),
             // --- NOT_EXISTS --- //
             // VoltageLevel fields
-            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, danglingLine1, true),
-            // Dangling Line fields
-            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, danglingLine1, true),
-            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, danglingLine1, true),
-            Arguments.of(NOT_EXISTS, FieldType.SHUNT_SUSCEPTANCE, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.SHUNT_SUSCEPTANCE, null, null, danglingLine1, true),
-            Arguments.of(NOT_EXISTS, FieldType.SHUNT_CONDUCTANCE, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.SHUNT_CONDUCTANCE, null, null, danglingLine1, true),
-            Arguments.of(NOT_EXISTS, FieldType.P0, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.P0, null, null, danglingLine1, true),
-            Arguments.of(NOT_EXISTS, FieldType.Q0, null, null, danglingLine, false),
-            Arguments.of(NOT_EXISTS, FieldType.Q0, null, null, danglingLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, boundaryLine1, true),
+            // Boundary Line fields
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_RESISTANCE, null, null, boundaryLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SERIE_REACTANCE, null, null, boundaryLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SHUNT_SUSCEPTANCE, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SHUNT_SUSCEPTANCE, null, null, boundaryLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.SHUNT_CONDUCTANCE, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SHUNT_CONDUCTANCE, null, null, boundaryLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.P0, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.P0, null, null, boundaryLine1, true),
+            Arguments.of(NOT_EXISTS, FieldType.Q0, null, null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.Q0, null, null, boundaryLine1, true),
 
             // --- IN --- //
             // VoltageLevel fields
-            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), danglingLine, true),
-            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), danglingLine, false),
-            // Dangling Line
-            Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), danglingLine, true),
-            Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), danglingLine, false),
-            Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), danglingLine, true),
-            Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), danglingLine, false),
-            Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.3, 0.35), danglingLine, true),
-            Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), danglingLine, false),
-            Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.4, 0.45), danglingLine, true),
-            Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), danglingLine, false),
-            Arguments.of(IN, FieldType.P0, null, Set.of(50.0, 100.0, 150.0), danglingLine, true),
-            Arguments.of(IN, FieldType.P0, null, Set.of(120.0, 180.0), danglingLine, false),
-            Arguments.of(IN, FieldType.Q0, null, Set.of(25.0, 50.0, 75.0), danglingLine, true),
-            Arguments.of(IN, FieldType.Q0, null, Set.of(120.0, 180.0), danglingLine, false),
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), boundaryLine, true),
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), boundaryLine, false),
+            // Boundary Line
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), boundaryLine, true),
+            Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), boundaryLine, false),
+            Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), boundaryLine, true),
+            Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), boundaryLine, false),
+            Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.3, 0.35), boundaryLine, true),
+            Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), boundaryLine, false),
+            Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.4, 0.45), boundaryLine, true),
+            Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), boundaryLine, false),
+            Arguments.of(IN, FieldType.P0, null, Set.of(50.0, 100.0, 150.0), boundaryLine, true),
+            Arguments.of(IN, FieldType.P0, null, Set.of(120.0, 180.0), boundaryLine, false),
+            Arguments.of(IN, FieldType.Q0, null, Set.of(25.0, 50.0, 75.0), boundaryLine, true),
+            Arguments.of(IN, FieldType.Q0, null, Set.of(120.0, 180.0), boundaryLine, false),
             // --- NOT_IN --- //
             // VoltageLevel fields
-            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), danglingLine, false),
-            // Dangling Line
-            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.3, 0.35), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.4, 0.45), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.P0, null, Set.of(50.0, 100.0, 150.0), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.P0, null, Set.of(120.0, 180.0), danglingLine, true),
-            Arguments.of(NOT_IN, FieldType.Q0, null, Set.of(25.0, 50.0, 75.0), danglingLine, false),
-            Arguments.of(NOT_IN, FieldType.Q0, null, Set.of(120.0, 180.0), danglingLine, true)
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), boundaryLine, false),
+            // Boundary Line
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.3, 0.35), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.4, 0.45), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.P0, null, Set.of(50.0, 100.0, 150.0), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.P0, null, Set.of(120.0, 180.0), boundaryLine, true),
+            Arguments.of(NOT_IN, FieldType.Q0, null, Set.of(25.0, 50.0, 75.0), boundaryLine, false),
+            Arguments.of(NOT_IN, FieldType.Q0, null, Set.of(120.0, 180.0), boundaryLine, true)
         );
     }
 
