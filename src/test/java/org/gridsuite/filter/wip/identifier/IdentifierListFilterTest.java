@@ -15,7 +15,6 @@ import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.wip.Filter;
 import org.gridsuite.filter.wip.TestNetworkUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -34,12 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class IdentifierListFilterTest {
 
-    private Network network;
-
-    @BeforeEach
-    void setUp() {
-        network = TestNetworkUtils.createTestNetwork();
-    }
+    private final Network network = TestNetworkUtils.createTestNetwork();
 
     private static Stream<Arguments> provideFilterArguments() {
         return Stream.of(// For each equipment type, we test that the filter is able to return multiple equipments, one equipment and no equipment when it's missing
@@ -110,7 +104,7 @@ class IdentifierListFilterTest {
         );
     }
 
-    private static Stream<Arguments> provideTopologyDependedFilterArguments() {
+    private static Stream<Arguments> provideTopologyDependedFilterEvaluationArguments() {
         return Stream.of(
                 // Buses - BUS_BREAKER
                 Arguments.of(TopologyKind.BUS_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S2", "BUS_S3")), Set.of("BUS_S2", "BUS_S3")),
@@ -158,7 +152,7 @@ class IdentifierListFilterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideTopologyDependedFilterArguments")
+    @MethodSource("provideTopologyDependedFilterEvaluationArguments")
     void testFilterEvaluationWithTopologyKindReturnsExpectedEquipments(TopologyKind topologyKind, Filter filter, Set<String> expectedEquipmentIds) {
         List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network, topologyKind);
 

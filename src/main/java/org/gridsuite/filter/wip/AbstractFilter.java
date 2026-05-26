@@ -18,6 +18,7 @@ import com.powsybl.iidm.network.TopologyKind;
 import com.powsybl.iidm.network.VoltageLevel;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
+import org.gridsuite.filter.wip.expert.ExpertFilter;
 import org.gridsuite.filter.wip.identifier.IdentifierListFilter;
 
 import java.util.List;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 )
 @JsonSubTypes({
     @JsonSubTypes.Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
+    @JsonSubTypes.Type(value = ExpertFilter.class, name = "EXPERT"),
 })
 public abstract class AbstractFilter implements Filter {
 
