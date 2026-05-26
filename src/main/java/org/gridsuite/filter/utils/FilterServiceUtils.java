@@ -26,7 +26,7 @@ public final class FilterServiceUtils {
     public static List<IdentifiableAttributes> getIdentifiableAttributes(AbstractFilter filter, Network network, FilterLoader filterLoader) {
         if (filter instanceof IdentifierListFilter identifierListFilter &&
             (filter.getEquipmentType() == EquipmentType.GENERATOR ||
-                filter.getEquipmentType() == EquipmentType.LOAD)) {
+                filter.getEquipmentType() == EquipmentType.LOAD || filter.getEquipmentType() == EquipmentType.BATTERY)) {
             return FiltersUtils.getIdentifiables(filter, network, filterLoader)
                 .stream()
                 .map(identifiable -> new IdentifiableAttributes(identifiable.getId(),
