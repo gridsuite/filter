@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
 })
-public abstract class AbstractFilter {
+public abstract class AbstractFilter implements Filter {
 
     private final EquipmentType equipmentType;
 

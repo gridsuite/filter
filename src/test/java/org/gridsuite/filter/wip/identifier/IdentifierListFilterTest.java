@@ -11,7 +11,7 @@ package org.gridsuite.filter.wip.identifier;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
-import org.gridsuite.filter.wip.AbstractFilter;
+import org.gridsuite.filter.wip.Filter;
 import org.gridsuite.filter.wip.TestNetworkUtils;
 import org.gridsuite.filter.wip.data.EquipmentType;
 import org.gridsuite.filter.wip.data.FilterType;
@@ -143,14 +143,14 @@ class IdentifierListFilterTest {
 
     @Test
     void testGetFilterTypeReturnsIdentifierList() {
-        IdentifierListFilter filter = new IdentifierListFilter(EquipmentType.LINE, Collections.emptySet());
+        Filter filter = new IdentifierListFilter(EquipmentType.LINE, Collections.emptySet());
 
         assertThat(filter.getFilterType()).isEqualTo(FilterType.IDENTIFIER_LIST);
     }
 
     @ParameterizedTest
     @MethodSource("provideFilterArguments")
-    void testFilterEvaluationReturnsExpectedEquipments(AbstractFilter filter, Set<String> expectedEquipmentIds) {
+    void testFilterEvaluationReturnsExpectedEquipments(Filter filter, Set<String> expectedEquipmentIds) {
         List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network);
 
         assertThat(filteredIdentifiableList).hasSize(expectedEquipmentIds.size());
@@ -159,7 +159,7 @@ class IdentifierListFilterTest {
 
     @ParameterizedTest
     @MethodSource("provideTopologyDependedFilterArguments")
-    void testFilterEvaluationWithTopologyKindReturnsExpectedEquipments(TopologyKind topologyKind, AbstractFilter filter, Set<String> expectedEquipmentIds) {
+    void testFilterEvaluationWithTopologyKindReturnsExpectedEquipments(TopologyKind topologyKind, Filter filter, Set<String> expectedEquipmentIds) {
         List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network, topologyKind);
 
         assertThat(filteredIdentifiableList).hasSize(expectedEquipmentIds.size());
