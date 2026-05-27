@@ -10,9 +10,9 @@ package org.gridsuite.filter.wip.identifier;
 
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
+import org.gridsuite.filter.utils.EquipmentType;
+import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.wip.AbstractFilter;
-import org.gridsuite.filter.wip.data.EquipmentType;
-import org.gridsuite.filter.wip.data.FilterType;
 
 import java.util.Objects;
 import java.util.Set;

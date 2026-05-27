@@ -16,8 +16,8 @@ import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import com.powsybl.iidm.network.VoltageLevel;
-import org.gridsuite.filter.wip.data.EquipmentType;
-import org.gridsuite.filter.wip.data.FilterType;
+import org.gridsuite.filter.utils.EquipmentType;
+import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.wip.identifier.IdentifierListFilter;
 
 import java.util.List;
