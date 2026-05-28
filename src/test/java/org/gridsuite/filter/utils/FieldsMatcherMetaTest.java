@@ -85,7 +85,7 @@ class FieldsMatcherMetaTest {
     @Builder
     @Getter
     @With
-    private static class Deeper {
+    private static final class Deeper {
         private final boolean up;
         private final Float f;
     }
@@ -93,7 +93,7 @@ class FieldsMatcherMetaTest {
     @Builder
     @Getter
     @With
-    private static class Deep {
+    private static final class Deep {
         private final Set<String> countries;
 
         private final Map<String, Set<Deeper>> deepers;
@@ -102,7 +102,7 @@ class FieldsMatcherMetaTest {
     @Builder
     @Getter
     @With
-    private static class Top {
+    private static final class Top {
         private String str;
         private int i;
         private byte[] bytes;
