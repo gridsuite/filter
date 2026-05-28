@@ -35,7 +35,7 @@ public class FieldsMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     private final T expected;
 
     @RequiredArgsConstructor
-    private static class EqualDiagnosingMatcher<U> extends TypeSafeDiagnosingMatcher<U> {
+    private static final class EqualDiagnosingMatcher<U> extends TypeSafeDiagnosingMatcher<U> {
         private final U expected;
 
         protected boolean matchesSafely(U actual, Description mismatchDescription) {
