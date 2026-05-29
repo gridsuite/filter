@@ -59,6 +59,7 @@ public final class FilterServiceUtils {
             .toList();
     }
 
+    @SuppressWarnings("checkstyle:LambdaBodyLength")
     public static FilteredIdentifiables evaluateFiltersWithEquipmentTypes(FiltersWithEquipmentTypes filtersWithEquipmentTypes, Network network, FilterLoader filterLoader) {
         Map<String, IdentifiableAttributes> result = new TreeMap<>();
         Map<String, IdentifiableAttributes> notFound = new TreeMap<>();

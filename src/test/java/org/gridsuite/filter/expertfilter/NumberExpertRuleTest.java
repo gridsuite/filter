@@ -114,10 +114,12 @@ class NumberExpertRuleTest {
         "provideArgumentsForHvdcLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
+        @SuppressWarnings("checkstyle:MethodLength")
         NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
         assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {
 
         Generator gen = Mockito.mock(Generator.class);
@@ -879,6 +881,7 @@ class NumberExpertRuleTest {
         );
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForShuntCompensatorTest() {
 
         ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
@@ -1164,6 +1167,7 @@ class NumberExpertRuleTest {
         );
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForLinesTest() {
 
         Line line = Mockito.mock(Line.class);
@@ -1780,6 +1784,7 @@ class NumberExpertRuleTest {
         );
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTest() {
 
         TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
@@ -2147,6 +2152,7 @@ class NumberExpertRuleTest {
         );
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTest() {
         // transfo
         ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
@@ -2872,6 +2878,7 @@ class NumberExpertRuleTest {
         );
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
