@@ -32,7 +32,8 @@ public final class GlobalFilterUtils {
     @Nonnull
     public static List<FieldType> getNominalVoltageFieldType(@Nonnull final EquipmentType equipmentType) {
         return switch (equipmentType) {
-            case LINE, TWO_WINDINGS_TRANSFORMER, HVDC_LINE -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2);
+            case LINE, TWO_WINDINGS_TRANSFORMER -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2);
+            case HVDC_LINE -> List.of(FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2);
             case THREE_WINDINGS_TRANSFORMER -> List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2, FieldType.NOMINAL_VOLTAGE_3);
             case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, VOLTAGE_LEVEL, BOUNDARY_LINE, LCC_CONVERTER_STATION, VSC_CONVERTER_STATION -> List.of(FieldType.NOMINAL_VOLTAGE);
             default -> List.of();
