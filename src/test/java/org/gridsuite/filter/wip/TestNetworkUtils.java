@@ -10,13 +10,36 @@ package org.gridsuite.filter.wip;
 
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.impl.NetworkFactoryImpl;
+import org.gridsuite.filter.utils.EquipmentType;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.assertj.core.api.Assertions.fail;
+
 public final class TestNetworkUtils {
 
+    private static final Network NETWORK = createTestNetwork();
+
     private TestNetworkUtils() {
+    }
+
+    public static Identifiable<?> getEquipmentFromTestNetwork(EquipmentType equipmentType, String equipmentId) {
+        return switch (equipmentType) {
+            case VOLTAGE_LEVEL -> NETWORK.getVoltageLevel(equipmentId);
+            case LINE -> NETWORK.getLine(equipmentId);
+            case GENERATOR -> NETWORK.getGenerator(equipmentId);
+            case LOAD -> NETWORK.getLoad(equipmentId);
+            case SHUNT_COMPENSATOR -> NETWORK.getShuntCompensator(equipmentId);
+            case BUSBAR_SECTION -> NETWORK.getBusbarSection(equipmentId);
+            case BATTERY -> NETWORK.getBattery(equipmentId);
+            case TWO_WINDINGS_TRANSFORMER -> NETWORK.getTwoWindingsTransformer(equipmentId);
+            case STATIC_VAR_COMPENSATOR -> NETWORK.getStaticVarCompensator(equipmentId);
+            case BOUNDARY_LINE -> NETWORK.getBoundaryLine(equipmentId);
+            case THREE_WINDINGS_TRANSFORMER -> NETWORK.getThreeWindingsTransformer(equipmentId);
+            case HVDC_LINE -> NETWORK.getHvdcLine(equipmentId);
+            default -> fail("Unsupported equipment type: " + equipmentType);
+        };
     }
 
     public static Network createTestNetwork() {
@@ -27,8 +50,9 @@ public final class TestNetworkUtils {
                 .setId("SUBSTATION_1").setCountry(Country.FR).add();
         Substation s2 = network.newSubstation()
                 .setId("SUBSTATION_2").setCountry(Country.DE).add();
-        network.newSubstation()
+        Substation s3 = network.newSubstation()
                 .setId("SUBSTATION_3").setCountry(Country.ES).add();
+        s3.setProperty("myCustomProperty", "My custom value");
 
         // ===== Voltage Levels =====
         // 3 voltage levels in S1 (NODE_BREAKER) with different nominal voltages
@@ -36,9 +60,12 @@ public final class TestNetworkUtils {
         VoltageLevel vl1 = s1.newVoltageLevel()
                 .setId("VOLTAGE_LEVEL_1").setNominalV(400.0)
                 .setTopologyKind(TopologyKind.NODE_BREAKER).add();
+        vl1.setProperty("myCustomProperty", "My custom value");
+        vl1.setName("Best voltage level ;)");
         VoltageLevel vl2 = s1.newVoltageLevel()
                 .setId("VOLTAGE_LEVEL_2").setNominalV(225.0)
                 .setTopologyKind(TopologyKind.NODE_BREAKER).add();
+        vl2.setName("");
         VoltageLevel vl3 = s1.newVoltageLevel()
                 .setId("VOLTAGE_LEVEL_3").setNominalV(90.0)
                 .setTopologyKind(TopologyKind.NODE_BREAKER).add();
@@ -49,7 +76,8 @@ public final class TestNetworkUtils {
                 .setTopologyKind(TopologyKind.BUS_BREAKER).add();
         vlS2.getBusBreakerView().newBus().setId("BUS_S2").add();
         VoltageLevel vlS3 = network.getSubstation("SUBSTATION_3").newVoltageLevel()
-                .setId("VL_S3").setNominalV(400.0)
+                .setId("VL_S3").setName("other vl...")
+                .setNominalV(400.0)
                 .setTopologyKind(TopologyKind.BUS_BREAKER).add();
         vlS3.getBusBreakerView().newBus().setId("BUS_S3").add();
 
@@ -82,9 +110,11 @@ public final class TestNetworkUtils {
                     .setEnergySource(EnergySource.NUCLEAR)
                     .setMinP(0.0).setMaxP(1000.0)
                     .setTargetP(100.0 * i).setTargetV(400.0)
+                    .setTargetQ(Double.NaN)
                     .setVoltageRegulatorOn(true)
                     .add();
         }
+        network.getGenerator("GENERATOR_3").setTargetQ(100.0);
 
         // ===== Batteries (3) =====
         for (int i = 1; i <= 3; i++) {
@@ -154,6 +184,13 @@ public final class TestNetworkUtils {
                     .setVoltageLevel2(vl2.getId()).setNode2(connect(vl2, nodeCounter2))
                     .setR(1.0).setX(10.0).setG(0.0).setB(0.0)
                     .setRatedU1(400.0).setRatedU2(225.0)
+                    .add()
+                    .newRatioTapChanger()
+                    .setTapPosition(0)
+                    .setLoadTapChangingCapabilities(true)
+                    .beginStep()
+                    .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
+                    .endStep()
                     .add();
         }
 
@@ -175,7 +212,34 @@ public final class TestNetworkUtils {
                     .setVoltageLevel(vl3.getId()).setNode(connect(vl3, nodeCounter3))
                     .add()
                     .add();
+            network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_" + i).getLeg2()
+                    .newRatioTapChanger()
+                    .setRegulationMode(RatioTapChanger.RegulationMode.REACTIVE_POWER)
+                    .setTapPosition(0)
+                    .setLoadTapChangingCapabilities(true)
+                    .beginStep()
+                    .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
+                    .endStep()
+                    .add();
+            network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_" + i).getLeg3().newRatioTapChanger()
+                    .setTapPosition(0)
+                    .setRegulationMode(RatioTapChanger.RegulationMode.VOLTAGE)
+                    .setLoadTapChangingCapabilities(true)
+                    .beginStep()
+                    .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
+                    .endStep()
+                    .add();
         }
+        network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_2").getLeg1()
+                .newRatioTapChanger()
+                .setRegulationMode(RatioTapChanger.RegulationMode.VOLTAGE)
+                .setTapPosition(0)
+                .setLoadTapChangingCapabilities(true)
+                .setTargetV(400.0)
+                .beginStep()
+                .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
+                .endStep()
+                .add();
 
         // ===== Lines (3) - between voltage levels of nominal V = 400 kV =====
         network.newLine()
