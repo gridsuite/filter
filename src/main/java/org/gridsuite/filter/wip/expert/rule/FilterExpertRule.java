@@ -8,7 +8,7 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
@@ -18,7 +18,6 @@ import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.Filter;
 import org.gridsuite.filter.wip.expert.data.DataType;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,13 +33,21 @@ import java.util.stream.Collectors;
 public final class FilterExpertRule extends AbstractExpertRule {
 
     private OperatorType operatorType;
+
     @Builder.Default
-    private Set<Filter> referenceFilters = Collections.emptySet();
+    private Set<Filter> referenceFilters = new HashSet<>();
+
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @Builder.Default
     private String networkIdCache = "";
+
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @Builder.Default
-    @JsonDeserialize(as = HashSet.class)
-    private Set<String> filterEvaluationCache = Collections.emptySet();
+    private Set<String> filterEvaluationCache = new HashSet<>();
 
     @Override
     public DataType getDataType() {

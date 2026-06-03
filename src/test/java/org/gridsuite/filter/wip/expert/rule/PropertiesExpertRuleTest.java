@@ -540,18 +540,18 @@ class PropertiesExpertRuleTest {
 
     @Test
     void testPropertiesValue() {
-        org.gridsuite.filter.expertfilter.expertrule.PropertiesExpertRule rule = org.gridsuite.filter.expertfilter.expertrule.PropertiesExpertRule.builder().operator(IN).field(FieldType.FREE_PROPERTIES).propertyName("property")
-                .propertyValues(Collections.singletonList("value1")).build();
-        assertEquals(Collections.singletonList("value1"), rule.getPropertyValues());
-        assertEquals("property", rule.getStringValue());
-        assertEquals(FieldType.FREE_PROPERTIES, rule.getField());
-        assertEquals(IN, rule.getOperator());
-        rule = org.gridsuite.filter.expertfilter.expertrule.PropertiesExpertRule.builder().operator(NOT_IN).field(FieldType.FREE_PROPERTIES).propertyName("property2")
-                .propertyValues(Collections.singletonList("value2")).build();
-        assertEquals(Collections.singletonList("value2"), rule.getPropertyValues());
-        assertEquals("property2", rule.getStringValue());
-        assertEquals(FieldType.FREE_PROPERTIES, rule.getField());
-        assertEquals(NOT_IN, rule.getOperator());
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().operatorType(IN).fieldType(FieldType.FREE_PROPERTIES).targetProperty("property")
+                .referenceValues(Collections.singleton("value1")).build();
+        assertEquals(Collections.singleton("value1"), rule.getReferenceValues());
+        assertEquals("property", rule.getTargetProperty());
+        assertEquals(FieldType.FREE_PROPERTIES, rule.getFieldType());
+        assertEquals(IN, rule.getOperatorType());
+        rule = PropertiesExpertRule.builder().operatorType(NOT_IN).fieldType(FieldType.FREE_PROPERTIES).targetProperty("property2")
+                .referenceValues(Collections.singleton("value2")).build();
+        assertEquals(Collections.singleton("value2"), rule.getReferenceValues());
+        assertEquals("property2", rule.getTargetProperty());
+        assertEquals(FieldType.FREE_PROPERTIES, rule.getFieldType());
+        assertEquals(NOT_IN, rule.getOperatorType());
     }
 
     @ParameterizedTest

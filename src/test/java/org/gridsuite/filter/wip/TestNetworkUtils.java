@@ -110,11 +110,10 @@ public final class TestNetworkUtils {
                     .setEnergySource(EnergySource.NUCLEAR)
                     .setMinP(0.0).setMaxP(1000.0)
                     .setTargetP(100.0 * i).setTargetV(400.0)
-                    .setTargetQ(Double.NaN)
+                    .setTargetQ(i == 3 ? 100.0 : Double.NaN)
                     .setVoltageRegulatorOn(true)
                     .add();
         }
-        network.getGenerator("GENERATOR_3").setTargetQ(100.0);
 
         // ===== Batteries (3) =====
         for (int i = 1; i <= 3; i++) {

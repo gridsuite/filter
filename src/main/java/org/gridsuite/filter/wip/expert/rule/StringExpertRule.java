@@ -19,7 +19,6 @@ import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.expert.data.DataType;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +38,7 @@ public final class StringExpertRule extends AbstractExpertRule {
     private String referenceValue = "";
     @Builder.Default
     @JsonDeserialize(as = HashSet.class)
-    private Set<String> referenceValues = Collections.emptySet();
+    private Set<String> referenceValues = new HashSet<>();
 
     @Override
     public DataType getDataType() {

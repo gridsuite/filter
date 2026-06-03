@@ -17,7 +17,6 @@ import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.expert.data.DataType;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,10 +29,12 @@ import java.util.Set;
 @SuperBuilder
 public final class CombinatorExpertRule extends AbstractExpertRule {
 
+    @NonNull
     private CombinatorType combinatorType;
+
     @Builder.Default
     @JsonDeserialize(as = HashSet.class)
-    private Set<ExpertRule> subRules = Collections.emptySet();
+    private Set<ExpertRule> subRules = new HashSet<>();
 
     @Override
     public DataType getDataType() {

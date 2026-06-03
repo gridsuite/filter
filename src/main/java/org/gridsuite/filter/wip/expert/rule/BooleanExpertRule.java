@@ -49,8 +49,8 @@ public final class BooleanExpertRule extends AbstractExpertRule {
         return switch (operatorType) {
             case EQUALS -> parsedReferenceValue == parsedFieldValue;
             case NOT_EQUALS -> parsedReferenceValue != parsedFieldValue;
-            case EXISTS -> parsedFieldValue;
-            case NOT_EXISTS -> !parsedFieldValue;
+            case EXISTS -> true;
+            case NOT_EXISTS -> false;
             default -> throw unsupportedOperatorException();
         };
     }

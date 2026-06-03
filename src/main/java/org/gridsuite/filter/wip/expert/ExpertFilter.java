@@ -37,6 +37,7 @@ public class ExpertFilter extends AbstractFilter {
 
     @Override
     protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
+        Objects.requireNonNull(identifiable);
         return rule.evaluateRule(identifiable);
     }
 }

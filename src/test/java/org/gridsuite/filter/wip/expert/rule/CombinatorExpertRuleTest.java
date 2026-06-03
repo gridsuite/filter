@@ -96,14 +96,14 @@ class CombinatorExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsCombinator() {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().build();
+        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinatorType(CombinatorType.OR).build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.COMBINATOR);
     }
 
     @Test
     void testGetOperatorTypeThrowsUnsupportedOperationException() {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().build();
+        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinatorType(CombinatorType.OR).build();
 
         assertThatThrownBy(rule::getOperatorType).isInstanceOf(UnsupportedOperationException.class);
     }

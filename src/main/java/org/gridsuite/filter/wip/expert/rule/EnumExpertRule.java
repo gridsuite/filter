@@ -17,7 +17,7 @@ import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.expert.data.DataType;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @Beta
@@ -34,8 +34,9 @@ public final class EnumExpertRule extends AbstractExpertRule {
 
     @Builder.Default
     private String referenceValue = "";
+
     @Builder.Default
-    private Set<String> referenceValues = Collections.emptySet();
+    private Set<String> referenceValues = new HashSet<>();
 
     @Override
     public DataType getDataType() {

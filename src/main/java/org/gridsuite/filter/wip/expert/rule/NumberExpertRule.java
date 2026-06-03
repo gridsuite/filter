@@ -33,11 +33,13 @@ public final class NumberExpertRule extends AbstractExpertRule {
 
     private FieldType fieldType;
     private OperatorType operatorType;
+
     @Builder.Default
     private Double referenceValue = Double.NaN;
+
     @Builder.Default
     @JsonDeserialize(as = HashSet.class)
-    private Set<Double> referenceValues = Set.of(Double.NaN);
+    private Set<Double> referenceValues = new HashSet<>(Set.of(Double.NaN));
 
     public static Double getNumberValue(String value) {
         return value == null ? Double.NaN : Double.parseDouble(value);

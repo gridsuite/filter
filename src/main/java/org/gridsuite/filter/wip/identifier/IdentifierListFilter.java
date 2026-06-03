@@ -37,6 +37,7 @@ public class IdentifierListFilter extends AbstractFilter {
 
     @Override
     protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
+        Objects.requireNonNull(identifiable);
         return equipmentIds.contains(identifiable.getId());
     }
 }
