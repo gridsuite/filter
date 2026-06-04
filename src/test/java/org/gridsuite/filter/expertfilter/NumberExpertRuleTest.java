@@ -114,12 +114,10 @@ class NumberExpertRuleTest {
         "provideArgumentsForHvdcLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
-        @SuppressWarnings("checkstyle:MethodLength")
         NumberExpertRule rule = NumberExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
         assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
-    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {
 
         Generator gen = Mockito.mock(Generator.class);
@@ -176,6 +174,21 @@ class NumberExpertRuleTest {
         Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
+            provideArgumentsForGeneratorTestEqualsArguments(gen),
+            provideArgumentsForGeneratorTestGreaterOrEqualsArguments(gen),
+            provideArgumentsForGeneratorTestGreaterArguments(gen),
+            provideArgumentsForGeneratorTestLowerOrEqualsArguments(gen),
+            provideArgumentsForGeneratorTestLowerArguments(gen),
+            provideArgumentsForGeneratorTestBetweenArguments(gen),
+            provideArgumentsForGeneratorTestExistsArguments(gen, gen1),
+            provideArgumentsForGeneratorTestNotExistsArguments(gen, gen1),
+            provideArgumentsForGeneratorTestInArguments(gen),
+            provideArgumentsForGeneratorTestNotInArguments(gen)
+        ).flatMap(stream -> stream);
+    }
+
+    private static Stream<Arguments> provideArgumentsForGeneratorTestEqualsArguments(Generator gen) {
+        return Stream.of(
                 // --- EQUALS --- //
                 // Generator fields
                 Arguments.of(EQUALS, FieldType.MIN_P, -500.0, null, gen, true),
@@ -209,8 +222,12 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.FORCED_OUTAGE_RATE, 40.0, null, gen, false),
                 // VoltageLevel fields
                 Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, gen, true),
-                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, gen, false),
+                Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, gen, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestGreaterOrEqualsArguments(Generator gen) {
+        return Stream.of(
                 // --- GREATER_OR_EQUALS --- //
                 // Generator fields
                 Arguments.of(GREATER_OR_EQUALS, FieldType.MIN_P, -600.0, null, gen, true),
@@ -259,8 +276,12 @@ class NumberExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, gen, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, gen, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, gen, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, gen, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestGreaterArguments(Generator gen) {
+        return Stream.of(
                 // --- GREATER --- //
                 // Generator fields
                 Arguments.of(GREATER, FieldType.MIN_P, -600.0, null, gen, true),
@@ -310,8 +331,12 @@ class NumberExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, gen, true),
                 Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 13.0, null, gen, false),
-                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, gen, false),
+                Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 14.0, null, gen, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestLowerOrEqualsArguments(Generator gen) {
+        return Stream.of(
                 // --- LOWER_OR_EQUALS --- //
                 // Generator fields
                 Arguments.of(LOWER_OR_EQUALS, FieldType.MIN_P, -400.0, null, gen, true),
@@ -360,8 +385,12 @@ class NumberExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 14.0, null, gen, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, gen, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, gen, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, gen, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestLowerArguments(Generator gen) {
+        return Stream.of(
                 // --- LOWER --- //
                 // Generator fields
                 Arguments.of(LOWER, FieldType.MIN_P, -400.0, null, gen, true),
@@ -410,8 +439,12 @@ class NumberExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, gen, true),
                 Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 13.0, null, gen, false),
-                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 12.0, null, gen, false),
+                Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 12.0, null, gen, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestBetweenArguments(Generator gen) {
+        return Stream.of(
                 // --- BETWEEN --- //
                 // Generator fields
                 Arguments.of(BETWEEN, FieldType.MIN_P, null, Set.of(-600.0, -400.0), gen, true),
@@ -445,8 +478,12 @@ class NumberExpertRuleTest {
                 Arguments.of(BETWEEN, FieldType.FORCED_OUTAGE_RATE, null, Set.of(55.0, 60.0), gen, false),
                 // VoltageLevel fields
                 Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), gen, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestExistsArguments(Generator gen, Generator gen1) {
+        return Stream.of(
                 // --- EXISTS --- //
                 // Generator fields
                 Arguments.of(EXISTS, FieldType.MIN_P, null, null, gen, true),
@@ -480,8 +517,12 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.FORCED_OUTAGE_RATE, null, null, gen1, false),
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen, true),
-                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen1, false),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen1, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestNotExistsArguments(Generator gen, Generator gen1) {
+        return Stream.of(
                 // --- NOT_EXISTS --- //
                 // Generator fields
                 Arguments.of(NOT_EXISTS, FieldType.MIN_P, null, null, gen, false),
@@ -515,8 +556,12 @@ class NumberExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.FORCED_OUTAGE_RATE, null, null, gen1, true),
                 // VoltageLevel fields
                 Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen, false),
-                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, gen1, true)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestInArguments(Generator gen) {
+        return Stream.of(
                 // --- IN --- //
                 // Generator fields
                 Arguments.of(IN, FieldType.MIN_P, null, Set.of(-600.0, -500.0, -400.0), gen, true),
@@ -550,8 +595,12 @@ class NumberExpertRuleTest {
                 Arguments.of(IN, FieldType.FORCED_OUTAGE_RATE, null, Set.of(40.0, 60.0), gen, false),
                 // VoltageLevel fields
                 Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), gen, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), gen, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), gen, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForGeneratorTestNotInArguments(Generator gen) {
+        return Stream.of(
                 // --- NOT_IN --- //
                 // Generator fields
                 Arguments.of(NOT_IN, FieldType.MIN_P, null, Set.of(-600.0, -400.0), gen, true),
@@ -881,7 +930,6 @@ class NumberExpertRuleTest {
         );
     }
 
-    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForShuntCompensatorTest() {
 
         ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
@@ -968,6 +1016,21 @@ class NumberExpertRuleTest {
         Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
+            provideArgumentsForShuntCompensatorTestEqualsArguments(shuntCompensator),
+            provideArgumentsForShuntCompensatorTestGreaterOrEqualsArguments(shuntCompensator),
+            provideArgumentsForShuntCompensatorTestGreaterArguments(shuntCompensator),
+            provideArgumentsForShuntCompensatorTestLowerOrEqualsArguments(shuntCompensator),
+            provideArgumentsForShuntCompensatorTestLowerArguments(shuntCompensator),
+            provideArgumentsForShuntCompensatorTestBetweenArguments(shuntCompensator),
+            provideArgumentsForShuntCompensatorTestExistsArguments(shuntCompensator, shuntCompensator1),
+            provideArgumentsForShuntCompensatorTestNotExistsArguments(shuntCompensator, shuntCompensator1),
+            provideArgumentsForShuntCompensatorTestInArguments(shuntCompensator),
+            provideArgumentsForShuntCompensatorTestNotInArguments(shuntCompensator)
+        ).flatMap(stream -> stream);
+    }
+
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestEqualsArguments(ShuntCompensator shuntCompensator) {
+        return Stream.of(
                 // --- EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, shuntCompensator, true),
@@ -984,8 +1047,12 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, 3., null, shuntCompensator, true),
                 Arguments.of(EQUALS, FieldType.MAX_SUSCEPTANCE, 2., null, shuntCompensator, false),
                 Arguments.of(EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 3., null, shuntCompensator, true),
-                Arguments.of(EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 2., null, shuntCompensator, false),
+                Arguments.of(EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 2., null, shuntCompensator, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestGreaterOrEqualsArguments(ShuntCompensator shuntCompensator) {
+        return Stream.of(
                 // --- GREATER_OR_EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, shuntCompensator, true),
@@ -1011,8 +1078,12 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 4., null, shuntCompensator, false),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 3., null, shuntCompensator, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 2., null, shuntCompensator, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 4., null, shuntCompensator, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 4., null, shuntCompensator, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestGreaterArguments(ShuntCompensator shuntCompensator) {
+        return Stream.of(
                 // --- GREATER --- //
                 // VoltageLevel fields
                 Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 12.0, null, shuntCompensator, true),
@@ -1038,8 +1109,12 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER, FieldType.MAX_SUSCEPTANCE, 4., null, shuntCompensator, false),
                 Arguments.of(GREATER, FieldType.SWITCHED_ON_SUSCEPTANCE, 2., null, shuntCompensator, true),
                 Arguments.of(GREATER, FieldType.SWITCHED_ON_SUSCEPTANCE, 3., null, shuntCompensator, false),
-                Arguments.of(GREATER, FieldType.SWITCHED_ON_SUSCEPTANCE, 4., null, shuntCompensator, false),
+                Arguments.of(GREATER, FieldType.SWITCHED_ON_SUSCEPTANCE, 4., null, shuntCompensator, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestLowerOrEqualsArguments(ShuntCompensator shuntCompensator) {
+        return Stream.of(
                 // --- LOWER_OR_EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, shuntCompensator, true),
@@ -1065,8 +1140,12 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER_OR_EQUALS, FieldType.MAX_SUSCEPTANCE, 2., null, shuntCompensator, false),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 3., null, shuntCompensator, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 4., null, shuntCompensator, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 2., null, shuntCompensator, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SWITCHED_ON_SUSCEPTANCE, 2., null, shuntCompensator, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestLowerArguments(ShuntCompensator shuntCompensator) {
+        return Stream.of(
                 // --- LOWER --- //
                 // VoltageLevel fields
                 Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 14.0, null, shuntCompensator, true),
@@ -1092,8 +1171,12 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.MAX_SUSCEPTANCE, 2., null, shuntCompensator, false),
                 Arguments.of(LOWER, FieldType.SWITCHED_ON_SUSCEPTANCE, 4., null, shuntCompensator, true),
                 Arguments.of(LOWER, FieldType.SWITCHED_ON_SUSCEPTANCE, 3., null, shuntCompensator, false),
-                Arguments.of(LOWER, FieldType.SWITCHED_ON_SUSCEPTANCE, 2., null, shuntCompensator, false),
+                Arguments.of(LOWER, FieldType.SWITCHED_ON_SUSCEPTANCE, 2., null, shuntCompensator, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestBetweenArguments(ShuntCompensator shuntCompensator) {
+        return Stream.of(
                 // --- BETWEEN --- //
                 // VoltageLevel fields
                 Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), shuntCompensator, true),
@@ -1112,20 +1195,30 @@ class NumberExpertRuleTest {
                 Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2., 4.), shuntCompensator, true),
                 Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false),
                 Arguments.of(BETWEEN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(2., 4.), shuntCompensator, true),
-                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false),
+                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestExistsArguments(ShuntCompensator shuntCompensator, ShuntCompensator shuntCompensator1) {
+        return Stream.of(
                 // --- EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator, true),
-                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator1, false),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator1, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestNotExistsArguments(ShuntCompensator shuntCompensator, ShuntCompensator shuntCompensator1) {
+        return Stream.of(
                 // --- NOT_EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator, false),
-                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, shuntCompensator1, true)
+        );
+    }
 
-                // Shunt Compensator Fields
-
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestInArguments(ShuntCompensator shuntCompensator) {
+        return Stream.of(
                 // --- IN --- //
                 // VoltageLevel fields
                 Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), shuntCompensator, true),
@@ -1144,7 +1237,12 @@ class NumberExpertRuleTest {
                 Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(3., 4.), shuntCompensator, true),
                 Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false),
                 Arguments.of(IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(3., 4.), shuntCompensator, true),
-                Arguments.of(IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false),
+                Arguments.of(IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForShuntCompensatorTestNotInArguments(ShuntCompensator shuntCompensator) {
+        return Stream.of(
                 // --- NOT_IN --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), shuntCompensator, true),
@@ -1167,7 +1265,6 @@ class NumberExpertRuleTest {
         );
     }
 
-    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForLinesTest() {
 
         Line line = Mockito.mock(Line.class);
@@ -1211,6 +1308,21 @@ class NumberExpertRuleTest {
         Mockito.when(voltageLevelNone2.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
+            provideArgumentsForLinesTestEqualsArguments(line),
+            provideArgumentsForLinesTestGreaterOrEqualsArguments(line),
+            provideArgumentsForLinesTestGreaterArguments(line),
+            provideArgumentsForLinesTestLowerOrEqualsArguments(line),
+            provideArgumentsForLinesTestLowerArguments(line),
+            provideArgumentsForLinesTestBetweenArguments(line),
+            provideArgumentsForLinesTestExistsArguments(line, line1),
+            provideArgumentsForLinesTestNotExistsArguments(line, line1),
+            provideArgumentsForLinesTestInArguments(line),
+            provideArgumentsForLinesTestNotInArguments(line)
+        ).flatMap(stream -> stream);
+    }
+
+    private static Stream<Arguments> provideArgumentsForLinesTestEqualsArguments(Line line) {
+        return Stream.of(
                 // --- EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13., null, line, true),
@@ -1231,8 +1343,12 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.SHUNT_SUSCEPTANCE_1, 200., null, line, true),
                 Arguments.of(EQUALS, FieldType.SHUNT_SUSCEPTANCE_1, 14., null, line, false),
                 Arguments.of(EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 250., null, line, true),
-                Arguments.of(EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 14., null, line, false),
+                Arguments.of(EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 14., null, line, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestGreaterOrEqualsArguments(Line line) {
+        return Stream.of(
                 // --- GREATER_OR_EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12., null, line, true),
@@ -1261,8 +1377,12 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_1, 201., null, line, false),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 249., null, line, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 250., null, line, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 251., null, line, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 251., null, line, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestGreaterArguments(Line line) {
+        return Stream.of(
                 // --- GREATER --- //
                 // VoltageLevel fields
                 Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 12., null, line, true),
@@ -1291,8 +1411,12 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE_1, 201., null, line, false),
                 Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE_2, 249., null, line, true),
                 Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE_2, 250., null, line, false),
-                Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE_2, 251., null, line, false),
+                Arguments.of(GREATER, FieldType.SHUNT_SUSCEPTANCE_2, 251., null, line, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestLowerOrEqualsArguments(Line line) {
+        return Stream.of(
                 // --- LOWER_OR_EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14., null, line, true),
@@ -1320,8 +1444,12 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_1, 199., null, line, false),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 251., null, line, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 250., null, line, true),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 249., null, line, false),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.SHUNT_SUSCEPTANCE_2, 249., null, line, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestLowerArguments(Line line) {
+        return Stream.of(
                 // --- LOWER --- //
                 // VoltageLevel fields
                 Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 14., null, line, true),
@@ -1349,8 +1477,12 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE_1, 199., null, line, false),
                 Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE_2, 251., null, line, true),
                 Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE_2, 250., null, line, false),
-                Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE_2, 249., null, line, false),
+                Arguments.of(LOWER, FieldType.SHUNT_SUSCEPTANCE_2, 249., null, line, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestBetweenArguments(Line line) {
+        return Stream.of(
                 // --- BETWEEN --- //
                 // VoltageLevel fields
                 Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 14.), line, true),
@@ -1370,24 +1502,36 @@ class NumberExpertRuleTest {
                 Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(199., 200.), line, true),
                 Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(201., 204.), line, false),
                 Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(245., 255.), line, true),
-                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(240., 249.), line, false),
+                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(240., 249.), line, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestExistsArguments(Line line, Line line1) {
+        return Stream.of(
                 // --- EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, line, true),
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, line1, false),
 
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line, true),
-                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line1, false),
+                Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line1, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestNotExistsArguments(Line line, Line line1) {
+        return Stream.of(
                 // --- NOT_EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, line, false),
                 Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, line1, true),
 
                 Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line, false),
-                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line1, true),
+                Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_2, null, null, line1, true)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestInArguments(Line line) {
+        return Stream.of(
                 // --- IN --- //
                 // VoltageLevel fields
                 Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 13., 14.), line, true),
@@ -1407,8 +1551,12 @@ class NumberExpertRuleTest {
                 Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(199., 200.), line, true),
                 Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(199., 204.), line, false),
                 Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(250., 240.), line, true),
-                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(240., 249.), line, false),
+                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(240., 249.), line, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForLinesTestNotInArguments(Line line) {
+        return Stream.of(
                 // --- NOT_IN --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 14.), line, true),
@@ -1784,7 +1932,6 @@ class NumberExpertRuleTest {
         );
     }
 
-    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTest() {
 
         TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
@@ -1851,6 +1998,23 @@ class NumberExpertRuleTest {
         Mockito.when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
 
         return Stream.of(
+            provideArgumentsForTwoWindingTransformerTestEqualsArguments(twoWindingsTransformer),
+            provideArgumentsForTwoWindingTransformerTestGreaterOrEqualsArguments(twoWindingsTransformer),
+            provideArgumentsForTwoWindingTransformerTestGreaterArguments(twoWindingsTransformer),
+            provideArgumentsForTwoWindingTransformerTestLowerOrEqualsArguments(twoWindingsTransformer),
+            provideArgumentsForTwoWindingTransformerTestLowerArguments(twoWindingsTransformer),
+            provideArgumentsForTwoWindingTransformerTestBetweenArguments(twoWindingsTransformer),
+            provideArgumentsForTwoWindingTransformerTestExistsArguments(twoWindingsTransformer, twoWindingsTransformer1),
+            provideArgumentsForTwoWindingTransformerTestNotExistsArguments(twoWindingsTransformer, twoWindingsTransformer1),
+            provideArgumentsForTwoWindingTransformerTestInArguments(twoWindingsTransformer),
+            provideArgumentsForTwoWindingTransformerTestNotInArguments(twoWindingsTransformer, twoWindingsTransformer2)
+        ).flatMap(stream -> stream);
+    }
+
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestEqualsArguments(
+        TwoWindingsTransformer twoWindingsTransformer
+    ) {
+        return Stream.of(
             // --- EQUALS --- //
             // Terminal fields
             Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, twoWindingsTransformer, true),
@@ -1877,8 +2041,14 @@ class NumberExpertRuleTest {
             Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 50., null, twoWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_1, 300., null, twoWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, twoWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, twoWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestGreaterOrEqualsArguments(
+        TwoWindingsTransformer twoWindingsTransformer
+    ) {
+        return Stream.of(
             // --- GREATER_OR_EQUALS --- //
             // Terminal
             Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, true),
@@ -1912,8 +2082,14 @@ class NumberExpertRuleTest {
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, false),
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, true),
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestGreaterArguments(
+        TwoWindingsTransformer twoWindingsTransformer
+    ) {
+        return Stream.of(
             // --- GREATER --- //
             // Terminal
             Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, twoWindingsTransformer, true),
@@ -1947,8 +2123,14 @@ class NumberExpertRuleTest {
             Arguments.of(GREATER, FieldType.RATED_VOLTAGE_1, 51., null, twoWindingsTransformer, false),
             Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, true),
             Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestLowerOrEqualsArguments(
+        TwoWindingsTransformer twoWindingsTransformer
+    ) {
+        return Stream.of(
             // --- LOWER_OR_EQUALS --- //
             // Terminal
             Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, true),
@@ -1982,8 +2164,14 @@ class NumberExpertRuleTest {
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, false),
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, true),
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestLowerArguments(
+        TwoWindingsTransformer twoWindingsTransformer
+    ) {
+        return Stream.of(
             // --- LOWER --- //
             // Terminal
             Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, twoWindingsTransformer, true),
@@ -2017,8 +2205,14 @@ class NumberExpertRuleTest {
             Arguments.of(LOWER, FieldType.RATED_VOLTAGE_1, 49., null, twoWindingsTransformer, false),
             Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 301., null, twoWindingsTransformer, true),
             Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 300., null, twoWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 299., null, twoWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestBetweenArguments(
+        TwoWindingsTransformer twoWindingsTransformer
+    ) {
+        return Stream.of(
             // --- BETWEEN --- //
             // Terminal
             Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
@@ -2042,8 +2236,15 @@ class NumberExpertRuleTest {
             Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(48., 52.), twoWindingsTransformer, true),
             Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(55., 70.), twoWindingsTransformer, false),
             Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(295., 305.), twoWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(320., 350.), twoWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(320., 350.), twoWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestExistsArguments(
+        TwoWindingsTransformer twoWindingsTransformer,
+        TwoWindingsTransformer twoWindingsTransformer1
+    ) {
+        return Stream.of(
             // --- EXISTS --- //
             // Terminal
             Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer, true),
@@ -2067,8 +2268,15 @@ class NumberExpertRuleTest {
             Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, true),
             Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, false),
             Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestNotExistsArguments(
+        TwoWindingsTransformer twoWindingsTransformer,
+        TwoWindingsTransformer twoWindingsTransformer1
+    ) {
+        return Stream.of(
             // --- NOT_EXISTS --- //
             // Terminal
             Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, twoWindingsTransformer, false),
@@ -2092,8 +2300,14 @@ class NumberExpertRuleTest {
             Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer, false),
             Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_1, null, null, twoWindingsTransformer1, true),
             Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, twoWindingsTransformer1, true)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestInArguments(
+        TwoWindingsTransformer twoWindingsTransformer
+    ) {
+        return Stream.of(
             // --- IN --- //
             // Terminal
             Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
@@ -2117,8 +2331,15 @@ class NumberExpertRuleTest {
             Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 50.0, 51.0), twoWindingsTransformer, true),
             Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 51.0), twoWindingsTransformer, false),
             Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, true),
-            Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTestNotInArguments(
+        TwoWindingsTransformer twoWindingsTransformer,
+        TwoWindingsTransformer twoWindingsTransformer2
+    ) {
+        return Stream.of(
             // --- NOT_IN --- //
             // Terminal
             Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
@@ -2152,7 +2373,6 @@ class NumberExpertRuleTest {
         );
     }
 
-    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTest() {
         // transfo
         ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
@@ -2231,6 +2451,23 @@ class NumberExpertRuleTest {
         Mockito.when(threeWindingsTransformer2.getLeg3()).thenReturn(leg2);
 
         return Stream.of(
+            provideArgumentsForThreeWindingTransformerTestEqualsArguments(threeWindingsTransformer),
+            provideArgumentsForThreeWindingTransformerTestGreaterOrEqualsArguments(threeWindingsTransformer),
+            provideArgumentsForThreeWindingTransformerTestGreaterArguments(threeWindingsTransformer),
+            provideArgumentsForThreeWindingTransformerTestLowerOrEqualsArguments(threeWindingsTransformer),
+            provideArgumentsForThreeWindingTransformerTestLowerArguments(threeWindingsTransformer),
+            provideArgumentsForThreeWindingTransformerTestBetweenArguments(threeWindingsTransformer),
+            provideArgumentsForThreeWindingTransformerTestExistsArguments(threeWindingsTransformer, threeWindingsTransformer1),
+            provideArgumentsForThreeWindingTransformerTestNotExistsArguments(threeWindingsTransformer, threeWindingsTransformer1),
+            provideArgumentsForThreeWindingTransformerTestInArguments(threeWindingsTransformer),
+            provideArgumentsForThreeWindingTransformerTestNotInArguments(threeWindingsTransformer, threeWindingsTransformer2)
+        ).flatMap(stream -> stream);
+    }
+
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestEqualsArguments(
+        ThreeWindingsTransformer threeWindingsTransformer
+    ) {
+        return Stream.of(
             // --- EQUALS --- //
             // Terminal fields
             Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE_1, 13.0, null, threeWindingsTransformer, true),
@@ -2291,8 +2528,14 @@ class NumberExpertRuleTest {
             Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 50., null, threeWindingsTransformer, true),
             Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_2, 300., null, threeWindingsTransformer, false),
             Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, true),
-            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_3, 300., null, threeWindingsTransformer, false),
+            Arguments.of(EQUALS, FieldType.RATED_VOLTAGE_3, 300., null, threeWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestGreaterOrEqualsArguments(
+        ThreeWindingsTransformer threeWindingsTransformer
+    ) {
+        return Stream.of(
             // --- GREATER_OR_EQUALS --- //
             // Terminal
             Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, threeWindingsTransformer, true),
@@ -2368,8 +2611,14 @@ class NumberExpertRuleTest {
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 51., null, threeWindingsTransformer, false),
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, true),
             Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, true),
-            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestGreaterArguments(
+        ThreeWindingsTransformer threeWindingsTransformer
+    ) {
+        return Stream.of(
             // --- GREATER --- //
             // Terminal
             Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE_1, 12.0, null, threeWindingsTransformer, true),
@@ -2445,8 +2694,14 @@ class NumberExpertRuleTest {
             Arguments.of(GREATER, FieldType.RATED_VOLTAGE_2, 51., null, threeWindingsTransformer, false),
             Arguments.of(GREATER, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, true),
             Arguments.of(GREATER, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, false),
-            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, false),
+            Arguments.of(GREATER, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestLowerOrEqualsArguments(
+        ThreeWindingsTransformer threeWindingsTransformer
+    ) {
+        return Stream.of(
             // --- LOWER_OR_EQUALS --- //
             // Terminal
             Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, threeWindingsTransformer, true),
@@ -2522,8 +2777,14 @@ class NumberExpertRuleTest {
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_2, 49., null, threeWindingsTransformer, false),
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, true),
             Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, true),
-            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestLowerArguments(
+        ThreeWindingsTransformer threeWindingsTransformer
+    ) {
+        return Stream.of(
             // --- LOWER --- //
             // Terminal
             Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE_1, 14.0, null, threeWindingsTransformer, true),
@@ -2599,8 +2860,14 @@ class NumberExpertRuleTest {
             Arguments.of(LOWER, FieldType.RATED_VOLTAGE_2, 49., null, threeWindingsTransformer, false),
             Arguments.of(LOWER, FieldType.RATED_VOLTAGE_3, 51., null, threeWindingsTransformer, true),
             Arguments.of(LOWER, FieldType.RATED_VOLTAGE_3, 50., null, threeWindingsTransformer, false),
-            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, false),
+            Arguments.of(LOWER, FieldType.RATED_VOLTAGE_3, 49., null, threeWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestBetweenArguments(
+        ThreeWindingsTransformer threeWindingsTransformer
+    ) {
+        return Stream.of(
             // --- BETWEEN --- //
             // Terminal
             Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
@@ -2652,8 +2919,15 @@ class NumberExpertRuleTest {
             Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(48., 52.), threeWindingsTransformer, true),
             Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(55., 70.), threeWindingsTransformer, false),
             Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, Set.of(48., 52.), threeWindingsTransformer, true),
-            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, Set.of(55., 70.), threeWindingsTransformer, false),
+            Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, Set.of(55., 70.), threeWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestExistsArguments(
+        ThreeWindingsTransformer threeWindingsTransformer,
+        ThreeWindingsTransformer threeWindingsTransformer1
+    ) {
+        return Stream.of(
             // --- EXISTS --- //
             // Terminal
             Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, threeWindingsTransformer, true),
@@ -2705,8 +2979,15 @@ class NumberExpertRuleTest {
             Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, threeWindingsTransformer, true),
             Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_2, null, null, threeWindingsTransformer1, false),
             Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer, true),
-            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer1, false),
+            Arguments.of(EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer1, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestNotExistsArguments(
+        ThreeWindingsTransformer threeWindingsTransformer,
+        ThreeWindingsTransformer threeWindingsTransformer1
+    ) {
+        return Stream.of(
             // --- NOT_EXISTS --- //
             // Terminal
             Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE_1, null, null, threeWindingsTransformer, false),
@@ -2758,8 +3039,14 @@ class NumberExpertRuleTest {
             Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, threeWindingsTransformer, false),
             Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_2, null, null, threeWindingsTransformer1, true),
             Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer, false),
-            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer1, true),
+            Arguments.of(NOT_EXISTS, FieldType.RATED_VOLTAGE_3, null, null, threeWindingsTransformer1, true)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestInArguments(
+        ThreeWindingsTransformer threeWindingsTransformer
+    ) {
+        return Stream.of(
             // --- IN --- //
             // Terminal
             Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
@@ -2811,8 +3098,15 @@ class NumberExpertRuleTest {
             Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
             Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49.0, 51.0), threeWindingsTransformer, false),
             Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
-            Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49.0, 51.0), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49.0, 51.0), threeWindingsTransformer, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTestNotInArguments(
+        ThreeWindingsTransformer threeWindingsTransformer,
+        ThreeWindingsTransformer threeWindingsTransformer2
+    ) {
+        return Stream.of(
             // --- NOT_IN --- //
             // Terminal
             Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
@@ -2878,7 +3172,6 @@ class NumberExpertRuleTest {
         );
     }
 
-    @SuppressWarnings("checkstyle:MethodLength")
     private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
         StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
         Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
@@ -2927,6 +3220,21 @@ class NumberExpertRuleTest {
         Mockito.when(svar1.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton1);
 
         return Stream.of(
+            provideArgumentsForStaticVarCompensatorTestEqualsArguments(svar),
+            provideArgumentsForStaticVarCompensatorTestGreaterOrEqualsArguments(svar),
+            provideArgumentsForStaticVarCompensatorTestGreaterArguments(svar),
+            provideArgumentsForStaticVarCompensatorTestLowerOrEqualsArguments(svar),
+            provideArgumentsForStaticVarCompensatorTestLowerArguments(svar),
+            provideArgumentsForStaticVarCompensatorTestBetweenArguments(svar),
+            provideArgumentsForStaticVarCompensatorTestExistsArguments(svar, svar1),
+            provideArgumentsForStaticVarCompensatorTestNotExistsArguments(svar, svar1),
+            provideArgumentsForStaticVarCompensatorTestInArguments(svar),
+            provideArgumentsForStaticVarCompensatorTestNotInArguments(svar)
+        ).flatMap(stream -> stream);
+    }
+
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestEqualsArguments(StaticVarCompensator svar) {
+        return Stream.of(
                 // --- EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
@@ -2958,8 +3266,12 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, -1.0, null, svar, true),
                 Arguments.of(EQUALS, FieldType.SUSCEPTANCE_FIX, -2.0, null, svar, false),
                 Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, true),
-                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, false),
+                Arguments.of(EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestGreaterOrEqualsArguments(StaticVarCompensator svar) {
+        return Stream.of(
                 // --- GREATER_OR_EQUALS --- //
                 // VoltageLevel fields
                 Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
@@ -3005,8 +3317,12 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, -0.9, null, svar, false),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, true),
                 Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, true),
-                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, false),
+                Arguments.of(GREATER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestGreaterArguments(StaticVarCompensator svar) {
+        return Stream.of(
                 // --- GREATER --- //
                 // VoltageLevel fields
                 Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, false),
@@ -3052,8 +3368,12 @@ class NumberExpertRuleTest {
                 Arguments.of(GREATER, FieldType.SUSCEPTANCE_FIX, -0.9, null, svar, false),
                 Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, false),
                 Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, true),
-                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, false),
+                Arguments.of(GREATER, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestLowerOrEqualsArguments(StaticVarCompensator svar) {
+        return Stream.of(
                 // --- LOWER_OR_EQUALS --- //
                 Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 12.0, null, svar, false),
@@ -3098,8 +3418,12 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER_OR_EQUALS, FieldType.SUSCEPTANCE_FIX, -0.9, null, svar, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, true),
                 Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, false),
-                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, true),
+                Arguments.of(LOWER_OR_EQUALS, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, true)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestLowerArguments(StaticVarCompensator svar) {
+        return Stream.of(
                 // --- LOWER --- //
                 // VoltageLevel fields
                 Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 13.0, null, svar, false),
@@ -3145,8 +3469,12 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.SUSCEPTANCE_FIX, -0.9, null, svar, true),
                 Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, -169.0, null, svar, false),
                 Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, -170.0, null, svar, false),
-                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, true),
+                Arguments.of(LOWER, FieldType.FIX_Q_AT_NOMINAL_V, -168.0, null, svar, true)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestBetweenArguments(StaticVarCompensator svar) {
+        return Stream.of(
                 // --- BETWEEN --- //
                 // VoltageLevel fields
                 Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, true),
@@ -3179,8 +3507,12 @@ class NumberExpertRuleTest {
                 Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-0.9, -1.1), svar, true),
                 Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.05, -1.1), svar, false),
                 Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
-                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestExistsArguments(StaticVarCompensator svar, StaticVarCompensator svar1) {
+        return Stream.of(
                 // --- EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar, true),
@@ -3212,8 +3544,12 @@ class NumberExpertRuleTest {
                 Arguments.of(EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar, true),
                 Arguments.of(EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar1, false),
                 Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar, true),
-                Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, false),
+                Arguments.of(EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestNotExistsArguments(StaticVarCompensator svar, StaticVarCompensator svar1) {
+        return Stream.of(
                 // --- NOT_EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, svar, false),
@@ -3245,8 +3581,12 @@ class NumberExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar, false),
                 Arguments.of(NOT_EXISTS, FieldType.SUSCEPTANCE_FIX, null, null, svar1, true),
                 Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar, false),
-                Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, true),
+                Arguments.of(NOT_EXISTS, FieldType.FIX_Q_AT_NOMINAL_V, null, null, svar1, true)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestInArguments(StaticVarCompensator svar) {
+        return Stream.of(
                 // --- IN --- //
                 // VoltageLevel fields
                 Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.0, 14.0), svar, true),
@@ -3279,8 +3619,12 @@ class NumberExpertRuleTest {
                 Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.0, -1.1), svar, true),
                 Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.05, -1.1), svar, false),
                 Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, true),
-                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false)
+        );
+    }
 
+    private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTestNotInArguments(StaticVarCompensator svar) {
+        return Stream.of(
                 // --- NOT_IN --- //
                 // VoltageLevel fields
                 Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, true),
