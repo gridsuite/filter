@@ -98,8 +98,7 @@ public final class TestNetworkUtils {
             vl1.newLoad()
                     .setId("LOAD_" + i)
                     .setNode(connect(vl1, nodeCounter1))
-                    .setP0(10.0 * i).setQ0(3.0 * i)
-                    .add();
+                    .setP0(10.0 * i).setQ0(3.0 * i).add();
         }
 
         // ===== Generators (3) =====
@@ -111,8 +110,7 @@ public final class TestNetworkUtils {
                     .setMinP(0.0).setMaxP(1000.0)
                     .setTargetP(100.0 * i).setTargetV(400.0)
                     .setTargetQ(i == 3 ? 100.0 : Double.NaN)
-                    .setVoltageRegulatorOn(true)
-                    .add();
+                    .setVoltageRegulatorOn(true).add();
         }
 
         // ===== Batteries (3) =====
@@ -121,8 +119,7 @@ public final class TestNetworkUtils {
                     .setId("BATTERY_" + i)
                     .setNode(connect(vl1, nodeCounter1))
                     .setMinP(-100.0).setMaxP(100.0)
-                    .setTargetP(10.0 * i).setTargetQ(5.0)
-                    .add();
+                    .setTargetP(10.0 * i).setTargetQ(5.0).add();
         }
 
         // ===== Shunt Compensators (3) =====
@@ -134,8 +131,7 @@ public final class TestNetworkUtils {
                     .newLinearModel()
                     .setBPerSection(1e-5)
                     .setMaximumSectionCount(1)
-                    .add()
-                    .add();
+                    .add().add();
         }
 
         // ===== Static Var Compensators (3) =====
@@ -146,8 +142,7 @@ public final class TestNetworkUtils {
                     .setBmin(0.0002).setBmax(0.0008)
                     .setRegulationMode(StaticVarCompensator.RegulationMode.VOLTAGE)
                     .setRegulating(true)
-                    .setVoltageSetpoint(400.0)
-                    .add();
+                    .setVoltageSetpoint(400.0).add();
         }
 
         // ===== LCC Converter Stations (3 + 3 partners for HVDC lines) =====
@@ -155,13 +150,11 @@ public final class TestNetworkUtils {
             vl1.newLccConverterStation()
                     .setId("LCC_CONVERTER_STATION_" + i)
                     .setNode(connect(vl1, nodeCounter1))
-                    .setLossFactor(1.1f).setPowerFactor(0.5f)
-                    .add();
+                    .setLossFactor(1.1f).setPowerFactor(0.5f).add();
             vlS2.newLccConverterStation()
                     .setId("LCC_PARTNER_" + i)
                     .setConnectableBus("BUS_S2").setBus("BUS_S2")
-                    .setLossFactor(1.1f).setPowerFactor(0.5f)
-                    .add();
+                    .setLossFactor(1.1f).setPowerFactor(0.5f).add();
         }
 
         // ===== VSC Converter Stations (3) =====
@@ -171,8 +164,7 @@ public final class TestNetworkUtils {
                     .setVoltageRegulatorOn(true)
                     .setNode(connect(vl1, nodeCounter1))
                     .setLossFactor(1.1f)
-                    .setVoltageSetpoint(400.0)
-                    .add();
+                    .setVoltageSetpoint(400.0).add();
         }
 
         // ===== Two Windings Transformers (3) - in S1 between vl1 (400 kV) and vl2 (225 kV) =====
@@ -189,8 +181,7 @@ public final class TestNetworkUtils {
                     .setLoadTapChangingCapabilities(true)
                     .beginStep()
                     .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
-                    .endStep()
-                    .add();
+                    .endStep().add();
         }
 
         // ===== Three Windings Transformers (3) - in S1 across vl1/vl2/vl3 =====
@@ -209,8 +200,7 @@ public final class TestNetworkUtils {
                     .newLeg3()
                     .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRatedU(90.0)
                     .setVoltageLevel(vl3.getId()).setNode(connect(vl3, nodeCounter3))
-                    .add()
-                    .add();
+                    .add().add();
             network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_" + i).getLeg2()
                     .newRatioTapChanger()
                     .setRegulationMode(RatioTapChanger.RegulationMode.REACTIVE_POWER)
@@ -218,16 +208,14 @@ public final class TestNetworkUtils {
                     .setLoadTapChangingCapabilities(true)
                     .beginStep()
                     .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
-                    .endStep()
-                    .add();
+                    .endStep().add();
             network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_" + i).getLeg3().newRatioTapChanger()
                     .setTapPosition(0)
                     .setRegulationMode(RatioTapChanger.RegulationMode.VOLTAGE)
                     .setLoadTapChangingCapabilities(true)
                     .beginStep()
                     .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
-                    .endStep()
-                    .add();
+                    .endStep().add();
         }
         network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_2").getLeg1()
                 .newRatioTapChanger()
@@ -237,28 +225,24 @@ public final class TestNetworkUtils {
                 .setTargetV(400.0)
                 .beginStep()
                 .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
-                .endStep()
-                .add();
+                .endStep().add();
 
         // ===== Lines (3) - between voltage levels of nominal V = 400 kV =====
         network.newLine()
                 .setId("LINE_1")
                 .setVoltageLevel1(vl1.getId()).setNode1(connect(vl1, nodeCounter1))
                 .setVoltageLevel2(vlS2.getId()).setConnectableBus2("BUS_S2").setBus2("BUS_S2")
-                .setR(1.0).setX(10.0).setG1(0.0).setB1(0.0).setG2(0.0).setB2(0.0)
-                .add();
+                .setR(1.0).setX(10.0).setG1(0.0).setB1(0.0).setG2(0.0).setB2(0.0).add();
         network.newLine()
                 .setId("LINE_2")
                 .setVoltageLevel1(vl1.getId()).setNode1(connect(vl1, nodeCounter1))
                 .setVoltageLevel2(vlS3.getId()).setConnectableBus2("BUS_S3").setBus2("BUS_S3")
-                .setR(1.0).setX(10.0).setG1(0.0).setB1(0.0).setG2(0.0).setB2(0.0)
-                .add();
+                .setR(1.0).setX(10.0).setG1(0.0).setB1(0.0).setG2(0.0).setB2(0.0).add();
         network.newLine()
                 .setId("LINE_3")
                 .setVoltageLevel1(vlS2.getId()).setConnectableBus1("BUS_S2").setBus1("BUS_S2")
                 .setVoltageLevel2(vlS3.getId()).setConnectableBus2("BUS_S3").setBus2("BUS_S3")
-                .setR(1.0).setX(10.0).setG1(0.0).setB1(0.0).setG2(0.0).setB2(0.0)
-                .add();
+                .setR(1.0).setX(10.0).setG1(0.0).setB1(0.0).setG2(0.0).setB2(0.0).add();
 
         // ===== Boundary (Dangling) Lines (3) =====
         for (int i = 1; i <= 3; i++) {
@@ -266,8 +250,7 @@ public final class TestNetworkUtils {
                     .setId("BOUNDARY_LINE_" + i)
                     .setNode(connect(vl1, nodeCounter1))
                     .setR(1.0).setX(10.0).setG(0.0).setB(0.0)
-                    .setP0(10.0).setQ0(5.0)
-                    .add();
+                    .setP0(10.0).setQ0(5.0).add();
         }
 
         // ===== HVDC Lines (3) =====
@@ -278,8 +261,7 @@ public final class TestNetworkUtils {
                     .setMaxP(100.0).setActivePowerSetpoint(50.0)
                     .setConvertersMode(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER)
                     .setConverterStationId1("LCC_CONVERTER_STATION_" + i)
-                    .setConverterStationId2("LCC_PARTNER_" + i)
-                    .add();
+                    .setConverterStationId2("LCC_PARTNER_" + i).add();
         }
 
         return network;

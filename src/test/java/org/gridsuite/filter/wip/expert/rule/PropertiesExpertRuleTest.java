@@ -533,7 +533,8 @@ class PropertiesExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operatorType, FieldType fieldType, Identifiable<?> equipment, String targetProperty, Set<String> referenceValues, Class<Throwable> expectedException) {
+    void testEvaluateRuleWithException(OperatorType operatorType, FieldType fieldType, Identifiable<?> equipment,
+                                       String targetProperty, Set<String> referenceValues, Class<Throwable> expectedException) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operatorType(operatorType).fieldType(fieldType).targetProperty(targetProperty).referenceValues(referenceValues).build();
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
     }
