@@ -218,7 +218,7 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.LOAD_TYPE, LoadType.FICTITIOUS.name(), null, load, true),
 
                 // --- IN --- //
-                 // VoltageLevel fields
+                // VoltageLevel fields
                 Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), load, true),
                 Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), load, false),
                 Arguments.of(IN, FieldType.LOAD_TYPE, null, Set.of(LoadType.UNDEFINED.name(), LoadType.AUXILIARY.name()), load, true),
@@ -685,14 +685,17 @@ class EnumExpertRuleTest {
             // --- IN --- //
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, true),
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), twoWindingsTransformer, false),
-            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), twoWindingsTransformer,
+                    false),
+            Arguments.of(IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()),
+                    twoWindingsTransformer, true),
 
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, false),
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), twoWindingsTransformer, true),
-            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, false)
+            Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null, Set.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()),
+                    twoWindingsTransformer, false)
             );
     }
 
@@ -857,9 +860,12 @@ class EnumExpertRuleTest {
             // --- IN --- //
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, true),
             Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_2, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
-            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer,
+                    false),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_2, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer,
+                    false),
+            Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer,
+                    false),
 
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, true),

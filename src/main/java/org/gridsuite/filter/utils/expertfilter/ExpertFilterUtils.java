@@ -96,7 +96,7 @@ public final class ExpertFilterUtils {
             case COUNTRY,
                 COUNTRY_1,
                 COUNTRY_2 ->
-                    voltageLevel.getSubstation().flatMap(Substation::getCountry).map(String::valueOf).orElse(null);
+                voltageLevel.getSubstation().flatMap(Substation::getCountry).map(String::valueOf).orElse(null);
             case NOMINAL_VOLTAGE,
                 NOMINAL_VOLTAGE_1,
                 NOMINAL_VOLTAGE_2 -> String.valueOf(voltageLevel.getNominalV());
@@ -259,10 +259,10 @@ public final class ExpertFilterUtils {
                 CONNECTED_1,
                 CONNECTED_2 -> String.valueOf(terminal.isConnected());
             case REGULATING_TERMINAL_VL_ID ->
-                    terminal.getVoltageLevel() != null ?
+                terminal.getVoltageLevel() != null ?
                     terminal.getVoltageLevel().getId() : null;
             case REGULATING_TERMINAL_CONNECTABLE_ID ->
-                    terminal.getConnectable() != null ?
+                terminal.getConnectable() != null ?
                     terminal.getConnectable().getId() : null;
             case P -> String.valueOf(terminal.getP());
             case Q -> String.valueOf(terminal.getQ());
