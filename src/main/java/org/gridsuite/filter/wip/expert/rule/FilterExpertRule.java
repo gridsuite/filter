@@ -46,6 +46,10 @@ public final class FilterExpertRule extends AbstractCachingExpertRule {
     @Builder.Default
     private Set<String> filterEvaluationCache = new HashSet<>();
 
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    private boolean cachedFilterEvaluation = false;
+
     @Override
     public DataType getDataType() {
         return DataType.FILTER;
@@ -66,6 +70,7 @@ public final class FilterExpertRule extends AbstractCachingExpertRule {
     @Override
     public void clearCache() {
         filterEvaluationCache.clear();
+        cachedFilterEvaluation = false;
     }
 
     @Override
@@ -74,7 +79,7 @@ public final class FilterExpertRule extends AbstractCachingExpertRule {
     }
 
     private boolean evaluateIsPartOfOperator(Network network, String targetId) {
-        if (!filterEvaluationCache.isEmpty()) {
+        if (cachedFilterEvaluation) {
             return filterEvaluationCache.contains(targetId);
         }
 
@@ -84,7 +89,8 @@ public final class FilterExpertRule extends AbstractCachingExpertRule {
                 .map(Identifiable::getId)
                 .collect(Collectors.toSet());
 
-        filterEvaluationCache = filterEvaluation;
+        filterEvaluationCache.addAll(filterEvaluation);
+        cachedFilterEvaluation = true;
         return filterEvaluation.contains(targetId);
     }
 }

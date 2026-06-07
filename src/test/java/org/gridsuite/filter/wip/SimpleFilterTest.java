@@ -4,6 +4,7 @@ import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import com.powsybl.iidm.network.VoltageLevel;
+import lombok.Getter;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ class SimpleFilterTest {
         List<Identifiable<?>> actualIdentifiable = simpleFilter.evaluate(network);
 
         assertThat(actualIdentifiable).isEqualTo(expectedIdentifiable);
+        assertThat(simpleFilter.isCacheCleared()).isTrue();
     }
 
     @Test
@@ -44,6 +46,7 @@ class SimpleFilterTest {
         List<Identifiable<?>> actualIdentifiable = simpleFilter.evaluate(network, TopologyKind.NODE_BREAKER);
 
         assertThat(actualIdentifiable).isEqualTo(expectedIdentifiable);
+        assertThat(simpleFilter.isCacheCleared()).isTrue();
     }
 
     private List<Identifiable<?>> getExpectedIdentifiable(Network network, EquipmentType equipmentType, TopologyKind topologyKind) {
@@ -75,7 +78,10 @@ class SimpleFilterTest {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @Getter
     private static final class SimpleFilter extends AbstractFilter {
+
+        private boolean cacheCleared = false;
 
         private SimpleFilter(EquipmentType equipmentType) {
             super(equipmentType);
@@ -89,6 +95,11 @@ class SimpleFilterTest {
         @Override
         protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
             return true;
+        }
+
+        @Override
+        public void clearEvaluationCache() {
+            cacheCleared = true;
         }
     }
 }

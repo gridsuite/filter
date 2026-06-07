@@ -52,12 +52,13 @@ public abstract class AbstractFilter implements Filter {
     }
 
     public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind) {
-        List<Identifiable<?>> filteredIdentifiable = getConsideredEquipmentStream(Objects.requireNonNull(network), topologyKind)
-                .filter(this::evaluateFilterRule)
-                .toList();
-        clearEvaluationCache();
-
-        return filteredIdentifiable;
+        try {
+            return getConsideredEquipmentStream(Objects.requireNonNull(network), topologyKind)
+                    .filter(this::evaluateFilterRule)
+                    .toList();
+        } finally {
+            clearEvaluationCache();
+        }
     }
 
     protected void clearEvaluationCache() {
