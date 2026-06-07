@@ -182,7 +182,7 @@ class ExpertFilterTest {
                                                 .referenceValue(400D).build())),
                         Set.of("VOLTAGE_LEVEL_1")),
                 //Filter Expert Filter
-                Arguments.of(buildFilterExpertFilter(EquipmentType.VOLTAGE_LEVEL, OperatorType.IS_PART_OF,
+                Arguments.of(buildFilterExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.ID, OperatorType.IS_PART_OF,
                                 Set.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.AND,
                                                 Set.of(StringExpertRule.builder().fieldType(FieldType.NAME).operatorType(OperatorType.NOT_IN)
                                                                 .referenceValues(Set.of("other vl...")).build(),
@@ -194,7 +194,7 @@ class ExpertFilterTest {
                                         new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VOLTAGE_LEVEL_3")))),
                         Set.of("VOLTAGE_LEVEL_1", "VOLTAGE_LEVEL_3", "VL_S3")
                 ),
-                Arguments.of(buildFilterExpertFilter(EquipmentType.VOLTAGE_LEVEL, OperatorType.IS_NOT_PART_OF,
+                Arguments.of(buildFilterExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.ID, OperatorType.IS_NOT_PART_OF,
                                 Set.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.AND,
                                                 Set.of(StringExpertRule.builder().fieldType(FieldType.NAME).operatorType(OperatorType.NOT_IN)
                                                                 .referenceValues(Set.of("other vl...")).build(),
@@ -239,8 +239,8 @@ class ExpertFilterTest {
         return new ExpertFilter(equipmentType, rule);
     }
 
-    private static Filter buildFilterExpertFilter(EquipmentType equipmentType, OperatorType operatorType, Set<Filter> referenceFilters) {
-        FilterExpertRule rule = FilterExpertRule.builder().operatorType(operatorType).referenceFilters(referenceFilters).build();
+    private static Filter buildFilterExpertFilter(EquipmentType equipmentType, FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters) {
+        FilterExpertRule rule = FilterExpertRule.builder().fieldType(fieldType).operatorType(operatorType).referenceFilters(referenceFilters).build();
         return new ExpertFilter(equipmentType, rule);
     }
 
@@ -262,6 +262,16 @@ class ExpertFilterTest {
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
 
         assertThat(filter.getFilterType()).isEqualTo(FilterType.EXPERT);
+    }
+
+    @Test
+    void testCachingExpertRuleClearsCacheAfterEvaluation() {
+        AbstractCachingExpertRule mockRule = Mockito.mock(AbstractCachingExpertRule.class);
+        ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
+
+        filter.evaluate(network);
+
+        verify(mockRule).clearCache();
     }
 
     @Test

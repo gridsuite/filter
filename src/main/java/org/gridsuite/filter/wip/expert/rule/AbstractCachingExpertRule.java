@@ -9,17 +9,15 @@
 package org.gridsuite.filter.wip.expert.rule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.annotations.Beta;
-import com.powsybl.commons.PowsyblException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.expert.data.DataType;
 
+@EqualsAndHashCode(callSuper = true)
 @Beta
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -28,25 +26,15 @@ import org.gridsuite.filter.wip.expert.data.DataType;
         visible = true
 )
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = BooleanExpertRule.class, name = "BOOLEAN"),
-    @JsonSubTypes.Type(value = EnumExpertRule.class, name = "ENUM"),
+    @JsonSubTypes.Type(value = CombinatorExpertRule.class, name = "COMBINATOR"),
     @JsonSubTypes.Type(value = FilterExpertRule.class, name = "FILTER"),
-    @JsonSubTypes.Type(value = NumberExpertRule.class, name = "NUMBER"),
-    @JsonSubTypes.Type(value = PropertiesExpertRule.class, name = "PROPERTIES"),
-    @JsonSubTypes.Type(value = StringExpertRule.class, name = "STRING")
 })
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SuperBuilder
 @NoArgsConstructor
-public abstract class AbstractExpertRule implements ExpertRule {
+public abstract class AbstractCachingExpertRule extends AbstractExpertRule {
 
-    @JsonProperty("type")
-    public abstract DataType getDataType();
-
-    protected abstract OperatorType getOperatorType();
-
-    protected PowsyblException unsupportedOperatorException() {
-        return new PowsyblException(String.format("%s operator not supported with %s rule data type", getOperatorType(), getDataType()));
-    }
+    public abstract void clearCache();
 }
+

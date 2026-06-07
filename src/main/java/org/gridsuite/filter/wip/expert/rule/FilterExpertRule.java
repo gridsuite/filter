@@ -14,6 +14,8 @@ import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
+import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.Filter;
 import org.gridsuite.filter.wip.expert.data.DataType;
@@ -30,18 +32,13 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public final class FilterExpertRule extends AbstractExpertRule {
+public final class FilterExpertRule extends AbstractCachingExpertRule {
 
+    private FieldType fieldType;
     private OperatorType operatorType;
 
     @Builder.Default
     private Set<Filter> referenceFilters = new HashSet<>();
-
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @Builder.Default
-    private String networkIdCache = "";
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
@@ -56,11 +53,19 @@ public final class FilterExpertRule extends AbstractExpertRule {
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
+        Network network = identifiable.getNetwork();
+        String targetId = ExpertFilterUtils.getFieldValue(fieldType, null, identifiable);
+
         return switch (operatorType) {
-            case IS_PART_OF -> evaluateIsPartOfOperator(identifiable);
-            case IS_NOT_PART_OF -> !evaluateIsPartOfOperator(identifiable);
+            case IS_PART_OF -> evaluateIsPartOfOperator(network, targetId);
+            case IS_NOT_PART_OF -> !evaluateIsPartOfOperator(network, targetId);
             default -> throw unsupportedOperatorException();
         };
+    }
+
+    @Override
+    public void clearCache() {
+        filterEvaluationCache.clear();
     }
 
     @Override
@@ -68,20 +73,18 @@ public final class FilterExpertRule extends AbstractExpertRule {
         return operatorType;
     }
 
-    private boolean evaluateIsPartOfOperator(Identifiable<?> identifiable) {
-        Network network = identifiable.getNetwork();
-        if (networkIdCache.equals(network.getId())) {
-            return filterEvaluationCache.contains(identifiable.getId());
+    private boolean evaluateIsPartOfOperator(Network network, String targetId) {
+        if (!filterEvaluationCache.isEmpty()) {
+            return filterEvaluationCache.contains(targetId);
         }
 
         Set<String> filterEvaluation = referenceFilters.stream()
-                .map(filter -> filter.evaluate(identifiable.getNetwork()))
+                .map(filter -> filter.evaluate(network))
                 .flatMap(List::stream)
                 .map(Identifiable::getId)
                 .collect(Collectors.toSet());
 
-        networkIdCache = network.getId();
         filterEvaluationCache = filterEvaluation;
-        return filterEvaluation.contains(identifiable.getId());
+        return filterEvaluation.contains(targetId);
     }
 }

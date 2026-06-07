@@ -52,9 +52,16 @@ public abstract class AbstractFilter implements Filter {
     }
 
     public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind) {
-        return getConsideredEquipmentStream(Objects.requireNonNull(network), topologyKind)
+        List<Identifiable<?>> filteredIdentifiable = getConsideredEquipmentStream(Objects.requireNonNull(network), topologyKind)
                 .filter(this::evaluateFilterRule)
                 .toList();
+        clearEvaluationCache();
+
+        return filteredIdentifiable;
+    }
+
+    protected void clearEvaluationCache() {
+        // Do nothing by default
     }
 
     @JsonProperty("type")

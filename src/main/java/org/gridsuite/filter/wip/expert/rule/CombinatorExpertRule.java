@@ -27,7 +27,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public final class CombinatorExpertRule extends AbstractExpertRule {
+public final class CombinatorExpertRule extends AbstractCachingExpertRule {
 
     @NonNull
     private CombinatorType combinatorType;
@@ -47,6 +47,14 @@ public final class CombinatorExpertRule extends AbstractExpertRule {
             case AND -> subRules.stream().allMatch(rule -> rule.evaluateRule(identifiable));
             case OR -> subRules.stream().anyMatch(rule -> rule.evaluateRule(identifiable));
         };
+    }
+
+    @Override
+    public void clearCache() {
+        subRules.stream()
+                .filter(rule -> rule instanceof AbstractCachingExpertRule)
+                .map(rule -> (AbstractCachingExpertRule) rule)
+                .forEach(AbstractCachingExpertRule::clearCache);
     }
 
     @Override

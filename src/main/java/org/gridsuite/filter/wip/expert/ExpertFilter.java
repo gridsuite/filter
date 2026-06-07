@@ -13,6 +13,7 @@ import com.powsybl.iidm.network.Identifiable;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.wip.AbstractFilter;
+import org.gridsuite.filter.wip.expert.rule.AbstractCachingExpertRule;
 import org.gridsuite.filter.wip.expert.rule.ExpertRule;
 
 import java.util.Objects;
@@ -38,6 +39,14 @@ public class ExpertFilter extends AbstractFilter {
     @Override
     protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
         Objects.requireNonNull(identifiable);
+
         return rule.evaluateRule(identifiable);
+    }
+
+    @Override
+    protected void clearEvaluationCache() {
+        if (rule instanceof AbstractCachingExpertRule cachingRule) {
+            cachingRule.clearCache();
+        }
     }
 }
