@@ -52,8 +52,8 @@ public final class CombinatorExpertRule extends AbstractCachingExpertRule {
     @Override
     public void clearCache() {
         subRules.stream()
-                .filter(rule -> rule instanceof AbstractCachingExpertRule)
-                .map(rule -> (AbstractCachingExpertRule) rule)
+                .filter(AbstractCachingExpertRule.class::isInstance)
+                .map(AbstractCachingExpertRule.class::cast)
                 .forEach(AbstractCachingExpertRule::clearCache);
     }
 
