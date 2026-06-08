@@ -79,18 +79,17 @@ public final class FilterExpertRule extends AbstractCachingExpertRule {
     }
 
     private boolean evaluateIsPartOfOperator(Network network, String targetId) {
-        if (cachedFilterEvaluation) {
-            return filterEvaluationCache.contains(targetId);
+        if (!cachedFilterEvaluation) {
+            Set<String> filterEvaluation = referenceFilters.stream()
+                    .map(filter -> filter.evaluate(network))
+                    .flatMap(List::stream)
+                    .map(Identifiable::getId)
+                    .collect(Collectors.toSet());
+
+            filterEvaluationCache.addAll(filterEvaluation);
+            cachedFilterEvaluation = true;
         }
 
-        Set<String> filterEvaluation = referenceFilters.stream()
-                .map(filter -> filter.evaluate(network))
-                .flatMap(List::stream)
-                .map(Identifiable::getId)
-                .collect(Collectors.toSet());
-
-        filterEvaluationCache.addAll(filterEvaluation);
-        cachedFilterEvaluation = true;
-        return filterEvaluation.contains(targetId);
+        return filterEvaluationCache.contains(targetId);
     }
 }
