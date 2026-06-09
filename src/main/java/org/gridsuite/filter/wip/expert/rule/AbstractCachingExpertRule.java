@@ -8,31 +8,14 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.annotations.Beta;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
 @Beta
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type",
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        visible = true
-)
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = CombinatorExpertRule.class, name = "COMBINATOR"),
-    @JsonSubTypes.Type(value = FilterExpertRule.class, name = "FILTER"),
-})
-@Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@SuperBuilder
-@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public abstract class AbstractCachingExpertRule extends AbstractExpertRule {
 
     public abstract void clearCache();

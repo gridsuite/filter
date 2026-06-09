@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
@@ -1847,24 +1849,66 @@ class StringExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsString() {
-        StringExpertRule rule = StringExpertRule.builder().build();
+        StringExpertRule rule = StringExpertRule.builder()
+                .fieldType(FieldType.NAME)
+                .operatorType(OperatorType.IN)
+                .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.STRING);
     }
 
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
-        StringExpertRule rule = StringExpertRule.builder().operatorType(OperatorType.IN).build();
+        StringExpertRule rule = StringExpertRule.builder()
+                .fieldType(FieldType.NAME)
+                .operatorType(OperatorType.IN)
+                .build();
 
         assertThat(rule.getOperatorType()).isEqualTo(OperatorType.IN);
     }
 
     @ParameterizedTest
     @MethodSource({
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForBusTest",
+        "provideArgumentsForBusBarSectionTest",
+        "provideArgumentsForBatteryTest",
+        "provideArgumentsForShuntCompensatorTest",
+        "provideArgumentsForLinesTest",
+        "provideArgumentsForTwoWindingsTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForBoundaryLineTest",
+        "provideArgumentsForThreeWindingsTransformerTest",
+        "provideArgumentsForHvdcLineTest",
+        "provideArgumentsForHvdcConverterStationTest",
+    })
+    void testFilterRoundTripSerializationDeserialization(OperatorType operatorType, FieldType fieldType, String referenceValue, Set<String> referenceValues,
+                                                         Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExpertRule rule = StringExpertRule.builder()
+                .operatorType(operatorType)
+                .fieldType(fieldType)
+                .referenceValue(referenceValue)
+                .referenceValues(referenceValues)
+                .build();
+
+        String serializedRule = objectMapper.writeValueAsString(rule);
+        ExpertRule deserializedRule = objectMapper.readValue(serializedRule, ExpertRule.class);
+
+        assertThat(deserializedRule).isEqualTo(rule);
+    }
+
+    @ParameterizedTest
+    @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType opertaorType, FieldType fieldType, Identifiable<?> equipment, Class<Throwable> expectedException) {
-        StringExpertRule rule = StringExpertRule.builder().operatorType(opertaorType).fieldType(fieldType).build();
+    void testEvaluateRuleWithException(OperatorType operatorType, FieldType fieldType, Identifiable<?> equipment, Class<Throwable> expectedException) {
+        ExpertRule rule = StringExpertRule.builder()
+                .operatorType(operatorType)
+                .fieldType(fieldType)
+                .build();
+
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
     }
 
@@ -1885,7 +1929,13 @@ class StringExpertRuleTest {
         "provideArgumentsForHvdcConverterStationTest",
     })
     void testEvaluateRule(OperatorType operatorType, FieldType fieldType, String referenceValue, Set<String> referenceValues, Identifiable<?> equipment, boolean expected) {
-        StringExpertRule rule = StringExpertRule.builder().operatorType(operatorType).fieldType(fieldType).referenceValue(referenceValue).referenceValues(referenceValues).build();
+        ExpertRule rule = StringExpertRule.builder()
+                .operatorType(operatorType)
+                .fieldType(fieldType)
+                .referenceValue(referenceValue)
+                .referenceValues(referenceValues)
+                .build();
+
         assertEquals(expected, rule.evaluateRule(equipment));
     }
 }

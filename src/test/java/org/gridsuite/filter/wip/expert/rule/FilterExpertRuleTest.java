@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import org.gridsuite.filter.utils.EquipmentType;
@@ -556,14 +558,14 @@ class FilterExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsFilter() {
-        FilterExpertRule rule = FilterExpertRule.builder().build();
+        FilterExpertRule rule = FilterExpertRule.builder().fieldType(FieldType.ID).operatorType(OperatorType.IS_PART_OF).referenceFilters(Collections.emptySet()).build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.FILTER);
     }
 
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
-        FilterExpertRule rule = FilterExpertRule.builder().operatorType(OperatorType.IS_PART_OF).build();
+        FilterExpertRule rule = FilterExpertRule.builder().fieldType(FieldType.ID).operatorType(OperatorType.IS_PART_OF).referenceFilters(Collections.emptySet()).build();
 
         assertThat(rule.getOperatorType()).isEqualTo(OperatorType.IS_PART_OF);
     }
@@ -571,20 +573,52 @@ class FilterExpertRuleTest {
     @Test
     void testClearCacheClearsCachingSet() {
         Set<String> mockedCache = mock(Set.class);
-        FilterExpertRule rule = FilterExpertRule.builder().filterEvaluationCache(mockedCache).build();
+        FilterExpertRule rule = FilterExpertRule.builder().fieldType(FieldType.ID).operatorType(OperatorType.IS_PART_OF).referenceFilters(Collections.emptySet()).build();
+        rule.setCachedFilterEvaluation(true);
+        rule.setFilterEvaluationCache(mockedCache);
 
         rule.clearCache();
 
         verify(mockedCache).clear();
+        assertThat(rule.isCachedFilterEvaluation()).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource({
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForBatteryTest",
+        "provideArgumentsForShuntCompensatorTest",
+        "provideArgumentsForBoundaryLinesTest",
+        "provideArgumentsForLineTest",
+        "provideArgumentsForHvdcTest",
+    })
+    void testFilterRoundTripSerializationDeserialization(OperatorType operatorType, FieldType fieldType, Set<Filter> referenceFilters,
+                                                         Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExpertRule rule = FilterExpertRule.builder()
+                .operatorType(operatorType)
+                .fieldType(fieldType)
+                .referenceFilters(referenceFilters)
+                .build();
+
+        String serializedRule = objectMapper.writeValueAsString(rule);
+        ExpertRule deserializedRule = objectMapper.readValue(serializedRule, ExpertRule.class);
+
+        assertThat(deserializedRule).isEqualTo(rule);
     }
 
     @ParameterizedTest
     @MethodSource("provideMockRuleEvaluationArguments")
     void testMockRuleEvaluationReturnsExpected(FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters, String equipmentId, boolean expectedResult) {
-        ExpertRule rule = FilterExpertRule.builder().fieldType(fieldType).operatorType(operatorType).referenceFilters(referenceFilters).build();
         Identifiable<?> identifiable = mock(Identifiable.class, RETURNS_DEEP_STUBS);
         when(identifiable.getId()).thenReturn(equipmentId);
         when(identifiable.getNetwork().getId()).thenReturn("testNetworkId");
+        ExpertRule rule = FilterExpertRule.builder()
+                .fieldType(fieldType)
+                .operatorType(operatorType)
+                .referenceFilters(referenceFilters)
+                .build();
 
         assertThat(rule.evaluateRule(identifiable)).isEqualTo(expectedResult);
     }
@@ -592,8 +626,12 @@ class FilterExpertRuleTest {
     @ParameterizedTest
     @MethodSource("provideRealRuleEvaluationArguments")
     void testRealRuleEvaluationReturnsExpected(FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters, EquipmentType equipmentType, String equipmentId, boolean expectedResult) {
-        ExpertRule rule = FilterExpertRule.builder().fieldType(fieldType).operatorType(operatorType).referenceFilters(referenceFilters).build();
         Identifiable<?> identifiable = TestNetworkUtils.getEquipmentFromTestNetwork(equipmentType, equipmentId);
+        ExpertRule rule = FilterExpertRule.builder()
+                .fieldType(fieldType)
+                .operatorType(operatorType)
+                .referenceFilters(referenceFilters)
+                .build();
 
         assertThat(rule.evaluateRule(identifiable)).isEqualTo(expectedResult);
     }
@@ -601,7 +639,12 @@ class FilterExpertRuleTest {
     @ParameterizedTest
     @MethodSource("provideArgumentsForTestWithException")
     void testEvaluateRuleWithException(OperatorType operatorType, FieldType fieldType, Identifiable<?> equipment, Class<Throwable> expectedException) {
-        FilterExpertRule rule = FilterExpertRule.builder().fieldType(fieldType).operatorType(operatorType).build();
+        ExpertRule rule = FilterExpertRule.builder()
+                .fieldType(fieldType)
+                .operatorType(operatorType)
+                .referenceFilters(Collections.emptySet())
+                .build();
+
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
     }
 
@@ -616,7 +659,12 @@ class FilterExpertRuleTest {
         "provideArgumentsForHvdcTest",
     })
     void testEvaluateRule(OperatorType operatorType, FieldType fieldType, Set<Filter> referenceFilters, Identifiable<?> equipment, boolean expected) {
-        FilterExpertRule rule = FilterExpertRule.builder().operatorType(operatorType).fieldType(fieldType).referenceFilters(referenceFilters).build();
+        ExpertRule rule = FilterExpertRule.builder()
+                .fieldType(fieldType)
+                .operatorType(operatorType)
+                .referenceFilters(referenceFilters)
+                .build();
+
         assertEquals(expected, rule.evaluateRule(equipment));
     }
 }

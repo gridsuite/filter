@@ -8,39 +8,39 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.expert.data.DataType;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
 @Beta
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@SuperBuilder
 public final class EnumExpertRule extends AbstractExpertRule {
 
     private FieldType fieldType;
     private OperatorType operatorType;
+    private String referenceValue;
+    private Set<String> referenceValues;
 
-    @Builder.Default
-    private String referenceValue = "";
-
-    @Builder.Default
-    private Set<String> referenceValues = new HashSet<>();
-
-    @Override
-    public DataType getDataType() {
-        return DataType.ENUM;
+    @Builder
+    public EnumExpertRule(FieldType fieldType, OperatorType operatorType, String referenceValue, Set<String> referenceValues) {
+        this.fieldType = Objects.requireNonNull(fieldType);
+        this.operatorType = Objects.requireNonNull(operatorType);
+        this.referenceValue = referenceValue != null ? referenceValue : "";
+        this.referenceValues = referenceValues != null ? Set.copyOf(referenceValues) : Collections.emptySet();
     }
 
     @Override
@@ -60,7 +60,13 @@ public final class EnumExpertRule extends AbstractExpertRule {
     }
 
     @Override
-    protected OperatorType getOperatorType() {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public DataType getDataType() {
+        return DataType.ENUM;
+    }
+
+    @Override
+    public OperatorType getOperatorType() {
         return operatorType;
     }
 }

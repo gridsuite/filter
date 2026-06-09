@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.identifier;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
@@ -152,6 +154,17 @@ class IdentifierListFilterTest {
         Filter filter = new IdentifierListFilter(EquipmentType.LINE, Collections.emptySet());
 
         assertThat(filter.getFilterType()).isEqualTo(FilterType.IDENTIFIER_LIST);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideFilterArguments")
+    void testFilterRoundTripSerializationDeserialization(Filter filter, Set<String> expectedEquipmentIds) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String serializedFilter = objectMapper.writeValueAsString(filter);
+        Filter deserializedFilter = objectMapper.readValue(serializedFilter, Filter.class);
+
+        assertThat(deserializedFilter).isEqualTo(filter);
     }
 
     @ParameterizedTest

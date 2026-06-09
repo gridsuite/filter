@@ -8,9 +8,32 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.powsybl.iidm.network.Identifiable;
 import org.gridsuite.filter.wip.expert.data.DataType;
 
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    property = "dataType",
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    visible = true
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = BooleanExpertRule.class, name = "BOOLEAN"),
+    @JsonSubTypes.Type(value = EnumExpertRule.class, name = "ENUM"),
+    @JsonSubTypes.Type(value = FilterExpertRule.class, name = "FILTER"),
+    @JsonSubTypes.Type(value = NumberExpertRule.class, name = "NUMBER"),
+    @JsonSubTypes.Type(value = PropertiesExpertRule.class, name = "PROPERTIES"),
+    @JsonSubTypes.Type(value = StringExpertRule.class, name = "STRING"),
+    @JsonSubTypes.Type(value = CombinatorExpertRule.class, name = "COMBINATOR"),
+    @JsonSubTypes.Type(value = FilterExpertRule.class, name = "FILTER")
+})
 public interface ExpertRule {
 
     boolean evaluateRule(Identifiable<?> identifiable);

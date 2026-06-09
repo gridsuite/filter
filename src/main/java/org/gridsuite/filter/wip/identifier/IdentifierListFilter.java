@@ -8,8 +8,10 @@
 
 package org.gridsuite.filter.wip.identifier;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
+import lombok.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.wip.AbstractFilter;
@@ -21,16 +23,21 @@ import java.util.Set;
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
+@Data
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(callSuper = true)
 public class IdentifierListFilter extends AbstractFilter {
 
-    private final Set<String> equipmentIds;
+    private Set<String> equipmentIds;
 
+    @Builder
     public IdentifierListFilter(EquipmentType equipmentType, Set<String> equipmentIds) {
         super(equipmentType);
         this.equipmentIds = Set.copyOf(Objects.requireNonNull(equipmentIds));
     }
 
     @Override
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public FilterType getFilterType() {
         return FilterType.IDENTIFIER_LIST;
     }

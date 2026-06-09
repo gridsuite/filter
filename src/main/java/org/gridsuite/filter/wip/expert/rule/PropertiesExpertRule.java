@@ -8,41 +8,38 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.expert.data.DataType;
 
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
 @Beta
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@SuperBuilder
 public final class PropertiesExpertRule extends AbstractExpertRule {
 
     private FieldType fieldType;
     private OperatorType operatorType;
+    private String targetProperty;
+    private Set<String> referenceValues;
 
-    @Builder.Default
-    private String targetProperty = "";
-
-    @Builder.Default
-    @JsonDeserialize(as = HashSet.class)
-    private Set<String> referenceValues = new HashSet<>();
-
-    @Override
-    public DataType getDataType() {
-        return DataType.PROPERTIES;
+    @Builder
+    public PropertiesExpertRule(FieldType fieldType, OperatorType operatorType, String targetProperty, Set<String> referenceValues) {
+        this.fieldType = Objects.requireNonNull(fieldType);
+        this.operatorType = Objects.requireNonNull(operatorType);
+        this.targetProperty = Objects.requireNonNull(targetProperty);
+        this.referenceValues = Set.copyOf(Objects.requireNonNull(referenceValues));
     }
 
     @Override
@@ -60,7 +57,13 @@ public final class PropertiesExpertRule extends AbstractExpertRule {
     }
 
     @Override
-    protected OperatorType getOperatorType() {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public DataType getDataType() {
+        return DataType.PROPERTIES;
+    }
+
+    @Override
+    public OperatorType getOperatorType() {
         return operatorType;
     }
 }

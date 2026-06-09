@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.iidm.network.EnergySource;
 import com.powsybl.iidm.network.Generator;
 import com.powsybl.iidm.network.Identifiable;
@@ -24,6 +26,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -71,7 +74,7 @@ class CombinatorExpertRuleTest {
                 ), gen, false),
                 // --- Single rule OR --- //
                 Arguments.of(CombinatorType.OR, Set.of(
-                       EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.HYDRO.name()).build()
+                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.HYDRO.name()).build()
                 ), gen, true),
                 Arguments.of(CombinatorType.OR, Set.of(
                         EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.THERMAL.name()).build()
@@ -161,14 +164,20 @@ class CombinatorExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsCombinator() {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinatorType(CombinatorType.OR).build();
+        CombinatorExpertRule rule = CombinatorExpertRule.builder()
+                .combinatorType(CombinatorType.OR)
+                .subRules(Collections.emptySet())
+                .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.COMBINATOR);
     }
 
     @Test
     void testGetOperatorTypeThrowsUnsupportedOperationException() {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinatorType(CombinatorType.OR).build();
+        CombinatorExpertRule rule = CombinatorExpertRule.builder()
+                .combinatorType(CombinatorType.OR)
+                .subRules(Collections.emptySet())
+                .build();
 
         assertThatThrownBy(rule::getOperatorType).isInstanceOf(UnsupportedOperationException.class);
     }
@@ -178,8 +187,14 @@ class CombinatorExpertRuleTest {
         AbstractExpertRule nonCachingRule = mock(AbstractExpertRule.class);
         AbstractCachingExpertRule cachingRule = mock(AbstractCachingExpertRule.class);
         AbstractCachingExpertRule nestedCachingRule = mock(AbstractCachingExpertRule.class);
-        CombinatorExpertRule nestedCombinatorRule = CombinatorExpertRule.builder().combinatorType(CombinatorType.AND).subRules(Set.of(nonCachingRule, nestedCachingRule)).build();
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinatorType(CombinatorType.OR).subRules(Set.of(nonCachingRule, cachingRule, nestedCombinatorRule)).build();
+        CombinatorExpertRule nestedCombinatorRule = CombinatorExpertRule.builder()
+                .combinatorType(CombinatorType.AND)
+                .subRules(Set.of(nonCachingRule, nestedCachingRule))
+                .build();
+        CombinatorExpertRule rule = CombinatorExpertRule.builder()
+                .combinatorType(CombinatorType.OR)
+                .subRules(Set.of(nonCachingRule, cachingRule, nestedCombinatorRule))
+                .build();
 
         rule.clearCache();
 
@@ -190,8 +205,26 @@ class CombinatorExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource({"provideArgumentsForTest"})
+    void testFilterRoundTripSerializationDeserialization(CombinatorType combinatorType, Set<ExpertRule> rules, Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExpertRule rule = CombinatorExpertRule.builder()
+                .combinatorType(combinatorType)
+                .subRules(rules)
+                .build();
+
+        String serializedRule = objectMapper.writeValueAsString(rule);
+        ExpertRule deserializedRule = objectMapper.readValue(serializedRule, ExpertRule.class);
+
+        assertThat(deserializedRule).isEqualTo(rule);
+    }
+
+    @ParameterizedTest
+    @MethodSource({"provideArgumentsForTest"})
     void testEvaluateRule(CombinatorType combinatorType, Set<ExpertRule> rules, Identifiable<?> equipment, boolean expected) {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinatorType(combinatorType).subRules(rules).build();
+        ExpertRule rule = CombinatorExpertRule.builder()
+                .combinatorType(combinatorType)
+                .subRules(rules)
+                .build();
 
         assertEquals(expected, rule.evaluateRule(equipment));
     }
@@ -199,8 +232,11 @@ class CombinatorExpertRuleTest {
     @ParameterizedTest
     @MethodSource("provideMockRuleEvaluationArguments")
     void testMockRuleEvaluationReturnsExpected(CombinatorType combinatorType, Set<ExpertRule> subRules, boolean expectedResult) {
-        ExpertRule rule = CombinatorExpertRule.builder().combinatorType(combinatorType).subRules(subRules).build();
         Identifiable<?> identifiable = mock(Identifiable.class);
+        ExpertRule rule = CombinatorExpertRule.builder()
+                .combinatorType(combinatorType)
+                .subRules(subRules)
+                .build();
 
         assertThat(rule.evaluateRule(identifiable)).isEqualTo(expectedResult);
     }
@@ -208,8 +244,11 @@ class CombinatorExpertRuleTest {
     @ParameterizedTest
     @MethodSource("provideRealRuleEvaluationArguments")
     void testRealRuleEvaluationReturnsExpected(CombinatorType combinatorType, Set<ExpertRule> subRules, EquipmentType equipmentType, String equipmentId, boolean expectedResult) {
-        ExpertRule rule = CombinatorExpertRule.builder().combinatorType(combinatorType).subRules(subRules).build();
         Identifiable<?> identifiable = TestNetworkUtils.getEquipmentFromTestNetwork(equipmentType, equipmentId);
+        ExpertRule rule = CombinatorExpertRule.builder()
+                .combinatorType(combinatorType)
+                .subRules(subRules)
+                .build();
 
         assertThat(rule.evaluateRule(identifiable)).isEqualTo(expectedResult);
     }

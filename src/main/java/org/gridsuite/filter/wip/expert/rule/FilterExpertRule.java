@@ -9,11 +9,11 @@
 package org.gridsuite.filter.wip.expert.rule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
@@ -22,37 +22,37 @@ import org.gridsuite.filter.wip.expert.data.DataType;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
 @Beta
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@SuperBuilder
 public final class FilterExpertRule extends AbstractCachingExpertRule {
 
     private FieldType fieldType;
     private OperatorType operatorType;
-
-    @Builder.Default
-    private Set<Filter> referenceFilters = new HashSet<>();
+    private Set<Filter> referenceFilters;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @Builder.Default
-    private Set<String> filterEvaluationCache = new HashSet<>();
-
+    private boolean cachedFilterEvaluation;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    private boolean cachedFilterEvaluation = false;
+    private Set<String> filterEvaluationCache;
 
-    @Override
-    public DataType getDataType() {
-        return DataType.FILTER;
+    @Builder
+    public FilterExpertRule(FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters) {
+        this.fieldType = Objects.requireNonNull(fieldType);
+        this.operatorType = Objects.requireNonNull(operatorType);
+        this.referenceFilters = Set.copyOf(Objects.requireNonNull(referenceFilters));
+        this.filterEvaluationCache = new HashSet<>();
+        this.cachedFilterEvaluation = false;
     }
 
     @Override
@@ -68,14 +68,20 @@ public final class FilterExpertRule extends AbstractCachingExpertRule {
     }
 
     @Override
-    public void clearCache() {
-        filterEvaluationCache.clear();
-        cachedFilterEvaluation = false;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public DataType getDataType() {
+        return DataType.FILTER;
     }
 
     @Override
-    protected OperatorType getOperatorType() {
+    public OperatorType getOperatorType() {
         return operatorType;
+    }
+
+    @Override
+    public void clearCache() {
+        filterEvaluationCache.clear();
+        cachedFilterEvaluation = false;
     }
 
     private boolean evaluateIsPartOfOperator(Network network, String targetId) {

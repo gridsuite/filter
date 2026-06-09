@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
@@ -517,26 +519,55 @@ class PropertiesExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsProperties() {
-        PropertiesExpertRule rule = PropertiesExpertRule.builder().build();
+        PropertiesExpertRule rule = PropertiesExpertRule.builder()
+                .fieldType(FieldType.VOLTAGE_LEVEL_PROPERTIES)
+                .operatorType(OperatorType.IN)
+                .targetProperty("")
+                .referenceValues(Collections.emptySet())
+                .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.PROPERTIES);
     }
 
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
-        PropertiesExpertRule rule = PropertiesExpertRule.builder().operatorType(OperatorType.IN).build();
+        PropertiesExpertRule rule = PropertiesExpertRule.builder()
+                .fieldType(FieldType.VOLTAGE_LEVEL_PROPERTIES)
+                .operatorType(OperatorType.IN)
+                .targetProperty("")
+                .referenceValues(Collections.emptySet())
+                .build();
 
         assertThat(rule.getOperatorType()).isEqualTo(OperatorType.IN);
     }
 
     @ParameterizedTest
     @MethodSource({
-        "provideArgumentsForTestWithException"
+        "provideArgumentsForSubstationTest",
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForShuntCompensatorTest",
+        "provideArgumentsForLineTest",
+        "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForBoundaryLineTest",
+        "provideArgumentsForThreeWindingTransformerTest",
+        "provideArgumentsForHvdcLineTest",
     })
-    void testEvaluateRuleWithException(OperatorType operatorType, FieldType fieldType, Identifiable<?> equipment,
-                                       String targetProperty, Set<String> referenceValues, Class<Throwable> expectedException) {
-        PropertiesExpertRule rule = PropertiesExpertRule.builder().operatorType(operatorType).fieldType(fieldType).targetProperty(targetProperty).referenceValues(referenceValues).build();
-        assertThrows(expectedException, () -> rule.evaluateRule(equipment));
+    void testFilterRoundTripSerializationDeserialization(OperatorType operatorType, FieldType fieldType, String targetProperty, Set<String> referenceValues,
+                                                         Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExpertRule rule = PropertiesExpertRule.builder()
+                .operatorType(operatorType)
+                .fieldType(fieldType)
+                .targetProperty(targetProperty)
+                .referenceValues(referenceValues)
+                .build();
+
+        String serializedRule = objectMapper.writeValueAsString(rule);
+        ExpertRule deserializedRule = objectMapper.readValue(serializedRule, ExpertRule.class);
+
+        assertThat(deserializedRule).isEqualTo(rule);
     }
 
     @Test
@@ -557,6 +588,22 @@ class PropertiesExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource({
+        "provideArgumentsForTestWithException"
+    })
+    void testEvaluateRuleWithException(OperatorType operatorType, FieldType fieldType, Identifiable<?> equipment,
+                                       String targetProperty, Set<String> referenceValues, Class<Throwable> expectedException) {
+        ExpertRule rule = PropertiesExpertRule.builder()
+                .operatorType(operatorType)
+                .fieldType(fieldType)
+                .targetProperty(targetProperty)
+                .referenceValues(referenceValues)
+                .build();
+
+        assertThrows(expectedException, () -> rule.evaluateRule(equipment));
+    }
+
+    @ParameterizedTest
+    @MethodSource({
         "provideArgumentsForSubstationTest",
         "provideArgumentsForGeneratorTest",
         "provideArgumentsForTwoWindingTransformerTest",
@@ -569,7 +616,13 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operatorType, FieldType fieldType, String targetProperty, Set<String> referenceValues, Identifiable<?> equipment, boolean expected) {
-        PropertiesExpertRule rule = PropertiesExpertRule.builder().operatorType(operatorType).fieldType(fieldType).targetProperty(targetProperty).referenceValues(referenceValues).build();
+        ExpertRule rule = PropertiesExpertRule.builder()
+                .operatorType(operatorType)
+                .fieldType(fieldType)
+                .targetProperty(targetProperty)
+                .referenceValues(referenceValues)
+                .build();
+
         assertEquals(expected, rule.evaluateRule(equipment));
     }
 }

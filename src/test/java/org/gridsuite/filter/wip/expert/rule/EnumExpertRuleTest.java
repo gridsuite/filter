@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import org.gridsuite.filter.utils.RegulationType;
@@ -993,16 +995,55 @@ class EnumExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsEnum() {
-        EnumExpertRule rule = EnumExpertRule.builder().build();
+        EnumExpertRule rule = EnumExpertRule.builder()
+                .fieldType(FieldType.COUNTRY)
+                .operatorType(OperatorType.IN)
+                .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.ENUM);
     }
 
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
-        EnumExpertRule rule = EnumExpertRule.builder().operatorType(OperatorType.IN).build();
+        EnumExpertRule rule = EnumExpertRule.builder()
+                .fieldType(FieldType.COUNTRY)
+                .operatorType(OperatorType.IN)
+                .build();
 
         assertThat(rule.getOperatorType()).isEqualTo(OperatorType.IN);
+    }
+
+    @ParameterizedTest
+    @MethodSource({
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForBusTest",
+        "provideArgumentsForShuntCompensatorTest",
+        "provideArgumentsForBusBarSectionTest",
+        "provideArgumentsForBatteryTest",
+        "provideArgumentsForVoltageLevelTest",
+        "provideArgumentsForSubstationTest",
+        "provideArgumentsForLinesTest",
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForBoundaryLineTest",
+        "provideArgumentsForThreeWindingTransformerTest",
+        "provideArgumentsForHvdcLineTest",
+    })
+    void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, String value, Set<String> values,
+                                                         Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExpertRule rule = EnumExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .referenceValue(value)
+                .referenceValues(values)
+                .build();
+
+        String serializedRule = objectMapper.writeValueAsString(rule);
+        ExpertRule deserializedRule = objectMapper.readValue(serializedRule, ExpertRule.class);
+
+        assertThat(deserializedRule).isEqualTo(rule);
     }
 
     @ParameterizedTest
@@ -1010,7 +1051,13 @@ class EnumExpertRuleTest {
         "provideArgumentsForTestWithException"
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String value, Set<String> values, Class<Throwable> expectedException) {
-        EnumExpertRule rule = EnumExpertRule.builder().operatorType(operator).fieldType(field).referenceValue(value).referenceValues(values).build();
+        ExpertRule rule = EnumExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .referenceValue(value)
+                .referenceValues(values)
+                .build();
+
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
     }
 
@@ -1032,7 +1079,13 @@ class EnumExpertRuleTest {
         "provideArgumentsForHvdcLineTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
-        EnumExpertRule rule = EnumExpertRule.builder().operatorType(operator).fieldType(field).referenceValue(value).referenceValues(values).build();
+        ExpertRule rule = EnumExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .referenceValue(value)
+                .referenceValues(values)
+                .build();
+
         assertEquals(expected, rule.evaluateRule(equipment));
     }
 }

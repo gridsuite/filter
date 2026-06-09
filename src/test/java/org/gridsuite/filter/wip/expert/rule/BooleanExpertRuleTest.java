@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
@@ -518,16 +520,43 @@ class BooleanExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsBoolean() {
-        BooleanExpertRule rule = BooleanExpertRule.builder().build();
+        BooleanExpertRule rule = BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(true).build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.BOOLEAN);
     }
 
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
-        BooleanExpertRule rule = BooleanExpertRule.builder().operatorType(OperatorType.EQUALS).build();
+        BooleanExpertRule rule = BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(true).build();
 
         assertThat(rule.getOperatorType()).isEqualTo(OperatorType.EQUALS);
+    }
+
+    @ParameterizedTest
+    @MethodSource({
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForShuntCompensatorTest",
+        "provideArgumentsForBatteryTest",
+        "provideArgumentsForLinesTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForBoundaryLineTest",
+        "provideArgumentsForThreeWindingTransformerTest",
+        "provideArgumentsForHvdcLinesTest",
+    })
+    void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExpertRule rule = BooleanExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .referenceValue(value)
+                .build();
+
+        String serializedRule = objectMapper.writeValueAsString(rule);
+        ExpertRule deserializedRule = objectMapper.readValue(serializedRule, ExpertRule.class);
+
+        assertThat(deserializedRule).isEqualTo(rule);
     }
 
     @ParameterizedTest
@@ -535,7 +564,11 @@ class BooleanExpertRuleTest {
         "provideArgumentsForTestWithException"
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
-        BooleanExpertRule rule = BooleanExpertRule.builder().operatorType(operator).fieldType(field).build();
+        ExpertRule rule = BooleanExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .build();
+
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
     }
 
@@ -553,7 +586,12 @@ class BooleanExpertRuleTest {
         "provideArgumentsForHvdcLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) {
-        BooleanExpertRule rule = BooleanExpertRule.builder().operatorType(operator).fieldType(field).referenceValue(value).build();
+        ExpertRule rule = BooleanExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .referenceValue(value)
+                .build();
+
         assertEquals(expected, rule.evaluateRule(equipment));
     }
 }

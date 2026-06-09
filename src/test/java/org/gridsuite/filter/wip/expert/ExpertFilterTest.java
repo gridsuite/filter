@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.expert;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Line;
@@ -316,6 +318,17 @@ class ExpertFilterTest {
         assertThat(filteredIdentifiableList).hasSize(expectedEquipmentIds.size());
         assertThat(filteredIdentifiableList.stream().map(Identifiable::getId)).containsAll(expectedEquipmentIds);
         verify(mockRule, times(expectedEquipmentIds.size())).evaluateRule(any(Line.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideFilterEvaluationArguments")
+    void testFilterRoundTripSerializationDeserialization(Filter filter, Set<String> expectedEquipmentIds) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String serializedFilter = objectMapper.writeValueAsString(filter);
+        Filter deserializedFilter = objectMapper.readValue(serializedFilter, Filter.class);
+
+        assertThat(deserializedFilter).isEqualTo(filter);
     }
 
     @ParameterizedTest

@@ -8,37 +8,34 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.expert.data.DataType;
 
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
 @Beta
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@SuperBuilder
 public final class CombinatorExpertRule extends AbstractCachingExpertRule {
 
-    @NonNull
     private CombinatorType combinatorType;
+    private Set<ExpertRule> subRules;
 
-    @Builder.Default
-    @JsonDeserialize(as = HashSet.class)
-    private Set<ExpertRule> subRules = new HashSet<>();
-
-    @Override
-    public DataType getDataType() {
-        return DataType.COMBINATOR;
+    @Builder
+    public CombinatorExpertRule(CombinatorType combinatorType, Set<ExpertRule> subRules) {
+        this.combinatorType = Objects.requireNonNull(combinatorType);
+        this.subRules = Set.copyOf(Objects.requireNonNull(subRules));
     }
 
     @Override
@@ -51,14 +48,18 @@ public final class CombinatorExpertRule extends AbstractCachingExpertRule {
 
     @Override
     public void clearCache() {
-        subRules.stream()
-                .filter(AbstractCachingExpertRule.class::isInstance)
-                .map(AbstractCachingExpertRule.class::cast)
-                .forEach(AbstractCachingExpertRule::clearCache);
+        subRules.stream().filter(AbstractCachingExpertRule.class::isInstance).map(AbstractCachingExpertRule.class::cast).forEach(AbstractCachingExpertRule::clearCache);
     }
 
     @Override
-    protected OperatorType getOperatorType() {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public DataType getDataType() {
+        return DataType.COMBINATOR;
+    }
+
+    @Override
+    @JsonIgnore
+    public OperatorType getOperatorType() {
         throw new UnsupportedOperationException("Operator type not applicable for combinator rules");
     }
 }

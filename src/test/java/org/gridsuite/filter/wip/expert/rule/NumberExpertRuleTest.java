@@ -8,6 +8,8 @@
 
 package org.gridsuite.filter.wip.expert.rule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.GeneratorStartup;
@@ -4107,16 +4109,54 @@ class NumberExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsNumber() {
-        NumberExpertRule rule = NumberExpertRule.builder().build();
+        NumberExpertRule rule = NumberExpertRule.builder()
+                .fieldType(FieldType.NOMINAL_VOLTAGE)
+                .operatorType(OperatorType.IN)
+                .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.NUMBER);
     }
 
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
-        NumberExpertRule rule = NumberExpertRule.builder().operatorType(OperatorType.IN).build();
+        NumberExpertRule rule = NumberExpertRule.builder()
+                .fieldType(FieldType.NOMINAL_VOLTAGE)
+                .operatorType(OperatorType.IN)
+                .build();
 
         assertThat(rule.getOperatorType()).isEqualTo(OperatorType.IN);
+    }
+
+    @ParameterizedTest
+    @MethodSource({
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForBusTest",
+        "provideArgumentsForBusBarSectionTest",
+        "provideArgumentsForShuntCompensatorTest",
+        "provideArgumentsForBatteryTest",
+        "provideArgumentsForVoltageLevelTest",
+        "provideArgumentsForLinesTest",
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForBoundaryLineTest",
+        "provideArgumentsForThreeWindingTransformerTest",
+        "provideArgumentsForHvdcLinesTest",
+    })
+    void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, Double value, Set<Double> values,
+                                                         Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExpertRule rule = NumberExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .referenceValue(value)
+                .referenceValues(values)
+                .build();
+
+        String serializedRule = objectMapper.writeValueAsString(rule);
+        ExpertRule deserializedRule = objectMapper.readValue(serializedRule, ExpertRule.class);
+
+        assertThat(deserializedRule).isEqualTo(rule);
     }
 
     @ParameterizedTest
@@ -4124,7 +4164,11 @@ class NumberExpertRuleTest {
         "provideArgumentsForTestWithException"
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
-        NumberExpertRule rule = NumberExpertRule.builder().operatorType(operator).fieldType(field).build();
+        ExpertRule rule = NumberExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .build();
+
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
     }
 
@@ -4145,7 +4189,13 @@ class NumberExpertRuleTest {
         "provideArgumentsForHvdcLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
-        NumberExpertRule rule = NumberExpertRule.builder().operatorType(operator).fieldType(field).referenceValue(value).referenceValues(values).build();
+        ExpertRule rule = NumberExpertRule.builder()
+                .operatorType(operator)
+                .fieldType(field)
+                .referenceValue(value)
+                .referenceValues(values)
+                .build();
+
         assertEquals(expected, rule.evaluateRule(equipment));
     }
 }

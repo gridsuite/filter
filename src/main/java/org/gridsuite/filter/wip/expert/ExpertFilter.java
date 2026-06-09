@@ -8,8 +8,10 @@
 
 package org.gridsuite.filter.wip.expert;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
+import lombok.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.wip.AbstractFilter;
@@ -22,16 +24,21 @@ import java.util.Objects;
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
+@Data
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(callSuper = true)
 public class ExpertFilter extends AbstractFilter {
 
-    private final ExpertRule rule;
+    private ExpertRule rule;
 
+    @Builder
     public ExpertFilter(EquipmentType equipmentType, ExpertRule rule) {
         super(equipmentType);
         this.rule = Objects.requireNonNull(rule);
     }
 
     @Override
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public FilterType getFilterType() {
         return FilterType.EXPERT;
     }

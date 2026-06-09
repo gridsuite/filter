@@ -8,18 +8,13 @@
 
 package org.gridsuite.filter.wip;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import com.powsybl.iidm.network.VoltageLevel;
+import lombok.*;
 import org.gridsuite.filter.utils.EquipmentType;
-import org.gridsuite.filter.utils.FilterType;
-import org.gridsuite.filter.wip.expert.ExpertFilter;
-import org.gridsuite.filter.wip.identifier.IdentifierListFilter;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,23 +24,13 @@ import java.util.stream.Stream;
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type",
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        visible = true
-)
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
-    @JsonSubTypes.Type(value = ExpertFilter.class, name = "EXPERT"),
-})
+@Data
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractFilter implements Filter {
 
-    private final EquipmentType equipmentType;
-
-    protected AbstractFilter(EquipmentType equipmentType) {
-        this.equipmentType = Objects.requireNonNull(equipmentType);
-    }
+    @NonNull
+    private EquipmentType equipmentType;
 
     public List<Identifiable<?>> evaluate(Network network) {
         return evaluate(network, TopologyKind.BUS_BREAKER);
@@ -61,9 +46,6 @@ public abstract class AbstractFilter implements Filter {
     protected void clearEvaluationCache() {
         // Do nothing by default
     }
-
-    @JsonProperty("type")
-    public abstract FilterType getFilterType();
 
     protected abstract boolean evaluateFilterRule(Identifiable<?> identifiable);
 
