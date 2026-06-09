@@ -88,23 +88,28 @@ class IdentifierListFilterTest {
                 Arguments.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("SHUNT_COMPENSATOR_3")), Set.of("SHUNT_COMPENSATOR_3")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("MISSING_SHUNT_COMPENSATOR")), Collections.emptySet()),
                 // Static Var Compensators
-                Arguments.of(new IdentifierListFilter(EquipmentType.STATIC_VAR_COMPENSATOR, Set.of("STATIC_VAR_COMPENSATOR_1", "STATIC_VAR_COMPENSATOR_2")), Set.of("STATIC_VAR_COMPENSATOR_1", "STATIC_VAR_COMPENSATOR_2")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.STATIC_VAR_COMPENSATOR, Set.of("STATIC_VAR_COMPENSATOR_1", "STATIC_VAR_COMPENSATOR_2")),
+                        Set.of("STATIC_VAR_COMPENSATOR_1", "STATIC_VAR_COMPENSATOR_2")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.STATIC_VAR_COMPENSATOR, Set.of("STATIC_VAR_COMPENSATOR_3")), Set.of("STATIC_VAR_COMPENSATOR_3")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.STATIC_VAR_COMPENSATOR, Set.of("MISSING_STATIC_VAR_COMPENSATOR")), Collections.emptySet()),
                 // Two Windings Transformers
-                Arguments.of(new IdentifierListFilter(EquipmentType.TWO_WINDINGS_TRANSFORMER, Set.of("TWO_WINDINGS_TRANSFORMER_1", "TWO_WINDINGS_TRANSFORMER_2")), Set.of("TWO_WINDINGS_TRANSFORMER_1", "TWO_WINDINGS_TRANSFORMER_2")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.TWO_WINDINGS_TRANSFORMER, Set.of("TWO_WINDINGS_TRANSFORMER_1", "TWO_WINDINGS_TRANSFORMER_2")),
+                        Set.of("TWO_WINDINGS_TRANSFORMER_1", "TWO_WINDINGS_TRANSFORMER_2")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.TWO_WINDINGS_TRANSFORMER, Set.of("TWO_WINDINGS_TRANSFORMER_3")), Set.of("TWO_WINDINGS_TRANSFORMER_3")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.TWO_WINDINGS_TRANSFORMER, Set.of("MISSING_TWO_WINDINGS_TRANSFORMER")), Collections.emptySet()),
                 // Three Windings Transformers
-                Arguments.of(new IdentifierListFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, Set.of("THREE_WINDINGS_TRANSFORMER_1", "THREE_WINDINGS_TRANSFORMER_2")), Set.of("THREE_WINDINGS_TRANSFORMER_1", "THREE_WINDINGS_TRANSFORMER_2")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, Set.of("THREE_WINDINGS_TRANSFORMER_1", "THREE_WINDINGS_TRANSFORMER_2")),
+                        Set.of("THREE_WINDINGS_TRANSFORMER_1", "THREE_WINDINGS_TRANSFORMER_2")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, Set.of("THREE_WINDINGS_TRANSFORMER_3")), Set.of("THREE_WINDINGS_TRANSFORMER_3")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, Set.of("MISSING_THREE_WINDINGS_TRANSFORMER")), Collections.emptySet()),
                 // Lcc Converter Stations
-                Arguments.of(new IdentifierListFilter(EquipmentType.LCC_CONVERTER_STATION, Set.of("LCC_CONVERTER_STATION_1", "LCC_CONVERTER_STATION_2")), Set.of("LCC_CONVERTER_STATION_1", "LCC_CONVERTER_STATION_2")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.LCC_CONVERTER_STATION, Set.of("LCC_CONVERTER_STATION_1", "LCC_CONVERTER_STATION_2")),
+                        Set.of("LCC_CONVERTER_STATION_1", "LCC_CONVERTER_STATION_2")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.LCC_CONVERTER_STATION, Set.of("LCC_CONVERTER_STATION_3")), Set.of("LCC_CONVERTER_STATION_3")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.LCC_CONVERTER_STATION, Set.of("MISSING_LCC_CONVERTER_STATION")), Collections.emptySet()),
                 // Vsc Converter Stations
-                Arguments.of(new IdentifierListFilter(EquipmentType.VSC_CONVERTER_STATION, Set.of("VSC_CONVERTER_STATION_1", "VSC_CONVERTER_STATION_2")), Set.of("VSC_CONVERTER_STATION_1", "VSC_CONVERTER_STATION_2")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.VSC_CONVERTER_STATION, Set.of("VSC_CONVERTER_STATION_1", "VSC_CONVERTER_STATION_2")),
+                        Set.of("VSC_CONVERTER_STATION_1", "VSC_CONVERTER_STATION_2")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.VSC_CONVERTER_STATION, Set.of("VSC_CONVERTER_STATION_3")), Set.of("VSC_CONVERTER_STATION_3")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.VSC_CONVERTER_STATION, Set.of("MISSING_VSC_CONVERTER_STATION")), Collections.emptySet())
         );
@@ -118,7 +123,8 @@ class IdentifierListFilterTest {
                 Arguments.of(TopologyKind.BUS_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("MISSING_BUS")), Collections.emptySet()),
                 // Buses - NODE_BREAKER
                 Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S2", "BUS_S3")), Collections.emptySet()),
-                Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")), Set.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")),
+                Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")),
+                        Set.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")),
                 Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("VOLTAGE_LEVEL_3_0")), Set.of("VOLTAGE_LEVEL_3_0")),
                 Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("MISSING_BUS")), Collections.emptySet()),
                 // Buses - No Topology provided

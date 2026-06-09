@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * Store a list of equipment types for a given filter ID
  *
- * @author Florent MILLOT <florent.millot@rte-france.com>
+ * @author Florent MILLOT <florent.millot at rte-france.com>
  */
 public record EquipmentTypesByFilterId(UUID filterId, Set<IdentifiableType> equipmentTypes) {
 }

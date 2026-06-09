@@ -260,10 +260,10 @@ public final class ExpertFilterUtils {
                 CONNECTED_2 -> String.valueOf(terminal.isConnected());
             case REGULATING_TERMINAL_VL_ID ->
                 terminal.getVoltageLevel() != null ?
-                terminal.getVoltageLevel().getId() : null;
+                    terminal.getVoltageLevel().getId() : null;
             case REGULATING_TERMINAL_CONNECTABLE_ID ->
                 terminal.getConnectable() != null ?
-                terminal.getConnectable().getId() : null;
+                    terminal.getConnectable().getId() : null;
             case P -> String.valueOf(terminal.getP());
             case Q -> String.valueOf(terminal.getQ());
             case P_ABSOLUTE -> String.valueOf(Math.abs(terminal.getP()));

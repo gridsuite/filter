@@ -241,7 +241,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             Arguments.of(EquipmentType.BUS, List.of(FieldType.NOMINAL_VOLTAGE)),
             Arguments.of(EquipmentType.BUSBAR_SECTION, List.of(FieldType.NOMINAL_VOLTAGE)),
             Arguments.of(EquipmentType.BOUNDARY_LINE, List.of(FieldType.NOMINAL_VOLTAGE)),
-            Arguments.of(EquipmentType.HVDC_LINE, List.of(FieldType.NOMINAL_VOLTAGE_1, FieldType.NOMINAL_VOLTAGE_2)),
+            Arguments.of(EquipmentType.HVDC_LINE, List.of(FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2)),
             Arguments.of(EquipmentType.LCC_CONVERTER_STATION, List.of(FieldType.NOMINAL_VOLTAGE)),
             Arguments.of(EquipmentType.VSC_CONVERTER_STATION, List.of(FieldType.NOMINAL_VOLTAGE))
             );
@@ -345,7 +345,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
             final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+            try (MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> i1 = Mockito.mock(Identifiable.class);
                 when(i1.getId()).thenReturn("id1");
                 final Identifiable<?> i2 = Mockito.mock(Identifiable.class);
@@ -374,7 +374,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             final FilterLoader loader = Mockito.mock(FilterLoader.class);
             final AbstractFilter filter = Mockito.mock(AbstractFilter.class);
             when(filter.getEquipmentType()).thenReturn(EquipmentType.GENERATOR);
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+            try (MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> gen1 = Mockito.mock(Identifiable.class);
                 when(gen1.getId()).thenReturn("gen1");
                 final Identifiable<?> gen2 = Mockito.mock(Identifiable.class);
@@ -401,7 +401,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             when(filter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
             final UUID filterUuid = UuidUtils.createUUID(0);
             when(filter.getId()).thenReturn(filterUuid);
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+            try (MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> line1 = Mockito.mock(Identifiable.class);
                 when(line1.getId()).thenReturn("line1");
                 final Identifiable<?> line2 = Mockito.mock(Identifiable.class);
@@ -453,7 +453,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
 
             when(loader.getFilters(genericFilterUuids)).thenReturn(List.of(genericFilter));
 
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+            try (MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> gen1 = Mockito.mock(Identifiable.class);
                 when(gen1.getId()).thenReturn("gen1");
                 final Identifiable<?> gen2 = Mockito.mock(Identifiable.class);
@@ -490,7 +490,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             when(filter.getEquipmentType()).thenReturn(EquipmentType.VOLTAGE_LEVEL);
             final UUID filterUuid = UuidUtils.createUUID(0);
             when(filter.getId()).thenReturn(filterUuid);
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+            try (MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> line1 = Mockito.mock(Identifiable.class);
                 when(line1.getId()).thenReturn("line1");
                 final Identifiable<?> line2 = Mockito.mock(Identifiable.class);
@@ -518,7 +518,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
             when(filter.getEquipmentType()).thenReturn(EquipmentType.SUBSTATION);
             final UUID filterUuid = UuidUtils.createUUID(0);
             when(filter.getId()).thenReturn(filterUuid);
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+            try (MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> line1 = Mockito.mock(Identifiable.class);
                 when(line1.getId()).thenReturn("line1");
                 final Identifiable<?> line2 = Mockito.mock(Identifiable.class);
@@ -582,7 +582,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
 
             when(loader.getFilters(genericFilterUuids)).thenReturn(List.of(filterLine, filterTrans));
 
-            try (final MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
+            try (MockedStatic<FiltersUtils> mockedFU = Mockito.mockStatic(FiltersUtils.class, Mockito.CALLS_REAL_METHODS)) {
                 final Identifiable<?> line1 = Mockito.mock(Identifiable.class);
                 when(line1.getId()).thenReturn("line1");
                 final List<Identifiable<?>> lineAttributes = List.of(line1);

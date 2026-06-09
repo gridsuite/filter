@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 /**
  * @author Seddik Yengui <seddik.yengui at rte-france.com>
  */
