@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert.rule;
+package org.gridsuite.filter.wip.rule;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,7 @@ import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.TestNetworkUtils;
-import org.gridsuite.filter.wip.expert.data.DataType;
+import org.gridsuite.filter.wip.data.DataType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,11 +31,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
 class CombinatorExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForTest() {
@@ -156,8 +158,8 @@ class CombinatorExpertRuleTest {
         );
     }
 
-    private static AbstractExpertRule mockExpertRule(boolean ruleEvaluationOutput) {
-        AbstractExpertRule rule = mock(AbstractExpertRule.class);
+    private static ExpertRule mockExpertRule(boolean ruleEvaluationOutput) {
+        ExpertRule rule = mock(ExpertRule.class);
         when(rule.evaluateRule(any())).thenReturn(ruleEvaluationOutput);
         return rule;
     }
@@ -173,33 +175,23 @@ class CombinatorExpertRuleTest {
     }
 
     @Test
-    void testGetOperatorTypeThrowsUnsupportedOperationException() {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder()
-                .combinatorType(CombinatorType.OR)
-                .subRules(Collections.emptySet())
-                .build();
-
-        assertThatThrownBy(rule::getOperatorType).isInstanceOf(UnsupportedOperationException.class);
-    }
-
-    @Test
-    void testClearCacheCombinatorRuleClearsCacheForExpectedSubRules() {
-        AbstractExpertRule nonCachingRule = mock(AbstractExpertRule.class);
-        AbstractCachingExpertRule cachingRule = mock(AbstractCachingExpertRule.class);
-        AbstractCachingExpertRule nestedCachingRule = mock(AbstractCachingExpertRule.class);
+    void testClearCacheCombinatorRuleClearsCacheForSubRules() {
+        ExpertRule cachingRuleOne = mock(ExpertRule.class);
+        ExpertRule cachingRuleTwo = mock(ExpertRule.class);
+        ExpertRule nestedCachingRule = mock(ExpertRule.class);
         CombinatorExpertRule nestedCombinatorRule = CombinatorExpertRule.builder()
                 .combinatorType(CombinatorType.AND)
-                .subRules(Set.of(nonCachingRule, nestedCachingRule))
+                .subRules(Set.of(nestedCachingRule))
                 .build();
         CombinatorExpertRule rule = CombinatorExpertRule.builder()
                 .combinatorType(CombinatorType.OR)
-                .subRules(Set.of(nonCachingRule, cachingRule, nestedCombinatorRule))
+                .subRules(Set.of(cachingRuleOne, cachingRuleTwo, nestedCombinatorRule))
                 .build();
 
         rule.clearCache();
 
-        verifyNoInteractions(nonCachingRule);
-        verify(cachingRule).clearCache();
+        verify(cachingRuleOne).clearCache();
+        verify(cachingRuleTwo).clearCache();
         verify(nestedCachingRule).clearCache();
     }
 

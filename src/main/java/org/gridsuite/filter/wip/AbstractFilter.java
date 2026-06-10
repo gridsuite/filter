@@ -38,7 +38,7 @@ public abstract class AbstractFilter implements Filter {
 
     public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind) {
         clearEvaluationCache();
-        return getConsideredEquipmentStream(Objects.requireNonNull(network), topologyKind)
+        return getEquipmentStream(Objects.requireNonNull(network), topologyKind)
                 .filter(this::evaluateFilterRule)
                 .toList();
     }
@@ -49,7 +49,7 @@ public abstract class AbstractFilter implements Filter {
 
     protected abstract boolean evaluateFilterRule(Identifiable<?> identifiable);
 
-    private Stream<Identifiable<?>> getConsideredEquipmentStream(Network network, TopologyKind topologyKind) {
+    private Stream<Identifiable<?>> getEquipmentStream(Network network, TopologyKind topologyKind) {
         return switch (equipmentType) {
             case LINE -> network.getLineStream().map(line -> line);
             case BOUNDARY_LINE -> network.getBoundaryLineStream().map(boundaryLine -> boundaryLine);

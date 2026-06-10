@@ -14,15 +14,12 @@ import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import org.gridsuite.filter.utils.FilterType;
-import org.gridsuite.filter.wip.expert.ExpertFilter;
-import org.gridsuite.filter.wip.identifier.IdentifierListFilter;
 
 import java.util.List;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
-
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     property = "filterType",

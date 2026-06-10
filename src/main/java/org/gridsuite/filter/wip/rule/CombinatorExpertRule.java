@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert.rule;
+package org.gridsuite.filter.wip.rule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +15,7 @@ import com.powsybl.iidm.network.Identifiable;
 import lombok.*;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.expert.data.DataType;
+import org.gridsuite.filter.wip.data.DataType;
 
 import java.util.Objects;
 import java.util.Set;
@@ -25,9 +25,9 @@ import java.util.Set;
  */
 @Beta
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(callSuper = true)
-public final class CombinatorExpertRule extends AbstractCachingExpertRule {
+public final class CombinatorExpertRule implements ExpertRule {
 
     private CombinatorType combinatorType;
     private Set<ExpertRule> subRules;
@@ -46,12 +46,6 @@ public final class CombinatorExpertRule extends AbstractCachingExpertRule {
         };
     }
 
-    @Override
-    public void clearCache() {
-        subRules.stream().filter(AbstractCachingExpertRule.class::isInstance).map(AbstractCachingExpertRule.class::cast).forEach(AbstractCachingExpertRule::clearCache);
-    }
-
-    @Override
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public DataType getDataType() {
         return DataType.COMBINATOR;
@@ -61,5 +55,10 @@ public final class CombinatorExpertRule extends AbstractCachingExpertRule {
     @JsonIgnore
     public OperatorType getOperatorType() {
         throw new UnsupportedOperationException("Operator type not applicable for combinator rules");
+    }
+
+    @Override
+    public void clearCache() {
+        subRules.forEach(ExpertRule::clearCache);
     }
 }

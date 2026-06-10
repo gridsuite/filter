@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert.rule;
+package org.gridsuite.filter.wip.rule;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
@@ -15,46 +15,45 @@ import lombok.*;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.expert.data.DataType;
+import org.gridsuite.filter.wip.data.DataType;
 
-import java.util.Collections;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(callSuper = true)
-public final class EnumExpertRule extends AbstractExpertRule {
+public final class BooleanExpertRule implements ExpertRule {
 
     private FieldType fieldType;
     private OperatorType operatorType;
-    private String referenceValue;
-    private Set<String> referenceValues;
+    private Boolean referenceValue;
 
     @Builder
-    public EnumExpertRule(FieldType fieldType, OperatorType operatorType, String referenceValue, Set<String> referenceValues) {
+    public BooleanExpertRule(FieldType fieldType, OperatorType operatorType, Boolean referenceValue) {
         this.fieldType = Objects.requireNonNull(fieldType);
         this.operatorType = Objects.requireNonNull(operatorType);
-        this.referenceValue = referenceValue != null ? referenceValue : "";
-        this.referenceValues = referenceValues != null ? Set.copyOf(referenceValues) : Collections.emptySet();
+        this.referenceValue = referenceValue;
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
         String fieldValue = ExpertFilterUtils.getFieldValue(fieldType, null, identifiable);
         if (fieldValue == null) {
-            return false;
+            return OperatorType.NOT_EXISTS.equals(operatorType);
         }
 
+        boolean parsedFieldValue = Boolean.parseBoolean(fieldValue);
+        boolean parsedReferenceValue = Optional.ofNullable(referenceValue).orElse(false);
         return switch (operatorType) {
-            case EQUALS -> fieldValue.equals(referenceValue);
-            case NOT_EQUALS -> !fieldValue.equals(referenceValue);
-            case IN -> referenceValues.contains(fieldValue);
-            case NOT_IN -> !referenceValues.contains(fieldValue);
+            case EQUALS -> parsedReferenceValue == parsedFieldValue;
+            case NOT_EQUALS -> parsedReferenceValue != parsedFieldValue;
+            case EXISTS -> true;
+            case NOT_EXISTS -> false;
             default -> throw unsupportedOperatorException();
         };
     }
@@ -62,11 +61,6 @@ public final class EnumExpertRule extends AbstractExpertRule {
     @Override
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public DataType getDataType() {
-        return DataType.ENUM;
-    }
-
-    @Override
-    public OperatorType getOperatorType() {
-        return operatorType;
+        return DataType.BOOLEAN;
     }
 }

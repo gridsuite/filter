@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert.rule;
+package org.gridsuite.filter.wip.rule;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
@@ -15,7 +15,7 @@ import lombok.*;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.expert.data.DataType;
+import org.gridsuite.filter.wip.data.DataType;
 
 import java.util.Objects;
 import java.util.Set;
@@ -25,9 +25,9 @@ import java.util.Set;
  */
 @Beta
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(callSuper = true)
-public final class PropertiesExpertRule extends AbstractExpertRule {
+public final class PropertiesExpertRule implements ExpertRule {
 
     private FieldType fieldType;
     private OperatorType operatorType;
@@ -60,10 +60,5 @@ public final class PropertiesExpertRule extends AbstractExpertRule {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public DataType getDataType() {
         return DataType.PROPERTIES;
-    }
-
-    @Override
-    public OperatorType getOperatorType() {
-        return operatorType;
     }
 }

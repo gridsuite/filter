@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert;
+package org.gridsuite.filter.wip;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,10 +19,7 @@ import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.Filter;
-import org.gridsuite.filter.wip.TestNetworkUtils;
-import org.gridsuite.filter.wip.expert.rule.*;
-import org.gridsuite.filter.wip.identifier.IdentifierListFilter;
+import org.gridsuite.filter.wip.rule.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -40,6 +37,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
 class ExpertFilterTest {
 
     private final Network network = TestNetworkUtils.createTestNetwork();
@@ -260,7 +260,7 @@ class ExpertFilterTest {
 
     @Test
     void testGetFilterTypeReturnsExpertFilter() {
-        AbstractExpertRule mockRule = Mockito.mock(AbstractExpertRule.class);
+        ExpertRule mockRule = Mockito.mock(ExpertRule.class);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
 
         assertThat(filter.getFilterType()).isEqualTo(FilterType.EXPERT);
@@ -268,7 +268,7 @@ class ExpertFilterTest {
 
     @Test
     void testCachingExpertRuleClearsCacheAfterEvaluation() {
-        AbstractCachingExpertRule mockRule = Mockito.mock(AbstractCachingExpertRule.class);
+        ExpertRule mockRule = Mockito.mock(ExpertRule.class);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
 
         filter.evaluate(network);
@@ -294,7 +294,7 @@ class ExpertFilterTest {
     @Test
     void testFilterEvaluationWithMockRuleReturnsExpectedEquipment() {
         Line expectedLine = network.getLine("LINE_1");
-        AbstractExpertRule mockRule = Mockito.mock(AbstractExpertRule.class);
+        ExpertRule mockRule = Mockito.mock(ExpertRule.class);
         when(mockRule.evaluateRule(any())).thenReturn(false);
         when(mockRule.evaluateRule(expectedLine)).thenReturn(true);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);

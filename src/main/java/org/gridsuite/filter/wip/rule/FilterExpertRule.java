@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert.rule;
+package org.gridsuite.filter.wip.rule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +18,7 @@ import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.Filter;
-import org.gridsuite.filter.wip.expert.data.DataType;
+import org.gridsuite.filter.wip.data.DataType;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
  */
 @Beta
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(callSuper = true)
-public final class FilterExpertRule extends AbstractCachingExpertRule {
+public final class FilterExpertRule implements ExpertRule {
 
     private FieldType fieldType;
     private OperatorType operatorType;
@@ -41,18 +41,16 @@ public final class FilterExpertRule extends AbstractCachingExpertRule {
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    private boolean cachedFilterEvaluation;
+    private boolean cachedFilterEvaluation = false;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    private Set<String> filterEvaluationCache;
+    private Set<String> filterEvaluationCache = new HashSet<>();
 
     @Builder
     public FilterExpertRule(FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters) {
         this.fieldType = Objects.requireNonNull(fieldType);
         this.operatorType = Objects.requireNonNull(operatorType);
         this.referenceFilters = Set.copyOf(Objects.requireNonNull(referenceFilters));
-        this.filterEvaluationCache = new HashSet<>();
-        this.cachedFilterEvaluation = false;
     }
 
     @Override
@@ -71,11 +69,6 @@ public final class FilterExpertRule extends AbstractCachingExpertRule {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public DataType getDataType() {
         return DataType.FILTER;
-    }
-
-    @Override
-    public OperatorType getOperatorType() {
-        return operatorType;
     }
 
     @Override

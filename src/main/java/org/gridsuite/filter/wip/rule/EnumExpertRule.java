@@ -6,17 +6,16 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert.rule;
+package org.gridsuite.filter.wip.rule;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import lombok.*;
-import org.apache.commons.lang3.Strings;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.expert.data.DataType;
+import org.gridsuite.filter.wip.data.DataType;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -27,39 +26,35 @@ import java.util.Set;
  */
 @Beta
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(callSuper = true)
-public final class StringExpertRule extends AbstractExpertRule {
+public final class EnumExpertRule implements ExpertRule {
 
     private FieldType fieldType;
     private OperatorType operatorType;
-    private Set<String> referenceValues;
     private String referenceValue;
+    private Set<String> referenceValues;
 
     @Builder
-    public StringExpertRule(FieldType fieldType, OperatorType operatorType, String referenceValue, Set<String> referenceValues) {
+    public EnumExpertRule(FieldType fieldType, OperatorType operatorType, String referenceValue, Set<String> referenceValues) {
         this.fieldType = Objects.requireNonNull(fieldType);
         this.operatorType = Objects.requireNonNull(operatorType);
         this.referenceValue = referenceValue != null ? referenceValue : "";
-        this.referenceValues = referenceValues != null ? referenceValues : Collections.emptySet();
+        this.referenceValues = referenceValues != null ? Set.copyOf(referenceValues) : Collections.emptySet();
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
         String fieldValue = ExpertFilterUtils.getFieldValue(fieldType, null, identifiable);
-        if (fieldValue == null || fieldValue.isEmpty()) {
-            return operatorType.equals(OperatorType.NOT_EXISTS);
+        if (fieldValue == null) {
+            return false;
         }
 
         return switch (operatorType) {
-            case IS -> Strings.CI.equals(fieldValue, referenceValue);
-            case CONTAINS -> Strings.CI.contains(fieldValue, referenceValue);
-            case BEGINS_WITH -> Strings.CI.startsWith(fieldValue, referenceValue);
-            case ENDS_WITH -> Strings.CI.endsWith(fieldValue, referenceValue);
-            case EXISTS -> true;
-            case NOT_EXISTS -> false;
-            case IN -> referenceValues.stream().anyMatch(fieldValue::equalsIgnoreCase);
-            case NOT_IN -> referenceValues.stream().noneMatch(fieldValue::equalsIgnoreCase);
+            case EQUALS -> fieldValue.equals(referenceValue);
+            case NOT_EQUALS -> !fieldValue.equals(referenceValue);
+            case IN -> referenceValues.contains(fieldValue);
+            case NOT_IN -> !referenceValues.contains(fieldValue);
             default -> throw unsupportedOperatorException();
         };
     }
@@ -67,11 +62,6 @@ public final class StringExpertRule extends AbstractExpertRule {
     @Override
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public DataType getDataType() {
-        return DataType.STRING;
-    }
-
-    @Override
-    public OperatorType getOperatorType() {
-        return operatorType;
+        return DataType.ENUM;
     }
 }

@@ -6,13 +6,15 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert.rule;
+package org.gridsuite.filter.wip.rule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Identifiable;
-import org.gridsuite.filter.wip.expert.data.DataType;
+import org.gridsuite.filter.utils.expertfilter.OperatorType;
+import org.gridsuite.filter.wip.data.DataType;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -39,4 +41,14 @@ public interface ExpertRule {
     boolean evaluateRule(Identifiable<?> identifiable);
 
     DataType getDataType();
+
+    OperatorType getOperatorType();
+
+    default PowsyblException unsupportedOperatorException() {
+        return new PowsyblException(String.format("%s operator not supported with %s rule data type", getOperatorType(), getDataType()));
+    }
+
+    default void clearCache() {
+        // Do nothing by default
+    }
 }

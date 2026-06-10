@@ -6,8 +6,11 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.expert.data;
+package org.gridsuite.filter.wip.data;
 
+/**
+ * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
+ */
 public enum DataType {
     STRING,
     NUMBER,

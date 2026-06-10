@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.identifier;
+package org.gridsuite.filter.wip;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
@@ -14,10 +14,9 @@ import com.powsybl.iidm.network.Identifiable;
 import lombok.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
-import org.gridsuite.filter.wip.AbstractFilter;
+import org.gridsuite.filter.wip.rule.ExpertRule;
 
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -26,25 +25,31 @@ import java.util.Set;
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = true)
-public class IdentifierListFilter extends AbstractFilter {
+public class ExpertFilter extends AbstractFilter {
 
-    private Set<String> equipmentIds;
+    private ExpertRule rule;
 
     @Builder
-    public IdentifierListFilter(EquipmentType equipmentType, Set<String> equipmentIds) {
+    public ExpertFilter(EquipmentType equipmentType, ExpertRule rule) {
         super(equipmentType);
-        this.equipmentIds = Set.copyOf(Objects.requireNonNull(equipmentIds));
+        this.rule = Objects.requireNonNull(rule);
     }
 
     @Override
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public FilterType getFilterType() {
-        return FilterType.IDENTIFIER_LIST;
+        return FilterType.EXPERT;
     }
 
     @Override
     protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
         Objects.requireNonNull(identifiable);
-        return equipmentIds.contains(identifiable.getId());
+
+        return rule.evaluateRule(identifiable);
+    }
+
+    @Override
+    protected void clearEvaluationCache() {
+        rule.clearCache();
     }
 }
