@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -172,6 +173,16 @@ class CombinatorExpertRuleTest {
                 .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.COMBINATOR);
+    }
+
+    @Test
+    void testGetOperatorTypeThrowsUnsupportedOperationException() {
+        CombinatorExpertRule rule = CombinatorExpertRule.builder()
+                .combinatorType(CombinatorType.OR)
+                .subRules(Collections.emptySet())
+                .build();
+
+        assertThatThrownBy(rule::getOperatorType).isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
