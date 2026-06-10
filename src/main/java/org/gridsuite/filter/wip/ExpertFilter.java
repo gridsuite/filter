@@ -23,15 +23,16 @@ import java.util.Objects;
  */
 @Beta
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(callSuper = true)
-public class ExpertFilter extends AbstractFilter {
+public class ExpertFilter implements Filter {
 
+    private EquipmentType equipmentType;
     private ExpertRule rule;
 
     @Builder
     public ExpertFilter(EquipmentType equipmentType, ExpertRule rule) {
-        super(equipmentType);
+        this.equipmentType = Objects.requireNonNull(equipmentType);
         this.rule = Objects.requireNonNull(rule);
     }
 
@@ -42,14 +43,14 @@ public class ExpertFilter extends AbstractFilter {
     }
 
     @Override
-    protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
+    public boolean evaluateFilterRule(Identifiable<?> identifiable) {
         Objects.requireNonNull(identifiable);
 
         return rule.evaluateRule(identifiable);
     }
 
     @Override
-    protected void clearEvaluationCache() {
+    public void clearEvaluationCache() {
         rule.clearCache();
     }
 }

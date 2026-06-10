@@ -29,27 +29,27 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BooleanExpertRule implements ExpertRule {
 
-    private FieldType fieldType;
-    private OperatorType operatorType;
-    private Boolean referenceValue;
+    private FieldType field;
+    private OperatorType operator;
+    private Boolean value;
 
     @Builder
-    public BooleanExpertRule(FieldType fieldType, OperatorType operatorType, Boolean referenceValue) {
-        this.fieldType = Objects.requireNonNull(fieldType);
-        this.operatorType = Objects.requireNonNull(operatorType);
-        this.referenceValue = referenceValue;
+    public BooleanExpertRule(FieldType field, OperatorType operator, Boolean value) {
+        this.field = Objects.requireNonNull(field);
+        this.operator = Objects.requireNonNull(operator);
+        this.value = value;
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
-        String fieldValue = ExpertFilterUtils.getFieldValue(fieldType, null, identifiable);
+        String fieldValue = ExpertFilterUtils.getFieldValue(field, null, identifiable);
         if (fieldValue == null) {
-            return OperatorType.NOT_EXISTS.equals(operatorType);
+            return OperatorType.NOT_EXISTS.equals(operator);
         }
 
         boolean parsedFieldValue = Boolean.parseBoolean(fieldValue);
-        boolean parsedReferenceValue = Optional.ofNullable(referenceValue).orElse(false);
-        return switch (operatorType) {
+        boolean parsedReferenceValue = Optional.ofNullable(value).orElse(false);
+        return switch (operator) {
             case EQUALS -> parsedReferenceValue == parsedFieldValue;
             case NOT_EQUALS -> parsedReferenceValue != parsedFieldValue;
             case EXISTS -> true;

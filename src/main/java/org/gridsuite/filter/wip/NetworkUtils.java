@@ -8,48 +8,23 @@
 
 package org.gridsuite.filter.wip;
 
-import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import com.powsybl.iidm.network.VoltageLevel;
-import lombok.*;
 import org.gridsuite.filter.utils.EquipmentType;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
-@Beta
-@Data
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractFilter implements Filter {
+final class NetworkUtils {
 
-    @NonNull
-    private EquipmentType equipmentType;
-
-    public List<Identifiable<?>> evaluate(Network network) {
-        return evaluate(network, TopologyKind.BUS_BREAKER);
+    private NetworkUtils() {
     }
 
-    public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind) {
-        clearEvaluationCache();
-        return getEquipmentStream(Objects.requireNonNull(network), topologyKind)
-                .filter(this::evaluateFilterRule)
-                .toList();
-    }
-
-    protected void clearEvaluationCache() {
-        // Do nothing by default
-    }
-
-    protected abstract boolean evaluateFilterRule(Identifiable<?> identifiable);
-
-    private Stream<Identifiable<?>> getEquipmentStream(Network network, TopologyKind topologyKind) {
+    static Stream<Identifiable<?>> getEquipmentStream(Network network, EquipmentType equipmentType, TopologyKind topologyKind) {
         return switch (equipmentType) {
             case LINE -> network.getLineStream().map(line -> line);
             case BOUNDARY_LINE -> network.getBoundaryLineStream().map(boundaryLine -> boundaryLine);
@@ -70,7 +45,7 @@ public abstract class AbstractFilter implements Filter {
         };
     }
 
-    private Stream<Identifiable<?>> getBusStream(Network network, TopologyKind topologyKind) {
+    private static Stream<Identifiable<?>> getBusStream(Network network, TopologyKind topologyKind) {
         return network.getVoltageLevelStream()
                 .filter(vl -> topologyKind == null || vl.getTopologyKind() == topologyKind)
                 .map(VoltageLevel::getBusBreakerView)

@@ -27,7 +27,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,50 +52,50 @@ class CombinatorExpertRuleTest {
 
         return Stream.of(
                 // --- Single rule AND --- //
-                Arguments.of(CombinatorType.AND, Set.of(
-                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.HYDRO.name()).build()
+                Arguments.of(CombinatorType.AND, List.of(
+                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build()
                 ), gen, true),
-                Arguments.of(CombinatorType.AND, Set.of(
-                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.THERMAL.name()).build()
+                Arguments.of(CombinatorType.AND, List.of(
+                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build()
                 ), gen, false),
                 // --- Rule tree AND --- //
-                Arguments.of(CombinatorType.AND, Set.of(
-                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.HYDRO.name()).build(),
-                        CombinatorExpertRule.builder().combinatorType(CombinatorType.AND).subRules(Set.of(
-                                        StringExpertRule.builder().operatorType(OperatorType.IS).fieldType(FieldType.ID).referenceValue("GEN").build(),
-                                        NumberExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.MIN_P).referenceValue(-500.0).build()
+                Arguments.of(CombinatorType.AND, List.of(
+                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build(),
+                        CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(List.of(
+                                        StringExpertRule.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
+                                        NumberExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.MIN_P).value(-500.0).build()
                                 )
                         ).build()
                 ), gen, true),
-                Arguments.of(CombinatorType.AND, Set.of(
-                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.HYDRO.name()).build(),
-                        CombinatorExpertRule.builder().combinatorType(CombinatorType.AND).subRules(Set.of(
-                                        StringExpertRule.builder().operatorType(OperatorType.IS).fieldType(FieldType.ID).referenceValue("GEN").build(),
-                                        NumberExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.MIN_P).referenceValue(-400.0).build()
+                Arguments.of(CombinatorType.AND, List.of(
+                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build(),
+                        CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(List.of(
+                                        StringExpertRule.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
+                                        NumberExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.MIN_P).value(-400.0).build()
                                 )
                         ).build()
                 ), gen, false),
                 // --- Single rule OR --- //
-                Arguments.of(CombinatorType.OR, Set.of(
-                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.HYDRO.name()).build()
+                Arguments.of(CombinatorType.OR, List.of(
+                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.HYDRO.name()).build()
                 ), gen, true),
-                Arguments.of(CombinatorType.OR, Set.of(
-                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.THERMAL.name()).build()
+                Arguments.of(CombinatorType.OR, List.of(
+                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build()
                 ), gen, false),
                 // --- Rule tree OR --- //
-                Arguments.of(CombinatorType.OR, Set.of(
-                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.THERMAL.name()).build(),
-                        CombinatorExpertRule.builder().combinatorType(CombinatorType.OR).subRules(Set.of(
-                                        StringExpertRule.builder().operatorType(OperatorType.IS).fieldType(FieldType.ID).referenceValue("GEN").build(),
-                                        BooleanExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.VOLTAGE_REGULATOR_ON).referenceValue(false).build()
+                Arguments.of(CombinatorType.OR, List.of(
+                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build(),
+                        CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
+                                        StringExpertRule.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN").build(),
+                                        BooleanExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.VOLTAGE_REGULATOR_ON).value(false).build()
                                 )
                         ).build()
                 ), gen, true),
-                Arguments.of(CombinatorType.OR, Set.of(
-                        EnumExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.ENERGY_SOURCE).referenceValue(EnergySource.THERMAL.name()).build(),
-                        CombinatorExpertRule.builder().combinatorType(CombinatorType.OR).subRules(Set.of(
-                                        StringExpertRule.builder().operatorType(OperatorType.IS).fieldType(FieldType.ID).referenceValue("GEN_2").build(),
-                                        BooleanExpertRule.builder().operatorType(OperatorType.EQUALS).fieldType(FieldType.VOLTAGE_REGULATOR_ON).referenceValue(false).build()
+                Arguments.of(CombinatorType.OR, List.of(
+                        EnumExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.ENERGY_SOURCE).value(EnergySource.THERMAL.name()).build(),
+                        CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
+                                        StringExpertRule.builder().operator(OperatorType.IS).field(FieldType.ID).value("GEN_2").build(),
+                                        BooleanExpertRule.builder().operator(OperatorType.EQUALS).field(FieldType.VOLTAGE_REGULATOR_ON).value(false).build()
                                 )
                         ).build()
                 ), gen, false)
@@ -104,54 +104,54 @@ class CombinatorExpertRuleTest {
 
     private static Stream<Arguments> provideMockRuleEvaluationArguments() {
         return Stream.of(
-                Arguments.of(CombinatorType.OR, Set.of(mockExpertRule(true), mockExpertRule(false)), true),
-                Arguments.of(CombinatorType.OR, Set.of(mockExpertRule(false), mockExpertRule(false)), false),
-                Arguments.of(CombinatorType.AND, Set.of(mockExpertRule(true), mockExpertRule(true)), true),
-                Arguments.of(CombinatorType.AND, Set.of(mockExpertRule(true), mockExpertRule(false)), false),
-                Arguments.of(CombinatorType.AND, Set.of(mockExpertRule(false), mockExpertRule(false)), false)
+                Arguments.of(CombinatorType.OR, List.of(mockExpertRule(true), mockExpertRule(false)), true),
+                Arguments.of(CombinatorType.OR, List.of(mockExpertRule(false), mockExpertRule(false)), false),
+                Arguments.of(CombinatorType.AND, List.of(mockExpertRule(true), mockExpertRule(true)), true),
+                Arguments.of(CombinatorType.AND, List.of(mockExpertRule(true), mockExpertRule(false)), false),
+                Arguments.of(CombinatorType.AND, List.of(mockExpertRule(false), mockExpertRule(false)), false)
         );
     }
 
     private static Stream<Arguments> provideRealRuleEvaluationArguments() {
         return Stream.of(
                 Arguments.of(CombinatorType.OR,
-                        Set.of(BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(true).build(),
-                                EnumExpertRule.builder().fieldType(FieldType.COUNTRY).operatorType(OperatorType.EQUALS).referenceValue("FR").build()),
+                        List.of(BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(true).build(),
+                                EnumExpertRule.builder().field(FieldType.COUNTRY).operator(OperatorType.EQUALS).value("FR").build()),
                         EquipmentType.GENERATOR,
                         "GENERATOR_1",
                         true
                 ),
                 Arguments.of(CombinatorType.OR,
-                        Set.of(BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(false).build(),
-                                EnumExpertRule.builder().fieldType(FieldType.COUNTRY).operatorType(OperatorType.EQUALS).referenceValue("FR").build()),
+                        List.of(BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(false).build(),
+                                EnumExpertRule.builder().field(FieldType.COUNTRY).operator(OperatorType.EQUALS).value("FR").build()),
                         EquipmentType.GENERATOR,
                         "GENERATOR_1",
                         true
                 ),
                 Arguments.of(CombinatorType.OR,
-                        Set.of(BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(false).build(),
-                                EnumExpertRule.builder().fieldType(FieldType.COUNTRY).operatorType(OperatorType.EQUALS).referenceValue("ES").build()),
+                        List.of(BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(false).build(),
+                                EnumExpertRule.builder().field(FieldType.COUNTRY).operator(OperatorType.EQUALS).value("ES").build()),
                         EquipmentType.GENERATOR,
                         "GENERATOR_1",
                         false
                 ),
                 Arguments.of(CombinatorType.AND,
-                        Set.of(BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(true).build(),
-                                EnumExpertRule.builder().fieldType(FieldType.COUNTRY).operatorType(OperatorType.EQUALS).referenceValue("FR").build()),
+                        List.of(BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(true).build(),
+                                EnumExpertRule.builder().field(FieldType.COUNTRY).operator(OperatorType.EQUALS).value("FR").build()),
                         EquipmentType.GENERATOR,
                         "GENERATOR_1",
                         true
                 ),
                 Arguments.of(CombinatorType.AND,
-                        Set.of(BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(false).build(),
-                                EnumExpertRule.builder().fieldType(FieldType.COUNTRY).operatorType(OperatorType.EQUALS).referenceValue("FR").build()),
+                        List.of(BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(false).build(),
+                                EnumExpertRule.builder().field(FieldType.COUNTRY).operator(OperatorType.EQUALS).value("FR").build()),
                         EquipmentType.GENERATOR,
                         "GENERATOR_1",
                         false
                 ),
                 Arguments.of(CombinatorType.AND,
-                        Set.of(BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(true).build(),
-                                EnumExpertRule.builder().fieldType(FieldType.COUNTRY).operatorType(OperatorType.EQUALS).referenceValue("ES").build()),
+                        List.of(BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(true).build(),
+                                EnumExpertRule.builder().field(FieldType.COUNTRY).operator(OperatorType.EQUALS).value("ES").build()),
                         EquipmentType.GENERATOR,
                         "GENERATOR_1",
                         false
@@ -168,8 +168,8 @@ class CombinatorExpertRuleTest {
     @Test
     void testGetDataTypeReturnsCombinator() {
         CombinatorExpertRule rule = CombinatorExpertRule.builder()
-                .combinatorType(CombinatorType.OR)
-                .subRules(Collections.emptySet())
+                .combinator(CombinatorType.OR)
+                .rules(Collections.emptyList())
                 .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.COMBINATOR);
@@ -178,11 +178,11 @@ class CombinatorExpertRuleTest {
     @Test
     void testGetOperatorTypeThrowsUnsupportedOperationException() {
         CombinatorExpertRule rule = CombinatorExpertRule.builder()
-                .combinatorType(CombinatorType.OR)
-                .subRules(Collections.emptySet())
+                .combinator(CombinatorType.OR)
+                .rules(Collections.emptyList())
                 .build();
 
-        assertThatThrownBy(rule::getOperatorType).isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(rule::getOperator).isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
@@ -191,12 +191,12 @@ class CombinatorExpertRuleTest {
         ExpertRule cachingRuleTwo = mock(ExpertRule.class);
         ExpertRule nestedCachingRule = mock(ExpertRule.class);
         CombinatorExpertRule nestedCombinatorRule = CombinatorExpertRule.builder()
-                .combinatorType(CombinatorType.AND)
-                .subRules(Set.of(nestedCachingRule))
+                .combinator(CombinatorType.AND)
+                .rules(List.of(nestedCachingRule))
                 .build();
         CombinatorExpertRule rule = CombinatorExpertRule.builder()
-                .combinatorType(CombinatorType.OR)
-                .subRules(Set.of(cachingRuleOne, cachingRuleTwo, nestedCombinatorRule))
+                .combinator(CombinatorType.OR)
+                .rules(List.of(cachingRuleOne, cachingRuleTwo, nestedCombinatorRule))
                 .build();
 
         rule.clearCache();
@@ -208,11 +208,11 @@ class CombinatorExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource({"provideArgumentsForTest"})
-    void testFilterRoundTripSerializationDeserialization(CombinatorType combinatorType, Set<ExpertRule> rules, Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
+    void testFilterRoundTripSerializationDeserialization(CombinatorType combinatorType, List<ExpertRule> rules, Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         ExpertRule rule = CombinatorExpertRule.builder()
-                .combinatorType(combinatorType)
-                .subRules(rules)
+                .combinator(combinatorType)
+                .rules(rules)
                 .build();
 
         String serializedRule = objectMapper.writeValueAsString(rule);
@@ -223,10 +223,10 @@ class CombinatorExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource({"provideArgumentsForTest"})
-    void testEvaluateRule(CombinatorType combinatorType, Set<ExpertRule> rules, Identifiable<?> equipment, boolean expected) {
+    void testEvaluateRule(CombinatorType combinatorType, List<ExpertRule> rules, Identifiable<?> equipment, boolean expected) {
         ExpertRule rule = CombinatorExpertRule.builder()
-                .combinatorType(combinatorType)
-                .subRules(rules)
+                .combinator(combinatorType)
+                .rules(rules)
                 .build();
 
         assertEquals(expected, rule.evaluateRule(equipment));
@@ -234,11 +234,11 @@ class CombinatorExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource("provideMockRuleEvaluationArguments")
-    void testMockRuleEvaluationReturnsExpected(CombinatorType combinatorType, Set<ExpertRule> subRules, boolean expectedResult) {
+    void testMockRuleEvaluationReturnsExpected(CombinatorType combinatorType, List<ExpertRule> rules, boolean expectedResult) {
         Identifiable<?> identifiable = mock(Identifiable.class);
         ExpertRule rule = CombinatorExpertRule.builder()
-                .combinatorType(combinatorType)
-                .subRules(subRules)
+                .combinator(combinatorType)
+                .rules(rules)
                 .build();
 
         assertThat(rule.evaluateRule(identifiable)).isEqualTo(expectedResult);
@@ -246,11 +246,11 @@ class CombinatorExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource("provideRealRuleEvaluationArguments")
-    void testRealRuleEvaluationReturnsExpected(CombinatorType combinatorType, Set<ExpertRule> subRules, EquipmentType equipmentType, String equipmentId, boolean expectedResult) {
+    void testRealRuleEvaluationReturnsExpected(CombinatorType combinatorType, List<ExpertRule> rules, EquipmentType equipmentType, String equipmentId, boolean expectedResult) {
         Identifiable<?> identifiable = TestNetworkUtils.getEquipmentFromTestNetwork(equipmentType, equipmentId);
         ExpertRule rule = CombinatorExpertRule.builder()
-                .combinatorType(combinatorType)
-                .subRules(subRules)
+                .combinator(combinatorType)
+                .rules(rules)
                 .build();
 
         assertThat(rule.evaluateRule(identifiable)).isEqualTo(expectedResult);

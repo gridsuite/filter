@@ -25,6 +25,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -423,38 +424,38 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- BETWEEN --- //
                 // Generator fields
-                Arguments.of(BETWEEN, FieldType.MIN_P, null, Set.of(-600.0, -400.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.MIN_P, null, Set.of(-450.0, -400.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.MAX_P, null, Set.of(90.0, 110.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.MAX_P, null, Set.of(105.0, 110.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.TARGET_V, null, Set.of(10.0, 30.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.TARGET_V, null, Set.of(25.0, 30.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.TARGET_P, null, Set.of(20.0, 40.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.TARGET_P, null, Set.of(35.0, 40.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.TARGET_Q, null, Set.of(30.0, 50.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.TARGET_Q, null, Set.of(45.0, 50.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(50.0, 70.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(65.0, 70.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.P, null, Set.of(-90.0, -110.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.P, null, Set.of(-80.0, -90.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.Q, null, Set.of(-190.0, -210.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.Q, null, Set.of(-180.0, -190.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 110.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.P_ABSOLUTE, null, Set.of(80.0, 90.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 210.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.Q_ABSOLUTE, null, Set.of(180.0, 190.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.MIN_P, null, List.of(-600.0, -400.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.MIN_P, null, List.of(-450.0, -400.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.MAX_P, null, List.of(90.0, 110.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.MAX_P, null, List.of(105.0, 110.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.TARGET_V, null, List.of(10.0, 30.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.TARGET_V, null, List.of(25.0, 30.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.TARGET_P, null, List.of(20.0, 40.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.TARGET_P, null, List.of(35.0, 40.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.TARGET_Q, null, List.of(30.0, 50.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.TARGET_Q, null, List.of(45.0, 50.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.RATED_S, null, List.of(50.0, 70.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.RATED_S, null, List.of(65.0, 70.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.P, null, List.of(-90.0, -110.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.P, null, List.of(-80.0, -90.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.Q, null, List.of(-190.0, -210.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.Q, null, List.of(-180.0, -190.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.P_ABSOLUTE, null, List.of(90.0, 110.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.P_ABSOLUTE, null, List.of(80.0, 90.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.Q_ABSOLUTE, null, List.of(190.0, 210.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.Q_ABSOLUTE, null, List.of(180.0, 190.0), gen, false),
                 // GeneratorStartup extension fields
-                Arguments.of(BETWEEN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 60.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(55.0, 60.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.MARGINAL_COST, null, Set.of(40.0, 60.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.MARGINAL_COST, null, Set.of(55.0, 60.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.PLANNED_OUTAGE_RATE, null, Set.of(40.0, 60.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.PLANNED_OUTAGE_RATE, null, Set.of(55.0, 60.0), gen, false),
-                Arguments.of(BETWEEN, FieldType.FORCED_OUTAGE_RATE, null, Set.of(40.0, 60.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.FORCED_OUTAGE_RATE, null, Set.of(55.0, 60.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, List.of(40.0, 60.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, List.of(55.0, 60.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.MARGINAL_COST, null, List.of(40.0, 60.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.MARGINAL_COST, null, List.of(55.0, 60.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.PLANNED_OUTAGE_RATE, null, List.of(40.0, 60.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.PLANNED_OUTAGE_RATE, null, List.of(55.0, 60.0), gen, false),
+                Arguments.of(BETWEEN, FieldType.FORCED_OUTAGE_RATE, null, List.of(40.0, 60.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.FORCED_OUTAGE_RATE, null, List.of(55.0, 60.0), gen, false),
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), gen, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), gen, false)
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), gen, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), gen, false)
         );
     }
 
@@ -540,38 +541,38 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 // Generator fields
-                Arguments.of(IN, FieldType.MIN_P, null, Set.of(-600.0, -500.0, -400.0), gen, true),
-                Arguments.of(IN, FieldType.MIN_P, null, Set.of(-600.0, -400.0), gen, false),
-                Arguments.of(IN, FieldType.MAX_P, null, Set.of(90.0, 100.0, 110.0), gen, true),
-                Arguments.of(IN, FieldType.MAX_P, null, Set.of(90.0, 110.0), gen, false),
-                Arguments.of(IN, FieldType.TARGET_V, null, Set.of(10.0, 20.0, 30.0), gen, true),
-                Arguments.of(IN, FieldType.TARGET_V, null, Set.of(10.0, 30.0), gen, false),
-                Arguments.of(IN, FieldType.TARGET_P, null, Set.of(20.0, 30.0, 40.0), gen, true),
-                Arguments.of(IN, FieldType.TARGET_P, null, Set.of(20.0, 40.0), gen, false),
-                Arguments.of(IN, FieldType.TARGET_Q, null, Set.of(30.0, 40.0, 50.0), gen, true),
-                Arguments.of(IN, FieldType.TARGET_Q, null, Set.of(30.0, 50.0), gen, false),
-                Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 60.0, 70.0), gen, true),
-                Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 70.0), gen, false),
-                Arguments.of(IN, FieldType.P, null, Set.of(-90.0, -100.0, -110.0), gen, true),
-                Arguments.of(IN, FieldType.P, null, Set.of(-90.0, -110.0), gen, false),
-                Arguments.of(IN, FieldType.Q, null, Set.of(-190.0, -200.0, -210.0), gen, true),
-                Arguments.of(IN, FieldType.Q, null, Set.of(-190.0, -210.0), gen, false),
-                Arguments.of(IN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 100.0, 110.0), gen, true),
-                Arguments.of(IN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 110.0), gen, false),
-                Arguments.of(IN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 200.0, 210.0), gen, true),
-                Arguments.of(IN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 210.0), gen, false),
+                Arguments.of(IN, FieldType.MIN_P, null, List.of(-600.0, -500.0, -400.0), gen, true),
+                Arguments.of(IN, FieldType.MIN_P, null, List.of(-600.0, -400.0), gen, false),
+                Arguments.of(IN, FieldType.MAX_P, null, List.of(90.0, 100.0, 110.0), gen, true),
+                Arguments.of(IN, FieldType.MAX_P, null, List.of(90.0, 110.0), gen, false),
+                Arguments.of(IN, FieldType.TARGET_V, null, List.of(10.0, 20.0, 30.0), gen, true),
+                Arguments.of(IN, FieldType.TARGET_V, null, List.of(10.0, 30.0), gen, false),
+                Arguments.of(IN, FieldType.TARGET_P, null, List.of(20.0, 30.0, 40.0), gen, true),
+                Arguments.of(IN, FieldType.TARGET_P, null, List.of(20.0, 40.0), gen, false),
+                Arguments.of(IN, FieldType.TARGET_Q, null, List.of(30.0, 40.0, 50.0), gen, true),
+                Arguments.of(IN, FieldType.TARGET_Q, null, List.of(30.0, 50.0), gen, false),
+                Arguments.of(IN, FieldType.RATED_S, null, List.of(50.0, 60.0, 70.0), gen, true),
+                Arguments.of(IN, FieldType.RATED_S, null, List.of(50.0, 70.0), gen, false),
+                Arguments.of(IN, FieldType.P, null, List.of(-90.0, -100.0, -110.0), gen, true),
+                Arguments.of(IN, FieldType.P, null, List.of(-90.0, -110.0), gen, false),
+                Arguments.of(IN, FieldType.Q, null, List.of(-190.0, -200.0, -210.0), gen, true),
+                Arguments.of(IN, FieldType.Q, null, List.of(-190.0, -210.0), gen, false),
+                Arguments.of(IN, FieldType.P_ABSOLUTE, null, List.of(90.0, 100.0, 110.0), gen, true),
+                Arguments.of(IN, FieldType.P_ABSOLUTE, null, List.of(90.0, 110.0), gen, false),
+                Arguments.of(IN, FieldType.Q_ABSOLUTE, null, List.of(190.0, 200.0, 210.0), gen, true),
+                Arguments.of(IN, FieldType.Q_ABSOLUTE, null, List.of(190.0, 210.0), gen, false),
                 // GeneratorStartup extension fields
-                Arguments.of(IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 50.0, 60.0), gen, true),
-                Arguments.of(IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 60.0), gen, false),
-                Arguments.of(IN, FieldType.MARGINAL_COST, null, Set.of(40.0, 50.0, 60.0), gen, true),
-                Arguments.of(IN, FieldType.MARGINAL_COST, null, Set.of(40.0, 60.0), gen, false),
-                Arguments.of(IN, FieldType.PLANNED_OUTAGE_RATE, null, Set.of(40.0, 50.0, 60.0), gen, true),
-                Arguments.of(IN, FieldType.PLANNED_OUTAGE_RATE, null, Set.of(40.0, 60.0), gen, false),
-                Arguments.of(IN, FieldType.FORCED_OUTAGE_RATE, null, Set.of(40.0, 50.0, 60.0), gen, true),
-                Arguments.of(IN, FieldType.FORCED_OUTAGE_RATE, null, Set.of(40.0, 60.0), gen, false),
+                Arguments.of(IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, List.of(40.0, 50.0, 60.0), gen, true),
+                Arguments.of(IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, List.of(40.0, 60.0), gen, false),
+                Arguments.of(IN, FieldType.MARGINAL_COST, null, List.of(40.0, 50.0, 60.0), gen, true),
+                Arguments.of(IN, FieldType.MARGINAL_COST, null, List.of(40.0, 60.0), gen, false),
+                Arguments.of(IN, FieldType.PLANNED_OUTAGE_RATE, null, List.of(40.0, 50.0, 60.0), gen, true),
+                Arguments.of(IN, FieldType.PLANNED_OUTAGE_RATE, null, List.of(40.0, 60.0), gen, false),
+                Arguments.of(IN, FieldType.FORCED_OUTAGE_RATE, null, List.of(40.0, 50.0, 60.0), gen, true),
+                Arguments.of(IN, FieldType.FORCED_OUTAGE_RATE, null, List.of(40.0, 60.0), gen, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), gen, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), gen, false)
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), gen, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), gen, false)
         );
     }
 
@@ -579,38 +580,38 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- NOT_IN --- //
                 // Generator fields
-                Arguments.of(NOT_IN, FieldType.MIN_P, null, Set.of(-600.0, -400.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.MIN_P, null, Set.of(-600.0, -500.0, -400.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.MAX_P, null, Set.of(90.0, 110.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.MAX_P, null, Set.of(90.0, 100.0, 110.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.TARGET_V, null, Set.of(10.0, 30.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.TARGET_V, null, Set.of(10.0, 20.0, 30.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.TARGET_P, null, Set.of(20.0, 40.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.TARGET_P, null, Set.of(20.0, 30.0, 40.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.TARGET_Q, null, Set.of(30.0, 50.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.TARGET_Q, null, Set.of(30.0, 40.0, 50.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 70.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 60.0, 70.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.P, null, Set.of(-90.0, -110.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.P, null, Set.of(-90.0, -100.0, -110.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.Q, null, Set.of(-190.0, -210.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.Q, null, Set.of(-190.0, -200.0, -210.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 110.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.P_ABSOLUTE, null, Set.of(90.0, 100.0, 110.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 210.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.Q_ABSOLUTE, null, Set.of(190.0, 200.0, 210.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.MIN_P, null, List.of(-600.0, -400.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.MIN_P, null, List.of(-600.0, -500.0, -400.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.MAX_P, null, List.of(90.0, 110.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.MAX_P, null, List.of(90.0, 100.0, 110.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.TARGET_V, null, List.of(10.0, 30.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.TARGET_V, null, List.of(10.0, 20.0, 30.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.TARGET_P, null, List.of(20.0, 40.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.TARGET_P, null, List.of(20.0, 30.0, 40.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.TARGET_Q, null, List.of(30.0, 50.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.TARGET_Q, null, List.of(30.0, 40.0, 50.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.RATED_S, null, List.of(50.0, 70.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.RATED_S, null, List.of(50.0, 60.0, 70.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.P, null, List.of(-90.0, -110.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.P, null, List.of(-90.0, -100.0, -110.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.Q, null, List.of(-190.0, -210.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.Q, null, List.of(-190.0, -200.0, -210.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.P_ABSOLUTE, null, List.of(90.0, 110.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.P_ABSOLUTE, null, List.of(90.0, 100.0, 110.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.Q_ABSOLUTE, null, List.of(190.0, 210.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.Q_ABSOLUTE, null, List.of(190.0, 200.0, 210.0), gen, false),
                 // GeneratorStartup extension fields
-                Arguments.of(NOT_IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 60.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, Set.of(40.0, 50.0, 60.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.MARGINAL_COST, null, Set.of(40.0, 60.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.MARGINAL_COST, null, Set.of(40.0, 50.0, 60.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.PLANNED_OUTAGE_RATE, null, Set.of(40.0, 60.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.PLANNED_OUTAGE_RATE, null, Set.of(40.0, 50.0, 60.0), gen, false),
-                Arguments.of(NOT_IN, FieldType.FORCED_OUTAGE_RATE, null, Set.of(40.0, 60.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.FORCED_OUTAGE_RATE, null, Set.of(40.0, 50.0, 60.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, List.of(40.0, 60.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.PLANNED_ACTIVE_POWER_SET_POINT, null, List.of(40.0, 50.0, 60.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.MARGINAL_COST, null, List.of(40.0, 60.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.MARGINAL_COST, null, List.of(40.0, 50.0, 60.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.PLANNED_OUTAGE_RATE, null, List.of(40.0, 60.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.PLANNED_OUTAGE_RATE, null, List.of(40.0, 50.0, 60.0), gen, false),
+                Arguments.of(NOT_IN, FieldType.FORCED_OUTAGE_RATE, null, List.of(40.0, 60.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.FORCED_OUTAGE_RATE, null, List.of(40.0, 50.0, 60.0), gen, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), gen, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), gen, false)
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), gen, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), gen, false)
         );
     }
 
@@ -704,13 +705,13 @@ class NumberExpertRuleTest {
 
                 // --- BETWEEN --- //
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), load, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), load, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), load, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), load, false),
                 // Load fields
-                Arguments.of(BETWEEN, FieldType.P0, null, Set.of(60.0, 80.0), load, true),
-                Arguments.of(BETWEEN, FieldType.P0, null, Set.of(60.0, 70.0), load, false),
-                Arguments.of(BETWEEN, FieldType.Q0, null, Set.of(270.0, 280.0), load, true),
-                Arguments.of(BETWEEN, FieldType.Q0, null, Set.of(100.0, 260.0), load, false),
+                Arguments.of(BETWEEN, FieldType.P0, null, List.of(60.0, 80.0), load, true),
+                Arguments.of(BETWEEN, FieldType.P0, null, List.of(60.0, 70.0), load, false),
+                Arguments.of(BETWEEN, FieldType.Q0, null, List.of(270.0, 280.0), load, true),
+                Arguments.of(BETWEEN, FieldType.Q0, null, List.of(100.0, 260.0), load, false),
 
                 // --- EXISTS --- //
                 // VoltageLevel fields
@@ -734,23 +735,23 @@ class NumberExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), load, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), load, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), load, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), load, false),
                 // Load fields
-                Arguments.of(IN, FieldType.P0, null, Set.of(12.0, 77.0, 100.0), load, true),
-                Arguments.of(IN, FieldType.P0, null, Set.of(12.0, 100.0), load, false),
-                Arguments.of(IN, FieldType.Q0, null, Set.of(120.0, 277.0, 300.0), load, true),
-                Arguments.of(IN, FieldType.Q0, null, Set.of(120.0, 300.0), load, false),
+                Arguments.of(IN, FieldType.P0, null, List.of(12.0, 77.0, 100.0), load, true),
+                Arguments.of(IN, FieldType.P0, null, List.of(12.0, 100.0), load, false),
+                Arguments.of(IN, FieldType.Q0, null, List.of(120.0, 277.0, 300.0), load, true),
+                Arguments.of(IN, FieldType.Q0, null, List.of(120.0, 300.0), load, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), load, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), load, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), load, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), load, false),
                 // Load fields
-                Arguments.of(NOT_IN, FieldType.P0, null, Set.of(120.0, 140.0), load, true),
-                Arguments.of(NOT_IN, FieldType.P0, null, Set.of(70.0, 77.0, 140.0), load, false),
-                Arguments.of(NOT_IN, FieldType.Q0, null, Set.of(120.0, 300.0), load, true),
-                Arguments.of(NOT_IN, FieldType.Q0, null, Set.of(120.0, 277.0, 300.0), load, false)
+                Arguments.of(NOT_IN, FieldType.P0, null, List.of(120.0, 140.0), load, true),
+                Arguments.of(NOT_IN, FieldType.P0, null, List.of(70.0, 77.0, 140.0), load, false),
+                Arguments.of(NOT_IN, FieldType.Q0, null, List.of(120.0, 300.0), load, true),
+                Arguments.of(NOT_IN, FieldType.Q0, null, List.of(120.0, 277.0, 300.0), load, false)
         );
     }
 
@@ -803,8 +804,8 @@ class NumberExpertRuleTest {
 
                 // --- BETWEEN --- //
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), bus, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), bus, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), bus, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), bus, false),
 
                 // --- EXISTS --- //
                 // VoltageLevel fields
@@ -818,13 +819,13 @@ class NumberExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), bus, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), bus, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), bus, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), bus, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), bus, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), bus, false)
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), bus, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), bus, false)
         );
     }
 
@@ -881,8 +882,8 @@ class NumberExpertRuleTest {
 
                 // --- BETWEEN --- //
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), busbarSection, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), busbarSection, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), busbarSection, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), busbarSection, false),
 
                 // --- EXISTS --- //
                 // VoltageLevel fields
@@ -896,13 +897,13 @@ class NumberExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), busbarSection, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), busbarSection, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), busbarSection, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), busbarSection, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), busbarSection, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), busbarSection, false)
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), busbarSection, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), busbarSection, false)
         );
     }
 
@@ -1155,23 +1156,23 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- BETWEEN --- //
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), shuntCompensator, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), shuntCompensator, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), shuntCompensator, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), shuntCompensator, false),
 
                 // Shunt Compensator Fields
-                Arguments.of(BETWEEN, FieldType.MAXIMUM_SECTION_COUNT, null, Set.of(2.0, 4.0), shuntCompensator, true),
-                Arguments.of(BETWEEN, FieldType.MAXIMUM_SECTION_COUNT, null, Set.of(3.5, 4.0), shuntCompensator, false),
-                Arguments.of(BETWEEN, FieldType.SECTION_COUNT, null, Set.of(2.0, 4.0), shuntCompensator, true),
-                Arguments.of(BETWEEN, FieldType.SECTION_COUNT, null, Set.of(3.5, 4.0), shuntCompensator, false),
+                Arguments.of(BETWEEN, FieldType.MAXIMUM_SECTION_COUNT, null, List.of(2.0, 4.0), shuntCompensator, true),
+                Arguments.of(BETWEEN, FieldType.MAXIMUM_SECTION_COUNT, null, List.of(3.5, 4.0), shuntCompensator, false),
+                Arguments.of(BETWEEN, FieldType.SECTION_COUNT, null, List.of(2.0, 4.0), shuntCompensator, true),
+                Arguments.of(BETWEEN, FieldType.SECTION_COUNT, null, List.of(3.5, 4.0), shuntCompensator, false),
 
-                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(506., 508.), shuntCompensator, true),
-                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(508., 509.), shuntCompensator, false),
-                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, Set.of(506., 508.), shuntCompensator, true),
-                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, Set.of(508., 509.), shuntCompensator, false),
-                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(2., 4.), shuntCompensator, true),
-                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false),
-                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(2., 4.), shuntCompensator, true),
-                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false)
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(506., 508.), shuntCompensator, true),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(508., 509.), shuntCompensator, false),
+                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, List.of(506., 508.), shuntCompensator, true),
+                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, List.of(508., 509.), shuntCompensator, false),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, List.of(2., 4.), shuntCompensator, true),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, List.of(4., 6.), shuntCompensator, false),
+                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, List.of(2., 4.), shuntCompensator, true),
+                Arguments.of(BETWEEN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, List.of(4., 6.), shuntCompensator, false)
         );
     }
 
@@ -1197,23 +1198,23 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), shuntCompensator, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), shuntCompensator, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), shuntCompensator, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), shuntCompensator, false),
 
                 // Shunt Compensator Fields
-                Arguments.of(IN, FieldType.MAXIMUM_SECTION_COUNT, null, Set.of(2., 3., 4.), shuntCompensator, true),
-                Arguments.of(IN, FieldType.MAXIMUM_SECTION_COUNT, null, Set.of(2., 4.), shuntCompensator, false),
-                Arguments.of(IN, FieldType.SECTION_COUNT, null, Set.of(2., 3., 4.), shuntCompensator, true),
-                Arguments.of(IN, FieldType.SECTION_COUNT, null, Set.of(2., 4.), shuntCompensator, false),
+                Arguments.of(IN, FieldType.MAXIMUM_SECTION_COUNT, null, List.of(2., 3., 4.), shuntCompensator, true),
+                Arguments.of(IN, FieldType.MAXIMUM_SECTION_COUNT, null, List.of(2., 4.), shuntCompensator, false),
+                Arguments.of(IN, FieldType.SECTION_COUNT, null, List.of(2., 3., 4.), shuntCompensator, true),
+                Arguments.of(IN, FieldType.SECTION_COUNT, null, List.of(2., 4.), shuntCompensator, false),
 
-                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(507., 508.), shuntCompensator, true),
-                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(508., 509.), shuntCompensator, false),
-                Arguments.of(IN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, Set.of(507., 508.), shuntCompensator, true),
-                Arguments.of(IN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, Set.of(508., 509.), shuntCompensator, false),
-                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(3., 4.), shuntCompensator, true),
-                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false),
-                Arguments.of(IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(3., 4.), shuntCompensator, true),
-                Arguments.of(IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(4., 6.), shuntCompensator, false)
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(507., 508.), shuntCompensator, true),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(508., 509.), shuntCompensator, false),
+                Arguments.of(IN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, List.of(507., 508.), shuntCompensator, true),
+                Arguments.of(IN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, List.of(508., 509.), shuntCompensator, false),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, List.of(3., 4.), shuntCompensator, true),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, List.of(4., 6.), shuntCompensator, false),
+                Arguments.of(IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, List.of(3., 4.), shuntCompensator, true),
+                Arguments.of(IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, List.of(4., 6.), shuntCompensator, false)
         );
     }
 
@@ -1221,23 +1222,23 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), shuntCompensator, false),
 
                 // Shunt Compensator Fields
-                Arguments.of(NOT_IN, FieldType.MAXIMUM_SECTION_COUNT, null, Set.of(2., 4.), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.MAXIMUM_SECTION_COUNT, null, Set.of(2., 3., 4.), shuntCompensator, false),
-                Arguments.of(NOT_IN, FieldType.SECTION_COUNT, null, Set.of(2., 4.), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.SECTION_COUNT, null, Set.of(2., 3., 4.), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.MAXIMUM_SECTION_COUNT, null, List.of(2., 4.), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.MAXIMUM_SECTION_COUNT, null, List.of(2., 3., 4.), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.SECTION_COUNT, null, List.of(2., 4.), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.SECTION_COUNT, null, List.of(2., 3., 4.), shuntCompensator, false),
 
-                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(506., 508.), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(507., 509.), shuntCompensator, false),
-                Arguments.of(NOT_IN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, Set.of(506., 508.), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, Set.of(507., 509.), shuntCompensator, false),
-                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(6., 4.), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(3., 6.), shuntCompensator, false),
-                Arguments.of(NOT_IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(6., 4.), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, Set.of(3., 6.), shuntCompensator, false)
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(506., 508.), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(507., 509.), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, List.of(506., 508.), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.SWITCHED_ON_Q_AT_NOMINAL_V, null, List.of(507., 509.), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, List.of(6., 4.), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, List.of(3., 6.), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, List.of(6., 4.), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.SWITCHED_ON_SUSCEPTANCE, null, List.of(3., 6.), shuntCompensator, false)
         );
     }
 
@@ -1461,24 +1462,24 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- BETWEEN --- //
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 14.), line, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(13.5, 14.), line, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12., 14.), line, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(13.5, 14.), line, false),
 
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(16., 18.), line, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(17.5, 19.), line, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(16., 18.), line, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(17.5, 19.), line, false),
 
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(120., 160.), line, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(120., 140.), line, false),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(49., 51.), line, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(12., 14.), line, false),
-                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE_1, null, Set.of(9., 14.), line, true),
-                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE_1, null, Set.of(12., 14.), line, false),
-                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE_2, null, Set.of(2., 6.), line, true),
-                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE_2, null, Set.of(12., 14.), line, false),
-                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(199., 200.), line, true),
-                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(201., 204.), line, false),
-                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(245., 255.), line, true),
-                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(240., 249.), line, false)
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, List.of(120., 160.), line, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, List.of(120., 140.), line, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, List.of(49., 51.), line, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, List.of(12., 14.), line, false),
+                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE_1, null, List.of(9., 14.), line, true),
+                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE_1, null, List.of(12., 14.), line, false),
+                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE_2, null, List.of(2., 6.), line, true),
+                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE_2, null, List.of(12., 14.), line, false),
+                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_1, null, List.of(199., 200.), line, true),
+                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_1, null, List.of(201., 204.), line, false),
+                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_2, null, List.of(245., 255.), line, true),
+                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE_2, null, List.of(240., 249.), line, false)
         );
     }
 
@@ -1510,24 +1511,24 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 13., 14.), line, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 14.), line, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12., 13., 14.), line, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12., 14.), line, false),
 
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12., 17., 14.), line, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12., 14.), line, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12., 17., 14.), line, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12., 14.), line, false),
 
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(120., 150.), line, true),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(120., 140.), line, false),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(49., 50.), line, true),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(12., 14.), line, false),
-                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE_1, null, Set.of(9., 10.), line, true),
-                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE_1, null, Set.of(12., 14.), line, false),
-                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE_2, null, Set.of(2., 5., 14.), line, true),
-                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE_2, null, Set.of(2., 14.), line, false),
-                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(199., 200.), line, true),
-                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(199., 204.), line, false),
-                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(250., 240.), line, true),
-                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(240., 249.), line, false)
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, List.of(120., 150.), line, true),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, List.of(120., 140.), line, false),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, List.of(49., 50.), line, true),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, List.of(12., 14.), line, false),
+                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE_1, null, List.of(9., 10.), line, true),
+                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE_1, null, List.of(12., 14.), line, false),
+                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE_2, null, List.of(2., 5., 14.), line, true),
+                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE_2, null, List.of(2., 14.), line, false),
+                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_1, null, List.of(199., 200.), line, true),
+                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_1, null, List.of(199., 204.), line, false),
+                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_2, null, List.of(250., 240.), line, true),
+                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE_2, null, List.of(240., 249.), line, false)
         );
     }
 
@@ -1535,24 +1536,24 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 14.), line, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12., 13., 14.), line, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12., 14.), line, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12., 13., 14.), line, false),
 
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12., 14.), line, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12., 17., 14.), line, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12., 14.), line, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12., 17., 14.), line, false),
 
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(120., 149.), line, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(120., 140., 150.), line, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(49., 51.), line, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(50., 49., 51.), line, false),
-                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE_1, null, Set.of(9., 11.), line, true),
-                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE_1, null, Set.of(9., 10., 11.), line, false),
-                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE_2, null, Set.of(4., 6.), line, true),
-                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE_2, null, Set.of(4., 5., 6.), line, false),
-                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(199., 201.), line, true),
-                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE_1, null, Set.of(199., 200., 201.), line, false),
-                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(249., 251.), line, true),
-                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE_2, null, Set.of(249., 250., 251.), line, false)
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, List.of(120., 149.), line, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, List.of(120., 140., 150.), line, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, List.of(49., 51.), line, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, List.of(50., 49., 51.), line, false),
+                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE_1, null, List.of(9., 11.), line, true),
+                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE_1, null, List.of(9., 10., 11.), line, false),
+                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE_2, null, List.of(4., 6.), line, true),
+                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE_2, null, List.of(4., 5., 6.), line, false),
+                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE_1, null, List.of(199., 201.), line, true),
+                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE_1, null, List.of(199., 200., 201.), line, false),
+                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE_2, null, List.of(249., 251.), line, true),
+                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE_2, null, List.of(249., 250., 251.), line, false)
         );
     }
 
@@ -1677,17 +1678,17 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.TARGET_Q, 0.0, null, battery, false),
                 // --- BETWEEN --- //
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), battery, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), battery, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), battery, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), battery, false),
                 //Battery fields
-                Arguments.of(BETWEEN, FieldType.MIN_P, null, Set.of(-3.0, -14.0), battery, true),
-                Arguments.of(BETWEEN, FieldType.MIN_P, null, Set.of(-12.0, -14.0), battery, false),
-                Arguments.of(BETWEEN, FieldType.MAX_P, null, Set.of(2.0, 14.0), battery, true),
-                Arguments.of(BETWEEN, FieldType.MAX_P, null, Set.of(12.0, 14.0), battery, false),
-                Arguments.of(BETWEEN, FieldType.TARGET_P, null, Set.of(2.0, 14.0), battery, true),
-                Arguments.of(BETWEEN, FieldType.TARGET_P, null, Set.of(12.0, 14.0), battery, false),
-                Arguments.of(BETWEEN, FieldType.TARGET_Q, null, Set.of(0.0, 14.0), battery, true),
-                Arguments.of(BETWEEN, FieldType.TARGET_Q, null, Set.of(2.0, 14.0), battery, false),
+                Arguments.of(BETWEEN, FieldType.MIN_P, null, List.of(-3.0, -14.0), battery, true),
+                Arguments.of(BETWEEN, FieldType.MIN_P, null, List.of(-12.0, -14.0), battery, false),
+                Arguments.of(BETWEEN, FieldType.MAX_P, null, List.of(2.0, 14.0), battery, true),
+                Arguments.of(BETWEEN, FieldType.MAX_P, null, List.of(12.0, 14.0), battery, false),
+                Arguments.of(BETWEEN, FieldType.TARGET_P, null, List.of(2.0, 14.0), battery, true),
+                Arguments.of(BETWEEN, FieldType.TARGET_P, null, List.of(12.0, 14.0), battery, false),
+                Arguments.of(BETWEEN, FieldType.TARGET_Q, null, List.of(0.0, 14.0), battery, true),
+                Arguments.of(BETWEEN, FieldType.TARGET_Q, null, List.of(2.0, 14.0), battery, false),
                 // --- EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, battery, true),
@@ -1717,30 +1718,30 @@ class NumberExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), battery, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), battery, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), battery, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), battery, false),
                 //Battery fields
-                Arguments.of(IN, FieldType.MIN_P, null, Set.of(-3.0, -5.0, -14.0), battery, true),
-                Arguments.of(IN, FieldType.MIN_P, null, Set.of(-12.0, -6.0, -14.0), battery, false),
-                Arguments.of(IN, FieldType.MAX_P, null, Set.of(2.0, 5.0, 14.0), battery, true),
-                Arguments.of(IN, FieldType.MAX_P, null, Set.of(12.0, 6.0, 14.0), battery, false),
-                Arguments.of(IN, FieldType.TARGET_P, null, Set.of(2.0, 3.0, 14.0), battery, true),
-                Arguments.of(IN, FieldType.TARGET_P, null, Set.of(12.0, 4.0, 14.0), battery, false),
-                Arguments.of(IN, FieldType.TARGET_Q, null, Set.of(0.0, 1.0, 14.0), battery, true),
-                Arguments.of(IN, FieldType.TARGET_Q, null, Set.of(2.0, 3.0, 14.0), battery, false),
+                Arguments.of(IN, FieldType.MIN_P, null, List.of(-3.0, -5.0, -14.0), battery, true),
+                Arguments.of(IN, FieldType.MIN_P, null, List.of(-12.0, -6.0, -14.0), battery, false),
+                Arguments.of(IN, FieldType.MAX_P, null, List.of(2.0, 5.0, 14.0), battery, true),
+                Arguments.of(IN, FieldType.MAX_P, null, List.of(12.0, 6.0, 14.0), battery, false),
+                Arguments.of(IN, FieldType.TARGET_P, null, List.of(2.0, 3.0, 14.0), battery, true),
+                Arguments.of(IN, FieldType.TARGET_P, null, List.of(12.0, 4.0, 14.0), battery, false),
+                Arguments.of(IN, FieldType.TARGET_Q, null, List.of(0.0, 1.0, 14.0), battery, true),
+                Arguments.of(IN, FieldType.TARGET_Q, null, List.of(2.0, 3.0, 14.0), battery, false),
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), battery, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), battery, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), battery, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), battery, false),
                 //Battery fields
-                Arguments.of(NOT_IN, FieldType.MIN_P, null, Set.of(-3.0, -14.0), battery, true),
-                Arguments.of(NOT_IN, FieldType.MIN_P, null, Set.of(-12.0, -5.0, -14.0), battery, false),
-                Arguments.of(NOT_IN, FieldType.MAX_P, null, Set.of(2.0, 14.0), battery, true),
-                Arguments.of(NOT_IN, FieldType.MAX_P, null, Set.of(12.0, 5.0, 14.0), battery, false),
-                Arguments.of(NOT_IN, FieldType.TARGET_P, null, Set.of(2.0, 14.0), battery, true),
-                Arguments.of(NOT_IN, FieldType.TARGET_P, null, Set.of(12.0, 3.0, 14.0), battery, false),
-                Arguments.of(NOT_IN, FieldType.TARGET_Q, null, Set.of(0.0, 14.0), battery, true),
-                Arguments.of(NOT_IN, FieldType.TARGET_Q, null, Set.of(2.0, 1.0, 14.0), battery, false)
+                Arguments.of(NOT_IN, FieldType.MIN_P, null, List.of(-3.0, -14.0), battery, true),
+                Arguments.of(NOT_IN, FieldType.MIN_P, null, List.of(-12.0, -5.0, -14.0), battery, false),
+                Arguments.of(NOT_IN, FieldType.MAX_P, null, List.of(2.0, 14.0), battery, true),
+                Arguments.of(NOT_IN, FieldType.MAX_P, null, List.of(12.0, 5.0, 14.0), battery, false),
+                Arguments.of(NOT_IN, FieldType.TARGET_P, null, List.of(2.0, 14.0), battery, true),
+                Arguments.of(NOT_IN, FieldType.TARGET_P, null, List.of(12.0, 3.0, 14.0), battery, false),
+                Arguments.of(NOT_IN, FieldType.TARGET_Q, null, List.of(0.0, 14.0), battery, true),
+                Arguments.of(NOT_IN, FieldType.TARGET_Q, null, List.of(2.0, 1.0, 14.0), battery, false)
         );
     }
 
@@ -1843,20 +1844,20 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, 3.0, null, voltageLevel, false),
 
                 // --- BETWEEN --- //
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), voltageLevel, false),
-                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, true),
-                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(50.0, 60.0), voltageLevel, false),
-                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(20.0, 30.0), voltageLevel, false),
-                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, true),
-                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(500.0, 600.0), voltageLevel, false),
-                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(200.0, 300.0), voltageLevel, false),
-                Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(0.0, 2.0), voltageLevel, true),
-                Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(2.0, 6.0), voltageLevel, false),
-                Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 4.0), voltageLevel, false),
-                Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, true),
-                Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(5.0, 6.0), voltageLevel, false),
-                Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(2.0, 3.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), voltageLevel, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, List.of(30.0, 50.0), voltageLevel, true),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, List.of(50.0, 60.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_LIMIT, null, List.of(20.0, 30.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, List.of(300.0, 500.0), voltageLevel, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, List.of(500.0, 600.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_LIMIT, null, List.of(200.0, 300.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(0.0, 2.0), voltageLevel, true),
+                Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(2.0, 6.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(3.0, 4.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(3.0, 5.0), voltageLevel, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(5.0, 6.0), voltageLevel, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(2.0, 3.0), voltageLevel, false),
 
                 // --- EXISTS --- //
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, voltageLevel, true),
@@ -1883,28 +1884,28 @@ class NumberExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, null, voltageLevel1, true),
 
                 // --- IN --- //
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), voltageLevel, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, false),
-                Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 40.0, 50.0), voltageLevel, true),
-                Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, false),
-                Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, true),
-                Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, false),
-                Arguments.of(IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(1.0, 4.0, 5.0), voltageLevel, true),
-                Arguments.of(IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, false),
-                Arguments.of(IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(1.0, 4.0, 5.0), voltageLevel, true),
-                Arguments.of(IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), voltageLevel, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), voltageLevel, false),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, List.of(30.0, 40.0, 50.0), voltageLevel, true),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_LIMIT, null, List.of(30.0, 50.0), voltageLevel, false),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, List.of(300.0, 400.0, 500.0), voltageLevel, true),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_LIMIT, null, List.of(300.0, 500.0), voltageLevel, false),
+                Arguments.of(IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(1.0, 4.0, 5.0), voltageLevel, true),
+                Arguments.of(IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(3.0, 5.0), voltageLevel, false),
+                Arguments.of(IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(1.0, 4.0, 5.0), voltageLevel, true),
+                Arguments.of(IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(3.0, 5.0), voltageLevel, false),
 
                 // --- NOT_IN --- //
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), voltageLevel, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), voltageLevel, false),
-                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 50.0), voltageLevel, true),
-                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, Set.of(30.0, 40.0, 50.0), voltageLevel, false),
-                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 500.0), voltageLevel, true),
-                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, Set.of(300.0, 400.0, 500.0), voltageLevel, false),
-                Arguments.of(NOT_IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, true),
-                Arguments.of(NOT_IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(1.0, 4.0, 5.0), voltageLevel, false),
-                Arguments.of(NOT_IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(3.0, 5.0), voltageLevel, true),
-                Arguments.of(NOT_IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, Set.of(1.0, 4.0, 5.0), voltageLevel, false)
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), voltageLevel, false),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, List.of(30.0, 50.0), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_LIMIT, null, List.of(30.0, 40.0, 50.0), voltageLevel, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, List.of(300.0, 500.0), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_LIMIT, null, List.of(300.0, 400.0, 500.0), voltageLevel, false),
+                Arguments.of(NOT_IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(3.0, 5.0), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.LOW_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(1.0, 4.0, 5.0), voltageLevel, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(3.0, 5.0), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_SHORT_CIRCUIT_CURRENT_LIMIT, null, List.of(1.0, 4.0, 5.0), voltageLevel, false)
         );
     }
 
@@ -2191,28 +2192,28 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- BETWEEN --- //
                 // Terminal
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(13.5, 14.0), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(13.5, 14.0), twoWindingsTransformer, false),
                 // RatioTapChanger fields
-                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V, null, Set.of(13.5, 14.0), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V, null, List.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V, null, List.of(13.5, 14.0), twoWindingsTransformer, false),
                 // TwoWindingsTransformer fields
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.45, 0.55), twoWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_S, null, Set.of(150.0, 250.0), twoWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(48., 52.), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(55., 70.), twoWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(295., 305.), twoWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(320., 350.), twoWindingsTransformer, false)
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.15), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, List.of(0.15, 0.25), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, List.of(0.15, 0.25), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, List.of(0.25, 0.35), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE, null, List.of(0.25, 0.35), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE, null, List.of(0.35, 0.45), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, List.of(0.35, 0.45), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE, null, List.of(0.45, 0.55), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_S, null, List.of(50.0, 150.0), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_S, null, List.of(150.0, 250.0), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, List.of(48., 52.), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, List.of(55., 70.), twoWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, List.of(295., 305.), twoWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, List.of(320., 350.), twoWindingsTransformer, false)
         );
     }
 
@@ -2286,28 +2287,28 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 // Terminal
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), twoWindingsTransformer, false),
                 // RatioTapChanger fields
-                Arguments.of(IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V, null, List.of(12.0, 13.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V, null, List.of(12.0, 14.0), twoWindingsTransformer, false),
                 // TwoWindingsTransformer fields
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.3, 0.35), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.4, 0.45), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 100.0, 150.0), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 50.0, 51.0), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 51.0), twoWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, false)
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.1, 0.15), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.15), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, List.of(0.15, 0.2, 0.25), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, List.of(0.15, 0.25), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE, null, List.of(0.25, 0.3, 0.35), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE, null, List.of(0.25, 0.35), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, List.of(0.35, 0.4, 0.45), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, List.of(0.35, 0.45), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_S, null, List.of(50.0, 100.0, 150.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_S, null, List.of(50.0, 150.0), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, List.of(49.0, 50.0, 51.0), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, List.of(49.0, 51.0), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, List.of(299., 300., 301.), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, List.of(299., 301.), twoWindingsTransformer, false)
         );
     }
 
@@ -2318,28 +2319,28 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- NOT_IN --- //
                 // Terminal
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
                 // RatioTapChanger fields
-                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 14.0), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V, null, Set.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V, null, List.of(12.0, 14.0), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V, null, List.of(12.0, 13.0, 14.0), twoWindingsTransformer, false),
                 // TwoWindingsTransformer fields
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.35), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE, null, Set.of(0.25, 0.3, 0.35), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.45), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, Set.of(0.35, 0.4, 0.45), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 150.0), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_S, null, Set.of(50.0, 100.0, 150.0), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 51.), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 50., 51.), twoWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 301.), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(299., 300., 301.), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.15), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.1, 0.15), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, List.of(0.15, 0.25), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, List.of(0.15, 0.2, 0.25), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE, null, List.of(0.25, 0.35), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE, null, List.of(0.25, 0.3, 0.35), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, List.of(0.35, 0.45), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE, null, List.of(0.35, 0.4, 0.45), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_S, null, List.of(50.0, 150.0), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_S, null, List.of(50.0, 100.0, 150.0), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, List.of(49., 51.), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, List.of(49., 50., 51.), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, List.of(299., 301.), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, List.of(299., 300., 301.), twoWindingsTransformer, false),
 
                 // null RatioTapChanger
                 Arguments.of(EXISTS, FieldType.RATIO_TARGET_V, null, null, twoWindingsTransformer2, false),
@@ -2846,56 +2847,56 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- BETWEEN --- //
                 // Terminal
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(13.5, 14.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(13.5, 14.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_3, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE_3, null, List.of(13.5, 14.0), threeWindingsTransformer, false),
                 // RatioTapChanger fields
-                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V1, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V2, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V3, null, Set.of(13.5, 14.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V1, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V1, null, List.of(13.5, 14.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V2, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V2, null, List.of(13.5, 14.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V3, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATIO_TARGET_V3, null, List.of(13.5, 14.0), threeWindingsTransformer, false),
                 // TwoWindingsTransformer fields
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.45, 0.55), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.45, 0.55), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.45, 0.55), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_S1, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_S1, null, Set.of(150.0, 250.0), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_S2, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_S2, null, Set.of(150.0, 250.0), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_S3, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_S3, null, Set.of(150.0, 250.0), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(48., 52.), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, Set.of(55., 70.), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(48., 52.), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, Set.of(55., 70.), threeWindingsTransformer, false),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, Set.of(48., 52.), threeWindingsTransformer, true),
-                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, Set.of(55., 70.), threeWindingsTransformer, false)
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_1, null, List.of(0.05, 0.15), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_1, null, List.of(0.15, 0.25), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_2, null, List.of(0.05, 0.15), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_2, null, List.of(0.15, 0.25), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_3, null, List.of(0.05, 0.15), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE_3, null, List.of(0.15, 0.25), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_1, null, List.of(0.15, 0.25), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_1, null, List.of(0.25, 0.35), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_2, null, List.of(0.15, 0.25), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_2, null, List.of(0.25, 0.35), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_3, null, List.of(0.15, 0.25), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE_3, null, List.of(0.25, 0.35), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, List.of(0.25, 0.35), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, List.of(0.35, 0.45), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, List.of(0.25, 0.35), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, List.of(0.35, 0.45), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, List.of(0.25, 0.35), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, List.of(0.35, 0.45), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, List.of(0.35, 0.45), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, List.of(0.45, 0.55), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, List.of(0.35, 0.45), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, List.of(0.45, 0.55), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, List.of(0.35, 0.45), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, List.of(0.45, 0.55), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_S1, null, List.of(50.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_S1, null, List.of(150.0, 250.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_S2, null, List.of(50.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_S2, null, List.of(150.0, 250.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_S3, null, List.of(50.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_S3, null, List.of(150.0, 250.0), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, List.of(48., 52.), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_1, null, List.of(55., 70.), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, List.of(48., 52.), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_2, null, List.of(55., 70.), threeWindingsTransformer, false),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, List.of(48., 52.), threeWindingsTransformer, true),
+                Arguments.of(BETWEEN, FieldType.RATED_VOLTAGE_3, null, List.of(55., 70.), threeWindingsTransformer, false)
         );
     }
 
@@ -3025,56 +3026,56 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 // Terminal
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_3, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE_3, null, List.of(12.0, 14.0), threeWindingsTransformer, false),
                 // RatioTapChanger fields
-                Arguments.of(IN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V1, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V1, null, List.of(12.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V2, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V2, null, List.of(12.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V3, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATIO_TARGET_V3, null, List.of(12.0, 14.0), threeWindingsTransformer, false),
                 // TwoWindingsTransformer fields
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.15), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.15), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.15), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.25), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.35), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.45), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_S1, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_S1, null, Set.of(50.0, 150.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_S2, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_S2, null, Set.of(50.0, 150.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_S3, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_S3, null, Set.of(50.0, 150.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49.0, 51.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49.0, 51.0), threeWindingsTransformer, false),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49.0, 51.0), threeWindingsTransformer, false)
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE_1, null, List.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE_1, null, List.of(0.05, 0.15), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE_2, null, List.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE_2, null, List.of(0.05, 0.15), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE_3, null, List.of(0.05, 0.1, 0.15), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE_3, null, List.of(0.05, 0.15), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE_1, null, List.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE_1, null, List.of(0.15, 0.25), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE_2, null, List.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE_2, null, List.of(0.15, 0.25), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE_3, null, List.of(0.15, 0.2, 0.25), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE_3, null, List.of(0.15, 0.25), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, List.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, List.of(0.25, 0.35), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, List.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, List.of(0.25, 0.35), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, List.of(0.25, 0.3, 0.35), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, List.of(0.25, 0.35), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, List.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, List.of(0.35, 0.45), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, List.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, List.of(0.35, 0.45), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, List.of(0.35, 0.4, 0.45), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, List.of(0.35, 0.45), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_S1, null, List.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_S1, null, List.of(50.0, 150.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_S2, null, List.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_S2, null, List.of(50.0, 150.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_S3, null, List.of(50.0, 100.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_S3, null, List.of(50.0, 150.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, List.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_1, null, List.of(49.0, 51.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, List.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_2, null, List.of(49.0, 51.0), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, List.of(49.0, 50.0, 51.0), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.RATED_VOLTAGE_3, null, List.of(49.0, 51.0), threeWindingsTransformer, false)
         );
     }
 
@@ -3085,56 +3086,56 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- NOT_IN --- //
                 // Terminal
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_3, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_1, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_2, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_3, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE_3, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
                 // RatioTapChanger fields
-                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V1, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V2, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 14.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V3, null, Set.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V1, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V1, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V2, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V2, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V3, null, List.of(12.0, 14.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATIO_TARGET_V3, null, List.of(12.0, 13.0, 14.0), threeWindingsTransformer, false),
                 // TwoWindingsTransformer fields
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_1, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_2, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.15), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_3, null, Set.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_1, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_2, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.25), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_3, null, Set.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.35), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, Set.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.45), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, Set.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_S1, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_S1, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_S2, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_S2, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_S3, null, Set.of(50.0, 150.0), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_S3, null, Set.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 51.), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, Set.of(49., 50., 51.), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49., 51.), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, Set.of(49., 50., 51.), threeWindingsTransformer, false),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49., 51.), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_3, null, Set.of(49., 50., 51.), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_1, null, List.of(0.05, 0.15), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_1, null, List.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_2, null, List.of(0.05, 0.15), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_2, null, List.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_3, null, List.of(0.05, 0.15), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE_3, null, List.of(0.05, 0.1, 0.15), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_1, null, List.of(0.15, 0.25), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_1, null, List.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_2, null, List.of(0.15, 0.25), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_2, null, List.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_3, null, List.of(0.15, 0.25), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE_3, null, List.of(0.15, 0.2, 0.25), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, List.of(0.25, 0.35), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_1, null, List.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, List.of(0.25, 0.35), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_2, null, List.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, List.of(0.25, 0.35), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_CONDUCTANCE_3, null, List.of(0.25, 0.3, 0.35), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, List.of(0.35, 0.45), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_1, null, List.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, List.of(0.35, 0.45), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_2, null, List.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, List.of(0.35, 0.45), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.MAGNETIZING_SUSCEPTANCE_3, null, List.of(0.35, 0.4, 0.45), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_S1, null, List.of(50.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_S1, null, List.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_S2, null, List.of(50.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_S2, null, List.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_S3, null, List.of(50.0, 150.0), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_S3, null, List.of(50.0, 100.0, 150.0), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, List.of(49., 51.), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_1, null, List.of(49., 50., 51.), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, List.of(49., 51.), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_2, null, List.of(49., 50., 51.), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_3, null, List.of(49., 51.), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.RATED_VOLTAGE_3, null, List.of(49., 50., 51.), threeWindingsTransformer, false),
 
                 // null RatioTapChanger
                 Arguments.of(EXISTS, FieldType.RATIO_TARGET_V1, null, null, threeWindingsTransformer2, false),
@@ -3453,37 +3454,37 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- BETWEEN --- //
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
-                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false),
-                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-337.0, -339.0), svar, true),
-                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-338.5, -339.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, List.of(-168.0, -170.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.MIN_Q_AT_NOMINAL_V, null, List.of(-169.5, -170.0), svar, false),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(-337.0, -339.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(-338.5, -339.0), svar, false),
 
-                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-0.9, -1.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-1.05, -1.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-1.9, -2.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-2.05, -2.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, List.of(-0.9, -1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.MIN_SUSCEPTANCE, null, List.of(-1.05, -1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, List.of(-1.9, -2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.MAX_SUSCEPTANCE, null, List.of(-2.05, -2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, List.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.VOLTAGE_SET_POINT, null, List.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, List.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.REACTIVE_POWER_SET_POINT, null, List.of(2.05, 2.1), svar, false),
 
                 // StandbyAutomaton fields
-                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(1.9, 2.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.05, 2.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-0.9, -1.1), svar, true),
-                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.05, -1.1), svar, false),
-                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
-                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false)
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_SET_POINT, null, List.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_SET_POINT, null, List.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_SET_POINT, null, List.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_SET_POINT, null, List.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, List.of(0.9, 1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.LOW_VOLTAGE_THRESHOLD, null, List.of(1.05, 1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, List.of(1.9, 2.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, List.of(2.05, 2.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, List.of(-0.9, -1.1), svar, true),
+                Arguments.of(BETWEEN, FieldType.SUSCEPTANCE_FIX, null, List.of(-1.05, -1.1), svar, false),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, List.of(-168.0, -170.0), svar, true),
+                Arguments.of(BETWEEN, FieldType.FIX_Q_AT_NOMINAL_V, null, List.of(-169.5, -170.0), svar, false)
         );
     }
 
@@ -3565,37 +3566,37 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.0, 14.0), svar, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.0, 14.0), svar, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, true),
-                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false),
-                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-338.0, -339.0), svar, true),
-                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-338.5, -339.0), svar, false),
+                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, List.of(-169.0, -170.0), svar, true),
+                Arguments.of(IN, FieldType.MIN_Q_AT_NOMINAL_V, null, List.of(-169.5, -170.0), svar, false),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(-338.0, -339.0), svar, true),
+                Arguments.of(IN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(-338.5, -339.0), svar, false),
 
-                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-1.0, -1.1), svar, true),
-                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-1.05, -1.1), svar, false),
-                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-2.0, -2.1), svar, true),
-                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-2.05, -2.1), svar, false),
-                Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, true),
-                Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.0, 2.1), svar, true),
-                Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, List.of(-1.0, -1.1), svar, true),
+                Arguments.of(IN, FieldType.MIN_SUSCEPTANCE, null, List.of(-1.05, -1.1), svar, false),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, List.of(-2.0, -2.1), svar, true),
+                Arguments.of(IN, FieldType.MAX_SUSCEPTANCE, null, List.of(-2.05, -2.1), svar, false),
+                Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, List.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.VOLTAGE_SET_POINT, null, List.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, List.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.REACTIVE_POWER_SET_POINT, null, List.of(2.05, 2.1), svar, false),
 
                 // StandbyAutomaton fields
-                Arguments.of(IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, true),
-                Arguments.of(IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.0, 2.1), svar, true),
-                Arguments.of(IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.05, 2.1), svar, false),
-                Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.0, 1.1), svar, true),
-                Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.05, 1.1), svar, false),
-                Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.0, 2.1), svar, true),
-                Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.05, 2.1), svar, false),
-                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.0, -1.1), svar, true),
-                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.05, -1.1), svar, false),
-                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, true),
-                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.5, -170.0), svar, false)
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_SET_POINT, null, List.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_SET_POINT, null, List.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, List.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, List.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, List.of(1.0, 1.1), svar, true),
+                Arguments.of(IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, List.of(1.05, 1.1), svar, false),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, List.of(2.0, 2.1), svar, true),
+                Arguments.of(IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, List.of(2.05, 2.1), svar, false),
+                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, List.of(-1.0, -1.1), svar, true),
+                Arguments.of(IN, FieldType.SUSCEPTANCE_FIX, null, List.of(-1.05, -1.1), svar, false),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, List.of(-169.0, -170.0), svar, true),
+                Arguments.of(IN, FieldType.FIX_Q_AT_NOMINAL_V, null, List.of(-169.5, -170.0), svar, false)
         );
     }
 
@@ -3603,37 +3604,37 @@ class NumberExpertRuleTest {
         return Stream.of(
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), svar, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), svar, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
-                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, false),
-                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-337.0, -339.0), svar, true),
-                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, Set.of(-338.0, -339.0), svar, false),
+                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, List.of(-168.0, -170.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.MIN_Q_AT_NOMINAL_V, null, List.of(-169.0, -170.0), svar, false),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(-337.0, -339.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.MAX_Q_AT_NOMINAL_V, null, List.of(-338.0, -339.0), svar, false),
 
-                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-0.9, -1.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, Set.of(-1.0, -1.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-1.9, -2.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, Set.of(-2.0, -2.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, Set.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, List.of(-0.9, -1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.MIN_SUSCEPTANCE, null, List.of(-1.0, -1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, List.of(-1.9, -2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.MAX_SUSCEPTANCE, null, List.of(-2.0, -2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, List.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_SET_POINT, null, List.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, List.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.REACTIVE_POWER_SET_POINT, null, List.of(2.0, 2.1), svar, false),
 
                 // StandbyAutomaton fields
-                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_SET_POINT, null, Set.of(1.0, 1.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(1.9, 2.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, Set.of(2.0, 2.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(0.9, 1.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, Set.of(1.0, 1.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(1.9, 2.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, Set.of(2.0, 2.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-0.9, -1.1), svar, true),
-                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, Set.of(-1.0, -1.1), svar, false),
-                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-168.0, -170.0), svar, true),
-                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, Set.of(-169.0, -170.0), svar, false)
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_SET_POINT, null, List.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_SET_POINT, null, List.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, List.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_SET_POINT, null, List.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, List.of(0.9, 1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.LOW_VOLTAGE_THRESHOLD, null, List.of(1.0, 1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, List.of(1.9, 2.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.HIGH_VOLTAGE_THRESHOLD, null, List.of(2.0, 2.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, List.of(-0.9, -1.1), svar, true),
+                Arguments.of(NOT_IN, FieldType.SUSCEPTANCE_FIX, null, List.of(-1.0, -1.1), svar, false),
+                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, List.of(-168.0, -170.0), svar, true),
+                Arguments.of(NOT_IN, FieldType.FIX_Q_AT_NOMINAL_V, null, List.of(-169.0, -170.0), svar, false)
         );
     }
 
@@ -3784,21 +3785,21 @@ class NumberExpertRuleTest {
                 Arguments.of(LOWER, FieldType.Q0, 100.0, null, boundaryLine, true),
                 // --- BETWEEN --- //
                 // VoltageLevel fields
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), boundaryLine, true),
-                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(13.5, 14.0), boundaryLine, false),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), boundaryLine, true),
+                Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, List.of(13.5, 14.0), boundaryLine, false),
                 // Boundary Line fields
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), boundaryLine, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), boundaryLine, false),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.25), boundaryLine, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), boundaryLine, false),
-                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.35), boundaryLine, true),
-                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), boundaryLine, false),
-                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.45), boundaryLine, true),
-                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), boundaryLine, false),
-                Arguments.of(BETWEEN, FieldType.P0, null, Set.of(50.0, 150.0), boundaryLine, true),
-                Arguments.of(BETWEEN, FieldType.P0, null, Set.of(120.0, 180.0), boundaryLine, false),
-                Arguments.of(BETWEEN, FieldType.Q0, null, Set.of(25.0, 75.0), boundaryLine, true),
-                Arguments.of(BETWEEN, FieldType.Q0, null, Set.of(120.0, 180.0), boundaryLine, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.15), boundaryLine, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, List.of(0.2, 0.3), boundaryLine, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, List.of(0.15, 0.25), boundaryLine, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_REACTANCE, null, List.of(0.3, 0.4), boundaryLine, false),
+                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE, null, List.of(0.25, 0.35), boundaryLine, true),
+                Arguments.of(BETWEEN, FieldType.SHUNT_SUSCEPTANCE, null, List.of(0.4, 0.5), boundaryLine, false),
+                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE, null, List.of(0.35, 0.45), boundaryLine, true),
+                Arguments.of(BETWEEN, FieldType.SHUNT_CONDUCTANCE, null, List.of(0.5, 0.6), boundaryLine, false),
+                Arguments.of(BETWEEN, FieldType.P0, null, List.of(50.0, 150.0), boundaryLine, true),
+                Arguments.of(BETWEEN, FieldType.P0, null, List.of(120.0, 180.0), boundaryLine, false),
+                Arguments.of(BETWEEN, FieldType.Q0, null, List.of(25.0, 75.0), boundaryLine, true),
+                Arguments.of(BETWEEN, FieldType.Q0, null, List.of(120.0, 180.0), boundaryLine, false),
                 // --- EXISTS --- //
                 // VoltageLevel fields
                 Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, boundaryLine, true),
@@ -3836,38 +3837,38 @@ class NumberExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), boundaryLine, true),
-                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), boundaryLine, false),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), boundaryLine, true),
+                Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), boundaryLine, false),
                 // Boundary Line
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), boundaryLine, true),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), boundaryLine, false),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), boundaryLine, true),
-                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), boundaryLine, false),
-                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.3, 0.35), boundaryLine, true),
-                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), boundaryLine, false),
-                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.4, 0.45), boundaryLine, true),
-                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), boundaryLine, false),
-                Arguments.of(IN, FieldType.P0, null, Set.of(50.0, 100.0, 150.0), boundaryLine, true),
-                Arguments.of(IN, FieldType.P0, null, Set.of(120.0, 180.0), boundaryLine, false),
-                Arguments.of(IN, FieldType.Q0, null, Set.of(25.0, 50.0, 75.0), boundaryLine, true),
-                Arguments.of(IN, FieldType.Q0, null, Set.of(120.0, 180.0), boundaryLine, false),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.1, 0.15), boundaryLine, true),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, List.of(0.2, 0.3), boundaryLine, false),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, List.of(0.15, 0.2, 0.25), boundaryLine, true),
+                Arguments.of(IN, FieldType.SERIE_REACTANCE, null, List.of(0.3, 0.4), boundaryLine, false),
+                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE, null, List.of(0.25, 0.3, 0.35), boundaryLine, true),
+                Arguments.of(IN, FieldType.SHUNT_SUSCEPTANCE, null, List.of(0.4, 0.5), boundaryLine, false),
+                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE, null, List.of(0.35, 0.4, 0.45), boundaryLine, true),
+                Arguments.of(IN, FieldType.SHUNT_CONDUCTANCE, null, List.of(0.5, 0.6), boundaryLine, false),
+                Arguments.of(IN, FieldType.P0, null, List.of(50.0, 100.0, 150.0), boundaryLine, true),
+                Arguments.of(IN, FieldType.P0, null, List.of(120.0, 180.0), boundaryLine, false),
+                Arguments.of(IN, FieldType.Q0, null, List.of(25.0, 50.0, 75.0), boundaryLine, true),
+                Arguments.of(IN, FieldType.Q0, null, List.of(120.0, 180.0), boundaryLine, false),
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 14.0), boundaryLine, true),
-                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(12.0, 13.0, 14.0), boundaryLine, false),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 14.0), boundaryLine, true),
+                Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, List.of(12.0, 13.0, 14.0), boundaryLine, false),
                 // Boundary Line
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), boundaryLine, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.2, 0.3), boundaryLine, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.15, 0.2, 0.25), boundaryLine, false),
-                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, Set.of(0.3, 0.4), boundaryLine, true),
-                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.25, 0.3, 0.35), boundaryLine, false),
-                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE, null, Set.of(0.4, 0.5), boundaryLine, true),
-                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.35, 0.4, 0.45), boundaryLine, false),
-                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE, null, Set.of(0.5, 0.6), boundaryLine, true),
-                Arguments.of(NOT_IN, FieldType.P0, null, Set.of(50.0, 100.0, 150.0), boundaryLine, false),
-                Arguments.of(NOT_IN, FieldType.P0, null, Set.of(120.0, 180.0), boundaryLine, true),
-                Arguments.of(NOT_IN, FieldType.Q0, null, Set.of(25.0, 50.0, 75.0), boundaryLine, false),
-                Arguments.of(NOT_IN, FieldType.Q0, null, Set.of(120.0, 180.0), boundaryLine, true)
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.1, 0.15), boundaryLine, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, List.of(0.2, 0.3), boundaryLine, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, List.of(0.15, 0.2, 0.25), boundaryLine, false),
+                Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, null, List.of(0.3, 0.4), boundaryLine, true),
+                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE, null, List.of(0.25, 0.3, 0.35), boundaryLine, false),
+                Arguments.of(NOT_IN, FieldType.SHUNT_SUSCEPTANCE, null, List.of(0.4, 0.5), boundaryLine, true),
+                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE, null, List.of(0.35, 0.4, 0.45), boundaryLine, false),
+                Arguments.of(NOT_IN, FieldType.SHUNT_CONDUCTANCE, null, List.of(0.5, 0.6), boundaryLine, true),
+                Arguments.of(NOT_IN, FieldType.P0, null, List.of(50.0, 100.0, 150.0), boundaryLine, false),
+                Arguments.of(NOT_IN, FieldType.P0, null, List.of(120.0, 180.0), boundaryLine, true),
+                Arguments.of(NOT_IN, FieldType.Q0, null, List.of(25.0, 50.0, 75.0), boundaryLine, false),
+                Arguments.of(NOT_IN, FieldType.Q0, null, List.of(120.0, 180.0), boundaryLine, true)
         );
     }
 
@@ -4030,19 +4031,19 @@ class NumberExpertRuleTest {
 
                 // --- BETWEEN --- //
                 // Terminal
-                Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), hvdcLine, true),
-                Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(13.5, 14.0), hvdcLine, false),
-                Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), hvdcLine, true),
-                Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(13.5, 14.0), hvdcLine, false),
+                Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), hvdcLine, true),
+                Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, List.of(13.5, 14.0), hvdcLine, false),
+                Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), hvdcLine, true),
+                Arguments.of(BETWEEN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, List.of(13.5, 14.0), hvdcLine, false),
                 // HvdcLine fields
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), hvdcLine, true),
-                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, Set.of(0.15, 0.25), hvdcLine, false),
-                Arguments.of(BETWEEN, FieldType.MAX_P, null, Set.of(150.0, 250.0), hvdcLine, true),
-                Arguments.of(BETWEEN, FieldType.MAX_P, null, Set.of(225.0, 300.0), hvdcLine, false),
-                Arguments.of(BETWEEN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(50.0, 150.0), hvdcLine, true),
-                Arguments.of(BETWEEN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(120.0, 140.0), hvdcLine, false),
-                Arguments.of(BETWEEN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(300.0, 500.0), hvdcLine, true),
-                Arguments.of(BETWEEN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(450.0, 600.0), hvdcLine, false),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.15), hvdcLine, true),
+                Arguments.of(BETWEEN, FieldType.SERIE_RESISTANCE, null, List.of(0.15, 0.25), hvdcLine, false),
+                Arguments.of(BETWEEN, FieldType.MAX_P, null, List.of(150.0, 250.0), hvdcLine, true),
+                Arguments.of(BETWEEN, FieldType.MAX_P, null, List.of(225.0, 300.0), hvdcLine, false),
+                Arguments.of(BETWEEN, FieldType.ACTIVE_POWER_SET_POINT, null, List.of(50.0, 150.0), hvdcLine, true),
+                Arguments.of(BETWEEN, FieldType.ACTIVE_POWER_SET_POINT, null, List.of(120.0, 140.0), hvdcLine, false),
+                Arguments.of(BETWEEN, FieldType.DC_NOMINAL_VOLTAGE, null, List.of(300.0, 500.0), hvdcLine, true),
+                Arguments.of(BETWEEN, FieldType.DC_NOMINAL_VOLTAGE, null, List.of(450.0, 600.0), hvdcLine, false),
 
                 // --- EXISTS --- //
                 // Terminal
@@ -4078,43 +4079,43 @@ class NumberExpertRuleTest {
 
                 // --- IN --- //
                 // Terminal
-                Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), hvdcLine, true),
-                Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), hvdcLine, false),
-                Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), hvdcLine, true),
-                Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), hvdcLine, false),
+                Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, List.of(12.0, 13.0, 14.0), hvdcLine, true),
+                Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), hvdcLine, false),
+                Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, List.of(12.0, 13.0, 14.0), hvdcLine, true),
+                Arguments.of(IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), hvdcLine, false),
                 // HvdcLine fields
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), hvdcLine, true),
-                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), hvdcLine, false),
-                Arguments.of(IN, FieldType.MAX_P, null, Set.of(50.0, 200.0, 300.0), hvdcLine, true),
-                Arguments.of(IN, FieldType.MAX_P, null, Set.of(100.0, 150.0), hvdcLine, false),
-                Arguments.of(IN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(50.0, 100.0, 300.0), hvdcLine, true),
-                Arguments.of(IN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(200.0, 150.0), hvdcLine, false),
-                Arguments.of(IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(100.0, 400.0, 300.0), hvdcLine, true),
-                Arguments.of(IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(200.0, 150.0), hvdcLine, false),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.1, 0.15), hvdcLine, true),
+                Arguments.of(IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.15), hvdcLine, false),
+                Arguments.of(IN, FieldType.MAX_P, null, List.of(50.0, 200.0, 300.0), hvdcLine, true),
+                Arguments.of(IN, FieldType.MAX_P, null, List.of(100.0, 150.0), hvdcLine, false),
+                Arguments.of(IN, FieldType.ACTIVE_POWER_SET_POINT, null, List.of(50.0, 100.0, 300.0), hvdcLine, true),
+                Arguments.of(IN, FieldType.ACTIVE_POWER_SET_POINT, null, List.of(200.0, 150.0), hvdcLine, false),
+                Arguments.of(IN, FieldType.DC_NOMINAL_VOLTAGE, null, List.of(100.0, 400.0, 300.0), hvdcLine, true),
+                Arguments.of(IN, FieldType.DC_NOMINAL_VOLTAGE, null, List.of(200.0, 150.0), hvdcLine, false),
 
                 // --- NOT_IN --- //
                 // Terminal
-                Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 14.0), hvdcLine, true),
-                Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, Set.of(12.0, 13.0, 14.0), hvdcLine, false),
-                Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 14.0), hvdcLine, true),
-                Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, Set.of(12.0, 13.0, 14.0), hvdcLine, false),
+                Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, List.of(12.0, 14.0), hvdcLine, true),
+                Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_1, null, List.of(12.0, 13.0, 14.0), hvdcLine, false),
+                Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, List.of(12.0, 14.0), hvdcLine, true),
+                Arguments.of(NOT_IN, FieldType.CONVERTER_STATION_NOMINAL_VOLTAGE_2, null, List.of(12.0, 13.0, 14.0), hvdcLine, false),
                 // HvdcLine fields
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.15), hvdcLine, true),
-                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, Set.of(0.05, 0.1, 0.15), hvdcLine, false),
-                Arguments.of(NOT_IN, FieldType.MAX_P, null, Set.of(50.0, 200.0, 300.0), hvdcLine, false),
-                Arguments.of(NOT_IN, FieldType.MAX_P, null, Set.of(100.0, 150.0), hvdcLine, true),
-                Arguments.of(NOT_IN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(50.0, 100.0, 300.0), hvdcLine, false),
-                Arguments.of(NOT_IN, FieldType.ACTIVE_POWER_SET_POINT, null, Set.of(200.0, 150.0), hvdcLine, true),
-                Arguments.of(NOT_IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(100.0, 200.0, 300.0), hvdcLine, true),
-                Arguments.of(NOT_IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(400.0, 150.0), hvdcLine, false)
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.15), hvdcLine, true),
+                Arguments.of(NOT_IN, FieldType.SERIE_RESISTANCE, null, List.of(0.05, 0.1, 0.15), hvdcLine, false),
+                Arguments.of(NOT_IN, FieldType.MAX_P, null, List.of(50.0, 200.0, 300.0), hvdcLine, false),
+                Arguments.of(NOT_IN, FieldType.MAX_P, null, List.of(100.0, 150.0), hvdcLine, true),
+                Arguments.of(NOT_IN, FieldType.ACTIVE_POWER_SET_POINT, null, List.of(50.0, 100.0, 300.0), hvdcLine, false),
+                Arguments.of(NOT_IN, FieldType.ACTIVE_POWER_SET_POINT, null, List.of(200.0, 150.0), hvdcLine, true),
+                Arguments.of(NOT_IN, FieldType.DC_NOMINAL_VOLTAGE, null, List.of(100.0, 200.0, 300.0), hvdcLine, true),
+                Arguments.of(NOT_IN, FieldType.DC_NOMINAL_VOLTAGE, null, List.of(400.0, 150.0), hvdcLine, false)
         );
     }
 
     @Test
     void testGetDataTypeReturnsNumber() {
         NumberExpertRule rule = NumberExpertRule.builder()
-                .fieldType(FieldType.NOMINAL_VOLTAGE)
-                .operatorType(OperatorType.IN)
+                .field(FieldType.NOMINAL_VOLTAGE)
+                .operator(OperatorType.IN)
                 .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.NUMBER);
@@ -4123,11 +4124,11 @@ class NumberExpertRuleTest {
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
         NumberExpertRule rule = NumberExpertRule.builder()
-                .fieldType(FieldType.NOMINAL_VOLTAGE)
-                .operatorType(OperatorType.IN)
+                .field(FieldType.NOMINAL_VOLTAGE)
+                .operator(OperatorType.IN)
                 .build();
 
-        assertThat(rule.getOperatorType()).isEqualTo(OperatorType.IN);
+        assertThat(rule.getOperator()).isEqualTo(OperatorType.IN);
     }
 
     @ParameterizedTest
@@ -4146,14 +4147,14 @@ class NumberExpertRuleTest {
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
     })
-    void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, Double value, Set<Double> values,
+    void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, Double value, List<Double> values,
                                                          Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         ExpertRule rule = NumberExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
-                .referenceValue(value)
-                .referenceValues(values)
+                .operator(operator)
+                .field(field)
+                .value(value)
+                .values(values)
                 .build();
 
         String serializedRule = objectMapper.writeValueAsString(rule);
@@ -4168,8 +4169,8 @@ class NumberExpertRuleTest {
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
         ExpertRule rule = NumberExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
+                .operator(operator)
+                .field(field)
                 .build();
 
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
@@ -4191,12 +4192,12 @@ class NumberExpertRuleTest {
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
     })
-    void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
+    void testEvaluateRule(OperatorType operator, FieldType field, Double value, List<Double> values, Identifiable<?> equipment, boolean expected) {
         ExpertRule rule = NumberExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
-                .referenceValue(value)
-                .referenceValues(values)
+                .operator(operator)
+                .field(field)
+                .value(value)
+                .values(values)
                 .build();
 
         assertEquals(expected, rule.evaluateRule(equipment));

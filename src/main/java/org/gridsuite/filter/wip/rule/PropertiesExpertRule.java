@@ -17,8 +17,8 @@ import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.data.DataType;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -29,29 +29,29 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PropertiesExpertRule implements ExpertRule {
 
-    private FieldType fieldType;
-    private OperatorType operatorType;
-    private String targetProperty;
-    private Set<String> referenceValues;
+    private FieldType field;
+    private OperatorType operator;
+    private String propertyName;
+    private List<String> propertyValues;
 
     @Builder
-    public PropertiesExpertRule(FieldType fieldType, OperatorType operatorType, String targetProperty, Set<String> referenceValues) {
-        this.fieldType = Objects.requireNonNull(fieldType);
-        this.operatorType = Objects.requireNonNull(operatorType);
-        this.targetProperty = Objects.requireNonNull(targetProperty);
-        this.referenceValues = Set.copyOf(Objects.requireNonNull(referenceValues));
+    public PropertiesExpertRule(FieldType field, OperatorType operator, String propertyName, List<String> propertyValues) {
+        this.field = Objects.requireNonNull(field);
+        this.operator = Objects.requireNonNull(operator);
+        this.propertyName = Objects.requireNonNull(propertyName);
+        this.propertyValues = List.copyOf(Objects.requireNonNull(propertyValues));
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
-        String propertyValue = ExpertFilterUtils.getFieldValue(fieldType, targetProperty, identifiable);
+        String propertyValue = ExpertFilterUtils.getFieldValue(field, propertyName, identifiable);
         if (propertyValue == null) {
             return false;
         }
 
-        return switch (operatorType) {
-            case IN -> referenceValues.stream().anyMatch(propertyValue::equalsIgnoreCase);
-            case NOT_IN -> referenceValues.stream().noneMatch(propertyValue::equalsIgnoreCase);
+        return switch (operator) {
+            case IN -> propertyValues.stream().anyMatch(propertyValue::equalsIgnoreCase);
+            case NOT_IN -> propertyValues.stream().noneMatch(propertyValue::equalsIgnoreCase);
             default -> throw unsupportedOperatorException();
         };
     }

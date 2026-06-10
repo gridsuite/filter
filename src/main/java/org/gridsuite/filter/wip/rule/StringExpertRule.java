@@ -19,8 +19,8 @@ import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.data.DataType;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -31,35 +31,35 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StringExpertRule implements ExpertRule {
 
-    private FieldType fieldType;
-    private OperatorType operatorType;
-    private Set<String> referenceValues;
-    private String referenceValue;
+    private FieldType field;
+    private OperatorType operator;
+    private String value;
+    private List<String> values;
 
     @Builder
-    public StringExpertRule(FieldType fieldType, OperatorType operatorType, String referenceValue, Set<String> referenceValues) {
-        this.fieldType = Objects.requireNonNull(fieldType);
-        this.operatorType = Objects.requireNonNull(operatorType);
-        this.referenceValue = referenceValue != null ? referenceValue : "";
-        this.referenceValues = referenceValues != null ? referenceValues : Collections.emptySet();
+    public StringExpertRule(FieldType field, OperatorType operator, String value, List<String> values) {
+        this.field = Objects.requireNonNull(field);
+        this.operator = Objects.requireNonNull(operator);
+        this.value = value != null ? value : "";
+        this.values = values != null ? List.copyOf(values) : Collections.emptyList();
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
-        String fieldValue = ExpertFilterUtils.getFieldValue(fieldType, null, identifiable);
+        String fieldValue = ExpertFilterUtils.getFieldValue(field, null, identifiable);
         if (fieldValue == null || fieldValue.isEmpty()) {
-            return operatorType.equals(OperatorType.NOT_EXISTS);
+            return operator.equals(OperatorType.NOT_EXISTS);
         }
 
-        return switch (operatorType) {
-            case IS -> Strings.CI.equals(fieldValue, referenceValue);
-            case CONTAINS -> Strings.CI.contains(fieldValue, referenceValue);
-            case BEGINS_WITH -> Strings.CI.startsWith(fieldValue, referenceValue);
-            case ENDS_WITH -> Strings.CI.endsWith(fieldValue, referenceValue);
+        return switch (operator) {
+            case IS -> Strings.CI.equals(fieldValue, value);
+            case CONTAINS -> Strings.CI.contains(fieldValue, value);
+            case BEGINS_WITH -> Strings.CI.startsWith(fieldValue, value);
+            case ENDS_WITH -> Strings.CI.endsWith(fieldValue, value);
             case EXISTS -> true;
             case NOT_EXISTS -> false;
-            case IN -> referenceValues.stream().anyMatch(fieldValue::equalsIgnoreCase);
-            case NOT_IN -> referenceValues.stream().noneMatch(fieldValue::equalsIgnoreCase);
+            case IN -> values.stream().anyMatch(fieldValue::equalsIgnoreCase);
+            case NOT_IN -> values.stream().noneMatch(fieldValue::equalsIgnoreCase);
             default -> throw unsupportedOperatorException();
         };
     }

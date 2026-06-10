@@ -18,8 +18,8 @@ import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.data.DataType;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -30,31 +30,31 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EnumExpertRule implements ExpertRule {
 
-    private FieldType fieldType;
-    private OperatorType operatorType;
-    private String referenceValue;
-    private Set<String> referenceValues;
+    private FieldType field;
+    private OperatorType operator;
+    private String value;
+    private List<String> values;
 
     @Builder
-    public EnumExpertRule(FieldType fieldType, OperatorType operatorType, String referenceValue, Set<String> referenceValues) {
-        this.fieldType = Objects.requireNonNull(fieldType);
-        this.operatorType = Objects.requireNonNull(operatorType);
-        this.referenceValue = referenceValue != null ? referenceValue : "";
-        this.referenceValues = referenceValues != null ? Set.copyOf(referenceValues) : Collections.emptySet();
+    public EnumExpertRule(FieldType field, OperatorType operator, String value, List<String> values) {
+        this.field = Objects.requireNonNull(field);
+        this.operator = Objects.requireNonNull(operator);
+        this.value = value != null ? value : "";
+        this.values = values != null ? List.copyOf(values) : Collections.emptyList();
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
-        String fieldValue = ExpertFilterUtils.getFieldValue(fieldType, null, identifiable);
+        String fieldValue = ExpertFilterUtils.getFieldValue(field, null, identifiable);
         if (fieldValue == null) {
             return false;
         }
 
-        return switch (operatorType) {
-            case EQUALS -> fieldValue.equals(referenceValue);
-            case NOT_EQUALS -> !fieldValue.equals(referenceValue);
-            case IN -> referenceValues.contains(fieldValue);
-            case NOT_IN -> !referenceValues.contains(fieldValue);
+        return switch (operator) {
+            case EQUALS -> fieldValue.equals(value);
+            case NOT_EQUALS -> !fieldValue.equals(value);
+            case IN -> values.contains(fieldValue);
+            case NOT_IN -> !values.contains(fieldValue);
             default -> throw unsupportedOperatorException();
         };
     }

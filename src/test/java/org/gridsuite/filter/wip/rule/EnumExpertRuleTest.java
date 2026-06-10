@@ -23,6 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -146,19 +147,19 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // Generator fields
-                Arguments.of(IN, FieldType.ENERGY_SOURCE, null, Set.of(EnergySource.HYDRO.name(), EnergySource.THERMAL.name()), gen, true),
-                Arguments.of(IN, FieldType.ENERGY_SOURCE, null, Set.of(EnergySource.NUCLEAR.name(), EnergySource.THERMAL.name()), gen, false),
+                Arguments.of(IN, FieldType.ENERGY_SOURCE, null, List.of(EnergySource.HYDRO.name(), EnergySource.THERMAL.name()), gen, true),
+                Arguments.of(IN, FieldType.ENERGY_SOURCE, null, List.of(EnergySource.NUCLEAR.name(), EnergySource.THERMAL.name()), gen, false),
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), gen, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), gen, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), gen, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), gen, false),
 
                 // --- NOT_IN --- //
                 // Generator fields
-                Arguments.of(NOT_IN, FieldType.ENERGY_SOURCE, null, Set.of(EnergySource.NUCLEAR.name(), EnergySource.THERMAL.name()), gen, true),
-                Arguments.of(NOT_IN, FieldType.ENERGY_SOURCE, null, Set.of(EnergySource.HYDRO.name(), EnergySource.THERMAL.name()), gen, false),
+                Arguments.of(NOT_IN, FieldType.ENERGY_SOURCE, null, List.of(EnergySource.NUCLEAR.name(), EnergySource.THERMAL.name()), gen, true),
+                Arguments.of(NOT_IN, FieldType.ENERGY_SOURCE, null, List.of(EnergySource.HYDRO.name(), EnergySource.THERMAL.name()), gen, false),
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), gen, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), gen, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), gen, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), gen, false)
         );
     }
 
@@ -194,15 +195,15 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), load, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), load, false),
-                Arguments.of(IN, FieldType.LOAD_TYPE, null, Set.of(LoadType.UNDEFINED.name(), LoadType.AUXILIARY.name()), load, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), load, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), load, false),
+                Arguments.of(IN, FieldType.LOAD_TYPE, null, List.of(LoadType.UNDEFINED.name(), LoadType.AUXILIARY.name()), load, true),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), load, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), load, false),
-                Arguments.of(NOT_IN, FieldType.LOAD_TYPE, null, Set.of(LoadType.UNDEFINED.name(), LoadType.FICTITIOUS.name()), load, true)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), load, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), load, false),
+                Arguments.of(NOT_IN, FieldType.LOAD_TYPE, null, List.of(LoadType.UNDEFINED.name(), LoadType.FICTITIOUS.name()), load, true)
         );
     }
 
@@ -230,13 +231,13 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), bus, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), bus, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), bus, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), bus, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), bus, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), bus, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), bus, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), bus, false)
         );
     }
 
@@ -266,13 +267,13 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), busbarSection, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), busbarSection, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), busbarSection, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), busbarSection, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), busbarSection, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), busbarSection, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), busbarSection, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), busbarSection, false)
         );
     }
 
@@ -373,21 +374,21 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), shuntCompensator, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), shuntCompensator, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), shuntCompensator, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), shuntCompensator, false),
 
                 // Shunt Compensator fields
-                Arguments.of(IN, FieldType.SHUNT_COMPENSATOR_TYPE, null, Set.of("REACTOR"), shuntCompensator, true),
-                Arguments.of(IN, FieldType.SHUNT_COMPENSATOR_TYPE, null, Set.of("CAPACITOR"), shuntCompensator, false),
+                Arguments.of(IN, FieldType.SHUNT_COMPENSATOR_TYPE, null, List.of("REACTOR"), shuntCompensator, true),
+                Arguments.of(IN, FieldType.SHUNT_COMPENSATOR_TYPE, null, List.of("CAPACITOR"), shuntCompensator, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), shuntCompensator, false),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), shuntCompensator, false),
 
                 // Shunt Compensator fields
-                Arguments.of(NOT_IN, FieldType.SHUNT_COMPENSATOR_TYPE, null, Set.of("CAPACITOR"), shuntCompensator, true),
-                Arguments.of(NOT_IN, FieldType.SHUNT_COMPENSATOR_TYPE, null, Set.of("REACTOR"), shuntCompensator, false)
+                Arguments.of(NOT_IN, FieldType.SHUNT_COMPENSATOR_TYPE, null, List.of("CAPACITOR"), shuntCompensator, true),
+                Arguments.of(NOT_IN, FieldType.SHUNT_COMPENSATOR_TYPE, null, List.of("REACTOR"), shuntCompensator, false)
         );
     }
 
@@ -417,13 +418,13 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), battery, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), battery, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), battery, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), battery, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), battery, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), battery, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), battery, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), battery, false)
         );
     }
 
@@ -453,13 +454,13 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), boundaryLine, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), boundaryLine, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), boundaryLine, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), boundaryLine, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), boundaryLine, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), boundaryLine, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), boundaryLine, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), boundaryLine, false)
         );
     }
 
@@ -481,12 +482,12 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, voltageLevel, false),
 
                 // --- IN --- //
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), voltageLevel, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), voltageLevel, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), voltageLevel, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), voltageLevel, false),
 
                 // --- NOT_IN --- //
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), voltageLevel, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), voltageLevel, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), voltageLevel, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), voltageLevel, false)
         );
     }
 
@@ -506,12 +507,12 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, substation, false),
 
                 // --- IN --- //
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), substation, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), substation, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), substation, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), substation, false),
 
                 // --- NOT_IN --- //
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), substation, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), substation, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), substation, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), substation, false)
         );
     }
 
@@ -555,17 +556,17 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY_1, null, Set.of(Country.FR.name(), Country.DE.name()), line, true),
-                Arguments.of(IN, FieldType.COUNTRY_1, null, Set.of(Country.BE.name(), Country.DE.name()), line, false),
-                Arguments.of(IN, FieldType.COUNTRY_2, null, Set.of(Country.SM.name(), Country.FO.name()), line, true),
-                Arguments.of(IN, FieldType.COUNTRY_2, null, Set.of(Country.LI.name(), Country.MC.name()), line, false),
+                Arguments.of(IN, FieldType.COUNTRY_1, null, List.of(Country.FR.name(), Country.DE.name()), line, true),
+                Arguments.of(IN, FieldType.COUNTRY_1, null, List.of(Country.BE.name(), Country.DE.name()), line, false),
+                Arguments.of(IN, FieldType.COUNTRY_2, null, List.of(Country.SM.name(), Country.FO.name()), line, true),
+                Arguments.of(IN, FieldType.COUNTRY_2, null, List.of(Country.LI.name(), Country.MC.name()), line, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, Set.of(Country.BE.name(), Country.DE.name()), line, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, Set.of(Country.FR.name(), Country.DE.name()), line, false),
-                Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, Set.of(Country.LI.name(), Country.MC.name()), line, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, Set.of(Country.SM.name(), Country.FO.name()), line, false)
+                Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, List.of(Country.BE.name(), Country.DE.name()), line, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, List.of(Country.FR.name(), Country.DE.name()), line, false),
+                Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, List.of(Country.LI.name(), Country.MC.name()), line, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, List.of(Country.SM.name(), Country.FO.name()), line, false)
         );
     }
 
@@ -658,20 +659,20 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, twoWindingsTransformer, true),
 
                 // --- IN --- //
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, false),
                 Arguments.of(IN, FieldType.RATIO_REGULATION_MODE, null,
-                        Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), twoWindingsTransformer, false),
+                        List.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), twoWindingsTransformer, false),
                 Arguments.of(IN, FieldType.PHASE_REGULATION_MODE, null,
-                        Set.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true),
+                        List.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, true),
 
                 // --- NOT_IN --- //
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), twoWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), twoWindingsTransformer, false),
                 Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE, null,
-                        Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), twoWindingsTransformer, true),
+                        List.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), twoWindingsTransformer, true),
                 Arguments.of(NOT_IN, FieldType.PHASE_REGULATION_MODE, null,
-                        Set.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, false)
+                        List.of(PhaseTapChanger.RegulationMode.CURRENT_LIMITER.name(), PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name()), twoWindingsTransformer, false)
         );
     }
 
@@ -834,24 +835,24 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.PHASE_REGULATION_MODE_3, PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL.name(), null, threeWindingsTransformer, true),
 
                 // --- IN --- //
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, false),
                 Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_1, null,
-                        Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
+                        List.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
                 Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_2, null,
-                        Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
+                        List.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
                 Arguments.of(IN, FieldType.RATIO_REGULATION_MODE_3, null,
-                        Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
+                        List.of(RatioRegulationModeType.VOLTAGE_REGULATION.name(), RatioRegulationModeType.FIXED_RATIO.name()), threeWindingsTransformer, false),
 
                 // --- NOT_IN --- //
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, false),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, false),
                 Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_1, null,
-                        Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
+                        List.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
                 Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_2, null,
-                        Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
+                        List.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
                 Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_3, null,
-                        Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true)
+                        List.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true)
         );
     }
 
@@ -905,25 +906,25 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), svar, true),
-                Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), svar, false),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), svar, true),
+                Arguments.of(IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, true),
-                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.REACTIVE_POWER.name()), svar, false),
-                Arguments.of(IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, true),
-                Arguments.of(IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, false),
+                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, List.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, true),
+                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, List.of(StaticVarCompensator.RegulationMode.REACTIVE_POWER.name()), svar, false),
+                Arguments.of(IN, FieldType.REGULATION_TYPE, null, List.of(RegulationType.DISTANT.name()), svar, true),
+                Arguments.of(IN, FieldType.REGULATION_TYPE, null, List.of(RegulationType.LOCAL.name()), svar, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), svar, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), svar, false),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.BE.name(), Country.DE.name()), svar, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY, null, List.of(Country.FR.name(), Country.DE.name()), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.REACTIVE_POWER.name()), svar, true),
-                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, false),
-                Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, true),
-                Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, false)
+                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, List.of(StaticVarCompensator.RegulationMode.REACTIVE_POWER.name()), svar, true),
+                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, List.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, false),
+                Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, List.of(RegulationType.LOCAL.name()), svar, true),
+                Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, List.of(RegulationType.DISTANT.name()), svar, false)
         );
     }
 
@@ -978,29 +979,29 @@ class EnumExpertRuleTest {
 
                 // --- IN --- //
                 // VoltageLevel fields
-                Arguments.of(IN, FieldType.COUNTRY_1, null, Set.of(Country.FR.name(), Country.DE.name()), hvdcLine, true),
-                Arguments.of(IN, FieldType.COUNTRY_1, null, Set.of(Country.BE.name(), Country.DE.name()), hvdcLine, false),
-                Arguments.of(IN, FieldType.COUNTRY_2, null, Set.of(Country.SM.name(), Country.FO.name()), hvdcLine, true),
-                Arguments.of(IN, FieldType.COUNTRY_2, null, Set.of(Country.LI.name(), Country.MC.name()), hvdcLine, false),
-                Arguments.of(IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name()), hvdcLine, true),
-                Arguments.of(IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name()), hvdcLine, false),
+                Arguments.of(IN, FieldType.COUNTRY_1, null, List.of(Country.FR.name(), Country.DE.name()), hvdcLine, true),
+                Arguments.of(IN, FieldType.COUNTRY_1, null, List.of(Country.BE.name(), Country.DE.name()), hvdcLine, false),
+                Arguments.of(IN, FieldType.COUNTRY_2, null, List.of(Country.SM.name(), Country.FO.name()), hvdcLine, true),
+                Arguments.of(IN, FieldType.COUNTRY_2, null, List.of(Country.LI.name(), Country.MC.name()), hvdcLine, false),
+                Arguments.of(IN, FieldType.CONVERTERS_MODE, null, List.of(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name()), hvdcLine, true),
+                Arguments.of(IN, FieldType.CONVERTERS_MODE, null, List.of(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name()), hvdcLine, false),
 
                 // --- NOT_IN --- //
                 // VoltageLevel fields
-                Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, Set.of(Country.BE.name(), Country.DE.name()), hvdcLine, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, Set.of(Country.FR.name(), Country.DE.name()), hvdcLine, false),
-                Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, Set.of(Country.LI.name(), Country.MC.name()), hvdcLine, true),
-                Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, Set.of(Country.SM.name(), Country.FO.name()), hvdcLine, false),
-                Arguments.of(NOT_IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name()), hvdcLine, false),
-                Arguments.of(NOT_IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name()), hvdcLine, true)
+                Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, List.of(Country.BE.name(), Country.DE.name()), hvdcLine, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY_1, null, List.of(Country.FR.name(), Country.DE.name()), hvdcLine, false),
+                Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, List.of(Country.LI.name(), Country.MC.name()), hvdcLine, true),
+                Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, List.of(Country.SM.name(), Country.FO.name()), hvdcLine, false),
+                Arguments.of(NOT_IN, FieldType.CONVERTERS_MODE, null, List.of(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name()), hvdcLine, false),
+                Arguments.of(NOT_IN, FieldType.CONVERTERS_MODE, null, List.of(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name()), hvdcLine, true)
         );
     }
 
     @Test
     void testGetDataTypeReturnsEnum() {
         EnumExpertRule rule = EnumExpertRule.builder()
-                .fieldType(FieldType.COUNTRY)
-                .operatorType(OperatorType.IN)
+                .field(FieldType.COUNTRY)
+                .operator(OperatorType.IN)
                 .build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.ENUM);
@@ -1009,11 +1010,11 @@ class EnumExpertRuleTest {
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
         EnumExpertRule rule = EnumExpertRule.builder()
-                .fieldType(FieldType.COUNTRY)
-                .operatorType(OperatorType.IN)
+                .field(FieldType.COUNTRY)
+                .operator(OperatorType.IN)
                 .build();
 
-        assertThat(rule.getOperatorType()).isEqualTo(OperatorType.IN);
+        assertThat(rule.getOperator()).isEqualTo(OperatorType.IN);
     }
 
     @ParameterizedTest
@@ -1033,14 +1034,14 @@ class EnumExpertRuleTest {
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
     })
-    void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, String value, Set<String> values,
+    void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, String value, List<String> values,
                                                          Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         ExpertRule rule = EnumExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
-                .referenceValue(value)
-                .referenceValues(values)
+                .operator(operator)
+                .field(field)
+                .value(value)
+                .values(values)
                 .build();
 
         String serializedRule = objectMapper.writeValueAsString(rule);
@@ -1053,12 +1054,12 @@ class EnumExpertRuleTest {
     @MethodSource({
         "provideArgumentsForTestWithException"
     })
-    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String value, Set<String> values, Class<Throwable> expectedException) {
+    void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, String value, List<String> values, Class<Throwable> expectedException) {
         ExpertRule rule = EnumExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
-                .referenceValue(value)
-                .referenceValues(values)
+                .operator(operator)
+                .field(field)
+                .value(value)
+                .values(values)
                 .build();
 
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
@@ -1081,12 +1082,12 @@ class EnumExpertRuleTest {
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
     })
-    void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
+    void testEvaluateRule(OperatorType operator, FieldType field, String value, List<String> values, Identifiable<?> equipment, boolean expected) {
         ExpertRule rule = EnumExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
-                .referenceValue(value)
-                .referenceValues(values)
+                .operator(operator)
+                .field(field)
+                .value(value)
+                .values(values)
                 .build();
 
         assertEquals(expected, rule.evaluateRule(equipment));

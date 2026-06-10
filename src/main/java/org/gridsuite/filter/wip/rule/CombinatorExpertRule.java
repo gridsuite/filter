@@ -17,8 +17,8 @@ import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.data.DataType;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -29,20 +29,20 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CombinatorExpertRule implements ExpertRule {
 
-    private CombinatorType combinatorType;
-    private Set<ExpertRule> subRules;
+    private CombinatorType combinator;
+    private List<ExpertRule> rules;
 
     @Builder
-    public CombinatorExpertRule(CombinatorType combinatorType, Set<ExpertRule> subRules) {
-        this.combinatorType = Objects.requireNonNull(combinatorType);
-        this.subRules = Set.copyOf(Objects.requireNonNull(subRules));
+    public CombinatorExpertRule(CombinatorType combinator, List<ExpertRule> rules) {
+        this.combinator = Objects.requireNonNull(combinator);
+        this.rules = List.copyOf(Objects.requireNonNull(rules));
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
-        return switch (combinatorType) {
-            case AND -> subRules.stream().allMatch(rule -> rule.evaluateRule(identifiable));
-            case OR -> subRules.stream().anyMatch(rule -> rule.evaluateRule(identifiable));
+        return switch (combinator) {
+            case AND -> rules.stream().allMatch(rule -> rule.evaluateRule(identifiable));
+            case OR -> rules.stream().anyMatch(rule -> rule.evaluateRule(identifiable));
         };
     }
 
@@ -53,12 +53,12 @@ public final class CombinatorExpertRule implements ExpertRule {
 
     @Override
     @JsonIgnore
-    public OperatorType getOperatorType() {
+    public OperatorType getOperator() {
         throw new UnsupportedOperationException("Operator type not applicable for combinator rules");
     }
 
     @Override
     public void clearCache() {
-        subRules.forEach(ExpertRule::clearCache);
+        rules.forEach(ExpertRule::clearCache);
     }
 }

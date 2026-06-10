@@ -23,15 +23,16 @@ import java.util.Set;
  */
 @Beta
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(callSuper = true)
-public class IdentifierListFilter extends AbstractFilter {
+public class IdentifierListFilter implements Filter {
 
+    private EquipmentType equipmentType;
     private Set<String> equipmentIds;
 
     @Builder
     public IdentifierListFilter(EquipmentType equipmentType, Set<String> equipmentIds) {
-        super(equipmentType);
+        this.equipmentType = Objects.requireNonNull(equipmentType);
         this.equipmentIds = Set.copyOf(Objects.requireNonNull(equipmentIds));
     }
 
@@ -42,7 +43,7 @@ public class IdentifierListFilter extends AbstractFilter {
     }
 
     @Override
-    protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
+    public boolean evaluateFilterRule(Identifiable<?> identifiable) {
         Objects.requireNonNull(identifiable);
         return equipmentIds.contains(identifiable.getId());
     }

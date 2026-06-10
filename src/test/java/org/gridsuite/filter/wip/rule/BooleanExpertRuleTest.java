@@ -523,16 +523,16 @@ class BooleanExpertRuleTest {
 
     @Test
     void testGetDataTypeReturnsBoolean() {
-        BooleanExpertRule rule = BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(true).build();
+        BooleanExpertRule rule = BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(true).build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.BOOLEAN);
     }
 
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
-        BooleanExpertRule rule = BooleanExpertRule.builder().fieldType(FieldType.CONNECTED).operatorType(OperatorType.EQUALS).referenceValue(true).build();
+        BooleanExpertRule rule = BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(true).build();
 
-        assertThat(rule.getOperatorType()).isEqualTo(OperatorType.EQUALS);
+        assertThat(rule.getOperator()).isEqualTo(OperatorType.EQUALS);
     }
 
     @ParameterizedTest
@@ -551,9 +551,9 @@ class BooleanExpertRuleTest {
     void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         ExpertRule rule = BooleanExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
-                .referenceValue(value)
+                .operator(operator)
+                .field(field)
+                .value(value)
                 .build();
 
         String serializedRule = objectMapper.writeValueAsString(rule);
@@ -568,8 +568,8 @@ class BooleanExpertRuleTest {
     })
     void testEvaluateRuleWithException(OperatorType operator, FieldType field, Identifiable<?> equipment, Class<Throwable> expectedException) {
         ExpertRule rule = BooleanExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
+                .operator(operator)
+                .field(field)
                 .build();
 
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
@@ -590,9 +590,9 @@ class BooleanExpertRuleTest {
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) {
         ExpertRule rule = BooleanExpertRule.builder()
-                .operatorType(operator)
-                .fieldType(field)
-                .referenceValue(value)
+                .operator(operator)
+                .field(field)
+                .value(value)
                 .build();
 
         assertEquals(expected, rule.evaluateRule(equipment));

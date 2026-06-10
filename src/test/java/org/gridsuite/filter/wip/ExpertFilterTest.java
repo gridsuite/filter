@@ -73,12 +73,12 @@ class ExpertFilterTest {
                 Arguments.of(buildEnumExpertFilter(EquipmentType.LINE, FieldType.COUNTRY_1, OperatorType.NOT_EQUALS, "FR", null),
                         Set.of("LINE_3")),
                 Arguments.of(buildEnumExpertFilter(EquipmentType.LINE, FieldType.COUNTRY_1, OperatorType.IN, null,
-                        Set.of("DE")), Set.of("LINE_3")),
+                        List.of("DE")), Set.of("LINE_3")),
                 Arguments.of(buildEnumExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATIO_REGULATION_MODE_1, OperatorType.IN, null,
-                        Set.of("FIXED_RATIO")), Set.of("THREE_WINDINGS_TRANSFORMER_2")),
-                Arguments.of(buildEnumExpertFilter(EquipmentType.LINE, FieldType.COUNTRY_2, OperatorType.NOT_IN, null, Set.of("FR")),
+                        List.of("FIXED_RATIO")), Set.of("THREE_WINDINGS_TRANSFORMER_2")),
+                Arguments.of(buildEnumExpertFilter(EquipmentType.LINE, FieldType.COUNTRY_2, OperatorType.NOT_IN, null, List.of("FR")),
                         Set.of("LINE_1", "LINE_2", "LINE_3")),
-                Arguments.of(buildEnumExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATIO_REGULATION_MODE_1, OperatorType.NOT_IN, null, Set.of("FIXED_RATIO")),
+                Arguments.of(buildEnumExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATIO_REGULATION_MODE_1, OperatorType.NOT_IN, null, List.of("FIXED_RATIO")),
                         Collections.emptySet()),
                 //Number Expert Filter
                 Arguments.of(buildNumberExpertFilter(EquipmentType.BATTERY, FieldType.TARGET_P, OperatorType.EQUALS, 10D, null),
@@ -101,9 +101,9 @@ class ExpertFilterTest {
                         Set.of("GENERATOR_1")),
                 Arguments.of(buildNumberExpertFilter(EquipmentType.GENERATOR, FieldType.TARGET_P, OperatorType.LOWER, 200D, null),
                         Set.of("GENERATOR_1")),
-                Arguments.of(buildNumberExpertFilter(EquipmentType.GENERATOR, FieldType.TARGET_P, OperatorType.BETWEEN, null, Set.of(100D, 200D)),
+                Arguments.of(buildNumberExpertFilter(EquipmentType.GENERATOR, FieldType.TARGET_P, OperatorType.BETWEEN, null, List.of(100D, 200D)),
                         Set.of("GENERATOR_1", "GENERATOR_2")),
-                Arguments.of(buildNumberExpertFilter(EquipmentType.GENERATOR, FieldType.TARGET_P, OperatorType.BETWEEN, null, Set.of(200D, 100D)),
+                Arguments.of(buildNumberExpertFilter(EquipmentType.GENERATOR, FieldType.TARGET_P, OperatorType.BETWEEN, null, List.of(200D, 100D)),
                         Set.of("GENERATOR_1", "GENERATOR_2")),
                 Arguments.of(buildNumberExpertFilter(EquipmentType.GENERATOR, FieldType.TARGET_Q, OperatorType.EXISTS, null, null),
                         Set.of("GENERATOR_3")),
@@ -113,25 +113,25 @@ class ExpertFilterTest {
                         Set.of("THREE_WINDINGS_TRANSFORMER_1", "THREE_WINDINGS_TRANSFORMER_3")),
                 Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.SERIE_RESISTANCE_2, OperatorType.NOT_EXISTS, null, null),
                         Collections.emptySet()),
-                Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATED_VOLTAGE_0, OperatorType.IN, null, Set.of(220D, 63D)),
+                Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATED_VOLTAGE_0, OperatorType.IN, null, List.of(220D, 63D)),
                         Collections.emptySet()),
-                Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATED_VOLTAGE_0, OperatorType.IN, null, Set.of(400D)),
+                Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATED_VOLTAGE_0, OperatorType.IN, null, List.of(400D)),
                         Set.of("THREE_WINDINGS_TRANSFORMER_1", "THREE_WINDINGS_TRANSFORMER_2", "THREE_WINDINGS_TRANSFORMER_3")),
-                Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATED_VOLTAGE_0, OperatorType.NOT_IN, null, Set.of(400D)),
+                Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATED_VOLTAGE_0, OperatorType.NOT_IN, null, List.of(400D)),
                         Collections.emptySet()),
-                Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATED_VOLTAGE_0, OperatorType.NOT_IN, null, Set.of(220D, 63D)),
+                Arguments.of(buildNumberExpertFilter(EquipmentType.THREE_WINDINGS_TRANSFORMER, FieldType.RATED_VOLTAGE_0, OperatorType.NOT_IN, null, List.of(220D, 63D)),
                         Set.of("THREE_WINDINGS_TRANSFORMER_1", "THREE_WINDINGS_TRANSFORMER_2", "THREE_WINDINGS_TRANSFORMER_3")),
                 //Properties Expert Filter
                 Arguments.of(buildPropertiesExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.FREE_PROPERTIES, OperatorType.IN, "myCustomProperty",
-                        Set.of("My custom value", "My other custom value")), Set.of("VOLTAGE_LEVEL_1")),
+                        List.of("My custom value", "My other custom value")), Set.of("VOLTAGE_LEVEL_1")),
                 Arguments.of(buildPropertiesExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.FREE_PROPERTIES, OperatorType.IN, "myCustomProperty",
-                                Set.of("blabla", "blablabla")),
+                                List.of("blabla", "blablabla")),
                         Collections.emptySet()),
                 Arguments.of(buildPropertiesExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.SUBSTATION_PROPERTIES, OperatorType.NOT_IN, "myCustomProperty",
-                                Set.of("bla bla", "dfgjkhgfdsjkhfdsj")),
+                                List.of("bla bla", "dfgjkhgfdsjkhfdsj")),
                         Set.of("VL_S3")),
                 Arguments.of(buildPropertiesExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.SUBSTATION_PROPERTIES, OperatorType.NOT_IN, "myCustomProperty",
-                        Set.of("My custom value", "My other custom value")), Collections.emptySet()),
+                        List.of("My custom value", "My other custom value")), Collections.emptySet()),
                 //String Expert Filter
                 Arguments.of(buildStringExpertFilter(EquipmentType.LINE, FieldType.VOLTAGE_LEVEL_ID_1, OperatorType.IS, "VOLTAGE_LEVEL_1", null),
                         Set.of("LINE_1", "LINE_2")),
@@ -157,53 +157,53 @@ class ExpertFilterTest {
                         Set.of("VOLTAGE_LEVEL_2", "VOLTAGE_LEVEL_3", "VL_S2")),
                 Arguments.of(buildStringExpertFilter(EquipmentType.LINE, FieldType.NAME, OperatorType.NOT_EXISTS, null, null),
                         Set.of("LINE_1", "LINE_2", "LINE_3")),
-                Arguments.of(buildStringExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.NAME, OperatorType.IN, null, Set.of("Best voltage level ;)", "other vl...")),
+                Arguments.of(buildStringExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.NAME, OperatorType.IN, null, List.of("Best voltage level ;)", "other vl...")),
                         Set.of("VOLTAGE_LEVEL_1", "VL_S3")),
-                Arguments.of(buildStringExpertFilter(EquipmentType.LINE, FieldType.NAME, OperatorType.IN, null, Set.of("gdfsfds", "gfjkdhgfjdk")),
+                Arguments.of(buildStringExpertFilter(EquipmentType.LINE, FieldType.NAME, OperatorType.IN, null, List.of("gdfsfds", "gfjkdhgfjdk")),
                         Collections.emptySet()),
-                Arguments.of(buildStringExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.NAME, OperatorType.NOT_IN, null, Set.of("Best voltage level ;)")),
+                Arguments.of(buildStringExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.NAME, OperatorType.NOT_IN, null, List.of("Best voltage level ;)")),
                         Set.of("VL_S3")),
-                Arguments.of(buildStringExpertFilter(EquipmentType.LINE, FieldType.NAME, OperatorType.NOT_IN, null, Set.of("gdfsfds", "gfjkdhgfjdk")),
+                Arguments.of(buildStringExpertFilter(EquipmentType.LINE, FieldType.NAME, OperatorType.NOT_IN, null, List.of("gdfsfds", "gfjkdhgfjdk")),
 
                         Collections.emptySet()),
                 //Combinator Expert Filter
                 Arguments.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.OR,
-                                Set.of(StringExpertRule.builder().fieldType(FieldType.NAME).operatorType(OperatorType.NOT_IN)
-                                                .referenceValues(Set.of("Best voltage level ;)")).build(),
-                                        PropertiesExpertRule.builder().fieldType(FieldType.FREE_PROPERTIES).operatorType(OperatorType.IN).targetProperty("myCustomProperty")
-                                                .referenceValues(Set.of("My custom value", "My other custom value")).build(),
-                                        NumberExpertRule.builder().fieldType(FieldType.NOMINAL_VOLTAGE).operatorType(OperatorType.EQUALS)
-                                                .referenceValue(90D).build())),
+                                List.of(StringExpertRule.builder().field(FieldType.NAME).operator(OperatorType.NOT_IN)
+                                                .values(List.of("Best voltage level ;)")).build(),
+                                        PropertiesExpertRule.builder().field(FieldType.FREE_PROPERTIES).operator(OperatorType.IN).propertyName("myCustomProperty")
+                                                .propertyValues(List.of("My custom value", "My other custom value")).build(),
+                                        NumberExpertRule.builder().field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.EQUALS)
+                                                .value(90D).build())),
                         Set.of("VOLTAGE_LEVEL_1", "VOLTAGE_LEVEL_3", "VL_S3")),
                 Arguments.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.AND,
-                                Set.of(StringExpertRule.builder().fieldType(FieldType.NAME).operatorType(OperatorType.NOT_IN)
-                                                .referenceValues(Set.of("other vl...")).build(),
-                                        PropertiesExpertRule.builder().fieldType(FieldType.FREE_PROPERTIES).operatorType(OperatorType.IN).targetProperty("myCustomProperty")
-                                                .referenceValues(Set.of("My custom value", "My other custom value")).build(),
-                                        NumberExpertRule.builder().fieldType(FieldType.NOMINAL_VOLTAGE).operatorType(OperatorType.EQUALS)
-                                                .referenceValue(400D).build())),
+                                List.of(StringExpertRule.builder().field(FieldType.NAME).operator(OperatorType.NOT_IN)
+                                                .values(List.of("other vl...")).build(),
+                                        PropertiesExpertRule.builder().field(FieldType.FREE_PROPERTIES).operator(OperatorType.IN).propertyName("myCustomProperty")
+                                                .propertyValues(List.of("My custom value", "My other custom value")).build(),
+                                        NumberExpertRule.builder().field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.EQUALS)
+                                                .value(400D).build())),
                         Set.of("VOLTAGE_LEVEL_1")),
                 //Filter Expert Filter
                 Arguments.of(buildFilterExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.ID, OperatorType.IS_PART_OF,
-                                Set.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.AND,
-                                                Set.of(StringExpertRule.builder().fieldType(FieldType.NAME).operatorType(OperatorType.NOT_IN)
-                                                                .referenceValues(Set.of("other vl...")).build(),
-                                                        PropertiesExpertRule.builder().fieldType(FieldType.FREE_PROPERTIES).operatorType(OperatorType.IN).targetProperty("myCustomProperty")
-                                                                .referenceValues(Set.of("My custom value", "My other custom value")).build(),
-                                                        NumberExpertRule.builder().fieldType(FieldType.NOMINAL_VOLTAGE).operatorType(OperatorType.EQUALS)
-                                                                .referenceValue(400D).build())),
+                                List.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.AND,
+                                                List.of(StringExpertRule.builder().field(FieldType.NAME).operator(OperatorType.NOT_IN)
+                                                                .values(List.of("other vl...")).build(),
+                                                        PropertiesExpertRule.builder().field(FieldType.FREE_PROPERTIES).operator(OperatorType.IN).propertyName("myCustomProperty")
+                                                                .propertyValues(List.of("My custom value", "My other custom value")).build(),
+                                                        NumberExpertRule.builder().field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.EQUALS)
+                                                                .value(400D).build())),
                                         buildStringExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.NAME, OperatorType.EXISTS, null, null),
                                         new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VOLTAGE_LEVEL_3")))),
                         Set.of("VOLTAGE_LEVEL_1", "VOLTAGE_LEVEL_3", "VL_S3")
                 ),
                 Arguments.of(buildFilterExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.ID, OperatorType.IS_NOT_PART_OF,
-                                Set.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.AND,
-                                                Set.of(StringExpertRule.builder().fieldType(FieldType.NAME).operatorType(OperatorType.NOT_IN)
-                                                                .referenceValues(Set.of("other vl...")).build(),
-                                                        PropertiesExpertRule.builder().fieldType(FieldType.FREE_PROPERTIES).operatorType(OperatorType.IN).targetProperty("myCustomProperty")
-                                                                .referenceValues(Set.of("My custom value", "My other custom value")).build(),
-                                                        NumberExpertRule.builder().fieldType(FieldType.NOMINAL_VOLTAGE).operatorType(OperatorType.EQUALS)
-                                                                .referenceValue(400D).build())),
+                                List.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.AND,
+                                                List.of(StringExpertRule.builder().field(FieldType.NAME).operator(OperatorType.NOT_IN)
+                                                                .values(List.of("other vl...")).build(),
+                                                        PropertiesExpertRule.builder().field(FieldType.FREE_PROPERTIES).operator(OperatorType.IN).propertyName("myCustomProperty")
+                                                                .propertyValues(List.of("My custom value", "My other custom value")).build(),
+                                                        NumberExpertRule.builder().field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.EQUALS)
+                                                                .value(400D).build())),
                                         buildStringExpertFilter(EquipmentType.VOLTAGE_LEVEL, FieldType.NAME, OperatorType.EXISTS, null, null),
                                         new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VOLTAGE_LEVEL_3")))),
                         Set.of("VOLTAGE_LEVEL_2", "VL_S2")
@@ -211,38 +211,38 @@ class ExpertFilterTest {
         );
     }
 
-    private static Filter buildBooleanExpertFilter(EquipmentType equipmentType, FieldType fieldType, OperatorType operatorType, Boolean referenceValue) {
-        BooleanExpertRule rule = BooleanExpertRule.builder().fieldType(fieldType).operatorType(operatorType).referenceValue(referenceValue).build();
+    private static Filter buildBooleanExpertFilter(EquipmentType equipmentType, FieldType field, OperatorType operator, Boolean referenceValue) {
+        BooleanExpertRule rule = BooleanExpertRule.builder().field(field).operator(operator).value(referenceValue).build();
         return new ExpertFilter(equipmentType, rule);
     }
 
-    private static Filter buildEnumExpertFilter(EquipmentType equipmentType, FieldType fieldType, OperatorType operatorType, String referenceValue, Set<String> referenceValues) {
-        EnumExpertRule rule = EnumExpertRule.builder().fieldType(fieldType).operatorType(operatorType).referenceValue(referenceValue).referenceValues(referenceValues).build();
+    private static Filter buildEnumExpertFilter(EquipmentType equipmentType, FieldType field, OperatorType operator, String referenceValue, List<String> referenceValues) {
+        EnumExpertRule rule = EnumExpertRule.builder().field(field).operator(operator).value(referenceValue).values(referenceValues).build();
         return new ExpertFilter(equipmentType, rule);
     }
 
-    private static Filter buildNumberExpertFilter(EquipmentType equipmentType, FieldType fieldType, OperatorType operatorType, Double referenceValue, Set<Double> referenceValues) {
-        NumberExpertRule rule = NumberExpertRule.builder().fieldType(fieldType).operatorType(operatorType).referenceValue(referenceValue).referenceValues(referenceValues).build();
+    private static Filter buildNumberExpertFilter(EquipmentType equipmentType, FieldType field, OperatorType operator, Double referenceValue, List<Double> referenceValues) {
+        NumberExpertRule rule = NumberExpertRule.builder().field(field).operator(operator).value(referenceValue).values(referenceValues).build();
         return new ExpertFilter(equipmentType, rule);
     }
 
-    private static Filter buildPropertiesExpertFilter(EquipmentType equipmentType, FieldType fieldType, OperatorType operatorType, String targetProperty, Set<String> referenceValues) {
-        PropertiesExpertRule rule = PropertiesExpertRule.builder().fieldType(fieldType).operatorType(operatorType).targetProperty(targetProperty).referenceValues(referenceValues).build();
+    private static Filter buildPropertiesExpertFilter(EquipmentType equipmentType, FieldType field, OperatorType operator, String targetProperty, List<String> referenceValues) {
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().field(field).operator(operator).propertyName(targetProperty).propertyValues(referenceValues).build();
         return new ExpertFilter(equipmentType, rule);
     }
 
-    private static Filter buildStringExpertFilter(EquipmentType equipmentType, FieldType fieldType, OperatorType operatorType, String referenceValue, Set<String> referenceValues) {
-        StringExpertRule rule = StringExpertRule.builder().fieldType(fieldType).operatorType(operatorType).referenceValue(referenceValue).referenceValues(referenceValues).build();
+    private static Filter buildStringExpertFilter(EquipmentType equipmentType, FieldType field, OperatorType operator, String referenceValue, List<String> referenceValues) {
+        StringExpertRule rule = StringExpertRule.builder().field(field).operator(operator).value(referenceValue).values(referenceValues).build();
         return new ExpertFilter(equipmentType, rule);
     }
 
-    private static Filter buildCombinatorExpertFilter(EquipmentType equipmentType, CombinatorType combinatorType, Set<ExpertRule> subRules) {
-        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinatorType(combinatorType).subRules(subRules).build();
+    private static Filter buildCombinatorExpertFilter(EquipmentType equipmentType, CombinatorType combinatorType, List<ExpertRule> subRules) {
+        CombinatorExpertRule rule = CombinatorExpertRule.builder().combinator(combinatorType).rules(subRules).build();
         return new ExpertFilter(equipmentType, rule);
     }
 
-    private static Filter buildFilterExpertFilter(EquipmentType equipmentType, FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters) {
-        FilterExpertRule rule = FilterExpertRule.builder().fieldType(fieldType).operatorType(operatorType).referenceFilters(referenceFilters).build();
+    private static Filter buildFilterExpertFilter(EquipmentType equipmentType, FieldType field, OperatorType operator, List<Filter> filters) {
+        FilterExpertRule rule = FilterExpertRule.builder().field(field).operator(operator).filters(filters).build();
         return new ExpertFilter(equipmentType, rule);
     }
 

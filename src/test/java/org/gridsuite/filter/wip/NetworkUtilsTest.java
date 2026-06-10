@@ -4,9 +4,7 @@ import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import com.powsybl.iidm.network.VoltageLevel;
-import lombok.Getter;
 import org.gridsuite.filter.utils.EquipmentType;
-import org.gridsuite.filter.utils.FilterType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -16,37 +14,27 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SimpleFilterTest {
-
-    @Test
-    void testSimpleFilterReturnsExpectedFilterType() {
-        SimpleFilter simpleFilter = new SimpleFilter(EquipmentType.LINE);
-        assertThat(simpleFilter.getFilterType()).isEqualTo(FilterType.EXPERT);
-    }
+class NetworkUtilsTest {
 
     @ParameterizedTest
     @EnumSource(EquipmentType.class)
-    void testSimpleFilterEvaluationReturnsExpectedEquipments(EquipmentType equipmentType) {
+    void testGetEquipmentWithBusBreakerTopologyReturnsExpectedEquipments(EquipmentType equipmentType) {
         Network network = TestNetworkUtils.createTestNetwork();
         List<Identifiable<?>> expectedIdentifiable = getExpectedIdentifiable(network, equipmentType, TopologyKind.BUS_BREAKER);
-        SimpleFilter simpleFilter = new SimpleFilter(equipmentType);
 
-        List<Identifiable<?>> actualIdentifiable = simpleFilter.evaluate(network);
+        List<Identifiable<?>> actualIdentifiable = NetworkUtils.getEquipmentStream(network, equipmentType, TopologyKind.BUS_BREAKER).toList();
 
         assertThat(actualIdentifiable).isEqualTo(expectedIdentifiable);
-        assertThat(simpleFilter.isCacheCleared()).isTrue();
     }
 
     @Test
-    void testSimpleFilterEvaluationWithTopologyKindReturnsExpectedEquipments() {
+    void testGetEquipmentWithNodeBreakerTopologyKindReturnsExpectedEquipments() {
         Network network = TestNetworkUtils.createTestNetwork();
         List<Identifiable<?>> expectedIdentifiable = getExpectedIdentifiable(network, EquipmentType.BUS, TopologyKind.NODE_BREAKER);
-        SimpleFilter simpleFilter = new SimpleFilter(EquipmentType.BUS);
 
-        List<Identifiable<?>> actualIdentifiable = simpleFilter.evaluate(network, TopologyKind.NODE_BREAKER);
+        List<Identifiable<?>> actualIdentifiable = NetworkUtils.getEquipmentStream(network, EquipmentType.BUS, TopologyKind.NODE_BREAKER).toList();
 
         assertThat(actualIdentifiable).isEqualTo(expectedIdentifiable);
-        assertThat(simpleFilter.isCacheCleared()).isTrue();
     }
 
     private List<Identifiable<?>> getExpectedIdentifiable(Network network, EquipmentType equipmentType, TopologyKind topologyKind) {
@@ -76,30 +64,5 @@ class SimpleFilterTest {
                 .map(VoltageLevel::getBusBreakerView)
                 .flatMap(VoltageLevel.BusBreakerView::getBusStream)
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Getter
-    private static final class SimpleFilter extends AbstractFilter {
-
-        private boolean cacheCleared = false;
-
-        private SimpleFilter(EquipmentType equipmentType) {
-            super(equipmentType);
-        }
-
-        @Override
-        public FilterType getFilterType() {
-            return FilterType.EXPERT;
-        }
-
-        @Override
-        protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
-            return true;
-        }
-
-        @Override
-        public void clearEvaluationCache() {
-            cacheCleared = true;
-        }
     }
 }

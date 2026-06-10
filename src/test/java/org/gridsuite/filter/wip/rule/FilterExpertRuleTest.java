@@ -15,7 +15,6 @@ import com.powsybl.iidm.network.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.AbstractFilter;
 import org.gridsuite.filter.wip.Filter;
 import org.gridsuite.filter.wip.IdentifierListFilter;
 import org.gridsuite.filter.wip.TestNetworkUtils;
@@ -47,35 +46,35 @@ class FilterExpertRuleTest {
 
     private static Stream<Arguments> provideMockRuleEvaluationArguments() {
         return Stream.of(
-                Arguments.of(FieldType.ID, OperatorType.IS_PART_OF, Set.of(mockFilter(EquipmentType.GENERATOR), mockFilter(EquipmentType.LOAD)), "GENERATOR_1", true),
-                Arguments.of(FieldType.ID, OperatorType.IS_PART_OF, Set.of(mockFilter(EquipmentType.BATTERY), mockFilter(EquipmentType.LOAD)), "GENERATOR_1", false),
-                Arguments.of(FieldType.ID, OperatorType.IS_NOT_PART_OF, Set.of(mockFilter(EquipmentType.BATTERY), mockFilter(EquipmentType.LOAD)), "GENERATOR_1", true),
-                Arguments.of(FieldType.ID, OperatorType.IS_NOT_PART_OF, Set.of(mockFilter(EquipmentType.GENERATOR), mockFilter(EquipmentType.LOAD)), "GENERATOR_1", false)
+                Arguments.of(FieldType.ID, OperatorType.IS_PART_OF, List.of(mockFilter(EquipmentType.GENERATOR), mockFilter(EquipmentType.LOAD)), "GENERATOR_1", true),
+                Arguments.of(FieldType.ID, OperatorType.IS_PART_OF, List.of(mockFilter(EquipmentType.BATTERY), mockFilter(EquipmentType.LOAD)), "GENERATOR_1", false),
+                Arguments.of(FieldType.ID, OperatorType.IS_NOT_PART_OF, List.of(mockFilter(EquipmentType.BATTERY), mockFilter(EquipmentType.LOAD)), "GENERATOR_1", true),
+                Arguments.of(FieldType.ID, OperatorType.IS_NOT_PART_OF, List.of(mockFilter(EquipmentType.GENERATOR), mockFilter(EquipmentType.LOAD)), "GENERATOR_1", false)
         );
     }
 
     private static Stream<Arguments> provideRealRuleEvaluationArguments() {
         return Stream.of(
                 Arguments.of(FieldType.ID, OperatorType.IS_PART_OF,
-                        Set.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
+                        List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
                                 new IdentifierListFilter(EquipmentType.LOAD, Set.of("LOAD_1", "LOAD_2"))),
                         EquipmentType.GENERATOR,
                         "GENERATOR_1",
                         true),
                 Arguments.of(FieldType.ID, OperatorType.IS_PART_OF,
-                        Set.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
+                        List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
                                 new IdentifierListFilter(EquipmentType.LOAD, Set.of("LOAD_1", "LOAD_2"))),
                         EquipmentType.GENERATOR,
                         "GENERATOR_3",
                         false),
                 Arguments.of(FieldType.ID, OperatorType.IS_NOT_PART_OF,
-                        Set.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
+                        List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
                                 new IdentifierListFilter(EquipmentType.LOAD, Set.of("LOAD_1", "LOAD_2"))),
                         EquipmentType.GENERATOR,
                         "GENERATOR_1",
                         false),
                 Arguments.of(FieldType.ID, OperatorType.IS_NOT_PART_OF,
-                        Set.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
+                        List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
                                 new IdentifierListFilter(EquipmentType.LOAD, Set.of("LOAD_1", "LOAD_2"))),
                         EquipmentType.GENERATOR,
                         "GENERATOR_3",
@@ -123,25 +122,25 @@ class FilterExpertRuleTest {
         return Stream.of(
                 // --- IS_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("ID1"))), gen1, true),
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("ID2"))), gen2, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("ID1"))), gen1, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("ID2"))), gen2, true),
                 // VoltageLevel fields
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), gen1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), gen2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), gen1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), gen2, true),
                 // Substation fields
-                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST1"))), gen1, true),
-                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST2"))), gen2, true),
+                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST1"))), gen1, true),
+                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST2"))), gen2, true),
 
                 // --- IS_NOT_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("ID1"))), gen2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("ID2"))), gen1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("ID1"))), gen2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("ID2"))), gen1, true),
                 // VoltageLevel fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), gen1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), gen2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), gen1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), gen2, true),
                 // Substation fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST2"))), gen1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST1"))), gen2, true)
+                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST2"))), gen1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST1"))), gen2, true)
         );
     }
 
@@ -178,19 +177,19 @@ class FilterExpertRuleTest {
         return Stream.of(
                 // --- IS_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.LOAD, Set.of("ID1"))), load1, true),
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.LOAD, Set.of("ID2"))), load2, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.LOAD, Set.of("ID1"))), load1, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.LOAD, Set.of("ID2"))), load2, true),
                 // VoltageLevel fields
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), load1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), load2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), load1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), load2, true),
 
                 // --- IS_NOT_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.LOAD, Set.of("ID1"))), load2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.LOAD, Set.of("ID2"))), load1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.LOAD, Set.of("ID1"))), load2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.LOAD, Set.of("ID2"))), load1, true),
                 // VoltageLevel fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), load1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), load2, true)
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), load1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), load2, true)
         );
     }
 
@@ -227,19 +226,19 @@ class FilterExpertRuleTest {
         return Stream.of(
                 // --- IS_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.BATTERY, Set.of("ID1"))), battery1, true),
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.BATTERY, Set.of("ID2"))), battery2, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.BATTERY, Set.of("ID1"))), battery1, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.BATTERY, Set.of("ID2"))), battery2, true),
                 // VoltageLevel fields
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), battery1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), battery2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), battery1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), battery2, true),
 
                 // --- IS_NOT_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.BATTERY, Set.of("ID1"))), battery2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.BATTERY, Set.of("ID2"))), battery1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.BATTERY, Set.of("ID1"))), battery2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.BATTERY, Set.of("ID2"))), battery1, true),
                 // VoltageLevel fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), battery1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), battery2, true)
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), battery1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), battery2, true)
         );
     }
 
@@ -276,19 +275,19 @@ class FilterExpertRuleTest {
         return Stream.of(
                 // --- IS_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("ID1"))), shuntCompensator1, true),
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("ID2"))), shuntCompensator2, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("ID1"))), shuntCompensator1, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("ID2"))), shuntCompensator2, true),
                 // VoltageLevel fields
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), shuntCompensator1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), shuntCompensator2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), shuntCompensator1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), shuntCompensator2, true),
 
                 // --- IS_NOT_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("ID1"))), shuntCompensator2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("ID2"))), shuntCompensator1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("ID1"))), shuntCompensator2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.SHUNT_COMPENSATOR, Set.of("ID2"))), shuntCompensator1, true),
                 // VoltageLevel fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), shuntCompensator1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), shuntCompensator2, true)
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), shuntCompensator1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), shuntCompensator2, true)
         );
     }
 
@@ -325,19 +324,19 @@ class FilterExpertRuleTest {
         return Stream.of(
                 // --- IS_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.BOUNDARY_LINE, Set.of("ID1"))), boundaryLine1, true),
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.BOUNDARY_LINE, Set.of("ID2"))), boundaryLine2, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.BOUNDARY_LINE, Set.of("ID1"))), boundaryLine1, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.BOUNDARY_LINE, Set.of("ID2"))), boundaryLine2, true),
                 // VoltageLevel fields
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), boundaryLine1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), boundaryLine2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), boundaryLine1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), boundaryLine2, true),
 
                 // --- IS_NOT_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.BOUNDARY_LINE, Set.of("ID1"))), boundaryLine2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.BOUNDARY_LINE, Set.of("ID2"))), boundaryLine1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.BOUNDARY_LINE, Set.of("ID1"))), boundaryLine2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.BOUNDARY_LINE, Set.of("ID2"))), boundaryLine1, true),
                 // VoltageLevel fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), boundaryLine1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), boundaryLine2, true)
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), boundaryLine1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), boundaryLine2, true)
         );
     }
 
@@ -399,33 +398,33 @@ class FilterExpertRuleTest {
         return Stream.of(
                 // --- IS_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.LINE, Set.of("ID1"))), line1, true),
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.LINE, Set.of("ID2"))), line2, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.LINE, Set.of("ID1"))), line1, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.LINE, Set.of("ID2"))), line2, true),
                 // VoltageLevel fields
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL11"))), line1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL21"))), line1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL12"))), line2, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL22"))), line2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL11"))), line1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL21"))), line1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL12"))), line2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL22"))), line2, true),
                 // Substation fields
-                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_1, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST1"))), line1, true),
-                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_2, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST2"))), line1, true),
-                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_1, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST3"))), line2, true),
-                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_2, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST4"))), line2, true),
+                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_1, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST1"))), line1, true),
+                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_2, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST2"))), line1, true),
+                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_1, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST3"))), line2, true),
+                Arguments.of(IS_PART_OF, FieldType.SUBSTATION_ID_2, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST4"))), line2, true),
 
                 // --- IS_NOT_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.LINE, Set.of("ID1"))), line2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.LINE, Set.of("ID2"))), line1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.LINE, Set.of("ID1"))), line2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.LINE, Set.of("ID2"))), line1, true),
                 // VoltageLevel fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL11"))), line2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL21"))), line2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL12"))), line1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL22"))), line1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL11"))), line2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL21"))), line2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL12"))), line1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL22"))), line1, true),
                 // Substation fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_1, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST1"))), line2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_2, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST2"))), line2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_1, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST3"))), line1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_2, Set.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST4"))), line1, true)
+                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_1, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST1"))), line2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_2, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST2"))), line2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_1, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST3"))), line1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.SUBSTATION_ID_2, List.of(new IdentifierListFilter(EquipmentType.SUBSTATION, Set.of("SUBST4"))), line1, true)
         );
     }
 
@@ -481,23 +480,23 @@ class FilterExpertRuleTest {
         return Stream.of(
                 // --- IS_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.HVDC_LINE, Set.of("ID1"))), hvdcLine1, true),
-                Arguments.of(IS_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.HVDC_LINE, Set.of("ID2"))), hvdcLine2, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.HVDC_LINE, Set.of("ID1"))), hvdcLine1, true),
+                Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.HVDC_LINE, Set.of("ID2"))), hvdcLine2, true),
                 // VoltageLevel fields
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL11"))), hvdcLine1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL21"))), hvdcLine1, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL12"))), hvdcLine2, true),
-                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL22"))), hvdcLine2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL11"))), hvdcLine1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL21"))), hvdcLine1, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL12"))), hvdcLine2, true),
+                Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL22"))), hvdcLine2, true),
 
                 // --- IS_NOT_PART_OF --- //
                 // Common fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.HVDC_LINE, Set.of("ID1"))), hvdcLine2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.ID, Set.of(new IdentifierListFilter(EquipmentType.HVDC_LINE, Set.of("ID2"))), hvdcLine1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.HVDC_LINE, Set.of("ID1"))), hvdcLine2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.HVDC_LINE, Set.of("ID2"))), hvdcLine1, true),
                 // VoltageLevel fields
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL11"))), hvdcLine2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL21"))), hvdcLine2, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL12"))), hvdcLine1, true),
-                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, Set.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL22"))), hvdcLine1, true)
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL11"))), hvdcLine2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL21"))), hvdcLine2, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_1, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL12"))), hvdcLine1, true),
+                Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID_2, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL22"))), hvdcLine1, true)
         );
     }
 
@@ -540,43 +539,43 @@ class FilterExpertRuleTest {
         );
     }
 
-    private static AbstractFilter mockFilter(EquipmentType equipmentType) {
+    private static Filter mockFilter(EquipmentType equipmentType) {
         Network network = TestNetworkUtils.createTestNetwork();
-        AbstractFilter abstractFilter = mock(AbstractFilter.class);
+        Filter filterMock = mock(Filter.class);
 
         if (EquipmentType.LOAD.equals(equipmentType)) {
             List<Identifiable<?>> loadList = network.getLoadStream().collect(Collectors.toList());
-            when(abstractFilter.evaluate(any())).thenReturn(loadList);
+            when(filterMock.evaluate(any())).thenReturn(loadList);
         } else if (EquipmentType.GENERATOR.equals(equipmentType)) {
             List<Identifiable<?>> generatorList = network.getGeneratorStream().collect(Collectors.toList());
-            when(abstractFilter.evaluate(any())).thenReturn(generatorList);
+            when(filterMock.evaluate(any())).thenReturn(generatorList);
         } else if (EquipmentType.BATTERY.equals(equipmentType)) {
             List<Identifiable<?>> batteryList = network.getBatteryStream().collect(Collectors.toList());
-            when(abstractFilter.evaluate(any())).thenReturn(batteryList);
+            when(filterMock.evaluate(any())).thenReturn(batteryList);
         } else {
-            when(abstractFilter.evaluate(any())).thenReturn(Collections.emptyList());
+            when(filterMock.evaluate(any())).thenReturn(Collections.emptyList());
         }
-        return abstractFilter;
+        return filterMock;
     }
 
     @Test
     void testGetDataTypeReturnsFilter() {
-        FilterExpertRule rule = FilterExpertRule.builder().fieldType(FieldType.ID).operatorType(OperatorType.IS_PART_OF).referenceFilters(Collections.emptySet()).build();
+        FilterExpertRule rule = FilterExpertRule.builder().field(FieldType.ID).operator(OperatorType.IS_PART_OF).filters(Collections.emptyList()).build();
 
         assertThat(rule.getDataType()).isEqualTo(DataType.FILTER);
     }
 
     @Test
     void testGetOperatorTypeReturnsExpectedOperatorType() {
-        FilterExpertRule rule = FilterExpertRule.builder().fieldType(FieldType.ID).operatorType(OperatorType.IS_PART_OF).referenceFilters(Collections.emptySet()).build();
+        FilterExpertRule rule = FilterExpertRule.builder().field(FieldType.ID).operator(OperatorType.IS_PART_OF).filters(Collections.emptyList()).build();
 
-        assertThat(rule.getOperatorType()).isEqualTo(OperatorType.IS_PART_OF);
+        assertThat(rule.getOperator()).isEqualTo(OperatorType.IS_PART_OF);
     }
 
     @Test
     void testClearCacheClearsCachingSet() {
         Set<String> mockedCache = mock(Set.class);
-        FilterExpertRule rule = FilterExpertRule.builder().fieldType(FieldType.ID).operatorType(OperatorType.IS_PART_OF).referenceFilters(Collections.emptySet()).build();
+        FilterExpertRule rule = FilterExpertRule.builder().field(FieldType.ID).operator(OperatorType.IS_PART_OF).filters(Collections.emptyList()).build();
         rule.setCachedFilterEvaluation(true);
         rule.setFilterEvaluationCache(mockedCache);
 
@@ -596,13 +595,13 @@ class FilterExpertRuleTest {
         "provideArgumentsForLineTest",
         "provideArgumentsForHvdcTest",
     })
-    void testFilterRoundTripSerializationDeserialization(OperatorType operatorType, FieldType fieldType, Set<Filter> referenceFilters,
+    void testFilterRoundTripSerializationDeserialization(OperatorType operatorType, FieldType fieldType, List<Filter> filters,
                                                          Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         ExpertRule rule = FilterExpertRule.builder()
-                .operatorType(operatorType)
-                .fieldType(fieldType)
-                .referenceFilters(referenceFilters)
+                .operator(operatorType)
+                .field(fieldType)
+                .filters(filters)
                 .build();
 
         String serializedRule = objectMapper.writeValueAsString(rule);
@@ -613,14 +612,14 @@ class FilterExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource("provideMockRuleEvaluationArguments")
-    void testMockRuleEvaluationReturnsExpected(FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters, String equipmentId, boolean expectedResult) {
+    void testMockRuleEvaluationReturnsExpected(FieldType fieldType, OperatorType operatorType, List<Filter> filters, String equipmentId, boolean expectedResult) {
         Identifiable<?> identifiable = mock(Identifiable.class, RETURNS_DEEP_STUBS);
         when(identifiable.getId()).thenReturn(equipmentId);
         when(identifiable.getNetwork().getId()).thenReturn("testNetworkId");
         ExpertRule rule = FilterExpertRule.builder()
-                .fieldType(fieldType)
-                .operatorType(operatorType)
-                .referenceFilters(referenceFilters)
+                .field(fieldType)
+                .operator(operatorType)
+                .filters(filters)
                 .build();
 
         assertThat(rule.evaluateRule(identifiable)).isEqualTo(expectedResult);
@@ -628,12 +627,12 @@ class FilterExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource("provideRealRuleEvaluationArguments")
-    void testRealRuleEvaluationReturnsExpected(FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters, EquipmentType equipmentType, String equipmentId, boolean expectedResult) {
+    void testRealRuleEvaluationReturnsExpected(FieldType fieldType, OperatorType operatorType, List<Filter> filters, EquipmentType equipmentType, String equipmentId, boolean expectedResult) {
         Identifiable<?> identifiable = TestNetworkUtils.getEquipmentFromTestNetwork(equipmentType, equipmentId);
         ExpertRule rule = FilterExpertRule.builder()
-                .fieldType(fieldType)
-                .operatorType(operatorType)
-                .referenceFilters(referenceFilters)
+                .field(fieldType)
+                .operator(operatorType)
+                .filters(filters)
                 .build();
 
         assertThat(rule.evaluateRule(identifiable)).isEqualTo(expectedResult);
@@ -643,9 +642,9 @@ class FilterExpertRuleTest {
     @MethodSource("provideArgumentsForTestWithException")
     void testEvaluateRuleWithException(OperatorType operatorType, FieldType fieldType, Identifiable<?> equipment, Class<Throwable> expectedException) {
         ExpertRule rule = FilterExpertRule.builder()
-                .fieldType(fieldType)
-                .operatorType(operatorType)
-                .referenceFilters(Collections.emptySet())
+                .field(fieldType)
+                .operator(operatorType)
+                .filters(Collections.emptyList())
                 .build();
 
         assertThrows(expectedException, () -> rule.evaluateRule(equipment));
@@ -661,11 +660,11 @@ class FilterExpertRuleTest {
         "provideArgumentsForLineTest",
         "provideArgumentsForHvdcTest",
     })
-    void testEvaluateRule(OperatorType operatorType, FieldType fieldType, Set<Filter> referenceFilters, Identifiable<?> equipment, boolean expected) {
+    void testEvaluateRule(OperatorType operatorType, FieldType fieldType, List<Filter> filters, Identifiable<?> equipment, boolean expected) {
         ExpertRule rule = FilterExpertRule.builder()
-                .fieldType(fieldType)
-                .operatorType(operatorType)
-                .referenceFilters(referenceFilters)
+                .field(fieldType)
+                .operator(operatorType)
+                .filters(filters)
                 .build();
 
         assertEquals(expected, rule.evaluateRule(equipment));

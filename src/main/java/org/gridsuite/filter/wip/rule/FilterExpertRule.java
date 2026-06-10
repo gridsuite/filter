@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FilterExpertRule implements ExpertRule {
 
-    private FieldType fieldType;
-    private OperatorType operatorType;
-    private Set<Filter> referenceFilters;
+    private FieldType field;
+    private OperatorType operator;
+    private List<Filter> filters;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
@@ -47,18 +47,18 @@ public final class FilterExpertRule implements ExpertRule {
     private Set<String> filterEvaluationCache = new HashSet<>();
 
     @Builder
-    public FilterExpertRule(FieldType fieldType, OperatorType operatorType, Set<Filter> referenceFilters) {
-        this.fieldType = Objects.requireNonNull(fieldType);
-        this.operatorType = Objects.requireNonNull(operatorType);
-        this.referenceFilters = Set.copyOf(Objects.requireNonNull(referenceFilters));
+    public FilterExpertRule(FieldType field, OperatorType operator, List<Filter> filters) {
+        this.field = Objects.requireNonNull(field);
+        this.operator = Objects.requireNonNull(operator);
+        this.filters = List.copyOf(Objects.requireNonNull(filters));
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
         Network network = identifiable.getNetwork();
-        String targetId = ExpertFilterUtils.getFieldValue(fieldType, null, identifiable);
+        String targetId = ExpertFilterUtils.getFieldValue(field, null, identifiable);
 
-        return switch (operatorType) {
+        return switch (operator) {
             case IS_PART_OF -> evaluateIsPartOfOperator(network, targetId);
             case IS_NOT_PART_OF -> !evaluateIsPartOfOperator(network, targetId);
             default -> throw unsupportedOperatorException();
@@ -79,7 +79,7 @@ public final class FilterExpertRule implements ExpertRule {
 
     private boolean evaluateIsPartOfOperator(Network network, String targetId) {
         if (!cachedFilterEvaluation) {
-            Set<String> filterEvaluation = referenceFilters.stream()
+            Set<String> filterEvaluation = filters.stream()
                     .map(filter -> filter.evaluate(network))
                     .flatMap(List::stream)
                     .map(Identifiable::getId)

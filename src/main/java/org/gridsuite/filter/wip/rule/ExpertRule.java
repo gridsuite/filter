@@ -42,10 +42,10 @@ public interface ExpertRule {
 
     DataType getDataType();
 
-    OperatorType getOperatorType();
+    OperatorType getOperator();
 
     default PowsyblException unsupportedOperatorException() {
-        return new PowsyblException(String.format("%s operator not supported with %s rule data type", getOperatorType(), getDataType()));
+        return new PowsyblException(String.format("%s operator not supported with %s rule data type", getOperator(), getDataType()));
     }
 
     default void clearCache() {

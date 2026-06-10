@@ -18,8 +18,8 @@ import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.data.DataType;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -30,41 +30,41 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NumberExpertRule implements ExpertRule {
 
-    private FieldType fieldType;
-    private OperatorType operatorType;
-    private Double referenceValue;
-    private Set<Double> referenceValues;
+    private FieldType field;
+    private OperatorType operator;
+    private Double value;
+    private List<Double> values;
 
     public static Double getNumberValue(String value) {
         return value == null ? Double.NaN : Double.parseDouble(value);
     }
 
     @Builder
-    public NumberExpertRule(FieldType fieldType, OperatorType operatorType, Double referenceValue, Set<Double> referenceValues) {
-        this.fieldType = Objects.requireNonNull(fieldType);
-        this.operatorType = Objects.requireNonNull(operatorType);
-        this.referenceValue = referenceValue != null ? referenceValue : Double.NaN;
-        this.referenceValues = referenceValues != null ? Set.copyOf(referenceValues) : Collections.singleton(Double.NaN);
+    public NumberExpertRule(FieldType field, OperatorType operator, Double value, List<Double> values) {
+        this.field = Objects.requireNonNull(field);
+        this.operator = Objects.requireNonNull(operator);
+        this.value = value != null ? value : Double.NaN;
+        this.values = values != null ? List.copyOf(values) : List.of(Double.NaN);
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
-        Double fieldValue = getNumberValue(ExpertFilterUtils.getFieldValue(fieldType, null, identifiable));
+        Double fieldValue = getNumberValue(ExpertFilterUtils.getFieldValue(field, null, identifiable));
         if (fieldValue.isNaN()) {
-            return OperatorType.NOT_EXISTS.equals(operatorType);
+            return OperatorType.NOT_EXISTS.equals(operator);
         }
 
-        return switch (operatorType) {
-            case EQUALS -> fieldValue.equals(referenceValue);
-            case GREATER_OR_EQUALS -> fieldValue.compareTo(referenceValue) >= 0;
-            case GREATER -> fieldValue.compareTo(referenceValue) > 0;
-            case LOWER_OR_EQUALS -> fieldValue.compareTo(referenceValue) <= 0;
-            case LOWER -> fieldValue.compareTo(referenceValue) < 0;
+        return switch (operator) {
+            case EQUALS -> fieldValue.equals(value);
+            case GREATER_OR_EQUALS -> fieldValue.compareTo(value) >= 0;
+            case GREATER -> fieldValue.compareTo(value) > 0;
+            case LOWER_OR_EQUALS -> fieldValue.compareTo(value) <= 0;
+            case LOWER -> fieldValue.compareTo(value) < 0;
             case BETWEEN -> evaluateBetweenOperator(fieldValue);
             case EXISTS -> true;
             case NOT_EXISTS -> false;
-            case IN -> referenceValues.contains(fieldValue);
-            case NOT_IN -> !referenceValues.contains(fieldValue);
+            case IN -> values.contains(fieldValue);
+            case NOT_IN -> !values.contains(fieldValue);
             default -> throw unsupportedOperatorException();
         };
     }
@@ -76,8 +76,8 @@ public final class NumberExpertRule implements ExpertRule {
     }
 
     private boolean evaluateBetweenOperator(Double fieldValue) {
-        Double lowerLimit = Collections.min(referenceValues);
-        Double upperLimit = Collections.max(referenceValues);
+        Double lowerLimit = Collections.min(values);
+        Double upperLimit = Collections.max(values);
         return fieldValue.compareTo(lowerLimit) >= 0 && fieldValue.compareTo(upperLimit) <= 0;
     }
 }
