@@ -6,15 +6,15 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.identifier;
+package org.gridsuite.filter.wip;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
-import org.gridsuite.filter.wip.Filter;
-import org.gridsuite.filter.wip.TestNetworkUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -152,6 +152,17 @@ class IdentifierListFilterTest {
         Filter filter = new IdentifierListFilter(EquipmentType.LINE, Collections.emptySet());
 
         assertThat(filter.getFilterType()).isEqualTo(FilterType.IDENTIFIER_LIST);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideFilterArguments")
+    void testFilterRoundTripSerializationDeserialization(Filter filter, Set<String> expectedEquipmentIds) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String serializedFilter = objectMapper.writeValueAsString(filter);
+        Filter deserializedFilter = objectMapper.readValue(serializedFilter, Filter.class);
+
+        assertThat(deserializedFilter).isEqualTo(filter);
     }
 
     @ParameterizedTest

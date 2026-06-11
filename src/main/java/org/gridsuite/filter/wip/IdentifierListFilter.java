@@ -6,13 +6,14 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package org.gridsuite.filter.wip.identifier;
+package org.gridsuite.filter.wip;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
+import lombok.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
-import org.gridsuite.filter.wip.AbstractFilter;
 
 import java.util.Objects;
 import java.util.Set;
@@ -21,22 +22,29 @@ import java.util.Set;
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
-public class IdentifierListFilter extends AbstractFilter {
+@Getter
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class IdentifierListFilter implements Filter {
 
-    private final Set<String> equipmentIds;
+    private EquipmentType equipmentType;
+    private Set<String> equipmentIds;
 
+    @Builder
     public IdentifierListFilter(EquipmentType equipmentType, Set<String> equipmentIds) {
-        super(equipmentType);
+        this.equipmentType = Objects.requireNonNull(equipmentType);
         this.equipmentIds = Set.copyOf(Objects.requireNonNull(equipmentIds));
     }
 
     @Override
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public FilterType getFilterType() {
         return FilterType.IDENTIFIER_LIST;
     }
 
     @Override
-    protected boolean evaluateFilterRule(Identifiable<?> identifiable) {
+    public boolean evaluateFilterRule(Identifiable<?> identifiable) {
+        Objects.requireNonNull(identifiable);
         return equipmentIds.contains(identifiable.getId());
     }
 }
