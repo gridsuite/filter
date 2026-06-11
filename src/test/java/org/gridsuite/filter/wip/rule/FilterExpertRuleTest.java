@@ -53,7 +53,7 @@ class FilterExpertRuleTest {
         );
     }
 
-    private static Stream<Arguments> provideRealRuleEvaluationArguments() {
+    private static Stream<Arguments> provideRealNetworkIdentifiableRuleEvaluationArguments() {
         return Stream.of(
                 Arguments.of(FieldType.ID, OperatorType.IS_PART_OF,
                         List.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")),
@@ -637,7 +637,7 @@ class FilterExpertRuleTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideRealRuleEvaluationArguments")
+    @MethodSource("provideRealNetworkIdentifiableRuleEvaluationArguments")
     void testRealRuleEvaluationReturnsExpected(FieldType fieldType, OperatorType operatorType, List<Filter> filters, EquipmentType equipmentType, String equipmentId, boolean expectedResult) {
         Identifiable<?> identifiable = TestNetworkUtils.getEquipmentFromTestNetwork(equipmentType, equipmentId);
         ExpertRule rule = FilterExpertRule.builder()

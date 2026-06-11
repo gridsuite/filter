@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  */
 class CombinatorExpertRuleTest {
 
-    private static Stream<Arguments> provideArgumentsForTest() {
+    private static Stream<Arguments> provideLegacyTestArgumentsForTest() {
         Generator gen = Mockito.mock(Generator.class);
         Mockito.when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
         // Generator fields
@@ -112,7 +112,7 @@ class CombinatorExpertRuleTest {
         );
     }
 
-    private static Stream<Arguments> provideRealRuleEvaluationArguments() {
+    private static Stream<Arguments> provideRealNetworkIdentifiableRuleEvaluationArguments() {
         return Stream.of(
                 Arguments.of(CombinatorType.OR,
                         List.of(BooleanExpertRule.builder().field(FieldType.CONNECTED).operator(OperatorType.EQUALS).value(true).build(),
@@ -207,7 +207,7 @@ class CombinatorExpertRuleTest {
     }
 
     @ParameterizedTest
-    @MethodSource({"provideArgumentsForTest"})
+    @MethodSource("provideLegacyTestArgumentsForTest")
     void testFilterRoundTripSerializationDeserialization(CombinatorType combinatorType, List<ExpertRule> rules, Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         ExpertRule rule = CombinatorExpertRule.builder()
@@ -222,7 +222,7 @@ class CombinatorExpertRuleTest {
     }
 
     @ParameterizedTest
-    @MethodSource({"provideArgumentsForTest"})
+    @MethodSource("provideLegacyTestArgumentsForTest")
     void testEvaluateRule(CombinatorType combinatorType, List<ExpertRule> rules, Identifiable<?> equipment, boolean expected) {
         ExpertRule rule = CombinatorExpertRule.builder()
                 .combinator(combinatorType)
@@ -245,7 +245,7 @@ class CombinatorExpertRuleTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideRealRuleEvaluationArguments")
+    @MethodSource("provideRealNetworkIdentifiableRuleEvaluationArguments")
     void testRealRuleEvaluationReturnsExpected(CombinatorType combinatorType, List<ExpertRule> rules, EquipmentType equipmentType, String equipmentId, boolean expectedResult) {
         Identifiable<?> identifiable = TestNetworkUtils.getEquipmentFromTestNetwork(equipmentType, equipmentId);
         ExpertRule rule = CombinatorExpertRule.builder()
