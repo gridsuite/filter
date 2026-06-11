@@ -160,7 +160,15 @@ class PropertiesExpertRuleTest {
 
                 // --- NOT_IN --- //
                 Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Lille", "PARIS"), substation, false),
-                Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Paris"), substation, true)
+                Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "cvgRegion", List.of("Paris"), substation, true),
+
+                // --- EXISTS --- //
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "cvgRegion", null, substation, true),
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "test", null, substation, false),
+
+                // --- NOT_EXISTS --- //
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "cvgRegion", null, substation, false),
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "test", null, substation, true)
         );
     }
 
@@ -198,7 +206,23 @@ class PropertiesExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Lille"), generator, false),
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), generator, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), generator, false),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("11"), generator, true)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("11"), generator, true),
+
+                // --- EXISTS --- //
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "CodeOI", null, generator, true),
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "test", null, generator, false),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "regionCSV", null, generator, true),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "test", null, generator, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, generator, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "test", null, generator, false),
+
+                // --- NOT_EXISTS --- //
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "CodeOI", null, generator, false),
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "test", null, generator, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "regionCSV", null, generator, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "test", null, generator, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, generator, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "test", null, generator, true)
    );
     }
 
@@ -252,7 +276,29 @@ class PropertiesExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), line, false),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), line, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), line, false),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), line, true)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), line, true),
+                // --- EXISTS --- //
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "region", null, line, true),
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "a", null, line, false),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", null, line, true),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "b", null, line, false),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", null, line, true),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "c", null, line, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", null, line, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "d", null, line, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, line, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "e", null, line, false),
+                // --- NOT_EXISTS --- //
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "region", null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "a", null, line, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "regionCSV", null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "b", null, line, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "regionCSV", null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "c", null, line, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "d", null, line, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, line, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "e", null, line, true)
    );
     }
 
@@ -285,7 +331,21 @@ class PropertiesExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), load, false),
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), load, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), load, false),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), load, true)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), load, true),
+                // --- EXISTS --- //
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "propertyNameLoad", null, load, true),
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "a", null, load, false),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, load, true),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, load, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, load, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "c", null, load, false),
+                // --- NOT_EXISTS --- //
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "propertyNameLoad", null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "a", null, load, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, load, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, load, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "c", null, load, true)
         );
     }
 
@@ -318,7 +378,21 @@ class PropertiesExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), shuntCompensator, false),
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation2"), shuntCompensator, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), shuntCompensator, false),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), shuntCompensator, true)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), shuntCompensator, true),
+                // --- EXISTS --- //
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "propertyNameSC", null, shuntCompensator, true),
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "a", null, shuntCompensator, false),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, shuntCompensator, true),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, shuntCompensator, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, shuntCompensator, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "c", null, shuntCompensator, false),
+                // --- NOT_EXISTS --- //
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "propertyNameSC", null, shuntCompensator, false),
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "a", null, shuntCompensator, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, shuntCompensator, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, shuntCompensator, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, shuntCompensator, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "c", null, shuntCompensator, true)
         );
     }
 
@@ -370,7 +444,25 @@ class PropertiesExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), twoWindingsTransformer, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), twoWindingsTransformer, false),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), twoWindingsTransformer, true),
-                Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), transformerWithNullSub, false)
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "regionCSV", List.of("Paris"), transformerWithNullSub, false),
+                // --- EXISTS --- //
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "propertyNameTWT", null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "a", null, twoWindingsTransformer, false),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "regionCSV", null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, twoWindingsTransformer, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "c", null, twoWindingsTransformer, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, twoWindingsTransformer, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "d", null, twoWindingsTransformer, false),
+                // --- NOT_EXISTS --- //
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "propertyNameTWT", null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "a", null, twoWindingsTransformer, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "regionCSV", null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, twoWindingsTransformer, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "c", null, twoWindingsTransformer, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, twoWindingsTransformer, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "d", null, twoWindingsTransformer, true)
         );
     }
 
@@ -402,7 +494,21 @@ class PropertiesExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), svar, false),
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), svar, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), svar, false),
-                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), svar, true)
+                Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), svar, true),
+                // --- EXISTS --- //
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "propertyNameSVAR", null, svar, true),
+                Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "a", null, svar, false),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, svar, true),
+                Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, svar, false),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, svar, true),
+                Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "c", null, svar, false),
+                // --- NOT_EXISTS --- //
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "propertyNameSVAR", null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "a", null, svar, true),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, svar, true),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, svar, false),
+                Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "c", null, svar, true)
         );
     }
 
@@ -467,7 +573,29 @@ class PropertiesExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("33"), threeWindingsTransformer, false),
             Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("22"), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("44"), threeWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("22"), threeWindingsTransformer, true)
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", List.of("22"), threeWindingsTransformer, true),
+            // --- EXISTS --- //
+            Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "propertyNameTWT", null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "test", null, threeWindingsTransformer, false),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "regionCSV", null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "a", null, threeWindingsTransformer, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "b", null, threeWindingsTransformer, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "c", null, threeWindingsTransformer, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", null, threeWindingsTransformer, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "d", null, threeWindingsTransformer, false),
+            // --- NOT_EXISTS --- //
+            Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "propertyNameTWT", null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "test", null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "regionCSV", null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "a", null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "b", null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "c", null, threeWindingsTransformer, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "CodeOI", null, threeWindingsTransformer, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_3, "d", null, threeWindingsTransformer, true)
         );
     }
 
@@ -522,8 +650,30 @@ class PropertiesExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("33"), hvdc, false),
             Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", List.of("22"), hvdc, true),
             Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("42"), hvdc, false),
-            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("21"), hvdc, true)
-        );
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", List.of("21"), hvdc, true),
+            // --- EXISTS --- //
+            Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "propertyNameHVDC", null, hvdc, true),
+            Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "a", null, hvdc, false),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", null, hvdc, true),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "b", null, hvdc, false),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", null, hvdc, true),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "c", null, hvdc, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", null, hvdc, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "g", null, hvdc, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, hvdc, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "h", null, hvdc, false),
+            // --- NOT_EXISTS --- //
+            Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "propertyNameHVDC", null, hvdc, false),
+            Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "a", null, hvdc, true),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "propertyNameSubstation", null, hvdc, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "b", null, hvdc, true),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "propertyNameSubstation", null, hvdc, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "c", null, hvdc, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "CodeOI", null, hvdc, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "g", null, hvdc, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, hvdc, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "h", null, hvdc, true)
+            );
     }
 
     private static Stream<Arguments> provideArgumentsForBoundaryLineTest() {
@@ -554,7 +704,21 @@ class PropertiesExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), boundaryLine, false),
             Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), boundaryLine, true),
             Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), boundaryLine, false),
-            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), boundaryLine, true)
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), boundaryLine, true),
+            // --- EXISTS --- //
+            Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "propertyNameBL", null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "test", null, boundaryLine, false),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "test", null, boundaryLine, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, boundaryLine, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "test", null, boundaryLine, false),
+            // --- NOT_EXISTS --- //
+            Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "propertyNameBL", null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "test", null, boundaryLine, true),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "test", null, boundaryLine, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "test", null, boundaryLine, true)
         );
     }
 

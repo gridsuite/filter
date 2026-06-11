@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.utils.expertfilter.DataType;
+import org.gridsuite.filter.utils.expertfilter.OperatorType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +45,11 @@ public class PropertiesExpertRule extends AbstractExpertRule {
         }
         String propertyValue = getFieldValue(this.getField(), propertyName, identifiable);
         if (propertyValue == null) {
-            return false;
+            return this.getOperator() == OperatorType.NOT_EXISTS;
         }
         return switch (this.getOperator()) {
+            case EXISTS -> true;
+            case NOT_EXISTS -> false;
             case IN -> this.getPropertyValues().stream().anyMatch(propertyValue::equalsIgnoreCase);
             case NOT_IN -> this.getPropertyValues().stream().noneMatch(propertyValue::equalsIgnoreCase);
             default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
