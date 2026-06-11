@@ -8,59 +8,23 @@
 
 package org.gridsuite.filter.wip;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import com.powsybl.iidm.network.VoltageLevel;
 import org.gridsuite.filter.utils.EquipmentType;
-import org.gridsuite.filter.utils.FilterType;
-import org.gridsuite.filter.wip.identifier.IdentifierListFilter;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
-@Beta
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type",
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        visible = true
-)
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
-})
-public abstract class AbstractFilter implements Filter {
+final class NetworkUtils {
 
-    private final EquipmentType equipmentType;
-
-    protected AbstractFilter(EquipmentType equipmentType) {
-        this.equipmentType = Objects.requireNonNull(equipmentType);
+    private NetworkUtils() {
     }
 
-    public List<Identifiable<?>> evaluate(Network network) {
-        return evaluate(network, TopologyKind.BUS_BREAKER);
-    }
-
-    public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind) {
-        return getConsideredEquipmentStream(Objects.requireNonNull(network), topologyKind)
-                .filter(this::evaluateFilterRule)
-                .toList();
-    }
-
-    @JsonProperty("type")
-    public abstract FilterType getFilterType();
-
-    protected abstract boolean evaluateFilterRule(Identifiable<?> identifiable);
-
-    private Stream<Identifiable<?>> getConsideredEquipmentStream(Network network, TopologyKind topologyKind) {
+    static Stream<Identifiable<?>> getEquipmentStream(Network network, EquipmentType equipmentType, TopologyKind topologyKind) {
         return switch (equipmentType) {
             case LINE -> network.getLineStream().map(line -> line);
             case BOUNDARY_LINE -> network.getBoundaryLineStream().map(boundaryLine -> boundaryLine);
@@ -81,7 +45,7 @@ public abstract class AbstractFilter implements Filter {
         };
     }
 
-    private Stream<Identifiable<?>> getBusStream(Network network, TopologyKind topologyKind) {
+    private static Stream<Identifiable<?>> getBusStream(Network network, TopologyKind topologyKind) {
         return network.getVoltageLevelStream()
                 .filter(vl -> topologyKind == null || vl.getTopologyKind() == topologyKind)
                 .map(VoltageLevel::getBusBreakerView)

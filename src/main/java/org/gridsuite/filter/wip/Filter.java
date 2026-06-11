@@ -8,9 +8,12 @@
 
 package org.gridsuite.filter.wip;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
+import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 
 import java.util.List;
@@ -18,11 +21,37 @@ import java.util.List;
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    property = "filterType",
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    visible = true
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = IdentifierListFilter.class, name = "IDENTIFIER_LIST"),
+    @JsonSubTypes.Type(value = ExpertFilter.class, name = "EXPERT"),
+})
 public interface Filter {
 
-    List<Identifiable<?>> evaluate(Network network);
+    default List<Identifiable<?>> evaluate(Network network) {
+        return evaluate(network, TopologyKind.BUS_BREAKER);
+    }
 
-    List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind);
+    default List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind) {
+        clearEvaluationCache();
+
+        return NetworkUtils.getEquipmentStream(network, getEquipmentType(), topologyKind)
+                .filter(this::evaluateFilterRule)
+                .toList();
+    }
+
+    default void clearEvaluationCache() {
+        // Do nothing by default
+    }
+
+    boolean evaluateFilterRule(Identifiable<?> identifiable);
+
+    EquipmentType getEquipmentType();
 
     FilterType getFilterType();
 }
