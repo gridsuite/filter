@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
-@Data
+@Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FilterExpertRule implements ExpertRule {
@@ -44,7 +44,7 @@ public final class FilterExpertRule implements ExpertRule {
     private boolean cachedFilterEvaluation = false;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    private Set<String> filterEvaluationCache = new HashSet<>();
+    private final Set<String> filterEvaluationCache = new HashSet<>();
 
     @Builder
     public FilterExpertRule(FieldType field, OperatorType operator, List<Filter> filters) {

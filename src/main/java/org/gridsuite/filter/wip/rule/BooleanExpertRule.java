@@ -24,7 +24,7 @@ import java.util.Optional;
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
-@Data
+@Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BooleanExpertRule implements ExpertRule {

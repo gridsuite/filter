@@ -22,7 +22,7 @@ import java.util.Set;
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
-@Data
+@Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IdentifierListFilter implements Filter {

@@ -24,7 +24,7 @@ import java.util.Objects;
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
  */
 @Beta
-@Data
+@Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PropertiesExpertRule implements ExpertRule {

@@ -574,15 +574,26 @@ class FilterExpertRuleTest {
 
     @Test
     void testClearCacheClearsCachingSet() {
-        Set<String> mockedCache = mock(Set.class);
-        FilterExpertRule rule = FilterExpertRule.builder().field(FieldType.ID).operator(OperatorType.IS_PART_OF).filters(Collections.emptyList()).build();
-        rule.setCachedFilterEvaluation(true);
-        rule.setFilterEvaluationCache(mockedCache);
+        String identifiableId = "identifiableId";
+        Identifiable<?> identifiableMock = mock(Identifiable.class);
+        when(identifiableMock.getId()).thenReturn(identifiableId);
+        Filter filterMock = mock(Filter.class);
+        when(filterMock.evaluate(any())).thenReturn(List.of(identifiableMock));
+        FilterExpertRule rule = FilterExpertRule.builder().field(FieldType.ID).operator(OperatorType.IS_PART_OF).filters(List.of(filterMock)).build();
+        rule.evaluateRule(mock(Identifiable.class));
 
+        boolean isCachedFilterEvaluationBeforeClear = rule.isCachedFilterEvaluation();
+        boolean isCacheEmptyBeforeClear = rule.getFilterEvaluationCache().isEmpty();
+        boolean isIdPartOfCacheBeforeClear = rule.getFilterEvaluationCache().contains(identifiableId);
         rule.clearCache();
+        boolean isCacheEmptyAfterClear = rule.getFilterEvaluationCache().isEmpty();
+        boolean isCachedFilterEvaluationAfterClear = rule.isCachedFilterEvaluation();
 
-        verify(mockedCache).clear();
-        assertThat(rule.isCachedFilterEvaluation()).isFalse();
+        assertThat(isIdPartOfCacheBeforeClear).isTrue();
+        assertThat(isCachedFilterEvaluationBeforeClear).isTrue();
+        assertThat(isCacheEmptyBeforeClear).isFalse();
+        assertThat(isCacheEmptyAfterClear).isTrue();
+        assertThat(isCachedFilterEvaluationAfterClear).isFalse();
     }
 
     @ParameterizedTest
