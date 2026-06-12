@@ -17,6 +17,7 @@ import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.gridsuite.filter.wip.data.DataType;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,17 +40,19 @@ public final class PropertiesExpertRule implements ExpertRule {
         this.field = Objects.requireNonNull(field);
         this.operator = Objects.requireNonNull(operator);
         this.propertyName = Objects.requireNonNull(propertyName);
-        this.propertyValues = List.copyOf(Objects.requireNonNull(propertyValues));
+        this.propertyValues = propertyValues == null ? Collections.emptyList() : List.copyOf(propertyValues);
     }
 
     @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
         String propertyValue = ExpertFilterUtils.getFieldValue(field, propertyName, identifiable);
         if (propertyValue == null) {
-            return false;
+            return operator == OperatorType.NOT_EXISTS;
         }
 
         return switch (operator) {
+            case EXISTS -> true;
+            case NOT_EXISTS -> false;
             case IN -> propertyValues.stream().anyMatch(propertyValue::equalsIgnoreCase);
             case NOT_IN -> propertyValues.stream().noneMatch(propertyValue::equalsIgnoreCase);
             default -> throw unsupportedOperatorException();
