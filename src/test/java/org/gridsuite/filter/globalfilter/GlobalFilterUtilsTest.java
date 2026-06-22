@@ -287,7 +287,10 @@ class GlobalFilterUtilsTest implements WithAssertions {
             Arguments.of(EquipmentType.LINE, List.of(FieldType.SUBSTATION_PROPERTIES_1, FieldType.SUBSTATION_PROPERTIES_2)),
             Arguments.of(EquipmentType.GENERATOR, List.of(FieldType.SUBSTATION_PROPERTIES)),
             Arguments.of(EquipmentType.SUBSTATION, List.of(FieldType.FREE_PROPERTIES)),
-            Arguments.of(EquipmentType.BUS, List.of(FieldType.SUBSTATION_PROPERTIES))
+            Arguments.of(EquipmentType.BUS, List.of(FieldType.SUBSTATION_PROPERTIES)),
+            Arguments.of(EquipmentType.HVDC_LINE, List.of(FieldType.SUBSTATION_PROPERTIES_1, FieldType.SUBSTATION_PROPERTIES_2)),
+            Arguments.of(EquipmentType.VSC_CONVERTER_STATION, List.of(FieldType.SUBSTATION_PROPERTIES)),
+            Arguments.of(EquipmentType.LCC_CONVERTER_STATION, List.of(FieldType.SUBSTATION_PROPERTIES))
         );
     }
 

@@ -58,7 +58,7 @@ public final class ExpertFilterUtils {
                 case BOUNDARY_LINE -> getBoundaryLinesFieldValue(field, propertyName, (BoundaryLine) identifiable);
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
                 case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
-                case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, (HvdcConverterStation<?>) identifiable);
+                case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, propertyName, (HvdcConverterStation<?>) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
         };
@@ -304,12 +304,13 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getHvdcConverterStationFieldValue(FieldType field, HvdcConverterStation<?> hvdcConverterStation) {
+    private static String getHvdcConverterStationFieldValue(FieldType field, String propertyName, HvdcConverterStation<?> hvdcConverterStation) {
         return switch (field) {
             case COUNTRY,
                  NOMINAL_VOLTAGE,
                  VOLTAGE_LEVEL_ID,
                  SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, hvdcConverterStation.getTerminal().getVoltageLevel());
+            case SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, hvdcConverterStation.getTerminal().getVoltageLevel());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + hvdcConverterStation.getType() + "]");
         };
     }
