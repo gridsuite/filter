@@ -50,7 +50,7 @@ public final class ExpertFilterUtils {
                 case LOAD -> getLoadFieldValue(field, propertyName, (Load) identifiable);
                 case SHUNT_COMPENSATOR -> getShuntCompensatorFieldValue(field, propertyName, (ShuntCompensator) identifiable);
                 case BUS -> getBusFieldValue(field, (Bus) identifiable, propertyName);
-                case BUSBAR_SECTION -> getBusBarSectionFieldValue(field, (BusbarSection) identifiable);
+                case BUSBAR_SECTION -> getBusBarSectionFieldValue(field, propertyName, (BusbarSection) identifiable);
                 case BATTERY -> getBatteryFieldValue(field, propertyName, (Battery) identifiable);
                 case SUBSTATION -> getSubstationFieldValue(field, (Substation) identifiable);
                 case TWO_WINDINGS_TRANSFORMER -> getTwoWindingsTransformerFieldValue(field, propertyName, (TwoWindingsTransformer) identifiable);
@@ -240,12 +240,13 @@ public final class ExpertFilterUtils {
         };
     }
 
-    private static String getBusBarSectionFieldValue(FieldType field, BusbarSection busbarSection) {
+    private static String getBusBarSectionFieldValue(FieldType field, String propertyName, BusbarSection busbarSection) {
         return switch (field) {
             case COUNTRY,
                 NOMINAL_VOLTAGE,
                 VOLTAGE_LEVEL_ID,
-                SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, busbarSection.getTerminal().getVoltageLevel());
+                SUBSTATION_ID,
+                SUBSTATION_PROPERTIES -> getVoltageLevelFieldValue(field, propertyName, busbarSection.getTerminal().getVoltageLevel());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + busbarSection.getType() + "]");
         };
     }

@@ -149,12 +149,15 @@ public final class GlobalFilterUtils {
                                                             @Nonnull final EquipmentType actualType) {
         final List<AbstractExpertRule> rules = new ArrayList<>();
 
-        // Create only one OR rule for all filters with same type
+        // Create only one OR rule for all filters with same type (except special case of BUSBAR_SECTION type with voltage level filters)
         List<AbstractFilter> typeMatches = genericFilters.stream()
-                .filter(abstractFilter -> abstractFilter.getEquipmentType() == actualType)
+                .filter(abstractFilter -> abstractFilter.getEquipmentType() == actualType ||
+                    actualType == EquipmentType.BUSBAR_SECTION && abstractFilter.getEquipmentType() == EquipmentType.VOLTAGE_LEVEL)
                 .toList();
 
-        AbstractExpertRule typeMatchesRule = createFilterBasedRule(typeMatches, Set.of(FieldType.ID));
+        // for BUSBAR_SECTION type, we build a rule based on the voltage level id instead of the id
+        AbstractExpertRule typeMatchesRule = createFilterBasedRule(typeMatches,
+            actualType != EquipmentType.BUSBAR_SECTION ? Set.of(FieldType.ID) : Set.of(FieldType.VOLTAGE_LEVEL_ID));
         if (typeMatchesRule != null) {
             rules.add(typeMatchesRule);
         }
@@ -317,13 +320,18 @@ public final class GlobalFilterUtils {
             // (it is present in genericFilters OR there isn't any other equipment type in genericFilters))
 
             // all effective equipment types in genericFilters
+            //
+            // Special case : we can filter busbar sections with voltage level filters
+            // (for security analysis n-k results filtering on busbar sections contingencies)
             List<EquipmentType> equipmentTypesInGenericFilters = genericFilters.stream()
-                    .map(AbstractFilter::getEquipmentType)
-                    .filter(elem ->
-                            elem != EquipmentType.SUBSTATION &&
-                            elem != EquipmentType.VOLTAGE_LEVEL)
-                    .distinct().toList();
+                .map(AbstractFilter::getEquipmentType)
+                .filter(elem ->
+                    elem != EquipmentType.SUBSTATION &&
+                        (elem != EquipmentType.VOLTAGE_LEVEL || equipmentType == EquipmentType.BUSBAR_SECTION))
+                .distinct().toList();
+            boolean canFilterBusbarSectionsWithVoltageLevelFilter = equipmentTypesInGenericFilters.contains(EquipmentType.VOLTAGE_LEVEL) && equipmentType == EquipmentType.BUSBAR_SECTION;
             return equipmentTypesInGenericFilters.contains(equipmentType) ||
+                   canFilterBusbarSectionsWithVoltageLevelFilter ||
                    CollectionUtils.isEmpty(equipmentTypesInGenericFilters);
         }
     }
