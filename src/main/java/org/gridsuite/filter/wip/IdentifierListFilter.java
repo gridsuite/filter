@@ -60,8 +60,8 @@ public class IdentifierListFilter implements Filter {
     @Override
     public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
         var result = Filter.super.evaluate(network, topologyKind, reportNode);
-        Set<String> found = result.stream().map(Identifiable::getId).collect(toSet());
-        Set<String> notFound = Sets.difference(equipmentIds, found);
+        Set<String> foundIds = result.stream().map(Identifiable::getId).collect(toSet());
+        Set<String> notFoundIds = Sets.difference(equipmentIds, foundIds);
 
         if (!notFound.isEmpty()) {
             reportNodeRoot.newReportNode()
@@ -70,7 +70,7 @@ public class IdentifierListFilter implements Filter {
                     .withMessageTemplate("filter.evaluation.listFilter.notFound")
                     .withUntypedValue("equipementType", equipmentType.name())
                     .withUntypedValue("searchCount", equipmentIds.size())
-                    .withUntypedValue("notFoundCount", notFound.size())
+                    .withUntypedValue("notFoundCount", notFoundIds.size())
                     .withUntypedValue("notFoundIds", String.join(", ",
                             notFound.stream().sorted().toList()))
                     .add();
@@ -80,7 +80,7 @@ public class IdentifierListFilter implements Filter {
                     .withResourceBundles(FilterReportResourceBundle.BASE_NAME)
                     .withMessageTemplate("filter.evaluation.listFilter.allFound")
                     .withUntypedValue("equipementType", equipmentType.name())
-                    .withUntypedValue("searchCount", equipmentIds.size())
+                    .withUntypedValue("searchCount", notFoundIds.size())
                     .add();
         }
         return result;
