@@ -7,6 +7,8 @@
 package org.gridsuite.filter.utils;
 
 import com.powsybl.iidm.network.*;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.gridsuite.filter.AbstractFilter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
@@ -14,8 +16,6 @@ import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilter;
 import org.gridsuite.filter.identifierlistfilter.IdentifierListFilterEquipmentAttributes;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;

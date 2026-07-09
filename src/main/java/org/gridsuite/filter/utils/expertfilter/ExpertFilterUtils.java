@@ -11,6 +11,8 @@ import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.GeneratorStartup;
 import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
@@ -21,8 +23,6 @@ import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
 import org.gridsuite.filter.utils.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
