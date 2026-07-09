@@ -58,10 +58,8 @@ public class IdentifierListFilter implements Filter {
     }
 
     @Override
-    public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNodeRoot) {
-        clearEvaluationCache();
-
-        var result = Filter.super.evaluate(network, topologyKind, reportNodeRoot);
+    public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
+        var result = Filter.super.evaluate(network, topologyKind, reportNode);
         Set<String> found = result.stream().map(Identifiable::getId).collect(toSet());
         Set<String> notFound = Sets.difference(equipmentIds, found);
 
