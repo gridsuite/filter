@@ -16,7 +16,7 @@ import com.powsybl.commons.report.ReportResourceBundle;
 @AutoService(ReportResourceBundle.class)
 public final class FilterReportResourceBundle implements ReportResourceBundle {
 
-    public static final String BASE_NAME = "org.gridsuite.filter.reports";
+    public static final String BASE_NAME = "org.gridsuite.filter.report";
 
     public String getBaseName() {
         return BASE_NAME;
