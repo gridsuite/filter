@@ -11,7 +11,7 @@ import com.google.auto.service.AutoService;
 import com.powsybl.commons.report.ReportResourceBundle;
 
 /**
- * @author Charly Boutier {@literal <charly.boutier at rte-france.com>}
+ * @author Jacques Borsenberger {@literal <jacques.borsenberger at rte-france.com>}
  */
 @AutoService(ReportResourceBundle.class)
 public final class FilterReportResourceBundle implements ReportResourceBundle {
