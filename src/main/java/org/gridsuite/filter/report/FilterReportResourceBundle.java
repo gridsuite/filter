@@ -16,10 +16,8 @@ import com.powsybl.commons.report.ReportResourceBundle;
 @AutoService(ReportResourceBundle.class)
 public final class FilterReportResourceBundle implements ReportResourceBundle {
 
-    @SuppressWarnings("checkstyle:Indentation")
     public static final String BASE_NAME = "org.gridsuite.filter.reports";
 
-    @SuppressWarnings("checkstyle:Indentation")
     public String getBaseName() {
         return BASE_NAME;
     }
