@@ -66,7 +66,6 @@ public class IdentifierListFilter implements Filter {
         if (!notFound.isEmpty()) {
             reportNodeRoot.newReportNode()
                     .withSeverity(TypedValue.WARN_SEVERITY)
-                    .withResourceBundles(FilterReportResourceBundle.BASE_NAME)
                     .withMessageTemplate("filter.evaluation.listFilter.notFound")
                     .withUntypedValue("equipementType", equipmentType.name())
                     .withUntypedValue("searchCount", equipmentIds.size())
@@ -77,7 +76,6 @@ public class IdentifierListFilter implements Filter {
         } else {
             reportNodeRoot.newReportNode()
                     .withSeverity(TypedValue.INFO_SEVERITY)
-                    .withResourceBundles(FilterReportResourceBundle.BASE_NAME)
                     .withMessageTemplate("filter.evaluation.listFilter.allFound")
                     .withUntypedValue("equipementType", equipmentType.name())
                     .withUntypedValue("searchCount", notFoundIds.size())
