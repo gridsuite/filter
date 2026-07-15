@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -169,10 +168,27 @@ class IdentifierListFilterTest {
         assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.notFound");
         var values = reportNodeFilter.getValues();
         assertThat(values.get("equipementType")).hasToString("LINE");
-        assertThat(values.get("notFoundIds")).hasToString("Neo, One");
         assertThat(values.get("searchCount").getValue()).isEqualTo(3);
         assertThat(values.get("notFoundCount").getValue()).isEqualTo(2);
+        var nodesIdNotFound = reportNodeFilter.getChildren();
+        assertThat(nodesIdNotFound).hasSize(2);
+        assertThat(nodesIdNotFound.stream().map(ReportNode::getMessageKey))
+                .allMatch(key -> key.equals("filter.evaluation.listFilter.notFoundId"));
+        assertThat(nodesIdNotFound.stream().map(node -> node.getValues().get("id").toString()))
+                .containsExactly("Neo", "One");
+    }
 
+    @Test
+    void reportNoIdFound() {
+        Filter filter = new IdentifierListFilter(EquipmentType.LINE, Set.of("I don't think I'll find this one"));
+        ReportNode reportNode = ReportNode.newRootReportNode()
+                .withMessageTemplate("test")
+                .build();
+        var res = filter.evaluate(network, reportNode);
+        assertThat(res).isEmpty();
+        assertThat(reportNode.getChildren()).hasSize(1);
+        var reportNodeFilter = reportNode.getChildren().getFirst();
+        assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.emptyResult");
     }
 
     @Test

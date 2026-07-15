@@ -17,7 +17,6 @@ import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import lombok.*;
-import org.gridsuite.filter.report.FilterReportResourceBundle;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 
@@ -36,6 +35,8 @@ import static java.util.stream.Collectors.toSet;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IdentifierListFilter implements Filter {
 
+    public static final String SEARCH_COUNT = "searchCount";
+    public static final String EQUIPEMENT_TYPE = "equipementType";
     private EquipmentType equipmentType;
     private Set<String> equipmentIds;
 
@@ -57,28 +58,41 @@ public class IdentifierListFilter implements Filter {
         return equipmentIds.contains(identifiable.getId());
     }
 
+    @SuppressWarnings({"checkstyle:Indentation", "checkstyle:ParenPad"})
     @Override
     public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
         var result = Filter.super.evaluate(network, topologyKind, reportNode);
         Set<String> foundIds = result.stream().map(Identifiable::getId).collect(toSet());
         Set<String> notFoundIds = Sets.difference(equipmentIds, foundIds);
 
-        if (!notFound.isEmpty()) {
-            reportNodeRoot.newReportNode()
+        if (foundIds.isEmpty() && !equipmentIds.isEmpty()) {
+            reportNode.newReportNode()
+                    .withMessageTemplate("filter.evaluation.listFilter.emptyResult")
+                    .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
+                    .withSeverity(TypedValue.ERROR_SEVERITY)
+                    .add();
+        } else if (!notFoundIds.isEmpty()) {
+            final ReportNode node = reportNode.newReportNode()
                     .withSeverity(TypedValue.WARN_SEVERITY)
                     .withMessageTemplate("filter.evaluation.listFilter.notFound")
-                    .withUntypedValue("equipementType", equipmentType.name())
-                    .withUntypedValue("searchCount", equipmentIds.size())
+                    .withUntypedValue(EQUIPEMENT_TYPE, equipmentType.name())
+                    .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
                     .withUntypedValue("notFoundCount", notFoundIds.size())
-                    .withUntypedValue("notFoundIds", String.join(", ",
-                            notFound.stream().sorted().toList()))
                     .add();
+
+                    notFoundIds.stream().sorted().forEach( id -> node.newReportNode()
+                        .withSeverity(TypedValue.DETAIL_SEVERITY)
+                        .withMessageTemplate("filter.evaluation.listFilter.notFoundId")
+                        .withUntypedValue("id", id)
+                        .add()
+                    );
+
         } else {
-            reportNodeRoot.newReportNode()
+            reportNode.newReportNode()
                     .withSeverity(TypedValue.INFO_SEVERITY)
                     .withMessageTemplate("filter.evaluation.listFilter.allFound")
-                    .withUntypedValue("equipementType", equipmentType.name())
-                    .withUntypedValue("searchCount", notFoundIds.size())
+                    .withUntypedValue(EQUIPEMENT_TYPE, equipmentType.name())
+                    .withUntypedValue(SEARCH_COUNT, notFoundIds.size())
                     .add();
         }
         return result;
