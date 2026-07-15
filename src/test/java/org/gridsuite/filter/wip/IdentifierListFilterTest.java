@@ -24,6 +24,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -159,6 +160,8 @@ class IdentifierListFilterTest {
         Filter filter = new IdentifierListFilter(EquipmentType.LINE, Set.of("One", "Neo", "LINE_1"));
         ReportNode reportNode = ReportNode.newRootReportNode()
                 .withMessageTemplate("test")
+                .withResourceBundles("org.gridsuite.filter.report")
+                .withLocale(Locale.ENGLISH)
                 .build();
 
         var res = filter.evaluate(network, reportNode);
@@ -166,6 +169,7 @@ class IdentifierListFilterTest {
         assertThat(reportNode.getChildren()).hasSize(1);
         var reportNodeFilter = reportNode.getChildren().getFirst();
         assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.notFound");
+        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 3 elements (type LINE) : 2 elements not found");
         var values = reportNodeFilter.getValues();
         assertThat(values.get("equipementType")).hasToString("LINE");
         assertThat(values.get("searchCount").getValue()).isEqualTo(3);
@@ -176,6 +180,7 @@ class IdentifierListFilterTest {
                 .allMatch(key -> key.equals("filter.evaluation.listFilter.notFoundId"));
         assertThat(nodesIdNotFound.stream().map(node -> node.getValues().get("id").toString()))
                 .containsExactly("Neo", "One");
+
     }
 
     @Test
@@ -183,12 +188,15 @@ class IdentifierListFilterTest {
         Filter filter = new IdentifierListFilter(EquipmentType.LINE, Set.of("I don't think I'll find this one"));
         ReportNode reportNode = ReportNode.newRootReportNode()
                 .withMessageTemplate("test")
+                .withResourceBundles("org.gridsuite.filter.report")
+                .withLocale(Locale.ENGLISH)
                 .build();
         var res = filter.evaluate(network, reportNode);
         assertThat(res).isEmpty();
         assertThat(reportNode.getChildren()).hasSize(1);
         var reportNodeFilter = reportNode.getChildren().getFirst();
         assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.emptyResult");
+        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 1 (type LINE) elements no elements found");
     }
 
     @Test
@@ -196,6 +204,8 @@ class IdentifierListFilterTest {
         Filter filter = new IdentifierListFilter(EquipmentType.LOAD, Set.of("LOAD_1", "LOAD_2"));
         ReportNode reportNode = ReportNode.newRootReportNode()
                 .withMessageTemplate("test")
+                .withResourceBundles("org.gridsuite.filter.report")
+                .withLocale(Locale.ENGLISH)
                 .build();
 
         var res = filter.evaluate(network, reportNode);
@@ -206,6 +216,7 @@ class IdentifierListFilterTest {
         var values = reportNodeFilter.getValues();
         assertThat(values.get("equipementType")).hasToString("LOAD");
         assertThat(values.get("searchCount").getValue()).isEqualTo(2);
+        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 2 elements (type LOAD) : all elements found");
     }
 
     @ParameterizedTest

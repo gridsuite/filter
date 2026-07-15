@@ -58,7 +58,6 @@ public class IdentifierListFilter implements Filter {
         return equipmentIds.contains(identifiable.getId());
     }
 
-    @SuppressWarnings({"checkstyle:Indentation", "checkstyle:ParenPad"})
     @Override
     public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
         var result = Filter.super.evaluate(network, topologyKind, reportNode);
@@ -70,6 +69,7 @@ public class IdentifierListFilter implements Filter {
                     .withMessageTemplate("filter.evaluation.listFilter.emptyResult")
                     .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
                     .withSeverity(TypedValue.ERROR_SEVERITY)
+                    .withUntypedValue(EQUIPEMENT_TYPE, equipmentType.name())
                     .add();
         } else if (!notFoundIds.isEmpty()) {
             final ReportNode node = reportNode.newReportNode()
@@ -80,19 +80,19 @@ public class IdentifierListFilter implements Filter {
                     .withUntypedValue("notFoundCount", notFoundIds.size())
                     .add();
 
-                    notFoundIds.stream().sorted().forEach( id -> node.newReportNode()
-                        .withSeverity(TypedValue.DETAIL_SEVERITY)
-                        .withMessageTemplate("filter.evaluation.listFilter.notFoundId")
-                        .withUntypedValue("id", id)
-                        .add()
-                    );
+            notFoundIds.stream().sorted().forEach(id -> node.newReportNode()
+                .withSeverity(TypedValue.DETAIL_SEVERITY)
+                .withMessageTemplate("filter.evaluation.listFilter.notFoundId")
+                .withUntypedValue("id", id)
+                .add()
+            );
 
         } else {
             reportNode.newReportNode()
                     .withSeverity(TypedValue.INFO_SEVERITY)
                     .withMessageTemplate("filter.evaluation.listFilter.allFound")
                     .withUntypedValue(EQUIPEMENT_TYPE, equipmentType.name())
-                    .withUntypedValue(SEARCH_COUNT, notFoundIds.size())
+                    .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
                     .add();
         }
         return result;
