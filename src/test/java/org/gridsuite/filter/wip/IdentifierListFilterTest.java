@@ -196,7 +196,7 @@ class IdentifierListFilterTest {
         assertThat(reportNode.getChildren()).hasSize(1);
         var reportNodeFilter = reportNode.getChildren().getFirst();
         assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.emptyResult");
-        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 1 (type LINE) elements no elements found");
+        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 1 elements (type LINE) elements no elements found");
     }
 
     @Test
