@@ -10,6 +10,7 @@ package org.gridsuite.filter.wip;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.powsybl.commons.report.ReportNode;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
@@ -34,10 +35,18 @@ import java.util.List;
 public interface Filter {
 
     default List<Identifiable<?>> evaluate(Network network) {
-        return evaluate(network, TopologyKind.BUS_BREAKER);
+        return evaluate(network, TopologyKind.BUS_BREAKER, ReportNode.NO_OP);
+    }
+
+    default List<Identifiable<?>> evaluate(Network network, ReportNode reportNode) {
+        return evaluate(network, TopologyKind.BUS_BREAKER, reportNode);
     }
 
     default List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind) {
+        return evaluate(network, topologyKind, ReportNode.NO_OP);
+    }
+
+    default List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
         clearEvaluationCache();
 
         return NetworkUtils.getEquipmentStream(network, getEquipmentType(), topologyKind)

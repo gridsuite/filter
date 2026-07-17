@@ -10,6 +10,7 @@ package org.gridsuite.filter.wip;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.powsybl.commons.report.ReportNode;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
@@ -23,11 +24,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -152,6 +153,70 @@ class IdentifierListFilterTest {
         Filter filter = new IdentifierListFilter(EquipmentType.LINE, Collections.emptySet());
 
         assertThat(filter.getFilterType()).isEqualTo(FilterType.IDENTIFIER_LIST);
+    }
+
+    @Test
+    void reportIdNotFound() {
+        Filter filter = new IdentifierListFilter(EquipmentType.LINE, Set.of("One", "Neo", "LINE_1"));
+        ReportNode reportNode = ReportNode.newRootReportNode()
+                .withMessageTemplate("test")
+                .withResourceBundles("org.gridsuite.filter.report")
+                .withLocale(Locale.ENGLISH)
+                .build();
+
+        var res = filter.evaluate(network, reportNode);
+        assertThat(res.stream().map(Identifiable::getId)).containsExactly("LINE_1");
+        assertThat(reportNode.getChildren()).hasSize(1);
+        var reportNodeFilter = reportNode.getChildren().getFirst();
+        assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.notFound");
+        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 3 elements (type LINE) : 2 elements not found");
+        var values = reportNodeFilter.getValues();
+        assertThat(values.get("equipementType")).hasToString("LINE");
+        assertThat(values.get("searchCount").getValue()).isEqualTo(3);
+        assertThat(values.get("notFoundCount").getValue()).isEqualTo(2);
+        var nodesIdNotFound = reportNodeFilter.getChildren();
+        assertThat(nodesIdNotFound).hasSize(2);
+        assertThat(nodesIdNotFound.stream().map(ReportNode::getMessageKey))
+                .allMatch(key -> key.equals("filter.evaluation.listFilter.notFoundId"));
+        assertThat(nodesIdNotFound.stream().map(node -> node.getValues().get("id").toString()))
+                .containsExactly("Neo", "One");
+
+    }
+
+    @Test
+    void reportNoIdFound() {
+        Filter filter = new IdentifierListFilter(EquipmentType.LINE, Set.of("I don't think I'll find this one"));
+        ReportNode reportNode = ReportNode.newRootReportNode()
+                .withMessageTemplate("test")
+                .withResourceBundles("org.gridsuite.filter.report")
+                .withLocale(Locale.ENGLISH)
+                .build();
+        var res = filter.evaluate(network, reportNode);
+        assertThat(res).isEmpty();
+        assertThat(reportNode.getChildren()).hasSize(1);
+        var reportNodeFilter = reportNode.getChildren().getFirst();
+        assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.emptyResult");
+        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 1 elements (type LINE) elements no elements found");
+    }
+
+    @Test
+    void reportIdFound() {
+        Filter filter = new IdentifierListFilter(EquipmentType.LOAD, Set.of("LOAD_1", "LOAD_2"));
+        ReportNode reportNode = ReportNode.newRootReportNode()
+                .withMessageTemplate("test")
+                .withResourceBundles("org.gridsuite.filter.report")
+                .withLocale(Locale.ENGLISH)
+                .build();
+
+        var res = filter.evaluate(network, reportNode);
+        assertThat(res.stream().map(Identifiable::getId)).containsExactlyInAnyOrder("LOAD_1", "LOAD_2");
+        assertThat(reportNode.getChildren()).hasSize(1);
+        var reportNodeFilter = reportNode.getChildren().getFirst();
+        assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.allFound");
+        var values = reportNodeFilter.getValues();
+        assertThat(values.get("equipementType")).hasToString("LOAD");
+        assertThat(values.get("searchCount").getValue()).isEqualTo(2);
+        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 2 elements (type LOAD) : all elements found");
     }
 
     @ParameterizedTest
