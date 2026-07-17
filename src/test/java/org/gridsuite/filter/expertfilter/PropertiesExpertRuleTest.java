@@ -147,6 +147,100 @@ class PropertiesExpertRuleTest {
         assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
 
+    @ParameterizedTest
+    @MethodSource({
+        "provideArgumentsForNullSubstationTest"
+    })
+    void testEvaluateRuleWithNullSubstation(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
+        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
+        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
+    }
+
+    // Every equipment below is connected to a voltage level with no substation
+    // (getNullableSubstation() returns null, a valid IIDM case). Before the fix
+    // in ExpertFilterUtils, evaluating SUBSTATION_PROPERTIES on any of them
+    // threw a NullPointerException instead of returning false/true.
+    private static Stream<Arguments> provideArgumentsForNullSubstationTest() {
+
+        VoltageLevel voltageLevelNoSubstation = Mockito.mock(VoltageLevel.class);
+        Mockito.when(voltageLevelNoSubstation.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Mockito.when(voltageLevelNoSubstation.getNullableSubstation()).thenReturn(null);
+
+        Terminal terminalNoSubstation = Mockito.mock(Terminal.class);
+        Mockito.when(terminalNoSubstation.getVoltageLevel()).thenReturn(voltageLevelNoSubstation);
+
+        Line line = Mockito.mock(Line.class);
+        Mockito.when(line.getType()).thenReturn(IdentifiableType.LINE);
+        Mockito.when(line.getTerminal1()).thenReturn(terminalNoSubstation);
+        Mockito.when(line.getTerminal2()).thenReturn(terminalNoSubstation);
+
+        Load load = Mockito.mock(Load.class);
+        Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        Mockito.when(load.getTerminal()).thenReturn(terminalNoSubstation);
+
+        Generator generator = Mockito.mock(Generator.class);
+        Mockito.when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
+        Mockito.when(generator.getTerminal()).thenReturn(terminalNoSubstation);
+
+        Battery battery = Mockito.mock(Battery.class);
+        Mockito.when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
+        Mockito.when(battery.getTerminal()).thenReturn(terminalNoSubstation);
+
+        ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
+        Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        Mockito.when(shuntCompensator.getTerminal()).thenReturn(terminalNoSubstation);
+
+        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
+        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        Mockito.when(svar.getTerminal()).thenReturn(terminalNoSubstation);
+
+        BoundaryLine boundaryLine = Mockito.mock(BoundaryLine.class);
+        Mockito.when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        Mockito.when(boundaryLine.getTerminal()).thenReturn(terminalNoSubstation);
+
+        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
+        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        HvdcConverterStation<?> converterStation1 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation1.getTerminal()).thenReturn(terminalNoSubstation);
+        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+        HvdcConverterStation<?> converterStation2 = Mockito.mock(HvdcConverterStation.class);
+        Mockito.when(converterStation2.getTerminal()).thenReturn(terminalNoSubstation);
+        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
+
+        return Stream.of(
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, voltageLevelNoSubstation, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, voltageLevelNoSubstation, true),
+
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "region", null, line, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "region", null, line, true),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "region", null, line, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "region", null, line, true),
+
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, load, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, load, true),
+
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, generator, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, generator, true),
+
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, battery, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, battery, true),
+
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, shuntCompensator, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, shuntCompensator, true),
+
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, svar, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, svar, true),
+
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, boundaryLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, boundaryLine, true),
+
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "region", null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_1, "region", null, hvdcLine, true),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "region", null, hvdcLine, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES_2, "region", null, hvdcLine, true)
+        );
+    }
+
     private static Stream<Arguments> provideArgumentsForSubstationTest() {
 
         Substation substation = Mockito.mock(Substation.class);
