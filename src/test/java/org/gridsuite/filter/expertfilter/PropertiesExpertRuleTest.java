@@ -131,19 +131,19 @@ class PropertiesExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource({
-            "provideArgumentsForSubstationTest",
-            "provideArgumentsForGeneratorTest",
-            "provideArgumentsForTwoWindingTransformerTest",
-            "provideArgumentsForLoadTest",
-            "provideArgumentsForShuntCompensatorTest",
-            "provideArgumentsForLineTest",
-            "provideArgumentsForStaticVarCompensatorTest",
-            "provideArgumentsForBoundaryLineTest",
-            "provideArgumentsForThreeWindingTransformerTest",
-            "provideArgumentsForHvdcLineTest",
-            "provideArgumentsForBatteryTest",
-            "provideArgumentsForVoltageLevelTest",
-            "provideArgumentsForHvdcConverterStationTest",
+        "provideArgumentsForSubstationTest",
+        "provideArgumentsForGeneratorTest",
+        "provideArgumentsForTwoWindingTransformerTest",
+        "provideArgumentsForLoadTest",
+        "provideArgumentsForShuntCompensatorTest",
+        "provideArgumentsForLineTest",
+        "provideArgumentsForStaticVarCompensatorTest",
+        "provideArgumentsForBoundaryLineTest",
+        "provideArgumentsForThreeWindingTransformerTest",
+        "provideArgumentsForHvdcLineTest",
+        "provideArgumentsForBatteryTest",
+        "provideArgumentsForVoltageLevelTest",
+        "provideArgumentsForHvdcConverterStationTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
@@ -152,7 +152,7 @@ class PropertiesExpertRuleTest {
 
     @ParameterizedTest
     @MethodSource({
-            "provideArgumentsForNullSubstationTest"
+        "provideArgumentsForNullSubstationTest"
     })
     void testEvaluateRuleWithNullSubstation(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
@@ -403,7 +403,7 @@ class PropertiesExpertRuleTest {
                 Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_1, "d", null, line, true),
                 Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "CodeOI", null, line, false),
                 Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES_2, "e", null, line, true)
-        );
+   );
     }
 
     private static Stream<Arguments> provideArgumentsForLoadTest() {
