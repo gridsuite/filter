@@ -14,7 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 class FilterUuidExpertRuleTest {
     private static final UUID FILTER_GENERATOR_1_UUID = UUID.fromString("7928181c-7977-4592-ba19-88027e4254e4");
@@ -92,28 +92,28 @@ class FilterUuidExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForTestWithException() {
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
-        Generator generator = Mockito.mock(Generator.class);
-        Mockito.when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(generator.getTerminal()).thenReturn(terminal);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Generator generator = mock(Generator.class);
+        when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
+        Terminal terminal = mock(Terminal.class);
+        when(generator.getTerminal()).thenReturn(terminal);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
 
-        Load load = Mockito.mock(Load.class);
-        Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        Load load = mock(Load.class);
+        when(load.getType()).thenReturn(IdentifiableType.LOAD);
 
-        Battery battery = Mockito.mock(Battery.class);
-        Mockito.when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
+        Battery battery = mock(Battery.class);
+        when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
 
-        ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        ShuntCompensator shuntCompensator = mock(ShuntCompensator.class);
+        when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
 
-        Line line = Mockito.mock(Line.class);
-        Mockito.when(line.getType()).thenReturn(IdentifiableType.LINE);
+        Line line = mock(Line.class);
+        when(line.getType()).thenReturn(IdentifiableType.LINE);
 
-        BoundaryLine boundaryLine = Mockito.mock(BoundaryLine.class);
-        Mockito.when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        BoundaryLine boundaryLine = mock(BoundaryLine.class);
+        when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
 
         return Stream.of(
             // --- Test an unsupported field for each equipment --- //
@@ -208,7 +208,7 @@ class FilterUuidExpertRuleTest {
         "provideArgumentsForBoundaryLinesTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
-        try (MockedStatic<FilterServiceUtils> filterServiceUtilsMockedStatic = Mockito.mockStatic(FilterServiceUtils.class)) {
+        try (MockedStatic<FilterServiceUtils> filterServiceUtilsMockedStatic = mockStatic(FilterServiceUtils.class)) {
             initMockFilters(equipment.getNetwork(), filterServiceUtilsMockedStatic);
             FilterUuidExpertRule rule = FilterUuidExpertRule.builder().operator(operator).field(field).value(value).values(values).build();
             assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
@@ -216,37 +216,37 @@ class FilterUuidExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {
-        Network network = Mockito.mock(Network.class);
+        Network network = mock(Network.class);
 
-        Generator gen1 = Mockito.mock(Generator.class);
-        Mockito.when(gen1.getType()).thenReturn(IdentifiableType.GENERATOR);
-        Mockito.when(gen1.getNetwork()).thenReturn(network);
-        Generator gen2 = Mockito.mock(Generator.class);
-        Mockito.when(gen2.getType()).thenReturn(IdentifiableType.GENERATOR);
-        Mockito.when(gen2.getNetwork()).thenReturn(network);
+        Generator gen1 = mock(Generator.class);
+        when(gen1.getType()).thenReturn(IdentifiableType.GENERATOR);
+        when(gen1.getNetwork()).thenReturn(network);
+        Generator gen2 = mock(Generator.class);
+        when(gen2.getType()).thenReturn(IdentifiableType.GENERATOR);
+        when(gen2.getNetwork()).thenReturn(network);
 
         // Common fields
-        Mockito.when(gen1.getId()).thenReturn("ID1");
-        Mockito.when(gen2.getId()).thenReturn("ID2");
+        when(gen1.getId()).thenReturn("ID1");
+        when(gen2.getId()).thenReturn("ID2");
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Substation substation1 = Mockito.mock(Substation.class);
-        Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
-        Mockito.when(substation1.getId()).thenReturn("SUBST1");
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(gen1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        Substation substation1 = mock(Substation.class);
+        when(voltageLevel1.getId()).thenReturn("VL1");
+        when(substation1.getId()).thenReturn("SUBST1");
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(gen1.getTerminal()).thenReturn(terminal1);
+        when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
 
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Substation substation2 = Mockito.mock(Substation.class);
-        Mockito.when(voltageLevel2.getId()).thenReturn("VL2");
-        Mockito.when(substation2.getId()).thenReturn("SUBST2");
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(gen2.getTerminal()).thenReturn(terminal2);
-        Mockito.when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        Substation substation2 = mock(Substation.class);
+        when(voltageLevel2.getId()).thenReturn("VL2");
+        when(substation2.getId()).thenReturn("SUBST2");
+        Terminal terminal2 = mock(Terminal.class);
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        when(gen2.getTerminal()).thenReturn(terminal2);
+        when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
 
         return Stream.of(
             // --- IS_PART_OF --- //
@@ -274,31 +274,31 @@ class FilterUuidExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForLoadTest() {
-        Network network = Mockito.mock(Network.class);
+        Network network = mock(Network.class);
 
-        Load load1 = Mockito.mock(Load.class);
-        Mockito.when(load1.getType()).thenReturn(IdentifiableType.LOAD);
-        Mockito.when(load1.getNetwork()).thenReturn(network);
-        Load load2 = Mockito.mock(Load.class);
-        Mockito.when(load2.getType()).thenReturn(IdentifiableType.LOAD);
-        Mockito.when(load2.getNetwork()).thenReturn(network);
+        Load load1 = mock(Load.class);
+        when(load1.getType()).thenReturn(IdentifiableType.LOAD);
+        when(load1.getNetwork()).thenReturn(network);
+        Load load2 = mock(Load.class);
+        when(load2.getType()).thenReturn(IdentifiableType.LOAD);
+        when(load2.getNetwork()).thenReturn(network);
 
         // Common fields
-        Mockito.when(load1.getId()).thenReturn("ID1");
-        Mockito.when(load2.getId()).thenReturn("ID2");
+        when(load1.getId()).thenReturn("ID1");
+        when(load2.getId()).thenReturn("ID2");
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(load1.getTerminal()).thenReturn(terminal1);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getId()).thenReturn("VL1");
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(load1.getTerminal()).thenReturn(terminal1);
 
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel2.getId()).thenReturn("VL2");
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(load2.getTerminal()).thenReturn(terminal2);
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        when(voltageLevel2.getId()).thenReturn("VL2");
+        Terminal terminal2 = mock(Terminal.class);
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        when(load2.getTerminal()).thenReturn(terminal2);
 
         return Stream.of(
             // --- IS_PART_OF --- //
@@ -320,31 +320,31 @@ class FilterUuidExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForBatteryTest() {
-        Network network = Mockito.mock(Network.class);
+        Network network = mock(Network.class);
 
-        Battery battery1 = Mockito.mock(Battery.class);
-        Mockito.when(battery1.getType()).thenReturn(IdentifiableType.BATTERY);
-        Mockito.when(battery1.getNetwork()).thenReturn(network);
-        Battery battery2 = Mockito.mock(Battery.class);
-        Mockito.when(battery2.getType()).thenReturn(IdentifiableType.BATTERY);
-        Mockito.when(battery2.getNetwork()).thenReturn(network);
+        Battery battery1 = mock(Battery.class);
+        when(battery1.getType()).thenReturn(IdentifiableType.BATTERY);
+        when(battery1.getNetwork()).thenReturn(network);
+        Battery battery2 = mock(Battery.class);
+        when(battery2.getType()).thenReturn(IdentifiableType.BATTERY);
+        when(battery2.getNetwork()).thenReturn(network);
 
         // Common fields
-        Mockito.when(battery1.getId()).thenReturn("ID1");
-        Mockito.when(battery2.getId()).thenReturn("ID2");
+        when(battery1.getId()).thenReturn("ID1");
+        when(battery2.getId()).thenReturn("ID2");
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(battery1.getTerminal()).thenReturn(terminal1);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getId()).thenReturn("VL1");
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(battery1.getTerminal()).thenReturn(terminal1);
 
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel2.getId()).thenReturn("VL2");
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(battery2.getTerminal()).thenReturn(terminal2);
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        when(voltageLevel2.getId()).thenReturn("VL2");
+        Terminal terminal2 = mock(Terminal.class);
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        when(battery2.getTerminal()).thenReturn(terminal2);
 
         return Stream.of(
             // --- IS_PART_OF --- //
@@ -366,31 +366,31 @@ class FilterUuidExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForShuntCompensatorTest() {
-        Network network = Mockito.mock(Network.class);
+        Network network = mock(Network.class);
 
-        ShuntCompensator shuntCompensator1 = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator1.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
-        Mockito.when(shuntCompensator1.getNetwork()).thenReturn(network);
-        ShuntCompensator shuntCompensator2 = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator2.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
-        Mockito.when(shuntCompensator2.getNetwork()).thenReturn(network);
+        ShuntCompensator shuntCompensator1 = mock(ShuntCompensator.class);
+        when(shuntCompensator1.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        when(shuntCompensator1.getNetwork()).thenReturn(network);
+        ShuntCompensator shuntCompensator2 = mock(ShuntCompensator.class);
+        when(shuntCompensator2.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        when(shuntCompensator2.getNetwork()).thenReturn(network);
 
         // Common fields
-        Mockito.when(shuntCompensator1.getId()).thenReturn("ID1");
-        Mockito.when(shuntCompensator2.getId()).thenReturn("ID2");
+        when(shuntCompensator1.getId()).thenReturn("ID1");
+        when(shuntCompensator2.getId()).thenReturn("ID2");
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(shuntCompensator1.getTerminal()).thenReturn(terminal1);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getId()).thenReturn("VL1");
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(shuntCompensator1.getTerminal()).thenReturn(terminal1);
 
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel2.getId()).thenReturn("VL2");
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(shuntCompensator2.getTerminal()).thenReturn(terminal2);
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        when(voltageLevel2.getId()).thenReturn("VL2");
+        Terminal terminal2 = mock(Terminal.class);
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        when(shuntCompensator2.getTerminal()).thenReturn(terminal2);
 
         return Stream.of(
             // --- IS_PART_OF --- //
@@ -412,55 +412,55 @@ class FilterUuidExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForLineTest() {
-        Network network = Mockito.mock(Network.class);
+        Network network = mock(Network.class);
 
-        Line line1 = Mockito.mock(Line.class);
-        Mockito.when(line1.getType()).thenReturn(IdentifiableType.LINE);
-        Mockito.when(line1.getNetwork()).thenReturn(network);
-        Line line2 = Mockito.mock(Line.class);
-        Mockito.when(line2.getType()).thenReturn(IdentifiableType.LINE);
-        Mockito.when(line2.getNetwork()).thenReturn(network);
+        Line line1 = mock(Line.class);
+        when(line1.getType()).thenReturn(IdentifiableType.LINE);
+        when(line1.getNetwork()).thenReturn(network);
+        Line line2 = mock(Line.class);
+        when(line2.getType()).thenReturn(IdentifiableType.LINE);
+        when(line2.getNetwork()).thenReturn(network);
 
         // Common fields
-        Mockito.when(line1.getId()).thenReturn("ID1");
-        Mockito.when(line2.getId()).thenReturn("ID2");
+        when(line1.getId()).thenReturn("ID1");
+        when(line2.getId()).thenReturn("ID2");
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel1Line1 = Mockito.mock(VoltageLevel.class);
-        Substation substation1Line1 = Mockito.mock(Substation.class);
-        Mockito.when(voltageLevel1Line1.getId()).thenReturn("VL11");
-        Mockito.when(substation1Line1.getId()).thenReturn("SUBST1");
-        Terminal terminal1Line1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1Line1.getVoltageLevel()).thenReturn(voltageLevel1Line1);
-        Mockito.when(line1.getTerminal(TwoSides.ONE)).thenReturn(terminal1Line1);
-        Mockito.when(voltageLevel1Line1.getSubstation()).thenReturn(Optional.of(substation1Line1));
+        VoltageLevel voltageLevel1Line1 = mock(VoltageLevel.class);
+        Substation substation1Line1 = mock(Substation.class);
+        when(voltageLevel1Line1.getId()).thenReturn("VL11");
+        when(substation1Line1.getId()).thenReturn("SUBST1");
+        Terminal terminal1Line1 = mock(Terminal.class);
+        when(terminal1Line1.getVoltageLevel()).thenReturn(voltageLevel1Line1);
+        when(line1.getTerminal(TwoSides.ONE)).thenReturn(terminal1Line1);
+        when(voltageLevel1Line1.getSubstation()).thenReturn(Optional.of(substation1Line1));
 
-        VoltageLevel voltageLevel2Line1 = Mockito.mock(VoltageLevel.class);
-        Substation substation2Line1 = Mockito.mock(Substation.class);
-        Mockito.when(voltageLevel2Line1.getId()).thenReturn("VL21");
-        Mockito.when(substation2Line1.getId()).thenReturn("SUBST2");
-        Terminal terminal2Line1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2Line1.getVoltageLevel()).thenReturn(voltageLevel2Line1);
-        Mockito.when(line1.getTerminal(TwoSides.TWO)).thenReturn(terminal2Line1);
-        Mockito.when(voltageLevel2Line1.getSubstation()).thenReturn(Optional.of(substation2Line1));
+        VoltageLevel voltageLevel2Line1 = mock(VoltageLevel.class);
+        Substation substation2Line1 = mock(Substation.class);
+        when(voltageLevel2Line1.getId()).thenReturn("VL21");
+        when(substation2Line1.getId()).thenReturn("SUBST2");
+        Terminal terminal2Line1 = mock(Terminal.class);
+        when(terminal2Line1.getVoltageLevel()).thenReturn(voltageLevel2Line1);
+        when(line1.getTerminal(TwoSides.TWO)).thenReturn(terminal2Line1);
+        when(voltageLevel2Line1.getSubstation()).thenReturn(Optional.of(substation2Line1));
 
-        VoltageLevel voltageLevel1Line2 = Mockito.mock(VoltageLevel.class);
-        Substation substation1Line2 = Mockito.mock(Substation.class);
-        Mockito.when(voltageLevel1Line2.getId()).thenReturn("VL12");
-        Mockito.when(substation1Line2.getId()).thenReturn("SUBST3");
-        Terminal terminal1Line2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1Line2.getVoltageLevel()).thenReturn(voltageLevel1Line2);
-        Mockito.when(line2.getTerminal(TwoSides.ONE)).thenReturn(terminal1Line2);
-        Mockito.when(voltageLevel1Line2.getSubstation()).thenReturn(Optional.of(substation1Line2));
+        VoltageLevel voltageLevel1Line2 = mock(VoltageLevel.class);
+        Substation substation1Line2 = mock(Substation.class);
+        when(voltageLevel1Line2.getId()).thenReturn("VL12");
+        when(substation1Line2.getId()).thenReturn("SUBST3");
+        Terminal terminal1Line2 = mock(Terminal.class);
+        when(terminal1Line2.getVoltageLevel()).thenReturn(voltageLevel1Line2);
+        when(line2.getTerminal(TwoSides.ONE)).thenReturn(terminal1Line2);
+        when(voltageLevel1Line2.getSubstation()).thenReturn(Optional.of(substation1Line2));
 
-        VoltageLevel voltageLevel2Line2 = Mockito.mock(VoltageLevel.class);
-        Substation substation2Line2 = Mockito.mock(Substation.class);
-        Mockito.when(voltageLevel2Line2.getId()).thenReturn("VL22");
-        Mockito.when(substation2Line2.getId()).thenReturn("SUBST4");
-        Terminal terminal2Line2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2Line2.getVoltageLevel()).thenReturn(voltageLevel2Line2);
-        Mockito.when(line2.getTerminal(TwoSides.TWO)).thenReturn(terminal2Line2);
-        Mockito.when(voltageLevel2Line2.getSubstation()).thenReturn(Optional.of(substation2Line2));
+        VoltageLevel voltageLevel2Line2 = mock(VoltageLevel.class);
+        Substation substation2Line2 = mock(Substation.class);
+        when(voltageLevel2Line2.getId()).thenReturn("VL22");
+        when(substation2Line2.getId()).thenReturn("SUBST4");
+        Terminal terminal2Line2 = mock(Terminal.class);
+        when(terminal2Line2.getVoltageLevel()).thenReturn(voltageLevel2Line2);
+        when(line2.getTerminal(TwoSides.TWO)).thenReturn(terminal2Line2);
+        when(voltageLevel2Line2.getSubstation()).thenReturn(Optional.of(substation2Line2));
 
         return Stream.of(
             // --- IS_PART_OF --- //
@@ -496,49 +496,49 @@ class FilterUuidExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForHvdcTest() {
-        Network network = Mockito.mock(Network.class);
+        Network network = mock(Network.class);
 
-        HvdcLine hvdcLine1 = Mockito.mock(HvdcLine.class);
-        Mockito.when(hvdcLine1.getType()).thenReturn(IdentifiableType.HVDC_LINE);
-        Mockito.when(hvdcLine1.getNetwork()).thenReturn(network);
-        HvdcLine hvdcLine2 = Mockito.mock(HvdcLine.class);
-        Mockito.when(hvdcLine2.getType()).thenReturn(IdentifiableType.HVDC_LINE);
-        Mockito.when(hvdcLine2.getNetwork()).thenReturn(network);
+        HvdcLine hvdcLine1 = mock(HvdcLine.class);
+        when(hvdcLine1.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        when(hvdcLine1.getNetwork()).thenReturn(network);
+        HvdcLine hvdcLine2 = mock(HvdcLine.class);
+        when(hvdcLine2.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        when(hvdcLine2.getNetwork()).thenReturn(network);
 
         // Common fields
-        Mockito.when(hvdcLine1.getId()).thenReturn("ID1");
-        Mockito.when(hvdcLine2.getId()).thenReturn("ID2");
+        when(hvdcLine1.getId()).thenReturn("ID1");
+        when(hvdcLine2.getId()).thenReturn("ID2");
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel1Line1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1Line1.getId()).thenReturn("VL11");
-        Terminal terminal1Line1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1Line1.getVoltageLevel()).thenReturn(voltageLevel1Line1);
-        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1Line1);
-        Mockito.when(hvdcLine1.getConverterStation1()).thenReturn(converterStation1);
-        VoltageLevel voltageLevel2Line1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel2Line1.getId()).thenReturn("VL21");
-        Terminal terminal2Line1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2Line1.getVoltageLevel()).thenReturn(voltageLevel2Line1);
-        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal2Line1);
-        Mockito.when(hvdcLine1.getConverterStation2()).thenReturn(converterStation2);
+        VoltageLevel voltageLevel1Line1 = mock(VoltageLevel.class);
+        when(voltageLevel1Line1.getId()).thenReturn("VL11");
+        Terminal terminal1Line1 = mock(Terminal.class);
+        when(terminal1Line1.getVoltageLevel()).thenReturn(voltageLevel1Line1);
+        HvdcConverterStation converterStation1 = mock(HvdcConverterStation.class);
+        when(converterStation1.getTerminal()).thenReturn(terminal1Line1);
+        when(hvdcLine1.getConverterStation1()).thenReturn(converterStation1);
+        VoltageLevel voltageLevel2Line1 = mock(VoltageLevel.class);
+        when(voltageLevel2Line1.getId()).thenReturn("VL21");
+        Terminal terminal2Line1 = mock(Terminal.class);
+        when(terminal2Line1.getVoltageLevel()).thenReturn(voltageLevel2Line1);
+        HvdcConverterStation converterStation2 = mock(HvdcConverterStation.class);
+        when(converterStation2.getTerminal()).thenReturn(terminal2Line1);
+        when(hvdcLine1.getConverterStation2()).thenReturn(converterStation2);
 
-        VoltageLevel voltageLevel1Line2 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1Line2.getId()).thenReturn("VL12");
-        Terminal terminal1Line2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1Line2.getVoltageLevel()).thenReturn(voltageLevel1Line2);
-        HvdcConverterStation converterStation3 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation3.getTerminal()).thenReturn(terminal1Line2);
-        Mockito.when(hvdcLine2.getConverterStation1()).thenReturn(converterStation3);
-        VoltageLevel voltageLevel2Line2 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel2Line2.getId()).thenReturn("VL22");
-        Terminal terminal2Line2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2Line2.getVoltageLevel()).thenReturn(voltageLevel2Line2);
-        HvdcConverterStation converterStation4 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation4.getTerminal()).thenReturn(terminal2Line2);
-        Mockito.when(hvdcLine2.getConverterStation2()).thenReturn(converterStation4);
+        VoltageLevel voltageLevel1Line2 = mock(VoltageLevel.class);
+        when(voltageLevel1Line2.getId()).thenReturn("VL12");
+        Terminal terminal1Line2 = mock(Terminal.class);
+        when(terminal1Line2.getVoltageLevel()).thenReturn(voltageLevel1Line2);
+        HvdcConverterStation converterStation3 = mock(HvdcConverterStation.class);
+        when(converterStation3.getTerminal()).thenReturn(terminal1Line2);
+        when(hvdcLine2.getConverterStation1()).thenReturn(converterStation3);
+        VoltageLevel voltageLevel2Line2 = mock(VoltageLevel.class);
+        when(voltageLevel2Line2.getId()).thenReturn("VL22");
+        Terminal terminal2Line2 = mock(Terminal.class);
+        when(terminal2Line2.getVoltageLevel()).thenReturn(voltageLevel2Line2);
+        HvdcConverterStation converterStation4 = mock(HvdcConverterStation.class);
+        when(converterStation4.getTerminal()).thenReturn(terminal2Line2);
+        when(hvdcLine2.getConverterStation2()).thenReturn(converterStation4);
 
         return Stream.of(
             // --- IS_PART_OF --- //
@@ -564,31 +564,31 @@ class FilterUuidExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForBoundaryLinesTest() {
-        Network network = Mockito.mock(Network.class);
+        Network network = mock(Network.class);
 
-        BoundaryLine boundaryLine1 = Mockito.mock(BoundaryLine.class);
-        Mockito.when(boundaryLine1.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
-        Mockito.when(boundaryLine1.getNetwork()).thenReturn(network);
-        BoundaryLine boundaryLine2 = Mockito.mock(BoundaryLine.class);
-        Mockito.when(boundaryLine2.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
-        Mockito.when(boundaryLine2.getNetwork()).thenReturn(network);
+        BoundaryLine boundaryLine1 = mock(BoundaryLine.class);
+        when(boundaryLine1.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        when(boundaryLine1.getNetwork()).thenReturn(network);
+        BoundaryLine boundaryLine2 = mock(BoundaryLine.class);
+        when(boundaryLine2.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        when(boundaryLine2.getNetwork()).thenReturn(network);
 
         // Common fields
-        Mockito.when(boundaryLine1.getId()).thenReturn("ID1");
-        Mockito.when(boundaryLine2.getId()).thenReturn("ID2");
+        when(boundaryLine1.getId()).thenReturn("ID1");
+        when(boundaryLine2.getId()).thenReturn("ID2");
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getId()).thenReturn("VL1");
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(boundaryLine1.getTerminal()).thenReturn(terminal1);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getId()).thenReturn("VL1");
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(boundaryLine1.getTerminal()).thenReturn(terminal1);
 
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel2.getId()).thenReturn("VL2");
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(boundaryLine2.getTerminal()).thenReturn(terminal2);
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        when(voltageLevel2.getId()).thenReturn("VL2");
+        Terminal terminal2 = mock(Terminal.class);
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        when(boundaryLine2.getTerminal()).thenReturn(terminal2);
 
         return Stream.of(
             // --- IS_PART_OF --- //
