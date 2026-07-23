@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +22,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.*;
 
 class CombinatorExpertRuleTest {
     private FilterLoader filterLoader;
@@ -47,13 +47,13 @@ class CombinatorExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForTest() {
-        Generator gen = Mockito.mock(Generator.class);
-        Mockito.when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
+        Generator gen = mock(Generator.class);
+        when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
         // Generator fields
-        Mockito.when(gen.getEnergySource()).thenReturn(EnergySource.HYDRO);
-        Mockito.when(gen.getId()).thenReturn("GEN");
-        Mockito.when(gen.getMinP()).thenReturn(-500.0);
-        Mockito.when(gen.isVoltageRegulatorOn()).thenReturn(true);
+        when(gen.getEnergySource()).thenReturn(EnergySource.HYDRO);
+        when(gen.getId()).thenReturn("GEN");
+        when(gen.getMinP()).thenReturn(-500.0);
+        when(gen.isVoltageRegulatorOn()).thenReturn(true);
 
         return Stream.of(
                 // --- Single rule AND --- //
