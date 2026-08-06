@@ -144,17 +144,9 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForBatteryTest",
         "provideArgumentsForVoltageLevelTest",
         "provideArgumentsForHvdcConverterStationTest",
+        "provideArgumentsForNullSubstationTest",
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
-        PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
-        assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
-    }
-
-    @ParameterizedTest
-    @MethodSource({
-        "provideArgumentsForNullSubstationTest"
-    })
-    void testEvaluateRuleWithNullSubstation(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
         assertEquals(expected, rule.evaluateRule(equipment, filterLoader, new HashMap<>()));
     }
@@ -165,54 +157,54 @@ class PropertiesExpertRuleTest {
     // threw a NullPointerException instead of returning false/true.
     private static Stream<Arguments> provideArgumentsForNullSubstationTest() {
 
-        VoltageLevel voltageLevelNoSubstation = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevelNoSubstation.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
-        Mockito.when(voltageLevelNoSubstation.getNullableSubstation()).thenReturn(null);
+        VoltageLevel voltageLevelNoSubstation = mock(VoltageLevel.class);
+        when(voltageLevelNoSubstation.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        when(voltageLevelNoSubstation.getNullableSubstation()).thenReturn(null);
 
-        Terminal terminalNoSubstation = Mockito.mock(Terminal.class);
-        Mockito.when(terminalNoSubstation.getVoltageLevel()).thenReturn(voltageLevelNoSubstation);
+        Terminal terminalNoSubstation = mock(Terminal.class);
+        when(terminalNoSubstation.getVoltageLevel()).thenReturn(voltageLevelNoSubstation);
 
-        Line line = Mockito.mock(Line.class);
-        Mockito.when(line.getType()).thenReturn(IdentifiableType.LINE);
-        Mockito.when(line.getTerminal1()).thenReturn(terminalNoSubstation);
-        Mockito.when(line.getTerminal2()).thenReturn(terminalNoSubstation);
+        Line line = mock(Line.class);
+        when(line.getType()).thenReturn(IdentifiableType.LINE);
+        when(line.getTerminal1()).thenReturn(terminalNoSubstation);
+        when(line.getTerminal2()).thenReturn(terminalNoSubstation);
 
-        Load load = Mockito.mock(Load.class);
-        Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
-        Mockito.when(load.getTerminal()).thenReturn(terminalNoSubstation);
+        Load load = mock(Load.class);
+        when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        when(load.getTerminal()).thenReturn(terminalNoSubstation);
 
-        Generator generator = Mockito.mock(Generator.class);
-        Mockito.when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
-        Mockito.when(generator.getTerminal()).thenReturn(terminalNoSubstation);
+        Generator generator = mock(Generator.class);
+        when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
+        when(generator.getTerminal()).thenReturn(terminalNoSubstation);
 
-        Battery battery = Mockito.mock(Battery.class);
-        Mockito.when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
-        Mockito.when(battery.getTerminal()).thenReturn(terminalNoSubstation);
+        Battery battery = mock(Battery.class);
+        when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
+        when(battery.getTerminal()).thenReturn(terminalNoSubstation);
 
-        ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
-        Mockito.when(shuntCompensator.getTerminal()).thenReturn(terminalNoSubstation);
+        ShuntCompensator shuntCompensator = mock(ShuntCompensator.class);
+        when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        when(shuntCompensator.getTerminal()).thenReturn(terminalNoSubstation);
 
-        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
-        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
-        Mockito.when(svar.getTerminal()).thenReturn(terminalNoSubstation);
+        StaticVarCompensator svar = mock(StaticVarCompensator.class);
+        when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        when(svar.getTerminal()).thenReturn(terminalNoSubstation);
 
-        BoundaryLine boundaryLine = Mockito.mock(BoundaryLine.class);
-        Mockito.when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
-        Mockito.when(boundaryLine.getTerminal()).thenReturn(terminalNoSubstation);
+        BoundaryLine boundaryLine = mock(BoundaryLine.class);
+        when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        when(boundaryLine.getTerminal()).thenReturn(terminalNoSubstation);
 
-        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
-        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
-        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation1.getTerminal()).thenReturn(terminalNoSubstation);
-        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
-        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation2.getTerminal()).thenReturn(terminalNoSubstation);
-        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
+        HvdcLine hvdcLine = mock(HvdcLine.class);
+        when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        HvdcConverterStation converterStation1 = mock(HvdcConverterStation.class);
+        when(converterStation1.getTerminal()).thenReturn(terminalNoSubstation);
+        when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+        HvdcConverterStation converterStation2 = mock(HvdcConverterStation.class);
+        when(converterStation2.getTerminal()).thenReturn(terminalNoSubstation);
+        when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
 
-        HvdcConverterStation standaloneConverterStation = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(standaloneConverterStation.getType()).thenReturn(IdentifiableType.HVDC_CONVERTER_STATION);
-        Mockito.when(standaloneConverterStation.getTerminal()).thenReturn(terminalNoSubstation);
+        HvdcConverterStation standaloneConverterStation = mock(HvdcConverterStation.class);
+        when(standaloneConverterStation.getType()).thenReturn(IdentifiableType.HVDC_CONVERTER_STATION);
+        when(standaloneConverterStation.getTerminal()).thenReturn(terminalNoSubstation);
 
         return Stream.of(
                 Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "region", null, voltageLevelNoSubstation, false),
@@ -782,18 +774,18 @@ class PropertiesExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForBatteryTest() {
 
-        Battery battery = Mockito.mock(Battery.class);
-        Mockito.when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
-        Mockito.when(battery.getProperty("propertyNameBattery")).thenReturn("PropertyValueBattery");
+        Battery battery = mock(Battery.class);
+        when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
+        when(battery.getProperty("propertyNameBattery")).thenReturn("PropertyValueBattery");
 
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getProperty("CodeOI")).thenReturn("33");
-        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(battery.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getProperty("CodeOI")).thenReturn("33");
+        when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(battery.getTerminal()).thenReturn(terminal);
+        when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
 
         return Stream.of(
                 // --- IN --- //
@@ -829,13 +821,13 @@ class PropertiesExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForVoltageLevelTest() {
 
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
-        Mockito.when(voltageLevel.getProperty("propertyNameVL")).thenReturn("PropertyValueVL");
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        when(voltageLevel.getProperty("propertyNameVL")).thenReturn("PropertyValueVL");
 
-        Substation substation = Mockito.mock(Substation.class);
-        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
-        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
+        Substation substation = mock(Substation.class);
+        when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+        when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
 
         return Stream.of(
                 // --- IN --- //
@@ -863,17 +855,17 @@ class PropertiesExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForHvdcConverterStationTest() {
 
-        HvdcConverterStation converterStation = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation.getType()).thenReturn(IdentifiableType.HVDC_CONVERTER_STATION);
-        Mockito.when(converterStation.getProperty("propertyNameHCS")).thenReturn("PropertyValueHCS");
+        HvdcConverterStation converterStation = mock(HvdcConverterStation.class);
+        when(converterStation.getType()).thenReturn(IdentifiableType.HVDC_CONVERTER_STATION);
+        when(converterStation.getProperty("propertyNameHCS")).thenReturn("PropertyValueHCS");
 
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getNullableSubstation()).thenReturn(substation);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(converterStation.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(converterStation.getTerminal()).thenReturn(terminal);
+        when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
 
         return Stream.of(
                 // --- IN --- //
