@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import java.util.stream.Stream;
 import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 class EnumExpertRuleTest {
     private FilterLoader filterLoader;
@@ -42,50 +42,50 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForTestWithException() {
 
-        Network network = Mockito.mock(Network.class);
-        Mockito.when(network.getType()).thenReturn(IdentifiableType.NETWORK);
+        Network network = mock(Network.class);
+        when(network.getType()).thenReturn(IdentifiableType.NETWORK);
 
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
 
-        Generator generator = Mockito.mock(Generator.class);
-        Mockito.when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
-        Mockito.when(generator.getEnergySource()).thenReturn(EnergySource.HYDRO);
+        Generator generator = mock(Generator.class);
+        when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
+        when(generator.getEnergySource()).thenReturn(EnergySource.HYDRO);
 
-        Load load = Mockito.mock(Load.class);
-        Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        Load load = mock(Load.class);
+        when(load.getType()).thenReturn(IdentifiableType.LOAD);
 
-        ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        ShuntCompensator shuntCompensator = mock(ShuntCompensator.class);
+        when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
 
-        Bus bus = Mockito.mock(Bus.class);
-        Mockito.when(bus.getType()).thenReturn(IdentifiableType.BUS);
+        Bus bus = mock(Bus.class);
+        when(bus.getType()).thenReturn(IdentifiableType.BUS);
 
-        BusbarSection busbarSection = Mockito.mock(BusbarSection.class);
-        Mockito.when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
+        BusbarSection busbarSection = mock(BusbarSection.class);
+        when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
 
-        Battery battery = Mockito.mock(Battery.class);
-        Mockito.when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
+        Battery battery = mock(Battery.class);
+        when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
 
-        Substation substation = Mockito.mock(Substation.class);
-        Mockito.when(substation.getType()).thenReturn(IdentifiableType.SUBSTATION);
+        Substation substation = mock(Substation.class);
+        when(substation.getType()).thenReturn(IdentifiableType.SUBSTATION);
 
-        TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        TwoWindingsTransformer twoWindingsTransformer = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
 
-        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
-        Mockito.when(ratioTapChanger.getRegulationMode()).thenReturn(RatioTapChanger.RegulationMode.VOLTAGE);
+        RatioTapChanger ratioTapChanger = mock(RatioTapChanger.class);
+        when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        when(ratioTapChanger.getRegulationMode()).thenReturn(RatioTapChanger.RegulationMode.VOLTAGE);
 
-        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
-        Mockito.when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        PhaseTapChanger phaseTapChanger = mock(PhaseTapChanger.class);
+        when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
-        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
-        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        StaticVarCompensator svar = mock(StaticVarCompensator.class);
+        when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
-        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
-        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        HvdcLine hvdcLine = mock(HvdcLine.class);
+        when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
@@ -139,18 +139,18 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {
 
-        Generator gen = Mockito.mock(Generator.class);
-        Mockito.when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
+        Generator gen = mock(Generator.class);
+        when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
         // Generator fields
-        Mockito.when(gen.getEnergySource()).thenReturn(EnergySource.HYDRO);
+        when(gen.getEnergySource()).thenReturn(EnergySource.HYDRO);
         // VoltageLevel fields
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(gen.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(gen.getTerminal()).thenReturn(terminal);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -189,18 +189,18 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForLoadTest() {
 
-        Load load = Mockito.mock(Load.class);
-        Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
-        Mockito.when(load.getLoadType()).thenReturn(LoadType.AUXILIARY);
+        Load load = mock(Load.class);
+        when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        when(load.getLoadType()).thenReturn(LoadType.AUXILIARY);
 
         // VoltageLevel fields
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(load.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(load.getTerminal()).thenReturn(terminal);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -233,14 +233,14 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForBusTest() {
 
-        Bus bus = Mockito.mock(Bus.class);
-        Mockito.when(bus.getType()).thenReturn(IdentifiableType.BUS);
+        Bus bus = mock(Bus.class);
+        when(bus.getType()).thenReturn(IdentifiableType.BUS);
         // VoltageLevel fields
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Mockito.when(bus.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        when(bus.getVoltageLevel()).thenReturn(voltageLevel);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -267,16 +267,16 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForBusBarSectionTest() {
 
-        BusbarSection busbarSection = Mockito.mock(BusbarSection.class);
-        Mockito.when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
+        BusbarSection busbarSection = mock(BusbarSection.class);
+        when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
         // VoltageLevel fields
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(busbarSection.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(busbarSection.getTerminal()).thenReturn(terminal);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -303,10 +303,10 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForShuntCompensatorTest() {
 
-        ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        ShuntCompensator shuntCompensator = mock(ShuntCompensator.class);
+        when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
 
-        Mockito.when(shuntCompensator.getModel(ShuntCompensatorLinearModel.class)).thenReturn(new ShuntCompensatorLinearModel() {
+        when(shuntCompensator.getModel(ShuntCompensatorLinearModel.class)).thenReturn(new ShuntCompensatorLinearModel() {
             @Override
             public double getBPerSection() {
                 return -1.;
@@ -369,13 +369,13 @@ class EnumExpertRuleTest {
         });
 
         // VoltageLevel fields
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(shuntCompensator.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(shuntCompensator.getTerminal()).thenReturn(terminal);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -418,16 +418,16 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForBatteryTest() {
 
-        Battery battery = Mockito.mock(Battery.class);
-        Mockito.when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
+        Battery battery = mock(Battery.class);
+        when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
         // VoltageLevel fields
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(battery.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(battery.getTerminal()).thenReturn(terminal);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -454,16 +454,16 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForBoundaryLineTest() {
 
-        BoundaryLine boundaryLine = Mockito.mock(BoundaryLine.class);
-        Mockito.when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        BoundaryLine boundaryLine = mock(BoundaryLine.class);
+        when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
         // VoltageLevel fields
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(boundaryLine.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(boundaryLine.getTerminal()).thenReturn(terminal);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
             // --- EQUALS --- //
@@ -490,11 +490,11 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForVoltageLevelTest() {
 
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
-        Substation substation = Mockito.mock(Substation.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        Substation substation = mock(Substation.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
             // --- EQUALS --- //
@@ -517,9 +517,9 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForSubstationTest() {
 
-        Substation substation = Mockito.mock(Substation.class);
-        Mockito.when(substation.getType()).thenReturn(IdentifiableType.SUBSTATION);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        when(substation.getType()).thenReturn(IdentifiableType.SUBSTATION);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
 
         return Stream.of(
             // --- EQUALS --- //
@@ -542,26 +542,26 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForLinesTest() {
 
-        Line line = Mockito.mock(Line.class);
-        Mockito.when(line.getType()).thenReturn(IdentifiableType.LINE);
+        Line line = mock(Line.class);
+        when(line.getType()).thenReturn(IdentifiableType.LINE);
         // VoltageLevel fields
-        Substation substation1 = Mockito.mock(Substation.class);
-        Substation substation2 = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Terminal terminal2 = Mockito.mock(Terminal.class);
+        Substation substation1 = mock(Substation.class);
+        Substation substation2 = mock(Substation.class);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        Terminal terminal2 = mock(Terminal.class);
 
-        Mockito.when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
-        Mockito.when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
+        when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
+        when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
 
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(line.getTerminal(TwoSides.ONE)).thenReturn(terminal1);
-        Mockito.when(substation1.getCountry()).thenReturn(Optional.of(Country.FR));
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(line.getTerminal(TwoSides.ONE)).thenReturn(terminal1);
+        when(substation1.getCountry()).thenReturn(Optional.of(Country.FR));
 
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(line.getTerminal(TwoSides.TWO)).thenReturn(terminal2);
-        Mockito.when(substation2.getCountry()).thenReturn(Optional.of(Country.SM));
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        when(line.getTerminal(TwoSides.TWO)).thenReturn(terminal2);
+        when(substation2.getCountry()).thenReturn(Optional.of(Country.SM));
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -596,66 +596,66 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTest() {
 
-        TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        TwoWindingsTransformer twoWindingsTransformer = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
 
-        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
-        Mockito.when(ratioTapChanger.isRegulating()).thenReturn(true);
-        Mockito.when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
-        Mockito.when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
+        RatioTapChanger ratioTapChanger = mock(RatioTapChanger.class);
+        when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        when(ratioTapChanger.isRegulating()).thenReturn(true);
+        when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
+        when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
 
-        TwoWindingsTransformer twoWindingsTransformer2 = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer2.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        Mockito.when(twoWindingsTransformer2.getRatioTapChanger()).thenReturn(null);
+        TwoWindingsTransformer twoWindingsTransformer2 = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer2.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        when(twoWindingsTransformer2.getRatioTapChanger()).thenReturn(null);
 
-        Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
-        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
-        Mockito.when(phaseTapChanger.isRegulating()).thenReturn(true);
-        Mockito.when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
-        Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(100.);
+        when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        PhaseTapChanger phaseTapChanger = mock(PhaseTapChanger.class);
+        when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        when(phaseTapChanger.isRegulating()).thenReturn(true);
+        when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        when(phaseTapChanger.getRegulationValue()).thenReturn(100.);
 
-        Mockito.when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
+        when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
 
-        Substation substation = Mockito.mock(Substation.class);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
-        Mockito.when(twoWindingsTransformer.getSubstation()).thenReturn(Optional.of(substation));
+        Substation substation = mock(Substation.class);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        when(twoWindingsTransformer.getSubstation()).thenReturn(Optional.of(substation));
 
-        TwoWindingsTransformer twoWindingsTransformer3 = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer3.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        RatioTapChanger ratioTapChanger3 = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(twoWindingsTransformer3.getRatioTapChanger()).thenReturn(ratioTapChanger3);
-        Mockito.when(ratioTapChanger3.isRegulating()).thenReturn(false);
-        Mockito.when(ratioTapChanger3.hasLoadTapChangingCapabilities()).thenReturn(true);
+        TwoWindingsTransformer twoWindingsTransformer3 = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer3.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        RatioTapChanger ratioTapChanger3 = mock(RatioTapChanger.class);
+        when(twoWindingsTransformer3.getRatioTapChanger()).thenReturn(ratioTapChanger3);
+        when(ratioTapChanger3.isRegulating()).thenReturn(false);
+        when(ratioTapChanger3.hasLoadTapChangingCapabilities()).thenReturn(true);
 
-        TwoWindingsTransformer twoWindingsTransformer4 = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer4.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        RatioTapChanger ratioTapChanger4 = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(twoWindingsTransformer4.getRatioTapChanger()).thenReturn(ratioTapChanger4);
-        Mockito.when(ratioTapChanger4.isRegulating()).thenReturn(true);
-        Mockito.when(ratioTapChanger4.hasLoadTapChangingCapabilities()).thenReturn(true);
+        TwoWindingsTransformer twoWindingsTransformer4 = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer4.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        RatioTapChanger ratioTapChanger4 = mock(RatioTapChanger.class);
+        when(twoWindingsTransformer4.getRatioTapChanger()).thenReturn(ratioTapChanger4);
+        when(ratioTapChanger4.isRegulating()).thenReturn(true);
+        when(ratioTapChanger4.hasLoadTapChangingCapabilities()).thenReturn(true);
 
-        TwoWindingsTransformer twoWindingsTransformer5 = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer5.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        PhaseTapChanger phaseTapChanger5 = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(twoWindingsTransformer5.getPhaseTapChanger()).thenReturn(phaseTapChanger5);
-        Mockito.when(phaseTapChanger5.isRegulating()).thenReturn(false);
-        Mockito.when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        TwoWindingsTransformer twoWindingsTransformer5 = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer5.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger5 = mock(PhaseTapChanger.class);
+        when(twoWindingsTransformer5.getPhaseTapChanger()).thenReturn(phaseTapChanger5);
+        when(phaseTapChanger5.isRegulating()).thenReturn(false);
+        when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
-        TwoWindingsTransformer twoWindingsTransformer6 = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer6.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        PhaseTapChanger phaseTapChanger6 = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(twoWindingsTransformer6.getPhaseTapChanger()).thenReturn(phaseTapChanger6);
-        Mockito.when(phaseTapChanger6.isRegulating()).thenReturn(false);
-        Mockito.when(phaseTapChanger6.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL);
+        TwoWindingsTransformer twoWindingsTransformer6 = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer6.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger6 = mock(PhaseTapChanger.class);
+        when(twoWindingsTransformer6.getPhaseTapChanger()).thenReturn(phaseTapChanger6);
+        when(phaseTapChanger6.isRegulating()).thenReturn(false);
+        when(phaseTapChanger6.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL);
 
-        TwoWindingsTransformer twoWindingsTransformer7 = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer7.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        PhaseTapChanger phaseTapChanger7 = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(twoWindingsTransformer7.getPhaseTapChanger()).thenReturn(phaseTapChanger7);
-        Mockito.when(phaseTapChanger7.isRegulating()).thenReturn(true);
-        Mockito.when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        TwoWindingsTransformer twoWindingsTransformer7 = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer7.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger7 = mock(PhaseTapChanger.class);
+        when(twoWindingsTransformer7.getPhaseTapChanger()).thenReturn(phaseTapChanger7);
+        when(phaseTapChanger7.isRegulating()).thenReturn(true);
+        when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
         return Stream.of(
             // --- EQUALS --- //
@@ -702,109 +702,109 @@ class EnumExpertRuleTest {
     private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTest() {
 
         // transfo 1
-        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer threeWindingsTransformer = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
 
         // Ratio Tap Changer
-        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
-        ThreeWindingsTransformer.Leg leg = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(ratioTapChanger.isRegulating()).thenReturn(true);
-        Mockito.when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
-        Mockito.when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
-        Mockito.when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        RatioTapChanger ratioTapChanger = mock(RatioTapChanger.class);
+        ThreeWindingsTransformer.Leg leg = mock(ThreeWindingsTransformer.Leg.class);
+        when(ratioTapChanger.isRegulating()).thenReturn(true);
+        when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
+        when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
+        when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
 
         // Phase Tap Changer
-        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(leg.getPhaseTapChanger()).thenReturn(phaseTapChanger);
-        Mockito.when(phaseTapChanger.isRegulating()).thenReturn(true);
-        Mockito.when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
-        Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(100.);
+        PhaseTapChanger phaseTapChanger = mock(PhaseTapChanger.class);
+        when(leg.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        when(phaseTapChanger.isRegulating()).thenReturn(true);
+        when(phaseTapChanger.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        when(phaseTapChanger.getRegulationValue()).thenReturn(100.);
 
-        Mockito.when(threeWindingsTransformer.getLeg1()).thenReturn(leg);
-        Mockito.when(threeWindingsTransformer.getLeg2()).thenReturn(leg);
-        Mockito.when(threeWindingsTransformer.getLeg3()).thenReturn(leg);
+        when(threeWindingsTransformer.getLeg1()).thenReturn(leg);
+        when(threeWindingsTransformer.getLeg2()).thenReturn(leg);
+        when(threeWindingsTransformer.getLeg3()).thenReturn(leg);
 
-        Substation substation = Mockito.mock(Substation.class);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
-        Mockito.when(threeWindingsTransformer.getSubstation()).thenReturn(Optional.of(substation));
+        Substation substation = mock(Substation.class);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        when(threeWindingsTransformer.getSubstation()).thenReturn(Optional.of(substation));
 
         // transfo 2
-        ThreeWindingsTransformer threeWindingsTransformer2 = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer2.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer threeWindingsTransformer2 = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer2.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
 
-        ThreeWindingsTransformer.Leg leg2 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg2.getRatioTapChanger()).thenReturn(null);
-        Mockito.when(leg2.getPhaseTapChanger()).thenReturn(null);
+        ThreeWindingsTransformer.Leg leg2 = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg2.getRatioTapChanger()).thenReturn(null);
+        when(leg2.getPhaseTapChanger()).thenReturn(null);
 
-        Mockito.when(threeWindingsTransformer2.getLeg1()).thenReturn(leg2);
-        Mockito.when(threeWindingsTransformer2.getLeg2()).thenReturn(leg2);
-        Mockito.when(threeWindingsTransformer2.getLeg3()).thenReturn(leg2);
+        when(threeWindingsTransformer2.getLeg1()).thenReturn(leg2);
+        when(threeWindingsTransformer2.getLeg2()).thenReturn(leg2);
+        when(threeWindingsTransformer2.getLeg3()).thenReturn(leg2);
 
         // transfo 3
-        ThreeWindingsTransformer threeWindingsTransformer3 = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer3.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer threeWindingsTransformer3 = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer3.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
 
         // Ratio Tap Changer
-        RatioTapChanger ratioTapChanger3 = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(ratioTapChanger3.isRegulating()).thenReturn(false);
-        Mockito.when(ratioTapChanger3.hasLoadTapChangingCapabilities()).thenReturn(true);
-        ThreeWindingsTransformer.Leg leg3 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg3.getRatioTapChanger()).thenReturn(ratioTapChanger3);
-        Mockito.when(threeWindingsTransformer3.getLeg1()).thenReturn(leg3);
-        Mockito.when(threeWindingsTransformer3.getLeg2()).thenReturn(leg3);
-        Mockito.when(threeWindingsTransformer3.getLeg3()).thenReturn(leg3);
+        RatioTapChanger ratioTapChanger3 = mock(RatioTapChanger.class);
+        when(ratioTapChanger3.isRegulating()).thenReturn(false);
+        when(ratioTapChanger3.hasLoadTapChangingCapabilities()).thenReturn(true);
+        ThreeWindingsTransformer.Leg leg3 = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg3.getRatioTapChanger()).thenReturn(ratioTapChanger3);
+        when(threeWindingsTransformer3.getLeg1()).thenReturn(leg3);
+        when(threeWindingsTransformer3.getLeg2()).thenReturn(leg3);
+        when(threeWindingsTransformer3.getLeg3()).thenReturn(leg3);
 
         // transfo 4
-        ThreeWindingsTransformer threeWindingsTransformer4 = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer4.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
-        RatioTapChanger ratioTapChanger4 = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(ratioTapChanger4.isRegulating()).thenReturn(true);
-        Mockito.when(ratioTapChanger4.hasLoadTapChangingCapabilities()).thenReturn(true);
+        ThreeWindingsTransformer threeWindingsTransformer4 = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer4.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        RatioTapChanger ratioTapChanger4 = mock(RatioTapChanger.class);
+        when(ratioTapChanger4.isRegulating()).thenReturn(true);
+        when(ratioTapChanger4.hasLoadTapChangingCapabilities()).thenReturn(true);
 
-        ThreeWindingsTransformer.Leg leg4 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg4.getRatioTapChanger()).thenReturn(ratioTapChanger4);
-        Mockito.when(threeWindingsTransformer4.getLeg1()).thenReturn(leg4);
-        Mockito.when(threeWindingsTransformer4.getLeg2()).thenReturn(leg4);
-        Mockito.when(threeWindingsTransformer4.getLeg3()).thenReturn(leg4);
+        ThreeWindingsTransformer.Leg leg4 = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg4.getRatioTapChanger()).thenReturn(ratioTapChanger4);
+        when(threeWindingsTransformer4.getLeg1()).thenReturn(leg4);
+        when(threeWindingsTransformer4.getLeg2()).thenReturn(leg4);
+        when(threeWindingsTransformer4.getLeg3()).thenReturn(leg4);
 
         // transfo 5
-        ThreeWindingsTransformer threeWindingsTransformer5 = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer5.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
-        PhaseTapChanger phaseTapChanger5 = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(phaseTapChanger5.isRegulating()).thenReturn(false);
-        Mockito.when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        ThreeWindingsTransformer threeWindingsTransformer5 = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer5.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger5 = mock(PhaseTapChanger.class);
+        when(phaseTapChanger5.isRegulating()).thenReturn(false);
+        when(phaseTapChanger5.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
-        ThreeWindingsTransformer.Leg leg5 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg5.getPhaseTapChanger()).thenReturn(phaseTapChanger5);
-        Mockito.when(threeWindingsTransformer5.getLeg1()).thenReturn(leg5);
-        Mockito.when(threeWindingsTransformer5.getLeg2()).thenReturn(leg5);
-        Mockito.when(threeWindingsTransformer5.getLeg3()).thenReturn(leg5);
+        ThreeWindingsTransformer.Leg leg5 = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg5.getPhaseTapChanger()).thenReturn(phaseTapChanger5);
+        when(threeWindingsTransformer5.getLeg1()).thenReturn(leg5);
+        when(threeWindingsTransformer5.getLeg2()).thenReturn(leg5);
+        when(threeWindingsTransformer5.getLeg3()).thenReturn(leg5);
 
         // transfo 6
-        ThreeWindingsTransformer threeWindingsTransformer6 = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer6.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
-        PhaseTapChanger phaseTapChanger6 = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(phaseTapChanger6.isRegulating()).thenReturn(false);
-        Mockito.when(phaseTapChanger6.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL);
+        ThreeWindingsTransformer threeWindingsTransformer6 = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer6.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger6 = mock(PhaseTapChanger.class);
+        when(phaseTapChanger6.isRegulating()).thenReturn(false);
+        when(phaseTapChanger6.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.ACTIVE_POWER_CONTROL);
 
-        ThreeWindingsTransformer.Leg leg6 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg6.getPhaseTapChanger()).thenReturn(phaseTapChanger6);
-        Mockito.when(threeWindingsTransformer6.getLeg1()).thenReturn(leg6);
-        Mockito.when(threeWindingsTransformer6.getLeg2()).thenReturn(leg6);
-        Mockito.when(threeWindingsTransformer6.getLeg3()).thenReturn(leg6);
+        ThreeWindingsTransformer.Leg leg6 = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg6.getPhaseTapChanger()).thenReturn(phaseTapChanger6);
+        when(threeWindingsTransformer6.getLeg1()).thenReturn(leg6);
+        when(threeWindingsTransformer6.getLeg2()).thenReturn(leg6);
+        when(threeWindingsTransformer6.getLeg3()).thenReturn(leg6);
 
         // transfo 7
-        ThreeWindingsTransformer threeWindingsTransformer7 = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer7.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
-        PhaseTapChanger phaseTapChanger7 = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(phaseTapChanger7.isRegulating()).thenReturn(true);
-        Mockito.when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
+        ThreeWindingsTransformer threeWindingsTransformer7 = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer7.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        PhaseTapChanger phaseTapChanger7 = mock(PhaseTapChanger.class);
+        when(phaseTapChanger7.isRegulating()).thenReturn(true);
+        when(phaseTapChanger7.getRegulationMode()).thenReturn(PhaseTapChanger.RegulationMode.CURRENT_LIMITER);
 
-        ThreeWindingsTransformer.Leg leg7 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg7.getPhaseTapChanger()).thenReturn(phaseTapChanger7);
-        Mockito.when(threeWindingsTransformer7.getLeg1()).thenReturn(leg7);
-        Mockito.when(threeWindingsTransformer7.getLeg2()).thenReturn(leg7);
-        Mockito.when(threeWindingsTransformer7.getLeg3()).thenReturn(leg7);
+        ThreeWindingsTransformer.Leg leg7 = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg7.getPhaseTapChanger()).thenReturn(phaseTapChanger7);
+        when(threeWindingsTransformer7.getLeg1()).thenReturn(leg7);
+        when(threeWindingsTransformer7.getLeg2()).thenReturn(leg7);
+        when(threeWindingsTransformer7.getLeg3()).thenReturn(leg7);
 
         return Stream.of(
             // --- EQUALS --- //
@@ -878,28 +878,28 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
 
-        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
-        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
-        Mockito.when(svar.getId()).thenReturn("SVAR");
-        Mockito.when(svar.getRegulationMode()).thenReturn(StaticVarCompensator.RegulationMode.VOLTAGE);
+        StaticVarCompensator svar = mock(StaticVarCompensator.class);
+        when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        when(svar.getId()).thenReturn("SVAR");
+        when(svar.getRegulationMode()).thenReturn(StaticVarCompensator.RegulationMode.VOLTAGE);
 
         // VoltageLevel fields
-        Substation substation = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(svar.getTerminal()).thenReturn(terminal);
-        Mockito.when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(svar.getTerminal()).thenReturn(terminal);
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
         // Regulating terminal fields
-        Terminal regulatingTerminal = Mockito.mock(Terminal.class);
-        VoltageLevel distantVoltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(distantVoltageLevel.getId()).thenReturn("VL_2");
-        Mockito.when(regulatingTerminal.getVoltageLevel()).thenReturn(distantVoltageLevel);
-        BusbarSection regulatedBusBarSection = Mockito.mock(BusbarSection.class);
-        Mockito.when(regulatedBusBarSection.getId()).thenReturn("BBS");
-        Mockito.when(regulatingTerminal.getConnectable()).thenReturn(regulatedBusBarSection);
-        Mockito.when(svar.getRegulatingTerminal()).thenReturn(regulatingTerminal);
+        Terminal regulatingTerminal = mock(Terminal.class);
+        VoltageLevel distantVoltageLevel = mock(VoltageLevel.class);
+        when(distantVoltageLevel.getId()).thenReturn("VL_2");
+        when(regulatingTerminal.getVoltageLevel()).thenReturn(distantVoltageLevel);
+        BusbarSection regulatedBusBarSection = mock(BusbarSection.class);
+        when(regulatedBusBarSection.getId()).thenReturn("BBS");
+        when(regulatingTerminal.getConnectable()).thenReturn(regulatedBusBarSection);
+        when(svar.getRegulatingTerminal()).thenReturn(regulatingTerminal);
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -950,33 +950,33 @@ class EnumExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForHvdcLineTest() {
 
-        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
-        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        HvdcLine hvdcLine = mock(HvdcLine.class);
+        when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
         // VoltageLevel fields
-        Substation substation1 = Mockito.mock(Substation.class);
-        Substation substation2 = Mockito.mock(Substation.class);
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
-        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
+        Substation substation1 = mock(Substation.class);
+        Substation substation2 = mock(Substation.class);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        Terminal terminal2 = mock(Terminal.class);
+        HvdcConverterStation converterStation1 = mock(HvdcConverterStation.class);
+        HvdcConverterStation converterStation2 = mock(HvdcConverterStation.class);
 
-        Mockito.when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
-        Mockito.when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
+        when(voltageLevel1.getSubstation()).thenReturn(Optional.of(substation1));
+        when(voltageLevel2.getSubstation()).thenReturn(Optional.of(substation2));
 
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(substation1.getCountry()).thenReturn(Optional.of(Country.FR));
-        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(converterStation1.getTerminal()).thenReturn(terminal1);
+        when(substation1.getCountry()).thenReturn(Optional.of(Country.FR));
+        when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
 
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal2);
-        Mockito.when(substation2.getCountry()).thenReturn(Optional.of(Country.SM));
-        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        when(converterStation2.getTerminal()).thenReturn(terminal2);
+        when(substation2.getCountry()).thenReturn(Optional.of(Country.SM));
+        when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
 
-        Mockito.when(hvdcLine.getConvertersMode()).thenReturn(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER);
+        when(hvdcLine.getConvertersMode()).thenReturn(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER);
 
         return Stream.of(
             // --- EQUALS --- //

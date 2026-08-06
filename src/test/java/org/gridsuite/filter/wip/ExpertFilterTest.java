@@ -25,7 +25,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
@@ -260,7 +259,7 @@ class ExpertFilterTest {
 
     @Test
     void testGetFilterTypeReturnsExpertFilter() {
-        ExpertRule mockRule = Mockito.mock(ExpertRule.class);
+        ExpertRule mockRule = mock(ExpertRule.class);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
 
         assertThat(filter.getFilterType()).isEqualTo(FilterType.EXPERT);
@@ -268,7 +267,7 @@ class ExpertFilterTest {
 
     @Test
     void testCachingExpertRuleClearsCacheAfterEvaluation() {
-        ExpertRule mockRule = Mockito.mock(ExpertRule.class);
+        ExpertRule mockRule = mock(ExpertRule.class);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
 
         filter.evaluate(network);
@@ -278,7 +277,7 @@ class ExpertFilterTest {
 
     @Test
     void testFilterEvaluationWithMockRuleDelegatesEvaluationToRuleForEachEquipment() {
-        ExpertRule mockRule = Mockito.mock(ExpertRule.class);
+        ExpertRule mockRule = mock(ExpertRule.class);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
 
         filter.evaluate(network);
@@ -294,7 +293,7 @@ class ExpertFilterTest {
     @Test
     void testFilterEvaluationWithMockRuleReturnsExpectedEquipment() {
         Line expectedLine = network.getLine("LINE_1");
-        ExpertRule mockRule = Mockito.mock(ExpertRule.class);
+        ExpertRule mockRule = mock(ExpertRule.class);
         when(mockRule.evaluateRule(any())).thenReturn(false);
         when(mockRule.evaluateRule(expectedLine)).thenReturn(true);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
@@ -307,7 +306,7 @@ class ExpertFilterTest {
 
     @Test
     void testMockFilterEvaluationReturnsExpectedEquipments() {
-        ExpertRule mockRule = Mockito.mock(ExpertRule.class);
+        ExpertRule mockRule = mock(ExpertRule.class);
         Filter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
         when(mockRule.evaluateRule(any())).thenReturn(false);
         when(mockRule.evaluateRule(any(Line.class))).thenReturn(true);

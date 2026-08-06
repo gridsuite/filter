@@ -19,7 +19,7 @@
 
     <groupId>org.gridsuite</groupId>
     <artifactId>gridsuite-filter</artifactId>
-    <version>1.28.0-SNAPSHOT</version>
+    <version>1.30.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>Filter library</name>
@@ -42,10 +42,14 @@
     </developers>
 
     <properties>
-        <lombok.version>1.18.34</lombok.version>
+        <!-- FIXME to remove when powsybl-parent supports JDK25 -->
+        <java.version>25</java.version>
+        <maven.jacoco.version>0.8.15</maven.jacoco.version>
+        <checkstyle.version>13.8.0</checkstyle.version>
+        <lombok.version>1.18.46</lombok.version>
         <org-apache-commons.version>4.4</org-apache-commons.version>
         <org.hamcrest.version>2.2</org.hamcrest.version>
-        <powsybl-dependencies.version>2026.0.0</powsybl-dependencies.version>
+        <powsybl-dependencies.version>2026.1.0</powsybl-dependencies.version>
         <sonar.organization>gridsuite</sonar.organization>
         <sonar.projectKey>org.gridsuite:filter</sonar.projectKey>
     </properties>
@@ -79,7 +83,7 @@
         <dependencies>
             <!-- overrides of imports -->
             <!--
-              lombok for java21 support. We happen to get a version that is
+              lombok for java 25 support. We happen to get a version that is
               not high enough from powsybl-dependencies through open-rao.
             -->
             <dependency>
@@ -163,6 +167,12 @@
             <groupId>com.powsybl</groupId>
             <artifactId>powsybl-iidm-impl</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

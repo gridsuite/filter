@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -24,6 +23,7 @@ import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class NumberExpertRuleTest {
     private FilterLoader filterLoader;
@@ -44,39 +44,39 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForTestWithException() {
 
-        Network network = Mockito.mock(Network.class);
-        Mockito.when(network.getType()).thenReturn(IdentifiableType.NETWORK);
+        Network network = mock(Network.class);
+        when(network.getType()).thenReturn(IdentifiableType.NETWORK);
 
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
 
-        Generator generator = Mockito.mock(Generator.class);
-        Mockito.when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
-        Mockito.when(generator.getMinP()).thenReturn(-500.0);
+        Generator generator = mock(Generator.class);
+        when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
+        when(generator.getMinP()).thenReturn(-500.0);
 
-        Load load = Mockito.mock(Load.class);
-        Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        Load load = mock(Load.class);
+        when(load.getType()).thenReturn(IdentifiableType.LOAD);
 
-        ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        ShuntCompensator shuntCompensator = mock(ShuntCompensator.class);
+        when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
 
-        Bus bus = Mockito.mock(Bus.class);
-        Mockito.when(bus.getType()).thenReturn(IdentifiableType.BUS);
+        Bus bus = mock(Bus.class);
+        when(bus.getType()).thenReturn(IdentifiableType.BUS);
 
-        BusbarSection busbarSection = Mockito.mock(BusbarSection.class);
-        Mockito.when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
+        BusbarSection busbarSection = mock(BusbarSection.class);
+        when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
 
-        TwoWindingsTransformer twoWindingTransformer = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        TwoWindingsTransformer twoWindingTransformer = mock(TwoWindingsTransformer.class);
+        when(twoWindingTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
 
-        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
-        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        StaticVarCompensator svar = mock(StaticVarCompensator.class);
+        when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
-        ThreeWindingsTransformer threeWindingTransformer = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer threeWindingTransformer = mock(ThreeWindingsTransformer.class);
+        when(threeWindingTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
 
-        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
-        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        HvdcLine hvdcLine = mock(HvdcLine.class);
+        when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
@@ -120,58 +120,58 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForGeneratorTest() {
 
-        Generator gen = Mockito.mock(Generator.class);
-        Mockito.when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
+        Generator gen = mock(Generator.class);
+        when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
         // Generator fields
-        Mockito.when(gen.getMinP()).thenReturn(-500.0);
-        Mockito.when(gen.getMaxP()).thenReturn(100.0);
-        Mockito.when(gen.getTargetV()).thenReturn(20.0);
-        Mockito.when(gen.getTargetP()).thenReturn(30.0);
-        Mockito.when(gen.getTargetQ()).thenReturn(40.0);
-        Mockito.when(gen.getRatedS()).thenReturn(60.0);
+        when(gen.getMinP()).thenReturn(-500.0);
+        when(gen.getMaxP()).thenReturn(100.0);
+        when(gen.getTargetV()).thenReturn(20.0);
+        when(gen.getTargetP()).thenReturn(30.0);
+        when(gen.getTargetQ()).thenReturn(40.0);
+        when(gen.getRatedS()).thenReturn(60.0);
         // GeneratorStartup extension fields
-        GeneratorStartup genStartup = Mockito.mock(GeneratorStartup.class);
-        Mockito.when(genStartup.getPlannedActivePowerSetpoint()).thenReturn(50.0);
-        Mockito.when(genStartup.getMarginalCost()).thenReturn(50.0);
-        Mockito.when(genStartup.getPlannedOutageRate()).thenReturn(50.0);
-        Mockito.when(genStartup.getForcedOutageRate()).thenReturn(50.0);
-        Mockito.when(gen.getExtension(any())).thenReturn(genStartup);
+        GeneratorStartup genStartup = mock(GeneratorStartup.class);
+        when(genStartup.getPlannedActivePowerSetpoint()).thenReturn(50.0);
+        when(genStartup.getMarginalCost()).thenReturn(50.0);
+        when(genStartup.getPlannedOutageRate()).thenReturn(50.0);
+        when(genStartup.getForcedOutageRate()).thenReturn(50.0);
+        when(gen.getExtension(any())).thenReturn(genStartup);
         // Terminal fields
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(gen.getTerminal()).thenReturn(terminal);
-        Mockito.when(terminal.getP()).thenReturn(-100.0);
-        Mockito.when(terminal.getQ()).thenReturn(-200.0);
+        Terminal terminal = mock(Terminal.class);
+        when(gen.getTerminal()).thenReturn(terminal);
+        when(terminal.getP()).thenReturn(-100.0);
+        when(terminal.getQ()).thenReturn(-200.0);
         // VoltageLevel fields
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        Generator gen1 = Mockito.mock(Generator.class);
-        Mockito.when(gen1.getType()).thenReturn(IdentifiableType.GENERATOR);
+        Generator gen1 = mock(Generator.class);
+        when(gen1.getType()).thenReturn(IdentifiableType.GENERATOR);
         // Generator fields
-        Mockito.when(gen1.getMinP()).thenReturn(Double.NaN);
-        Mockito.when(gen1.getMaxP()).thenReturn(Double.NaN);
-        Mockito.when(gen1.getTargetV()).thenReturn(Double.NaN);
-        Mockito.when(gen1.getTargetP()).thenReturn(Double.NaN);
-        Mockito.when(gen1.getTargetQ()).thenReturn(Double.NaN);
-        Mockito.when(gen1.getRatedS()).thenReturn(Double.NaN);
+        when(gen1.getMinP()).thenReturn(Double.NaN);
+        when(gen1.getMaxP()).thenReturn(Double.NaN);
+        when(gen1.getTargetV()).thenReturn(Double.NaN);
+        when(gen1.getTargetP()).thenReturn(Double.NaN);
+        when(gen1.getTargetQ()).thenReturn(Double.NaN);
+        when(gen1.getRatedS()).thenReturn(Double.NaN);
         // GeneratorStartup extension fields
-        GeneratorStartup genStartup1 = Mockito.mock(GeneratorStartup.class);
-        Mockito.when(genStartup1.getPlannedActivePowerSetpoint()).thenReturn(Double.NaN);
-        Mockito.when(genStartup1.getMarginalCost()).thenReturn(Double.NaN);
-        Mockito.when(genStartup1.getPlannedOutageRate()).thenReturn(Double.NaN);
-        Mockito.when(genStartup1.getForcedOutageRate()).thenReturn(Double.NaN);
-        Mockito.when(gen1.getExtension(any())).thenReturn(genStartup1);
+        GeneratorStartup genStartup1 = mock(GeneratorStartup.class);
+        when(genStartup1.getPlannedActivePowerSetpoint()).thenReturn(Double.NaN);
+        when(genStartup1.getMarginalCost()).thenReturn(Double.NaN);
+        when(genStartup1.getPlannedOutageRate()).thenReturn(Double.NaN);
+        when(genStartup1.getForcedOutageRate()).thenReturn(Double.NaN);
+        when(gen1.getExtension(any())).thenReturn(genStartup1);
         // Terminal fields
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(gen1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(terminal1.getP()).thenReturn(Double.NaN);
-        Mockito.when(terminal1.getQ()).thenReturn(Double.NaN);
+        Terminal terminal1 = mock(Terminal.class);
+        when(gen1.getTerminal()).thenReturn(terminal1);
+        when(terminal1.getP()).thenReturn(Double.NaN);
+        when(terminal1.getQ()).thenReturn(Double.NaN);
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
             provideArgumentsForGeneratorTestEqualsArguments(gen),
@@ -640,28 +640,28 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForLoadTest() {
 
-        Load load = Mockito.mock(Load.class);
-        Mockito.when(load.getType()).thenReturn(IdentifiableType.LOAD);
-        Mockito.when(load.getP0()).thenReturn(77.0);
-        Mockito.when(load.getQ0()).thenReturn(277.0);
+        Load load = mock(Load.class);
+        when(load.getType()).thenReturn(IdentifiableType.LOAD);
+        when(load.getP0()).thenReturn(77.0);
+        when(load.getQ0()).thenReturn(277.0);
         // VoltageLevel fields
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(load.getTerminal()).thenReturn(terminal);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(load.getTerminal()).thenReturn(terminal);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        Load load1 = Mockito.mock(Load.class);
-        Mockito.when(load1.getType()).thenReturn(IdentifiableType.LOAD);
-        Mockito.when(load1.getP0()).thenReturn(Double.NaN);
-        Mockito.when(load1.getQ0()).thenReturn(Double.NaN);
+        Load load1 = mock(Load.class);
+        when(load1.getType()).thenReturn(IdentifiableType.LOAD);
+        when(load1.getP0()).thenReturn(Double.NaN);
+        when(load1.getQ0()).thenReturn(Double.NaN);
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(load1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(load1.getTerminal()).thenReturn(terminal1);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -780,20 +780,20 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForBusTest() {
 
-        Bus bus = Mockito.mock(Bus.class);
-        Mockito.when(bus.getType()).thenReturn(IdentifiableType.BUS);
+        Bus bus = mock(Bus.class);
+        when(bus.getType()).thenReturn(IdentifiableType.BUS);
         // VoltageLevel fields
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(bus.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(bus.getVoltageLevel()).thenReturn(voltageLevel);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        Bus bus1 = Mockito.mock(Bus.class);
-        Mockito.when(bus1.getType()).thenReturn(IdentifiableType.BUS);
+        Bus bus1 = mock(Bus.class);
+        when(bus1.getType()).thenReturn(IdentifiableType.BUS);
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(bus1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(bus1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -854,24 +854,24 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForBusBarSectionTest() {
 
-        BusbarSection busbarSection = Mockito.mock(BusbarSection.class);
-        Mockito.when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
+        BusbarSection busbarSection = mock(BusbarSection.class);
+        when(busbarSection.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
         // VoltageLevel fields
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(busbarSection.getTerminal()).thenReturn(terminal);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(busbarSection.getTerminal()).thenReturn(terminal);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        BusbarSection busbarSection1 = Mockito.mock(BusbarSection.class);
-        Mockito.when(busbarSection1.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
+        BusbarSection busbarSection1 = mock(BusbarSection.class);
+        when(busbarSection1.getType()).thenReturn(IdentifiableType.BUSBAR_SECTION);
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(busbarSection1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(busbarSection1.getTerminal()).thenReturn(terminal1);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -932,12 +932,12 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForShuntCompensatorTest() {
 
-        ShuntCompensator shuntCompensator = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        ShuntCompensator shuntCompensator = mock(ShuntCompensator.class);
+        when(shuntCompensator.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
 
-        Mockito.when(shuntCompensator.getMaximumSectionCount()).thenReturn(3);
-        Mockito.when(shuntCompensator.getSectionCount()).thenReturn(3);
-        Mockito.when(shuntCompensator.getModel(ShuntCompensatorLinearModel.class)).thenReturn(new ShuntCompensatorLinearModel() {
+        when(shuntCompensator.getMaximumSectionCount()).thenReturn(3);
+        when(shuntCompensator.getSectionCount()).thenReturn(3);
+        when(shuntCompensator.getModel(ShuntCompensatorLinearModel.class)).thenReturn(new ShuntCompensatorLinearModel() {
             @Override
             public double getBPerSection() {
                 return 1.;
@@ -999,21 +999,21 @@ class NumberExpertRuleTest {
             }
         });
         // VoltageLevel fields
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(shuntCompensator.getTerminal()).thenReturn(terminal);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(shuntCompensator.getTerminal()).thenReturn(terminal);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        ShuntCompensator shuntCompensator1 = Mockito.mock(ShuntCompensator.class);
-        Mockito.when(shuntCompensator1.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
+        ShuntCompensator shuntCompensator1 = mock(ShuntCompensator.class);
+        when(shuntCompensator1.getType()).thenReturn(IdentifiableType.SHUNT_COMPENSATOR);
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(shuntCompensator1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(shuntCompensator1.getTerminal()).thenReturn(terminal1);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
             provideArgumentsForShuntCompensatorTestEqualsArguments(shuntCompensator),
@@ -1267,45 +1267,45 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForLinesTest() {
 
-        Line line = Mockito.mock(Line.class);
-        Mockito.when(line.getType()).thenReturn(IdentifiableType.LINE);
+        Line line = mock(Line.class);
+        when(line.getType()).thenReturn(IdentifiableType.LINE);
         // Line Fields
 
-        Mockito.when(line.getR()).thenReturn(150.);
-        Mockito.when(line.getX()).thenReturn(50.);
-        Mockito.when(line.getG1()).thenReturn(10.);
-        Mockito.when(line.getG2()).thenReturn(5.);
-        Mockito.when(line.getB1()).thenReturn(200.);
-        Mockito.when(line.getB2()).thenReturn(250.);
+        when(line.getR()).thenReturn(150.);
+        when(line.getX()).thenReturn(50.);
+        when(line.getG1()).thenReturn(10.);
+        when(line.getG2()).thenReturn(5.);
+        when(line.getB1()).thenReturn(200.);
+        when(line.getB2()).thenReturn(250.);
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(line.getTerminal(TwoSides.ONE)).thenReturn(terminal1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(13.);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(line.getTerminal(TwoSides.ONE)).thenReturn(terminal1);
+        when(voltageLevel1.getNominalV()).thenReturn(13.);
 
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
-        Mockito.when(line.getTerminal(TwoSides.TWO)).thenReturn(terminal2);
-        Mockito.when(voltageLevel2.getNominalV()).thenReturn(17.);
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        Terminal terminal2 = mock(Terminal.class);
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        when(line.getTerminal(TwoSides.TWO)).thenReturn(terminal2);
+        when(voltageLevel2.getNominalV()).thenReturn(17.);
 
         // for testing none EXISTS
-        Line line1 = Mockito.mock(Line.class);
-        Mockito.when(line1.getType()).thenReturn(IdentifiableType.LINE);
+        Line line1 = mock(Line.class);
+        when(line1.getType()).thenReturn(IdentifiableType.LINE);
         // VoltageLevel fields
-        VoltageLevel voltageLevelNone = Mockito.mock(VoltageLevel.class);
-        Terminal terminalNone = Mockito.mock(Terminal.class);
-        Mockito.when(terminalNone.getVoltageLevel()).thenReturn(voltageLevelNone);
-        Mockito.when(line1.getTerminal(TwoSides.ONE)).thenReturn(terminalNone);
-        Mockito.when(voltageLevelNone.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevelNone = mock(VoltageLevel.class);
+        Terminal terminalNone = mock(Terminal.class);
+        when(terminalNone.getVoltageLevel()).thenReturn(voltageLevelNone);
+        when(line1.getTerminal(TwoSides.ONE)).thenReturn(terminalNone);
+        when(voltageLevelNone.getNominalV()).thenReturn(Double.NaN);
 
-        VoltageLevel voltageLevelNone2 = Mockito.mock(VoltageLevel.class);
-        Terminal terminalNone2 = Mockito.mock(Terminal.class);
-        Mockito.when(terminalNone2.getVoltageLevel()).thenReturn(voltageLevelNone2);
-        Mockito.when(line1.getTerminal(TwoSides.TWO)).thenReturn(terminalNone2);
-        Mockito.when(voltageLevelNone2.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevelNone2 = mock(VoltageLevel.class);
+        Terminal terminalNone2 = mock(Terminal.class);
+        when(terminalNone2.getVoltageLevel()).thenReturn(voltageLevelNone2);
+        when(line1.getTerminal(TwoSides.TWO)).thenReturn(terminalNone2);
+        when(voltageLevelNone2.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
             provideArgumentsForLinesTestEqualsArguments(line),
@@ -1582,33 +1582,33 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForBatteryTest() {
 
-        Battery battery = Mockito.mock(Battery.class);
-        Mockito.when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
-        Mockito.when(battery.getMinP()).thenReturn(-5.0);
-        Mockito.when(battery.getMaxP()).thenReturn(5.0);
-        Mockito.when(battery.getTargetP()).thenReturn(3.0);
-        Mockito.when(battery.getTargetQ()).thenReturn(1.0);
+        Battery battery = mock(Battery.class);
+        when(battery.getType()).thenReturn(IdentifiableType.BATTERY);
+        when(battery.getMinP()).thenReturn(-5.0);
+        when(battery.getMaxP()).thenReturn(5.0);
+        when(battery.getTargetP()).thenReturn(3.0);
+        when(battery.getTargetQ()).thenReturn(1.0);
         // VoltageLevel fields
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(battery.getTerminal()).thenReturn(terminal);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(battery.getTerminal()).thenReturn(terminal);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        Battery battery1 = Mockito.mock(Battery.class);
+        Battery battery1 = mock(Battery.class);
 
-        Mockito.when(battery1.getType()).thenReturn(IdentifiableType.BATTERY);
-        Mockito.when(battery1.getMinP()).thenReturn(Double.NaN);
-        Mockito.when(battery1.getMaxP()).thenReturn(Double.NaN);
-        Mockito.when(battery1.getTargetP()).thenReturn(Double.NaN);
-        Mockito.when(battery1.getTargetQ()).thenReturn(Double.NaN);
+        when(battery1.getType()).thenReturn(IdentifiableType.BATTERY);
+        when(battery1.getMinP()).thenReturn(Double.NaN);
+        when(battery1.getMaxP()).thenReturn(Double.NaN);
+        when(battery1.getTargetP()).thenReturn(Double.NaN);
+        when(battery1.getTargetQ()).thenReturn(Double.NaN);
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(battery1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(battery1.getTerminal()).thenReturn(terminal1);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
                 // --- EQUALS --- //
@@ -1770,19 +1770,19 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForVoltageLevelTest() {
 
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getExtension(IdentifiableShortCircuit.class)).thenReturn(new IdentifiableShortCircuitImpl(voltageLevel, 1.0, 4.0));
-        Mockito.when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
-        Mockito.when(voltageLevel.getLowVoltageLimit()).thenReturn(40.0);
-        Mockito.when(voltageLevel.getHighVoltageLimit()).thenReturn(400.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getExtension(IdentifiableShortCircuit.class)).thenReturn(new IdentifiableShortCircuitImpl(voltageLevel, 1.0, 4.0));
+        when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
+        when(voltageLevel.getLowVoltageLimit()).thenReturn(40.0);
+        when(voltageLevel.getHighVoltageLimit()).thenReturn(400.0);
 
         // for testing none EXISTS
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
-        Mockito.when(voltageLevel1.getLowVoltageLimit()).thenReturn(Double.NaN);
-        Mockito.when(voltageLevel1.getHighVoltageLimit()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        when(voltageLevel1.getLowVoltageLimit()).thenReturn(Double.NaN);
+        when(voltageLevel1.getHighVoltageLimit()).thenReturn(Double.NaN);
 
         return Stream.of(
             // --- EQUALS --- //
@@ -1934,68 +1934,68 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForTwoWindingTransformerTest() {
 
-        TwoWindingsTransformer twoWindingsTransformer = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        Mockito.when(twoWindingsTransformer.getR()).thenReturn(0.1);
-        Mockito.when(twoWindingsTransformer.getX()).thenReturn(0.2);
-        Mockito.when(twoWindingsTransformer.getG()).thenReturn(0.3);
-        Mockito.when(twoWindingsTransformer.getB()).thenReturn(0.4);
-        Mockito.when(twoWindingsTransformer.getRatedS()).thenReturn(100.0);
-        Mockito.when(twoWindingsTransformer.getRatedU1()).thenReturn(50.);
-        Mockito.when(twoWindingsTransformer.getRatedU2()).thenReturn(300.0);
+        TwoWindingsTransformer twoWindingsTransformer = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        when(twoWindingsTransformer.getR()).thenReturn(0.1);
+        when(twoWindingsTransformer.getX()).thenReturn(0.2);
+        when(twoWindingsTransformer.getG()).thenReturn(0.3);
+        when(twoWindingsTransformer.getB()).thenReturn(0.4);
+        when(twoWindingsTransformer.getRatedS()).thenReturn(100.0);
+        when(twoWindingsTransformer.getRatedU1()).thenReturn(50.);
+        when(twoWindingsTransformer.getRatedU2()).thenReturn(300.0);
 
         // Terminal fields
-        Terminal terminal = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(twoWindingsTransformer.getTerminal1()).thenReturn(terminal);
-        Mockito.when(twoWindingsTransformer.getTerminal2()).thenReturn(terminal);
+        Terminal terminal = mock(Terminal.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(twoWindingsTransformer.getTerminal1()).thenReturn(terminal);
+        when(twoWindingsTransformer.getTerminal2()).thenReturn(terminal);
         // RatioTapChanger fields
-        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(ratioTapChanger.getTargetV()).thenReturn(13.0);
-        Mockito.when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        RatioTapChanger ratioTapChanger = mock(RatioTapChanger.class);
+        when(ratioTapChanger.getTargetV()).thenReturn(13.0);
+        when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
         // PhaseTapChanger fields
-        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(200.);
-        Mockito.when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        PhaseTapChanger phaseTapChanger = mock(PhaseTapChanger.class);
+        when(phaseTapChanger.getRegulationValue()).thenReturn(200.);
+        when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
 
         // for testing none EXISTS
-        TwoWindingsTransformer twoWindingsTransformer1 = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer1.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        Mockito.when(twoWindingsTransformer1.getR()).thenReturn(Double.NaN);
-        Mockito.when(twoWindingsTransformer1.getX()).thenReturn(Double.NaN);
-        Mockito.when(twoWindingsTransformer1.getG()).thenReturn(Double.NaN);
-        Mockito.when(twoWindingsTransformer1.getB()).thenReturn(Double.NaN);
-        Mockito.when(twoWindingsTransformer1.getRatedS()).thenReturn(Double.NaN);
-        Mockito.when(twoWindingsTransformer1.getRatedU1()).thenReturn(Double.NaN);
-        Mockito.when(twoWindingsTransformer1.getRatedU2()).thenReturn(Double.NaN);
+        TwoWindingsTransformer twoWindingsTransformer1 = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer1.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        when(twoWindingsTransformer1.getR()).thenReturn(Double.NaN);
+        when(twoWindingsTransformer1.getX()).thenReturn(Double.NaN);
+        when(twoWindingsTransformer1.getG()).thenReturn(Double.NaN);
+        when(twoWindingsTransformer1.getB()).thenReturn(Double.NaN);
+        when(twoWindingsTransformer1.getRatedS()).thenReturn(Double.NaN);
+        when(twoWindingsTransformer1.getRatedU1()).thenReturn(Double.NaN);
+        when(twoWindingsTransformer1.getRatedU2()).thenReturn(Double.NaN);
 
         // Terminal fields
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(twoWindingsTransformer1.getTerminal1()).thenReturn(terminal1);
-        Mockito.when(twoWindingsTransformer1.getTerminal2()).thenReturn(terminal1);
+        Terminal terminal1 = mock(Terminal.class);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(twoWindingsTransformer1.getTerminal1()).thenReturn(terminal1);
+        when(twoWindingsTransformer1.getTerminal2()).thenReturn(terminal1);
 
         // RatioTapChanger fields
-        RatioTapChanger ratioTapChanger1 = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(ratioTapChanger1.getTargetV()).thenReturn(Double.NaN);
-        Mockito.when(twoWindingsTransformer1.getRatioTapChanger()).thenReturn(ratioTapChanger1);
+        RatioTapChanger ratioTapChanger1 = mock(RatioTapChanger.class);
+        when(ratioTapChanger1.getTargetV()).thenReturn(Double.NaN);
+        when(twoWindingsTransformer1.getRatioTapChanger()).thenReturn(ratioTapChanger1);
 
         // null RatioTapChanger
-        TwoWindingsTransformer twoWindingsTransformer2 = Mockito.mock(TwoWindingsTransformer.class);
-        Mockito.when(twoWindingsTransformer2.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
-        Mockito.when(twoWindingsTransformer2.getRatioTapChanger()).thenReturn(null);
+        TwoWindingsTransformer twoWindingsTransformer2 = mock(TwoWindingsTransformer.class);
+        when(twoWindingsTransformer2.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
+        when(twoWindingsTransformer2.getRatioTapChanger()).thenReturn(null);
 
         // PhaseTapChanger fields
-        PhaseTapChanger phaseTapChanger1 = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(phaseTapChanger1.getRegulationValue()).thenReturn(Double.NaN);
-        Mockito.when(twoWindingsTransformer1.getPhaseTapChanger()).thenReturn(phaseTapChanger1);
+        PhaseTapChanger phaseTapChanger1 = mock(PhaseTapChanger.class);
+        when(phaseTapChanger1.getRegulationValue()).thenReturn(Double.NaN);
+        when(twoWindingsTransformer1.getPhaseTapChanger()).thenReturn(phaseTapChanger1);
 
         // null PhaseTapChanger
-        Mockito.when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
+        when(twoWindingsTransformer2.getPhaseTapChanger()).thenReturn(null);
 
         return Stream.of(
             provideArgumentsForTwoWindingTransformerTestEqualsArguments(twoWindingsTransformer),
@@ -2375,80 +2375,80 @@ class NumberExpertRuleTest {
 
     private static Stream<Arguments> provideArgumentsForThreeWindingTransformerTest() {
         // transfo
-        ThreeWindingsTransformer threeWindingsTransformer = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
-        ThreeWindingsTransformer.Leg leg = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg.getR()).thenReturn(0.1);
-        Mockito.when(leg.getX()).thenReturn(0.2);
-        Mockito.when(leg.getG()).thenReturn(0.3);
-        Mockito.when(leg.getB()).thenReturn(0.4);
-        Mockito.when(leg.getRatedS()).thenReturn(100.0);
-        Mockito.when(leg.getRatedU()).thenReturn(50.);
+        ThreeWindingsTransformer threeWindingsTransformer = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer.Leg leg = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg.getR()).thenReturn(0.1);
+        when(leg.getX()).thenReturn(0.2);
+        when(leg.getG()).thenReturn(0.3);
+        when(leg.getB()).thenReturn(0.4);
+        when(leg.getRatedS()).thenReturn(100.0);
+        when(leg.getRatedU()).thenReturn(50.);
 
         // Terminal fields
-        Terminal terminal = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(leg.getTerminal()).thenReturn(terminal);
+        Terminal terminal = mock(Terminal.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(leg.getTerminal()).thenReturn(terminal);
         // RatioTapChanger fields
-        RatioTapChanger ratioTapChanger = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(ratioTapChanger.getTargetV()).thenReturn(13.0);
-        Mockito.when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
+        RatioTapChanger ratioTapChanger = mock(RatioTapChanger.class);
+        when(ratioTapChanger.getTargetV()).thenReturn(13.0);
+        when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
         // PhaseTapChanger fields
-        PhaseTapChanger phaseTapChanger = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(phaseTapChanger.getRegulationValue()).thenReturn(200.);
-        Mockito.when(leg.getPhaseTapChanger()).thenReturn(phaseTapChanger);
+        PhaseTapChanger phaseTapChanger = mock(PhaseTapChanger.class);
+        when(phaseTapChanger.getRegulationValue()).thenReturn(200.);
+        when(leg.getPhaseTapChanger()).thenReturn(phaseTapChanger);
 
-        Mockito.when(threeWindingsTransformer.getLeg1()).thenReturn(leg);
-        Mockito.when(threeWindingsTransformer.getLeg2()).thenReturn(leg);
-        Mockito.when(threeWindingsTransformer.getLeg3()).thenReturn(leg);
+        when(threeWindingsTransformer.getLeg1()).thenReturn(leg);
+        when(threeWindingsTransformer.getLeg2()).thenReturn(leg);
+        when(threeWindingsTransformer.getLeg3()).thenReturn(leg);
 
         // transfo 1
         // for testing none EXISTS
-        ThreeWindingsTransformer threeWindingsTransformer1 = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer1.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
-        ThreeWindingsTransformer.Leg leg1 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg1.getR()).thenReturn(Double.NaN);
-        Mockito.when(leg1.getX()).thenReturn(Double.NaN);
-        Mockito.when(leg1.getG()).thenReturn(Double.NaN);
-        Mockito.when(leg1.getB()).thenReturn(Double.NaN);
-        Mockito.when(leg1.getRatedS()).thenReturn(Double.NaN);
-        Mockito.when(leg1.getRatedU()).thenReturn(Double.NaN);
+        ThreeWindingsTransformer threeWindingsTransformer1 = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer1.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer.Leg leg1 = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg1.getR()).thenReturn(Double.NaN);
+        when(leg1.getX()).thenReturn(Double.NaN);
+        when(leg1.getG()).thenReturn(Double.NaN);
+        when(leg1.getB()).thenReturn(Double.NaN);
+        when(leg1.getRatedS()).thenReturn(Double.NaN);
+        when(leg1.getRatedU()).thenReturn(Double.NaN);
 
         // Terminal fields
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(leg1.getTerminal()).thenReturn(terminal1);
+        Terminal terminal1 = mock(Terminal.class);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(leg1.getTerminal()).thenReturn(terminal1);
 
         // RatioTapChanger fields
-        RatioTapChanger ratioTapChanger1 = Mockito.mock(RatioTapChanger.class);
-        Mockito.when(ratioTapChanger1.getTargetV()).thenReturn(Double.NaN);
-        Mockito.when(leg1.getRatioTapChanger()).thenReturn(ratioTapChanger1);
+        RatioTapChanger ratioTapChanger1 = mock(RatioTapChanger.class);
+        when(ratioTapChanger1.getTargetV()).thenReturn(Double.NaN);
+        when(leg1.getRatioTapChanger()).thenReturn(ratioTapChanger1);
 
         // PhaseTapChanger fields
-        PhaseTapChanger phaseTapChanger1 = Mockito.mock(PhaseTapChanger.class);
-        Mockito.when(phaseTapChanger1.getRegulationValue()).thenReturn(Double.NaN);
-        Mockito.when(leg1.getPhaseTapChanger()).thenReturn(phaseTapChanger1);
+        PhaseTapChanger phaseTapChanger1 = mock(PhaseTapChanger.class);
+        when(phaseTapChanger1.getRegulationValue()).thenReturn(Double.NaN);
+        when(leg1.getPhaseTapChanger()).thenReturn(phaseTapChanger1);
 
-        Mockito.when(threeWindingsTransformer1.getLeg1()).thenReturn(leg1);
-        Mockito.when(threeWindingsTransformer1.getLeg2()).thenReturn(leg1);
-        Mockito.when(threeWindingsTransformer1.getLeg3()).thenReturn(leg1);
+        when(threeWindingsTransformer1.getLeg1()).thenReturn(leg1);
+        when(threeWindingsTransformer1.getLeg2()).thenReturn(leg1);
+        when(threeWindingsTransformer1.getLeg3()).thenReturn(leg1);
 
         // transfo 2
         // null RatioTapChanger
-        ThreeWindingsTransformer threeWindingsTransformer2 = Mockito.mock(ThreeWindingsTransformer.class);
-        Mockito.when(threeWindingsTransformer2.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
-        ThreeWindingsTransformer.Leg leg2 = Mockito.mock(ThreeWindingsTransformer.Leg.class);
-        Mockito.when(leg2.getRatioTapChanger()).thenReturn(null);
+        ThreeWindingsTransformer threeWindingsTransformer2 = mock(ThreeWindingsTransformer.class);
+        when(threeWindingsTransformer2.getType()).thenReturn(IdentifiableType.THREE_WINDINGS_TRANSFORMER);
+        ThreeWindingsTransformer.Leg leg2 = mock(ThreeWindingsTransformer.Leg.class);
+        when(leg2.getRatioTapChanger()).thenReturn(null);
 
         // null PhaseTapChanger
-        Mockito.when(leg2.getPhaseTapChanger()).thenReturn(null);
-        Mockito.when(threeWindingsTransformer2.getLeg1()).thenReturn(leg2);
-        Mockito.when(threeWindingsTransformer2.getLeg2()).thenReturn(leg2);
-        Mockito.when(threeWindingsTransformer2.getLeg3()).thenReturn(leg2);
+        when(leg2.getPhaseTapChanger()).thenReturn(null);
+        when(threeWindingsTransformer2.getLeg1()).thenReturn(leg2);
+        when(threeWindingsTransformer2.getLeg2()).thenReturn(leg2);
+        when(threeWindingsTransformer2.getLeg3()).thenReturn(leg2);
 
         return Stream.of(
             provideArgumentsForThreeWindingTransformerTestEqualsArguments(threeWindingsTransformer),
@@ -3173,51 +3173,51 @@ class NumberExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForStaticVarCompensatorTest() {
-        StaticVarCompensator svar = Mockito.mock(StaticVarCompensator.class);
-        Mockito.when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        StaticVarCompensator svar = mock(StaticVarCompensator.class);
+        when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
 
-        Mockito.when(svar.getBmin()).thenReturn(-1.0);
-        Mockito.when(svar.getBmax()).thenReturn(-2.0);
-        Mockito.when(svar.getVoltageSetpoint()).thenReturn(1.0);
-        Mockito.when(svar.getReactivePowerSetpoint()).thenReturn(2.0);
+        when(svar.getBmin()).thenReturn(-1.0);
+        when(svar.getBmax()).thenReturn(-2.0);
+        when(svar.getVoltageSetpoint()).thenReturn(1.0);
+        when(svar.getReactivePowerSetpoint()).thenReturn(2.0);
 
-        StandbyAutomaton standbyAutomaton = Mockito.mock(StandbyAutomaton.class);
-        Mockito.when(standbyAutomaton.getLowVoltageSetpoint()).thenReturn(1.0);
-        Mockito.when(standbyAutomaton.getHighVoltageSetpoint()).thenReturn(2.0);
-        Mockito.when(standbyAutomaton.getLowVoltageThreshold()).thenReturn(1.0);
-        Mockito.when(standbyAutomaton.getHighVoltageThreshold()).thenReturn(2.0);
-        Mockito.when(standbyAutomaton.getB0()).thenReturn(-1.0);
-        Mockito.when(svar.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton);
+        StandbyAutomaton standbyAutomaton = mock(StandbyAutomaton.class);
+        when(standbyAutomaton.getLowVoltageSetpoint()).thenReturn(1.0);
+        when(standbyAutomaton.getHighVoltageSetpoint()).thenReturn(2.0);
+        when(standbyAutomaton.getLowVoltageThreshold()).thenReturn(1.0);
+        when(standbyAutomaton.getHighVoltageThreshold()).thenReturn(2.0);
+        when(standbyAutomaton.getB0()).thenReturn(-1.0);
+        when(svar.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton);
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(svar.getTerminal()).thenReturn(terminal);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(svar.getTerminal()).thenReturn(terminal);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        StaticVarCompensator svar1 = Mockito.mock(StaticVarCompensator.class);
-        Mockito.when(svar1.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
+        StaticVarCompensator svar1 = mock(StaticVarCompensator.class);
+        when(svar1.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(svar1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(svar1.getTerminal()).thenReturn(terminal1);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
-        Mockito.when(svar1.getBmin()).thenReturn(Double.NaN);
-        Mockito.when(svar1.getBmax()).thenReturn(Double.NaN);
-        Mockito.when(svar1.getVoltageSetpoint()).thenReturn(Double.NaN);
-        Mockito.when(svar1.getReactivePowerSetpoint()).thenReturn(Double.NaN);
+        when(svar1.getBmin()).thenReturn(Double.NaN);
+        when(svar1.getBmax()).thenReturn(Double.NaN);
+        when(svar1.getVoltageSetpoint()).thenReturn(Double.NaN);
+        when(svar1.getReactivePowerSetpoint()).thenReturn(Double.NaN);
 
-        StandbyAutomaton standbyAutomaton1 = Mockito.mock(StandbyAutomaton.class);
-        Mockito.when(standbyAutomaton1.getLowVoltageSetpoint()).thenReturn(Double.NaN);
-        Mockito.when(standbyAutomaton1.getHighVoltageSetpoint()).thenReturn(Double.NaN);
-        Mockito.when(standbyAutomaton1.getLowVoltageThreshold()).thenReturn(Double.NaN);
-        Mockito.when(standbyAutomaton1.getHighVoltageThreshold()).thenReturn(Double.NaN);
-        Mockito.when(standbyAutomaton1.getB0()).thenReturn(Double.NaN);
-        Mockito.when(svar1.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton1);
+        StandbyAutomaton standbyAutomaton1 = mock(StandbyAutomaton.class);
+        when(standbyAutomaton1.getLowVoltageSetpoint()).thenReturn(Double.NaN);
+        when(standbyAutomaton1.getHighVoltageSetpoint()).thenReturn(Double.NaN);
+        when(standbyAutomaton1.getLowVoltageThreshold()).thenReturn(Double.NaN);
+        when(standbyAutomaton1.getHighVoltageThreshold()).thenReturn(Double.NaN);
+        when(standbyAutomaton1.getB0()).thenReturn(Double.NaN);
+        when(svar1.getExtension(StandbyAutomaton.class)).thenReturn(standbyAutomaton1);
 
         return Stream.of(
             provideArgumentsForStaticVarCompensatorTestEqualsArguments(svar),
@@ -3662,37 +3662,37 @@ class NumberExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForBoundaryLineTest() {
-        BoundaryLine boundaryLine = Mockito.mock(BoundaryLine.class);
-        Mockito.when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
-        Mockito.when(boundaryLine.getR()).thenReturn(0.1);
-        Mockito.when(boundaryLine.getX()).thenReturn(0.2);
-        Mockito.when(boundaryLine.getB()).thenReturn(0.3);
-        Mockito.when(boundaryLine.getG()).thenReturn(0.4);
-        Mockito.when(boundaryLine.getP0()).thenReturn(100.0);
-        Mockito.when(boundaryLine.getQ0()).thenReturn(50.0);
+        BoundaryLine boundaryLine = mock(BoundaryLine.class);
+        when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        when(boundaryLine.getR()).thenReturn(0.1);
+        when(boundaryLine.getX()).thenReturn(0.2);
+        when(boundaryLine.getB()).thenReturn(0.3);
+        when(boundaryLine.getG()).thenReturn(0.4);
+        when(boundaryLine.getP0()).thenReturn(100.0);
+        when(boundaryLine.getQ0()).thenReturn(50.0);
 
         // VoltageLevel fields
-        VoltageLevel voltageLevel = Mockito.mock(VoltageLevel.class);
-        Terminal terminal = Mockito.mock(Terminal.class);
-        Mockito.when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
-        Mockito.when(boundaryLine.getTerminal()).thenReturn(terminal);
-        Mockito.when(voltageLevel.getNominalV()).thenReturn(13.0);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        Terminal terminal = mock(Terminal.class);
+        when(terminal.getVoltageLevel()).thenReturn(voltageLevel);
+        when(boundaryLine.getTerminal()).thenReturn(terminal);
+        when(voltageLevel.getNominalV()).thenReturn(13.0);
 
         // for testing none EXISTS
-        BoundaryLine boundaryLine1 = Mockito.mock(BoundaryLine.class);
-        Mockito.when(boundaryLine1.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
-        Mockito.when(boundaryLine1.getB()).thenReturn(Double.NaN);
-        Mockito.when(boundaryLine1.getR()).thenReturn(Double.NaN);
-        Mockito.when(boundaryLine1.getG()).thenReturn(Double.NaN);
-        Mockito.when(boundaryLine1.getX()).thenReturn(Double.NaN);
-        Mockito.when(boundaryLine1.getP0()).thenReturn(Double.NaN);
-        Mockito.when(boundaryLine1.getQ0()).thenReturn(Double.NaN);
+        BoundaryLine boundaryLine1 = mock(BoundaryLine.class);
+        when(boundaryLine1.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
+        when(boundaryLine1.getB()).thenReturn(Double.NaN);
+        when(boundaryLine1.getR()).thenReturn(Double.NaN);
+        when(boundaryLine1.getG()).thenReturn(Double.NaN);
+        when(boundaryLine1.getX()).thenReturn(Double.NaN);
+        when(boundaryLine1.getP0()).thenReturn(Double.NaN);
+        when(boundaryLine1.getQ0()).thenReturn(Double.NaN);
         // VoltageLevel fields
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
-        Mockito.when(boundaryLine1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        Terminal terminal1 = mock(Terminal.class);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        when(boundaryLine1.getTerminal()).thenReturn(terminal1);
+        when(voltageLevel1.getNominalV()).thenReturn(Double.NaN);
 
         return Stream.of(
             // --- EQUALS --- //
@@ -3896,57 +3896,57 @@ class NumberExpertRuleTest {
     }
 
     private static Stream<Arguments> provideArgumentsForHvdcLinesTest() {
-        HvdcLine hvdcLine = Mockito.mock(HvdcLine.class);
-        Mockito.when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
-        Mockito.when(hvdcLine.getR()).thenReturn(0.1);
-        Mockito.when(hvdcLine.getMaxP()).thenReturn(200.0);
-        Mockito.when(hvdcLine.getActivePowerSetpoint()).thenReturn(100.0);
-        Mockito.when(hvdcLine.getNominalV()).thenReturn(400.0);
+        HvdcLine hvdcLine = mock(HvdcLine.class);
+        when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        when(hvdcLine.getR()).thenReturn(0.1);
+        when(hvdcLine.getMaxP()).thenReturn(200.0);
+        when(hvdcLine.getActivePowerSetpoint()).thenReturn(100.0);
+        when(hvdcLine.getNominalV()).thenReturn(400.0);
 
         // Terminal fields
-        Terminal terminal1 = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel1 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel1.getNominalV()).thenReturn(13.0);
-        Mockito.when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
+        Terminal terminal1 = mock(Terminal.class);
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getNominalV()).thenReturn(13.0);
+        when(terminal1.getVoltageLevel()).thenReturn(voltageLevel1);
 
-        Terminal terminal2 = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel2 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel2.getNominalV()).thenReturn(13.0);
-        Mockito.when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
+        Terminal terminal2 = mock(Terminal.class);
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        when(voltageLevel2.getNominalV()).thenReturn(13.0);
+        when(terminal2.getVoltageLevel()).thenReturn(voltageLevel2);
 
         // Converter Stations fields
-        HvdcConverterStation converterStation1 = Mockito.mock(HvdcConverterStation.class);
-        HvdcConverterStation converterStation2 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation1.getTerminal()).thenReturn(terminal1);
-        Mockito.when(converterStation2.getTerminal()).thenReturn(terminal2);
-        Mockito.when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
-        Mockito.when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
+        HvdcConverterStation converterStation1 = mock(HvdcConverterStation.class);
+        HvdcConverterStation converterStation2 = mock(HvdcConverterStation.class);
+        when(converterStation1.getTerminal()).thenReturn(terminal1);
+        when(converterStation2.getTerminal()).thenReturn(terminal2);
+        when(hvdcLine.getConverterStation1()).thenReturn(converterStation1);
+        when(hvdcLine.getConverterStation2()).thenReturn(converterStation2);
 
         // for testing none EXISTS
-        HvdcLine hvdcLine1 = Mockito.mock(HvdcLine.class);
-        Mockito.when(hvdcLine1.getType()).thenReturn(IdentifiableType.HVDC_LINE);
-        Mockito.when(hvdcLine1.getR()).thenReturn(Double.NaN);
-        Mockito.when(hvdcLine1.getMaxP()).thenReturn(Double.NaN);
-        Mockito.when(hvdcLine1.getActivePowerSetpoint()).thenReturn(Double.NaN);
-        Mockito.when(hvdcLine1.getNominalV()).thenReturn(Double.NaN);
+        HvdcLine hvdcLine1 = mock(HvdcLine.class);
+        when(hvdcLine1.getType()).thenReturn(IdentifiableType.HVDC_LINE);
+        when(hvdcLine1.getR()).thenReturn(Double.NaN);
+        when(hvdcLine1.getMaxP()).thenReturn(Double.NaN);
+        when(hvdcLine1.getActivePowerSetpoint()).thenReturn(Double.NaN);
+        when(hvdcLine1.getNominalV()).thenReturn(Double.NaN);
 
         // Terminal fields
-        Terminal terminal3 = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel3 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel3.getNominalV()).thenReturn(Double.NaN);
-        Mockito.when(terminal3.getVoltageLevel()).thenReturn(voltageLevel3);
-        Terminal terminal4 = Mockito.mock(Terminal.class);
-        VoltageLevel voltageLevel4 = Mockito.mock(VoltageLevel.class);
-        Mockito.when(voltageLevel4.getNominalV()).thenReturn(Double.NaN);
-        Mockito.when(terminal4.getVoltageLevel()).thenReturn(voltageLevel4);
+        Terminal terminal3 = mock(Terminal.class);
+        VoltageLevel voltageLevel3 = mock(VoltageLevel.class);
+        when(voltageLevel3.getNominalV()).thenReturn(Double.NaN);
+        when(terminal3.getVoltageLevel()).thenReturn(voltageLevel3);
+        Terminal terminal4 = mock(Terminal.class);
+        VoltageLevel voltageLevel4 = mock(VoltageLevel.class);
+        when(voltageLevel4.getNominalV()).thenReturn(Double.NaN);
+        when(terminal4.getVoltageLevel()).thenReturn(voltageLevel4);
 
         // None Converter Stations fields
-        HvdcConverterStation converterStation3 = Mockito.mock(HvdcConverterStation.class);
-        HvdcConverterStation converterStation4 = Mockito.mock(HvdcConverterStation.class);
-        Mockito.when(converterStation3.getTerminal()).thenReturn(terminal3);
-        Mockito.when(converterStation4.getTerminal()).thenReturn(terminal4);
-        Mockito.when(hvdcLine1.getConverterStation1()).thenReturn(converterStation3);
-        Mockito.when(hvdcLine1.getConverterStation2()).thenReturn(converterStation4);
+        HvdcConverterStation converterStation3 = mock(HvdcConverterStation.class);
+        HvdcConverterStation converterStation4 = mock(HvdcConverterStation.class);
+        when(converterStation3.getTerminal()).thenReturn(terminal3);
+        when(converterStation4.getTerminal()).thenReturn(terminal4);
+        when(hvdcLine1.getConverterStation1()).thenReturn(converterStation3);
+        when(hvdcLine1.getConverterStation2()).thenReturn(converterStation4);
 
         return Stream.of(
             // --- EQUALS --- //

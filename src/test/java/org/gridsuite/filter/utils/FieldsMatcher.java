@@ -6,6 +6,8 @@
  */
 package org.gridsuite.filter.utils;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.MutableTriple;
@@ -16,8 +18,6 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.collection.ArrayMatching;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
