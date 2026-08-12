@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.toSet;
 public class IdentifierListFilter implements Filter {
 
     public static final String SEARCH_COUNT = "searchCount";
-    public static final String EQUIPEMENT_TYPE = "equipementType";
+    public static final String EQUIPMENT_TYPE = "equipmentType";
     private EquipmentType equipmentType;
     private Set<String> equipmentIds;
 
@@ -69,13 +69,13 @@ public class IdentifierListFilter implements Filter {
                     .withMessageTemplate("filter.evaluation.listFilter.emptyResult")
                     .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
                     .withSeverity(TypedValue.ERROR_SEVERITY)
-                    .withUntypedValue(EQUIPEMENT_TYPE, equipmentType.name())
+                    .withUntypedValue(EQUIPMENT_TYPE, equipmentType.name())
                     .add();
         } else if (!notFoundIds.isEmpty()) {
             final ReportNode node = reportNode.newReportNode()
                     .withSeverity(TypedValue.WARN_SEVERITY)
                     .withMessageTemplate("filter.evaluation.listFilter.notFound")
-                    .withUntypedValue(EQUIPEMENT_TYPE, equipmentType.name())
+                    .withUntypedValue(EQUIPMENT_TYPE, equipmentType.name())
                     .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
                     .withUntypedValue("notFoundCount", notFoundIds.size())
                     .add();
@@ -91,7 +91,7 @@ public class IdentifierListFilter implements Filter {
             reportNode.newReportNode()
                     .withSeverity(TypedValue.INFO_SEVERITY)
                     .withMessageTemplate("filter.evaluation.listFilter.allFound")
-                    .withUntypedValue(EQUIPEMENT_TYPE, equipmentType.name())
+                    .withUntypedValue(EQUIPMENT_TYPE, equipmentType.name())
                     .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
                     .add();
         }
