@@ -68,7 +68,7 @@ public class IdentifierListFilter implements Filter {
             reportNode.newReportNode()
                     .withMessageTemplate("filter.evaluation.listFilter.emptyResult")
                     .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
-                    .withSeverity(TypedValue.ERROR_SEVERITY)
+                    .withSeverity(TypedValue.WARN_SEVERITY)
                     .withUntypedValue(EQUIPEMENT_TYPE, equipmentType.name())
                     .add();
         } else if (!notFoundIds.isEmpty()) {
