@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.powsybl.iidm.network.Identifiable;
 import lombok.*;
-import org.apache.commons.lang3.Strings;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
@@ -50,12 +49,14 @@ public final class StringExpertRule implements ExpertRule {
         if (fieldValue == null || fieldValue.isEmpty()) {
             return operator.equals(OperatorType.NOT_EXISTS);
         }
+        String fieldValueLowerCase = fieldValue.toLowerCase();
+        String valueLowerCase = value.toLowerCase();
 
         return switch (operator) {
-            case IS -> Strings.CI.equals(fieldValue, value);
-            case CONTAINS -> Strings.CI.contains(fieldValue, value);
-            case BEGINS_WITH -> Strings.CI.startsWith(fieldValue, value);
-            case ENDS_WITH -> Strings.CI.endsWith(fieldValue, value);
+            case IS -> fieldValue.equalsIgnoreCase(value);
+            case CONTAINS -> fieldValueLowerCase.contains(valueLowerCase);
+            case BEGINS_WITH -> fieldValueLowerCase.startsWith(valueLowerCase);
+            case ENDS_WITH -> fieldValueLowerCase.endsWith(valueLowerCase);
             case EXISTS -> true;
             case NOT_EXISTS -> false;
             case IN -> values.stream().anyMatch(fieldValue::equalsIgnoreCase);
