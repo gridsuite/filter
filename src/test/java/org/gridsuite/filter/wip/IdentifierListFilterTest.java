@@ -171,7 +171,7 @@ class IdentifierListFilterTest {
         assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.notFound");
         assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 3 elements (type LINE) : 2 elements not found");
         var values = reportNodeFilter.getValues();
-        assertThat(values.get("equipementType")).hasToString("LINE");
+        assertThat(values.get("equipmentType")).hasToString("LINE");
         assertThat(values.get("searchCount").getValue()).isEqualTo(3);
         assertThat(values.get("notFoundCount").getValue()).isEqualTo(2);
         var nodesIdNotFound = reportNodeFilter.getChildren();
@@ -196,7 +196,7 @@ class IdentifierListFilterTest {
         assertThat(reportNode.getChildren()).hasSize(1);
         var reportNodeFilter = reportNode.getChildren().getFirst();
         assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.emptyResult");
-        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 1 elements (type LINE) elements no elements found");
+        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 1 elements (type LINE) : no elements found");
     }
 
     @Test
@@ -214,7 +214,7 @@ class IdentifierListFilterTest {
         var reportNodeFilter = reportNode.getChildren().getFirst();
         assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.allFound");
         var values = reportNodeFilter.getValues();
-        assertThat(values.get("equipementType")).hasToString("LOAD");
+        assertThat(values.get("equipmentType")).hasToString("LOAD");
         assertThat(values.get("searchCount").getValue()).isEqualTo(2);
         assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 2 elements (type LOAD) : all elements found");
     }
