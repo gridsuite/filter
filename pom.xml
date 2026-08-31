@@ -42,6 +42,9 @@
     </developers>
 
     <properties>
+        <!-- version currently used in our springboot version; then we guarantee compatibility with our servers -->
+        <apache-lang3.version>3.17.0</apache-lang3.version>
+        <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
         <!-- FIXME to remove when powsybl-parent supports JDK25 -->
         <java.version>25</java.version>
         <maven.jacoco.version>0.8.15</maven.jacoco.version>
@@ -82,6 +85,16 @@
     <dependencyManagement>
         <dependencies>
             <!-- overrides of imports -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${apache-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta-annotation.version}</version>
+            </dependency>
             <!--
               lombok for java 25 support. We happen to get a version that is
               not high enough from powsybl-dependencies through open-rao.
@@ -116,15 +129,25 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Compilation dependencies -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Compilation dependencies -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>com.powsybl</groupId>
@@ -167,12 +190,6 @@
             <groupId>com.powsybl</groupId>
             <artifactId>powsybl-iidm-impl</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>2.1.1</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
