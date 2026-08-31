@@ -13,5 +13,5 @@ import java.util.UUID;
  * @author Joris Mancini <joris.mancini_externe at rte-france.com>
  */
 public interface FilterLoader {
-    List<Filter> getNewFilters(List<UUID> uuids);
+    List<Filter> load(List<UUID> uuids);
 }
