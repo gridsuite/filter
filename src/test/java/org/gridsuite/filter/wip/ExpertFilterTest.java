@@ -33,6 +33,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -337,5 +339,17 @@ class ExpertFilterTest {
 
         assertThat(filteredIdentifiableList).hasSize(expectedEquipmentIds.size());
         assertThat(filteredIdentifiableList.stream().map(Identifiable::getId)).containsAll(expectedEquipmentIds);
+    }
+
+    @Test
+    void testFilterName() {
+        ExpertFilter expertFilter = ExpertFilter.builder()
+                .equipmentType(EquipmentType.LINE)
+                .rule(StringExpertRule.builder().field(FieldType.NAME).operator(OperatorType.BEGINS_WITH).value("Best").build())
+                .build();
+        assertNull(expertFilter.getName());
+
+        expertFilter.setName("coucou");
+        assertEquals("coucou", expertFilter.getName());
     }
 }

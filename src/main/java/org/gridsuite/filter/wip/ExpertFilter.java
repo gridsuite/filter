@@ -29,17 +29,33 @@ public class ExpertFilter implements Filter {
 
     private EquipmentType equipmentType;
     private ExpertRule rule;
+    private String name;
+
+    public ExpertFilter(EquipmentType equipmentType, ExpertRule rule) {
+        this(equipmentType, rule, null);
+    }
 
     @Builder
-    public ExpertFilter(EquipmentType equipmentType, ExpertRule rule) {
+    public ExpertFilter(EquipmentType equipmentType, ExpertRule rule, String name) {
         this.equipmentType = Objects.requireNonNull(equipmentType);
         this.rule = Objects.requireNonNull(rule);
+        this.name = name;
     }
 
     @Override
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public FilterType getFilterType() {
         return FilterType.EXPERT;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
