@@ -261,4 +261,14 @@ class IdentifierListFilterTest {
         identifierListFilter.setName("coucou");
         assertEquals("coucou", identifierListFilter.getName());
     }
+
+    @Test
+    void buildFilterWithName() {
+        IdentifierListFilter identifierListFilter = IdentifierListFilter.builder()
+                .name("coucou")
+                .equipmentType(EquipmentType.LINE)
+                .equipmentIds(Set.of("LINE_1", "LINE_2"))
+                .build();
+        assertEquals("coucou", identifierListFilter.getName());
+    }
 }

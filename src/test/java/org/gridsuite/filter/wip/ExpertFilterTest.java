@@ -352,4 +352,14 @@ class ExpertFilterTest {
         expertFilter.setName("coucou");
         assertEquals("coucou", expertFilter.getName());
     }
+
+    @Test
+    void buildFilterWithName() {
+        ExpertFilter expertFilter = ExpertFilter.builder()
+                .name("coucou")
+                .equipmentType(EquipmentType.LINE)
+                .rule(StringExpertRule.builder().field(FieldType.NAME).operator(OperatorType.BEGINS_WITH).value("Best").build())
+                .build();
+        assertEquals("coucou", expertFilter.getName());
+    }
 }
