@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -246,5 +248,27 @@ class IdentifierListFilterTest {
 
         assertThat(filteredIdentifiableList).hasSize(expectedEquipmentIds.size());
         assertThat(filteredIdentifiableList.stream().map(Identifiable::getId)).containsAll(expectedEquipmentIds);
+    }
+
+    @Test
+    void testFilterName() {
+        IdentifierListFilter identifierListFilter = IdentifierListFilter.builder()
+                .equipmentType(EquipmentType.LINE)
+                .equipmentIds(Set.of("LINE_1", "LINE_2"))
+                .build();
+        assertNull(identifierListFilter.getName());
+
+        identifierListFilter.setName("coucou");
+        assertEquals("coucou", identifierListFilter.getName());
+    }
+
+    @Test
+    void buildFilterWithName() {
+        IdentifierListFilter identifierListFilter = IdentifierListFilter.builder()
+                .name("coucou")
+                .equipmentType(EquipmentType.LINE)
+                .equipmentIds(Set.of("LINE_1", "LINE_2"))
+                .build();
+        assertEquals("coucou", identifierListFilter.getName());
     }
 }

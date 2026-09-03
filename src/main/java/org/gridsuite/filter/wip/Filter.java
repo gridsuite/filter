@@ -14,6 +14,7 @@ import com.powsybl.commons.report.ReportNode;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
+import jakarta.annotation.Nullable;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 
@@ -63,4 +64,8 @@ public interface Filter {
     EquipmentType getEquipmentType();
 
     FilterType getFilterType();
+
+    @Nullable String getName();
+
+    void setName(String name);
 }

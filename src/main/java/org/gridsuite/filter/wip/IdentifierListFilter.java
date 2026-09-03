@@ -39,17 +39,33 @@ public class IdentifierListFilter implements Filter {
     public static final String EQUIPMENT_TYPE = "equipmentType";
     private EquipmentType equipmentType;
     private Set<String> equipmentIds;
+    private String name;
+
+    public IdentifierListFilter(EquipmentType equipmentType, Set<String> equipmentIds) {
+        this(equipmentType, equipmentIds, null);
+    }
 
     @Builder
-    public IdentifierListFilter(EquipmentType equipmentType, Set<String> equipmentIds) {
+    public IdentifierListFilter(EquipmentType equipmentType, Set<String> equipmentIds, String name) {
         this.equipmentType = Objects.requireNonNull(equipmentType);
         this.equipmentIds = Set.copyOf(Objects.requireNonNull(equipmentIds));
+        this.name = name;
     }
 
     @Override
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public FilterType getFilterType() {
         return FilterType.IDENTIFIER_LIST;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
