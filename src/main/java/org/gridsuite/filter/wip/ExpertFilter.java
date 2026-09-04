@@ -10,12 +10,16 @@ package org.gridsuite.filter.wip;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
+import com.powsybl.commons.report.ReportNode;
 import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.TopologyKind;
 import lombok.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 import org.gridsuite.filter.wip.rule.ExpertRule;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -56,6 +60,13 @@ public class ExpertFilter implements Filter {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
+        List<Identifiable<?>> foundEquipments = Filter.super.evaluate(network, topologyKind, reportNode);
+        ReportUtils.reportMatchingEquipmentsCount(foundEquipments.size(), reportNode);
+        return foundEquipments;
     }
 
     @Override
