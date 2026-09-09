@@ -76,23 +76,21 @@ public class IdentifierListFilter implements Filter {
 
     @Override
     public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
+        reportNode.newReportNode()
+                .withMessageTemplate("filter.evaluation.listFilter.evaluate")
+                .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
+                .withUntypedValue(EQUIPMENT_TYPE, equipmentType.name())
+                .withSeverity(TypedValue.INFO_SEVERITY)
+                .add();
+
         var result = Filter.super.evaluate(network, topologyKind, reportNode);
         Set<String> foundIds = result.stream().map(Identifiable::getId).collect(toSet());
         Set<String> notFoundIds = Sets.difference(equipmentIds, foundIds);
 
-        if (foundIds.isEmpty() && !equipmentIds.isEmpty()) {
-            reportNode.newReportNode()
-                    .withMessageTemplate("filter.evaluation.listFilter.emptyResult")
-                    .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
-                    .withSeverity(TypedValue.WARN_SEVERITY)
-                    .withUntypedValue(EQUIPMENT_TYPE, equipmentType.name())
-                    .add();
-        } else if (!notFoundIds.isEmpty()) {
+        if (!foundIds.isEmpty() && !notFoundIds.isEmpty()) {
             final ReportNode node = reportNode.newReportNode()
-                    .withSeverity(TypedValue.WARN_SEVERITY)
+                    .withSeverity(TypedValue.INFO_SEVERITY)
                     .withMessageTemplate("filter.evaluation.listFilter.notFound")
-                    .withUntypedValue(EQUIPMENT_TYPE, equipmentType.name())
-                    .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
                     .withUntypedValue("notFoundCount", notFoundIds.size())
                     .add();
 
@@ -102,15 +100,8 @@ public class IdentifierListFilter implements Filter {
                 .withUntypedValue("id", id)
                 .add()
             );
-
-        } else {
-            reportNode.newReportNode()
-                    .withSeverity(TypedValue.INFO_SEVERITY)
-                    .withMessageTemplate("filter.evaluation.listFilter.allFound")
-                    .withUntypedValue(EQUIPMENT_TYPE, equipmentType.name())
-                    .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
-                    .add();
         }
+        ReportUtils.reportMatchingEquipmentsCount(foundIds.size(), reportNode);
         return result;
     }
 }

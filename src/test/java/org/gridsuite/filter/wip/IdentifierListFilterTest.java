@@ -168,15 +168,19 @@ class IdentifierListFilterTest {
 
         var res = filter.evaluate(network, reportNode);
         assertThat(res.stream().map(Identifiable::getId)).containsExactly("LINE_1");
-        assertThat(reportNode.getChildren()).hasSize(1);
-        var reportNodeFilter = reportNode.getChildren().getFirst();
-        assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.notFound");
-        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 3 elements (type LINE) : 2 elements not found");
-        var values = reportNodeFilter.getValues();
+        assertThat(reportNode.getChildren()).hasSize(3);
+        var evaluateNode = reportNode.getChildren().getFirst();
+        assertThat(evaluateNode.getMessageKey()).isEqualTo("filter.evaluation.listFilter.evaluate");
+        var values = evaluateNode.getValues();
         assertThat(values.get("equipmentType")).hasToString("LINE");
         assertThat(values.get("searchCount").getValue()).isEqualTo(3);
-        assertThat(values.get("notFoundCount").getValue()).isEqualTo(2);
-        var nodesIdNotFound = reportNodeFilter.getChildren();
+        assertThat(evaluateNode.getMessage()).isEqualTo("Evaluate identifier list filter of 3 elements (type LINE)");
+        var missingEquipmentsReport = reportNode.getChildren().get(1);
+        assertThat(missingEquipmentsReport.getMessageKey()).isEqualTo("filter.evaluation.listFilter.notFound");
+        assertThat(missingEquipmentsReport.getMessage()).isEqualTo("Partial match: 2 elements not found");
+        var missingEquipmentsValues = missingEquipmentsReport.getValues();
+        assertThat(missingEquipmentsValues.get("notFoundCount").getValue()).isEqualTo(2);
+        var nodesIdNotFound = missingEquipmentsReport.getChildren();
         assertThat(nodesIdNotFound).hasSize(2);
         assertThat(nodesIdNotFound.stream().map(ReportNode::getMessageKey))
                 .allMatch(key -> key.equals("filter.evaluation.listFilter.notFoundId"));
@@ -195,10 +199,16 @@ class IdentifierListFilterTest {
                 .build();
         var res = filter.evaluate(network, reportNode);
         assertThat(res).isEmpty();
-        assertThat(reportNode.getChildren()).hasSize(1);
-        var reportNodeFilter = reportNode.getChildren().getFirst();
-        assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.emptyResult");
-        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 1 elements (type LINE) : no elements found");
+        assertThat(reportNode.getChildren()).hasSize(2);
+        var evaluateNode = reportNode.getChildren().getFirst();
+        assertThat(evaluateNode.getMessageKey()).isEqualTo("filter.evaluation.listFilter.evaluate");
+        var values = evaluateNode.getValues();
+        assertThat(values.get("equipmentType")).hasToString("LINE");
+        assertThat(values.get("searchCount").getValue()).isEqualTo(1);
+        assertThat(evaluateNode.getMessage()).isEqualTo("Evaluate identifier list filter of 1 elements (type LINE)");
+        var summaryNode = reportNode.getChildren().get(1);
+        assertThat(summaryNode.getMessageKey()).isEqualTo("filter.evaluation.general.noMatchingEquipment");
+        assertThat(summaryNode.getMessage()).isEqualTo("No matching equipment found in the network");
     }
 
     @Test
@@ -212,13 +222,18 @@ class IdentifierListFilterTest {
 
         var res = filter.evaluate(network, reportNode);
         assertThat(res.stream().map(Identifiable::getId)).containsExactlyInAnyOrder("LOAD_1", "LOAD_2");
-        assertThat(reportNode.getChildren()).hasSize(1);
-        var reportNodeFilter = reportNode.getChildren().getFirst();
-        assertThat(reportNodeFilter.getMessageKey()).isEqualTo("filter.evaluation.listFilter.allFound");
-        var values = reportNodeFilter.getValues();
+        assertThat(reportNode.getChildren()).hasSize(2);
+        var evaluateNode = reportNode.getChildren().getFirst();
+        assertThat(evaluateNode.getMessageKey()).isEqualTo("filter.evaluation.listFilter.evaluate");
+        var values = evaluateNode.getValues();
         assertThat(values.get("equipmentType")).hasToString("LOAD");
         assertThat(values.get("searchCount").getValue()).isEqualTo(2);
-        assertThat(reportNodeFilter.getMessage()).isEqualTo("Applying list filter of 2 elements (type LOAD) : all elements found");
+        assertThat(evaluateNode.getMessage()).isEqualTo("Evaluate identifier list filter of 2 elements (type LOAD)");
+        var summaryNode = reportNode.getChildren().get(1);
+        assertThat(summaryNode.getMessageKey()).isEqualTo("filter.evaluation.general.countMatchingEquipments");
+        var summaryValues = summaryNode.getValues();
+        assertThat(summaryValues.get("count").getValue()).isEqualTo(2);
+        assertThat(summaryNode.getMessage()).isEqualTo("2 matching equipments found in the network");
     }
 
     @ParameterizedTest
