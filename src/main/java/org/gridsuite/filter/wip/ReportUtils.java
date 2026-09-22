@@ -23,7 +23,7 @@ public final class ReportUtils {
         if (matchingEquipmentsCount == 0) {
             reportNode.newReportNode()
                     .withMessageTemplate("filter.evaluation.general.noMatchingEquipment")
-                    .withSeverity(TypedValue.WARN_SEVERITY)
+                    .withSeverity(TypedValue.INFO_SEVERITY)
                     .add();
         } else {
             reportNode.newReportNode()
