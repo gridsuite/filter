@@ -6,14 +6,14 @@
  */
 package org.gridsuite.filter.utils;
 
+import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
 import org.gridsuite.filter.*;
-import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.*;
+import org.gridsuite.filter.wip.ExpertFilter;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Franck Lecuyer <franck.lecuyer at rte-france.com>
@@ -21,42 +21,6 @@ import java.util.stream.Collectors;
 public final class FilterServiceUtils {
     private FilterServiceUtils() {
         throw new AssertionError("Utility class should not be instantiated");
-    }
-
-    public static List<IdentifiableAttributes> getIdentifiableAttributes(AbstractFilter filter, Network network, FilterLoader filterLoader) {
-        if (filter instanceof IdentifierListFilter identifierListFilter &&
-            (filter.getEquipmentType() == EquipmentType.GENERATOR ||
-                filter.getEquipmentType() == EquipmentType.LOAD || filter.getEquipmentType() == EquipmentType.BATTERY)) {
-            return FiltersUtils.getIdentifiables(filter, network, filterLoader)
-                .stream()
-                .map(identifiable -> new IdentifiableAttributes(identifiable.getId(),
-                    identifiable.getType(),
-                    identifierListFilter.getDistributionKey(identifiable.getId())))
-                .toList();
-        } else {
-            return FiltersUtils.getIdentifiables(filter, network, filterLoader).stream()
-                .map(identifiable -> new IdentifiableAttributes(identifiable.getId(), identifiable.getType(), null))
-                .toList();
-        }
-    }
-
-    public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, List<UUID> uuids, FilterLoader filterLoader) {
-        return getFilterEquipmentsFromUuid(network, uuids, filterLoader, Set.of());
-    }
-
-    public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, List<UUID> uuids, FilterLoader filterLoader, Set<FilterType> filterTypesToExclude) {
-        List<AbstractFilter> filters = filterLoader.getFilters(uuids);
-        return filters.stream()
-            .filter(filter -> filter != null && !filterTypesToExclude.contains(filter.getType()))
-            .map(filter -> filter.toFilterEquipments(FilterServiceUtils.getIdentifiableAttributes(filter, network, filterLoader)))
-            .toList();
-    }
-
-    public static List<FilterEquipments> getFilterEquipmentsFromUuid(Network network, UUID uuid, FilterLoader filterLoader) {
-        List<AbstractFilter> filters = filterLoader.getFilters(List.of(uuid));
-        return filters.stream()
-            .map(filter -> filter.toFilterEquipments(FilterServiceUtils.getIdentifiableAttributes(filter, network, filterLoader)))
-            .toList();
     }
 
     public static FilteredIdentifiables evaluateFiltersWithEquipmentTypes(FiltersWithEquipmentTypes filtersWithEquipmentTypes, Network network, FilterLoader filterLoader) {
@@ -76,28 +40,27 @@ public final class FilterServiceUtils {
                                                    AbstractFilter filter) {
         Objects.requireNonNull(filter);
         EquipmentType filterEquipmentType = filter.getEquipmentType();
-        FilteredIdentifiables filteredIdentifiables = filter.toFilteredIdentifiables(getIdentifiableAttributes(filter, network, filterLoader));
-
-        if (filteredIdentifiables.notFoundIds() != null) {
-            filteredIdentifiables.notFoundIds().forEach(element -> notFound.put(element.getId(), element));
-        }
-
-        if (filteredIdentifiables.equipmentIds() == null) {
-            return;
-        }
+        List<Identifiable<?>> identifiables = filter.toFilter(filterLoader).evaluate(network);
 
         if (filterEquipmentType != EquipmentType.SUBSTATION && filterEquipmentType != EquipmentType.VOLTAGE_LEVEL) {
-            filteredIdentifiables.equipmentIds().forEach(element -> result.put(element.getId(), element));
+            FilterEquipments filterEquipments = filter.toFilterEquipments(identifiables);
+            if (filterEquipments.getNotFoundEquipments() != null) {
+                filterEquipments.getNotFoundEquipments().forEach(id -> notFound.put(
+                        id,
+                        new IdentifiableAttributes(id, EquipmentTypeMapper.map(filter.getEquipmentType()), null)));
+            }
+            filterEquipments.getIdentifiableAttributes().forEach(id -> result.put(id.getId(), id));
             return;
         }
 
         Set<IdentifiableType> selectedEquipmentTypes = getSelectedEquipmentTypes(filtersWithEquipmentTypes, filter.getId());
 
         // This list is the result of the original filter and so necessarily contains a list of IDs of substations or voltage levels.
-        Set<String> filteredEquipmentIds = filteredIdentifiables.equipmentIds().stream().map(IdentifiableAttributes::getId).collect(Collectors.toSet());
+        List<String> filteredEquipmentIds = identifiables.stream().map(Identifiable::getId).toList();
         List<ExpertFilter> filters = FilterWithEquipmentTypesUtils.createFiltersForSubEquipments(filterEquipmentType, filteredEquipmentIds, selectedEquipmentTypes);
-        filters.stream().flatMap(expertFilter -> getIdentifiableAttributes(expertFilter, network, filterLoader).stream())
-            .forEach(element -> result.put(element.getId(), element));
+        filters.stream()
+                .flatMap(expertFilter -> expertFilter.evaluate(network).stream()).map(FilterServiceUtils::map)
+                .forEach(element -> result.put(element.getId(), element));
     }
 
     private static Set<IdentifiableType> getSelectedEquipmentTypes(FiltersWithEquipmentTypes filtersWithEquipmentTypes, UUID filterUuid) {
@@ -110,5 +73,13 @@ public final class FilterServiceUtils {
                 () -> new IllegalStateException("No selected equipment types for filter " + filterUuid
                     + " : substation and voltage level filters should contain an equipment types list")
             );
+    }
+
+    public static IdentifiableAttributes map(Identifiable<?> identifiable) {
+        return new IdentifiableAttributes(identifiable.getId(), identifiable.getType(), null);
+    }
+
+    public static FilteredIdentifiables map(List<Identifiable<?>> identifiables) {
+        return new FilteredIdentifiables(identifiables.stream().map(FilterServiceUtils::map).toList(), List.of());
     }
 }

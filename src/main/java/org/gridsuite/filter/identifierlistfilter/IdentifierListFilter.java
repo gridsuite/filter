@@ -8,14 +8,18 @@
 package org.gridsuite.filter.identifierlistfilter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.powsybl.iidm.network.IdentifiableType;
+import com.powsybl.iidm.network.Identifiable;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.AbstractFilter;
+import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.utils.EquipmentType;
+import org.gridsuite.filter.utils.FilterServiceUtils;
 import org.gridsuite.filter.utils.FilterType;
+import org.gridsuite.filter.wip.Filter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Seddik Yengui <seddik.yengui at rte-france.com>
@@ -44,20 +48,12 @@ public class IdentifierListFilter extends AbstractFilter {
         return FilterType.IDENTIFIER_LIST;
     }
 
-    public Double getDistributionKey(String equipmentId) {
-        return filterEquipmentsAttributes.stream()
-                .filter(attribute -> attribute.getEquipmentID().equals(equipmentId))
-                .findFirst()
-                .map(IdentifierListFilterEquipmentAttributes::getDistributionKey)
-                .orElse(null);
-    }
-
     @Override
-    public FilterEquipments toFilterEquipments(List<IdentifiableAttributes> identifiableAttributes) {
+    public FilterEquipments toFilterEquipments(List<Identifiable<?>> identifiables) {
         // we keep the same order of the equipments in the filter
         List<String> notFound = new ArrayList<>();
         List<IdentifiableAttributes> orderedIdentifiableAttributes = filterEquipmentsAttributes.stream()
-                .map(f -> identifiableAttributes.stream()
+                .map(f -> identifiables.stream()
                         .filter(attribute -> Objects.equals(attribute.getId(), f.getEquipmentID()))
                         .findFirst()
                         .orElseGet(() -> {
@@ -65,6 +61,7 @@ public class IdentifierListFilter extends AbstractFilter {
                             return null;
                         }))
                 .filter(Objects::nonNull)
+                .map(FilterServiceUtils::map)
                 .toList();
 
         return FilterEquipments.builder()
@@ -75,14 +72,12 @@ public class IdentifierListFilter extends AbstractFilter {
     }
 
     @Override
-    public FilteredIdentifiables toFilteredIdentifiables(List<IdentifiableAttributes> identifiableAttributes) {
-
-        FilterEquipments filterEquipments = toFilterEquipments(identifiableAttributes);
-
-        IdentifiableType idType = IdentifiableType.valueOf(getEquipmentType().name()); // {LC,VS}C_CONVERTER_STATION not supported!
-        List<IdentifiableAttributes> notFounds = filterEquipments.getNotFoundEquipments().stream().map(element ->
-            new IdentifiableAttributes(element, idType, null)).toList();
-
-        return new FilteredIdentifiables(filterEquipments.getIdentifiableAttributes(), notFounds);
+    public Filter toFilter(FilterLoader filterLoader) {
+        return org.gridsuite.filter.wip.IdentifierListFilter.builder()
+                .equipmentType(getEquipmentType())
+                .equipmentIds(filterEquipmentsAttributes.stream()
+                        .map(IdentifierListFilterEquipmentAttributes::getEquipmentID)
+                        .collect(Collectors.toSet()))
+                .build();
     }
 }

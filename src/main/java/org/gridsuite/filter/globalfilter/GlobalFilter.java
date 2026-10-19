@@ -7,6 +7,9 @@
 package org.gridsuite.filter.globalfilter;
 
 import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.iidm.network.Network;
+import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +17,13 @@ import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.utils.EquipmentType;
+import org.gridsuite.filter.wip.ExpertFilter;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
+import static org.gridsuite.filter.globalfilter.GlobalFilterUtils.buildExpertFilter;
 
 /**
  * @author maissa Souissi <maissa.souissi at rte-france.com>
@@ -44,5 +50,20 @@ public class GlobalFilter {
             && CollectionUtils.isEmpty(this.genericFilter)
             && CollectionUtils.isEmpty(this.substationOrVoltageLevelFilter)
             && (MapUtils.isEmpty(this.substationProperty) || this.substationProperty.values().stream().allMatch(CollectionUtils::isEmpty));
+    }
+
+    @Nonnull
+    public List<Identifiable<?>> evaluate(@Nonnull final Network network,
+                                          @Nonnull final List<EquipmentType> equipmentTypes,
+                                          @Nonnull final FilterLoader filterLoader) {
+        List<Identifiable<?>> identifiables = new ArrayList<>();
+        for (final EquipmentType equipmentType : equipmentTypes) {
+            // Extract IDs from expert filter
+            final ExpertFilter expertFilter = buildExpertFilter(this, equipmentType, filterLoader);
+            if (expertFilter != null) {
+                identifiables.addAll(expertFilter.evaluate(network));
+            }
+        }
+        return identifiables;
     }
 }
