@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2023, RTE (http://www.rte-france.com)
+/*
+ * Copyright (c) 2026, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -7,21 +7,14 @@
 package org.gridsuite.filter.expertfilter.expertrule;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.powsybl.commons.PowsyblException;
-import com.powsybl.iidm.network.Identifiable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
 import org.gridsuite.filter.utils.expertfilter.DataType;
-
-import java.util.Map;
-import java.util.UUID;
-
-import static org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils.getFieldValue;
+import org.gridsuite.filter.wip.rule.ExpertRule;
 
 /**
  * @author Antoine Bouhours <antoine.bouhours at rte-france.com>
@@ -39,17 +32,12 @@ public class EnumExpertRule extends StringExpertRule {
     }
 
     @Override
-    public boolean evaluateRule(Identifiable<?> identifiable, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
-        String identifiableValue = getFieldValue(this.getField(), null, identifiable);
-        if (identifiableValue == null) {
-            return false;
-        }
-        return switch (this.getOperator()) {
-            case EQUALS -> identifiableValue.equals(this.getValue());
-            case NOT_EQUALS -> !identifiableValue.equals(this.getValue());
-            case IN -> this.getValues().contains(identifiableValue);
-            case NOT_IN -> !this.getValues().contains(identifiableValue);
-            default -> throw new PowsyblException(this.getOperator() + " operator not supported with " + this.getDataType() + " rule data type");
-        };
+    public ExpertRule toRule(FilterLoader filterLoader) {
+        return org.gridsuite.filter.wip.rule.EnumExpertRule.builder()
+                .field(getField())
+                .operator(getOperator())
+                .value(getValue())
+                .values(getValues() == null ? null : getValues().stream().toList())
+                .build();
     }
 }
