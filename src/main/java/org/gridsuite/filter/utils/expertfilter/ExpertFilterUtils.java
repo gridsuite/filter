@@ -730,7 +730,7 @@ public final class ExpertFilterUtils {
                 case SUBSTATION -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, VOLTAGE_LEVEL,
                      LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, TWO_WINDINGS_TRANSFORMER,
-                     THREE_WINDINGS_TRANSFORMER, BOUNDARY_LINE -> Stream.of(FieldType.SUBSTATION_ID);
+                     THREE_WINDINGS_TRANSFORMER, BOUNDARY_LINE, SWITCH -> Stream.of(FieldType.SUBSTATION_ID);
                 case LINE, HVDC_LINE
                         -> Stream.of(FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
             };
@@ -738,7 +738,7 @@ public final class ExpertFilterUtils {
             return switch (actualType) {
                 case VOLTAGE_LEVEL -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, SUBSTATION,
-                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, BOUNDARY_LINE -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, BOUNDARY_LINE, SWITCH -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
                 case LINE, HVDC_LINE, TWO_WINDINGS_TRANSFORMER
                         -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2);
                 case THREE_WINDINGS_TRANSFORMER -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2, FieldType.VOLTAGE_LEVEL_ID_3);

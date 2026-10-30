@@ -117,6 +117,24 @@ public final class FiltersUtils {
         return new ArrayList<>(stream.toList());
     }
 
+    private static List<Identifiable<?>> getSwitchList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
+        if (filter instanceof IdentifierListFilter identifierListFilter) {
+            List<String> equipmentsIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
+            Stream<Switch> stream = network.getSwitchStream()
+                .filter(switchEquipment -> equipmentsIds.contains(switchEquipment.getId()));
+            return new ArrayList<>(stream.toList());
+        } else if (filter instanceof ExpertFilter expertFilter) {
+            var rule = expertFilter.getRules();
+            Map<UUID, FilterEquipments> cachedUuidFilters = new HashMap<>();
+            Stream<Switch> stream = network.getSwitchStream()
+                .filter(switchEquipment -> rule.evaluateRule(switchEquipment, filterLoader, cachedUuidFilters));
+            return new ArrayList<>(stream.toList());
+        } else {
+            return List.of();
+        }
+
+    }
+
     private static List<Identifiable<?>> getLineList(Network network, AbstractFilter filter, FilterLoader filterLoader) {
         if (filter instanceof IdentifierListFilter identifierListFilter) {
             List<String> equipmentIds = getIdentifierListFilterEquipmentIds(identifierListFilter);
@@ -237,6 +255,7 @@ public final class FiltersUtils {
             case BUSBAR_SECTION -> getBusbarSectionList(network, filter, filterLoader);
             case VOLTAGE_LEVEL -> getVoltageLevelList(network, filter, filterLoader);
             case SUBSTATION -> getSubstationList(network, filter, filterLoader);
+            case SWITCH -> getSwitchList(network, filter, filterLoader);
         };
     }
 

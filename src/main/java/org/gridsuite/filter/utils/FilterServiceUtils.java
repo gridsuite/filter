@@ -8,6 +8,15 @@ package org.gridsuite.filter.utils;
 
 import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
+import com.powsybl.iidm.network.Substation;
+import com.powsybl.iidm.network.Switch;
+import com.powsybl.iidm.network.SwitchKind;
+import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.sld.builders.NetworkGraphBuilder;
+import com.powsybl.sld.layout.ImplicitCellDetector;
+import com.powsybl.sld.layout.LayoutParameters;
+import com.powsybl.sld.model.graphs.VoltageLevelGraph;
+import com.powsybl.sld.model.nodes.Node;
 import org.gridsuite.filter.*;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.identifierlistfilter.*;
@@ -95,9 +104,82 @@ public final class FilterServiceUtils {
 
         // This list is the result of the original filter and so necessarily contains a list of IDs of substations or voltage levels.
         Set<String> filteredEquipmentIds = filteredIdentifiables.equipmentIds().stream().map(IdentifiableAttributes::getId).collect(Collectors.toSet());
-        List<ExpertFilter> filters = FilterWithEquipmentTypesUtils.createFiltersForSubEquipments(filterEquipmentType, filteredEquipmentIds, selectedEquipmentTypes);
-        filters.stream().flatMap(expertFilter -> getIdentifiableAttributes(expertFilter, network, filterLoader).stream())
-            .forEach(element -> result.put(element.getId(), element));
+
+        List<IdentifiableAttributes> identifiableAttributes = getIdentifiableAttributesWithEquipmentTypes(
+            filterEquipmentType, filteredEquipmentIds, selectedEquipmentTypes, network, filterLoader);
+        identifiableAttributes.forEach(element -> result.put(element.getId(), element));
+    }
+
+    private static List<IdentifiableAttributes> getIdentifiableAttributesWithEquipmentTypes(EquipmentType filterEquipmentType,
+                                                                                            Set<String> filteredEquipmentIds,
+                                                                                            Set<IdentifiableType> selectedEquipmentTypes,
+                                                                                            Network network,
+                                                                                            FilterLoader filterLoader) {
+        List<IdentifiableAttributes> result = new ArrayList<>();
+
+        selectedEquipmentTypes.forEach(selectedEquipmentType -> {
+            if (selectedEquipmentType != IdentifiableType.SWITCH) {
+                ExpertFilter filter = FilterWithEquipmentTypesUtils.createFilterForSubEquipment(filterEquipmentType, filteredEquipmentIds, selectedEquipmentType);
+                result.addAll(getIdentifiableAttributes(filter, network, filterLoader));
+            } else {
+                // for switch selected equipment type, we cannot create and evaluate an expert filter (it is not implemented yet) to get all
+                // the non fictitious breaker or load break switches in coupler cells of the voltageLevels/substations
+                result.addAll(getNonFictitiousSwitchesInCouplerCells(filterEquipmentType, filteredEquipmentIds, network));
+            }
+        });
+
+        return result;
+    }
+
+    private static List<IdentifiableAttributes> getNonFictitiousSwitchesInCouplerCells(EquipmentType filterEquipmentType,
+                                                                                       Set<String> filteredEquipmentIds,
+                                                                                       Network network) {
+        List<IdentifiableAttributes> switches = new ArrayList<>();
+
+        Set<String> voltageLevelIds = new HashSet<>();
+        if (filterEquipmentType == EquipmentType.SUBSTATION) {
+            // get all voltage levels ids of the substations in the list of filtered substations
+            network.getSubstationStream()
+                    .filter(substation -> filteredEquipmentIds.contains(substation.getId()))
+                    .flatMap(Substation::getVoltageLevelStream)
+                    .map(VoltageLevel::getId)
+                    .forEach(voltageLevelIds::add);
+        } else {
+            voltageLevelIds = filteredEquipmentIds;
+        }
+
+        voltageLevelIds.forEach(vlId -> {
+            VoltageLevel vl = network.getVoltageLevel(vlId);
+            if (vl != null) {
+                // create voltage level graph (with default layout parameters)
+                VoltageLevelGraph voltageLevelGraph = new NetworkGraphBuilder(network, new LayoutParameters()).buildVoltageLevelGraph(vlId);
+
+                // detect cells on this graph
+                new ImplicitCellDetector().detectCells(voltageLevelGraph);
+
+                // get all non fictitious breaker or load breaker switches in the graph intern cells
+                Set<String> switchIds = getSwitchesFromVoltageLevelCells(voltageLevelGraph, network);
+                switchIds.forEach(switchId -> switches.add(new IdentifiableAttributes(switchId, IdentifiableType.SWITCH, null)));
+            }
+        });
+
+        return switches;
+    }
+
+    private static Set<String> getSwitchesFromVoltageLevelCells(VoltageLevelGraph voltageLevelGraph, Network network) {
+        Set<String> switchIds = new HashSet<>();
+        voltageLevelGraph.getInternCellStream().forEach(cell -> cell.getNodes().forEach(node -> {
+            if (node.getType() == Node.NodeType.SWITCH) {
+                Switch switchEquipment = network.getSwitch(node.getId());
+                if (switchEquipment != null &&
+                    !switchEquipment.isFictitious() &&
+                    (switchEquipment.getKind() == SwitchKind.BREAKER || switchEquipment.getKind() == SwitchKind.LOAD_BREAK_SWITCH)) {
+                    switchIds.add(node.getId());
+                }
+            }
+        }));
+
+        return switchIds;
     }
 
     private static Set<IdentifiableType> getSelectedEquipmentTypes(FiltersWithEquipmentTypes filtersWithEquipmentTypes, UUID filterUuid) {
