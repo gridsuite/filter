@@ -2,6 +2,8 @@ package org.gridsuite.filter.expertfilter;
 
 import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
+import com.powsybl.iidm.network.regulation.RegulationMode;
+import com.powsybl.iidm.network.regulation.VoltageRegulation;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.expertfilter.expertrule.EnumExpertRule;
 import org.gridsuite.filter.utils.RegulationType;
@@ -75,7 +77,9 @@ class EnumExpertRuleTest {
 
         RatioTapChanger ratioTapChanger = mock(RatioTapChanger.class);
         when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
-        when(ratioTapChanger.getRegulationMode()).thenReturn(RatioTapChanger.RegulationMode.VOLTAGE);
+        VoltageRegulation ratioVoltageRegulation = mock(VoltageRegulation.class);
+        when(ratioTapChanger.getVoltageRegulation()).thenReturn(ratioVoltageRegulation);
+        when(ratioVoltageRegulation.getMode()).thenReturn(RegulationMode.VOLTAGE);
 
         PhaseTapChanger phaseTapChanger = mock(PhaseTapChanger.class);
         when(twoWindingsTransformer.getPhaseTapChanger()).thenReturn(phaseTapChanger);
@@ -603,7 +607,6 @@ class EnumExpertRuleTest {
         when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
         when(ratioTapChanger.isRegulating()).thenReturn(true);
         when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
-        when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
 
         TwoWindingsTransformer twoWindingsTransformer2 = mock(TwoWindingsTransformer.class);
         when(twoWindingsTransformer2.getType()).thenReturn(IdentifiableType.TWO_WINDINGS_TRANSFORMER);
@@ -710,7 +713,6 @@ class EnumExpertRuleTest {
         ThreeWindingsTransformer.Leg leg = mock(ThreeWindingsTransformer.Leg.class);
         when(ratioTapChanger.isRegulating()).thenReturn(true);
         when(ratioTapChanger.hasLoadTapChangingCapabilities()).thenReturn(false);
-        when(ratioTapChanger.getRegulationValue()).thenReturn(225.);
         when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
 
         // Phase Tap Changer
@@ -870,7 +872,7 @@ class EnumExpertRuleTest {
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(gi.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_2, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true)
         );
@@ -881,7 +883,9 @@ class EnumExpertRuleTest {
         StaticVarCompensator svar = mock(StaticVarCompensator.class);
         when(svar.getType()).thenReturn(IdentifiableType.STATIC_VAR_COMPENSATOR);
         when(svar.getId()).thenReturn("SVAR");
-        when(svar.getRegulationMode()).thenReturn(StaticVarCompensator.RegulationMode.VOLTAGE);
+        VoltageRegulation voltageRegulation = mock(VoltageRegulation.class);
+        when(svar.getVoltageRegulation()).thenReturn(voltageRegulation);
+        when(voltageRegulation.getMode()).thenReturn(RegulationMode.VOLTAGE);
 
         // VoltageLevel fields
         Substation substation = mock(Substation.class);
@@ -908,8 +912,8 @@ class EnumExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.VOLTAGE.name(), null, svar, true),
-                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.REACTIVE_POWER.name(), null, svar, false),
+                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, RegulationMode.VOLTAGE.name(), null, svar, true),
+                Arguments.of(EQUALS, FieldType.SVAR_REGULATION_MODE, RegulationMode.REACTIVE_POWER.name(), null, svar, false),
                 Arguments.of(EQUALS, FieldType.REGULATION_TYPE, RegulationType.DISTANT.name(), null, svar, true),
                 Arguments.of(EQUALS, FieldType.REGULATION_TYPE, RegulationType.LOCAL.name(), null, svar, false),
 
@@ -919,8 +923,8 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.VOLTAGE.name(), null, svar, false),
-                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, StaticVarCompensator.RegulationMode.REACTIVE_POWER.name(), null, svar, true),
+                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, RegulationMode.VOLTAGE.name(), null, svar, false),
+                Arguments.of(NOT_EQUALS, FieldType.SVAR_REGULATION_MODE, RegulationMode.REACTIVE_POWER.name(), null, svar, true),
                 Arguments.of(NOT_EQUALS, FieldType.REGULATION_TYPE, RegulationType.LOCAL.name(), null, svar, true),
                 Arguments.of(NOT_EQUALS, FieldType.REGULATION_TYPE, RegulationType.DISTANT.name(), null, svar, false),
 
@@ -930,8 +934,8 @@ class EnumExpertRuleTest {
                 Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, true),
-                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.REACTIVE_POWER.name()), svar, false),
+                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(RegulationMode.VOLTAGE.name()), svar, true),
+                Arguments.of(IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(RegulationMode.REACTIVE_POWER.name()), svar, false),
                 Arguments.of(IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, true),
                 Arguments.of(IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, false),
 
@@ -941,8 +945,8 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), svar, false),
 
                 // Static Var Compensator fields
-                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.REACTIVE_POWER.name()), svar, true),
-                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(StaticVarCompensator.RegulationMode.VOLTAGE.name()), svar, false),
+                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(RegulationMode.REACTIVE_POWER.name()), svar, true),
+                Arguments.of(NOT_IN, FieldType.SVAR_REGULATION_MODE, null, Set.of(RegulationMode.VOLTAGE.name()), svar, false),
                 Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.LOCAL.name()), svar, true),
                 Arguments.of(NOT_IN, FieldType.REGULATION_TYPE, null, Set.of(RegulationType.DISTANT.name()), svar, false)
         );
