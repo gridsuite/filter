@@ -617,4 +617,32 @@ class FiltersUtilsTest implements WithAssertions {
                 List.of("item5")), false))
             .as("result").containsExactlyInAnyOrder("item1", "item2", "item3", "item4", "item5");
     }
+
+    @Test
+    void testSwitchFilter() {
+        final Network network = prepareNetwork();
+
+        // identifier list filter
+        List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
+            new IdentifierListFilterEquipmentAttributes("switch1", null));
+
+        IdentifierListFilter identifierListFilter = new IdentifierListFilter(
+            UUID.randomUUID(),
+            new Date(),
+            EquipmentType.SWITCH,
+            filterEquipmentAttributes);
+
+        List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
+        assertEquals(0, identifiables.size());
+
+        // expert filter
+        ExpertFilter expertFilter = new ExpertFilter(
+            UUID.randomUUID(),
+            new Date(),
+            EquipmentType.SWITCH,
+            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("switch1").build());
+
+        identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
+        assertEquals(0, identifiables.size());
+    }
 }
