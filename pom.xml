@@ -134,6 +134,7 @@
             <groupId>com.powsybl</groupId>
             <artifactId>powsybl-iidm-extensions</artifactId>
         </dependency>
+        <!-- TODO remove this dependency when coupling switches detection will be implemented in powsybl-core -->
         <dependency>
             <groupId>com.powsybl</groupId>
             <artifactId>powsybl-single-line-diagram-core</artifactId>

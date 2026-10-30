@@ -151,6 +151,7 @@ public final class FilterServiceUtils {
         voltageLevelIds.forEach(vlId -> {
             VoltageLevel vl = network.getVoltageLevel(vlId);
             if (vl != null) {
+                // TODO later : use powsybl api when coupling switches detection will be implemented in powsybl-core
                 // create voltage level graph (with default layout parameters)
                 VoltageLevelGraph voltageLevelGraph = new NetworkGraphBuilder(network, new LayoutParameters()).buildVoltageLevelGraph(vlId);
 
