@@ -620,11 +620,11 @@ class FiltersUtilsTest implements WithAssertions {
 
     @Test
     void testSwitchFilter() {
-        final Network network = prepareNetwork();
+        Network network = FourSubstationsNodeBreakerFactory.create();
 
         // identifier list filter
         List<IdentifierListFilterEquipmentAttributes> filterEquipmentAttributes = List.of(
-            new IdentifierListFilterEquipmentAttributes("switch1", null));
+            new IdentifierListFilterEquipmentAttributes("S1VL2_COUPLER", null));
 
         IdentifierListFilter identifierListFilter = new IdentifierListFilter(
             UUID.randomUUID(),
@@ -633,16 +633,18 @@ class FiltersUtilsTest implements WithAssertions {
             filterEquipmentAttributes);
 
         List<Identifiable<?>> identifiables = FiltersUtils.getIdentifiables(identifierListFilter, network, filterLoader);
-        assertEquals(0, identifiables.size());
+        assertEquals(1, identifiables.size());
+        assertEquals("S1VL2_COUPLER", identifiables.get(0).getId());
 
         // expert filter
         ExpertFilter expertFilter = new ExpertFilter(
             UUID.randomUUID(),
             new Date(),
             EquipmentType.SWITCH,
-            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(OperatorType.BEGINS_WITH).value("switch1").build());
+            StringExpertRule.builder().combinator(CombinatorType.AND).field(ID).operator(IS).value("S1VL2_COUPLER").build());
 
         identifiables = FiltersUtils.getIdentifiables(expertFilter, network, filterLoader);
-        assertEquals(0, identifiables.size());
+        assertEquals(1, identifiables.size());
+        assertEquals("S1VL2_COUPLER", identifiables.get(0).getId());
     }
 }
