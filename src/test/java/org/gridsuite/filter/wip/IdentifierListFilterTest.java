@@ -23,6 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -234,6 +235,35 @@ class IdentifierListFilterTest {
         var summaryValues = summaryNode.getValues();
         assertThat(summaryValues.get("count").getValue()).isEqualTo(2);
         assertThat(summaryNode.getMessage()).isEqualTo("2 matching equipments found in the network");
+    }
+
+    @Test
+    void preservesEquipmentIdOrder() {
+        Set<String> equipmentIds = new LinkedHashSet<>(List.of("LOAD_2", "LOAD_1"));
+        IdentifierListFilter filter = new IdentifierListFilter(EquipmentType.LOAD, equipmentIds);
+
+        assertThat(filter.evaluate(network).stream().map(Identifiable::getId))
+                .containsExactly("LOAD_2", "LOAD_1");
+    }
+
+    @Test
+    void preservesEquipmentIdOrderWhenEquipmentIsMissing() {
+        Set<String> equipmentIds = new LinkedHashSet<>(List.of("LOAD_2", "MISSING_LOAD", "LOAD_1"));
+        IdentifierListFilter filter = new IdentifierListFilter(EquipmentType.LOAD, equipmentIds);
+
+        assertThat(filter.evaluate(network).stream().map(Identifiable::getId))
+                .containsExactly("LOAD_2", "LOAD_1");
+    }
+
+    @Test
+    void preservesEquipmentIdOrderWhenDeserialized() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String filterJson = "{\"filterType\":\"IDENTIFIER_LIST\",\"equipmentType\":\"LOAD\",\"equipmentIds\":[\"LOAD_2\",\"LOAD_1\"]}";
+
+        Filter filter = objectMapper.readValue(filterJson, Filter.class);
+
+        assertThat(filter.evaluate(network).stream().map(Identifiable::getId))
+                .containsExactly("LOAD_2", "LOAD_1");
     }
 
     @ParameterizedTest

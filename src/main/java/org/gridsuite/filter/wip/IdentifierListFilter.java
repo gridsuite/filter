@@ -9,6 +9,7 @@
 package org.gridsuite.filter.wip;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 import com.powsybl.commons.report.ReportNode;
@@ -20,11 +21,10 @@ import lombok.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Kamil MARUT {@literal <kamil.marut at rte-france.com>}
@@ -38,6 +38,7 @@ public class IdentifierListFilter implements Filter {
     public static final String SEARCH_COUNT = "searchCount";
     public static final String EQUIPMENT_TYPE = "equipmentType";
     private EquipmentType equipmentType;
+    @JsonDeserialize(as = LinkedHashSet.class)
     private Set<String> equipmentIds;
     private String name;
 
@@ -48,7 +49,7 @@ public class IdentifierListFilter implements Filter {
     @Builder
     public IdentifierListFilter(EquipmentType equipmentType, Set<String> equipmentIds, String name) {
         this.equipmentType = Objects.requireNonNull(equipmentType);
-        this.equipmentIds = Set.copyOf(Objects.requireNonNull(equipmentIds));
+        this.equipmentIds = Collections.unmodifiableSet(new LinkedHashSet<>(Objects.requireNonNull(equipmentIds)));
         this.name = name;
     }
 
@@ -83,8 +84,14 @@ public class IdentifierListFilter implements Filter {
                 .withSeverity(TypedValue.INFO_SEVERITY)
                 .add();
 
-        var result = Filter.super.evaluate(network, topologyKind, reportNode);
-        Set<String> foundIds = result.stream().map(Identifiable::getId).collect(toSet());
+        Map<String, Identifiable<?>> foundById = Filter.super.evaluate(network, topologyKind, reportNode)
+                .stream().collect(toMap(Identifiable::getId, Function.identity()));
+        List<Identifiable<?>> orderedResult = equipmentIds.stream()
+                .<Identifiable<?>>map(foundById::get)
+                .filter(Objects::nonNull)
+                .toList();
+
+        Set<String> foundIds = foundById.keySet();
         Set<String> notFoundIds = Sets.difference(equipmentIds, foundIds);
 
         if (!foundIds.isEmpty() && !notFoundIds.isEmpty()) {
@@ -102,6 +109,6 @@ public class IdentifierListFilter implements Filter {
             );
         }
         ReportUtils.reportMatchingEquipmentsCount(foundIds.size(), reportNode);
-        return result;
+        return orderedResult;
     }
 }
