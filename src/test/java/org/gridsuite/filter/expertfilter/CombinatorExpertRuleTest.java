@@ -53,7 +53,7 @@ class CombinatorExpertRuleTest {
         when(gen.getEnergySource()).thenReturn(EnergySource.HYDRO);
         when(gen.getId()).thenReturn("GEN");
         when(gen.getMinP()).thenReturn(-500.0);
-        when(gen.isVoltageRegulatorOn()).thenReturn(true);
+        when(gen.isRegulating()).thenReturn(true);
 
         return Stream.of(
                 // --- Single rule AND --- //

@@ -125,9 +125,9 @@ class NumberExpertRuleTest {
         // Generator fields
         when(gen.getMinP()).thenReturn(-500.0);
         when(gen.getMaxP()).thenReturn(100.0);
-        when(gen.getTargetV()).thenReturn(20.0);
+        when(gen.getRegulatingTargetV()).thenReturn(20.0);
         when(gen.getTargetP()).thenReturn(30.0);
-        when(gen.getTargetQ()).thenReturn(40.0);
+        when(gen.getRegulatingTargetQ()).thenReturn(40.0);
         when(gen.getRatedS()).thenReturn(60.0);
         // GeneratorStartup extension fields
         GeneratorStartup genStartup = mock(GeneratorStartup.class);
@@ -152,9 +152,9 @@ class NumberExpertRuleTest {
         // Generator fields
         when(gen1.getMinP()).thenReturn(Double.NaN);
         when(gen1.getMaxP()).thenReturn(Double.NaN);
-        when(gen1.getTargetV()).thenReturn(Double.NaN);
+        when(gen1.getRegulatingTargetV()).thenReturn(Double.NaN);
         when(gen1.getTargetP()).thenReturn(Double.NaN);
-        when(gen1.getTargetQ()).thenReturn(Double.NaN);
+        when(gen1.getRegulatingTargetQ()).thenReturn(Double.NaN);
         when(gen1.getRatedS()).thenReturn(Double.NaN);
         // GeneratorStartup extension fields
         GeneratorStartup genStartup1 = mock(GeneratorStartup.class);
@@ -1587,7 +1587,7 @@ class NumberExpertRuleTest {
         when(battery.getMinP()).thenReturn(-5.0);
         when(battery.getMaxP()).thenReturn(5.0);
         when(battery.getTargetP()).thenReturn(3.0);
-        when(battery.getTargetQ()).thenReturn(1.0);
+        when(battery.getRegulatingTargetQ()).thenReturn(1.0);
         // VoltageLevel fields
         VoltageLevel voltageLevel = mock(VoltageLevel.class);
         Terminal terminal = mock(Terminal.class);
@@ -1602,7 +1602,7 @@ class NumberExpertRuleTest {
         when(battery1.getMinP()).thenReturn(Double.NaN);
         when(battery1.getMaxP()).thenReturn(Double.NaN);
         when(battery1.getTargetP()).thenReturn(Double.NaN);
-        when(battery1.getTargetQ()).thenReturn(Double.NaN);
+        when(battery1.getRegulatingTargetQ()).thenReturn(Double.NaN);
         // VoltageLevel fields
         VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
         Terminal terminal1 = mock(Terminal.class);
@@ -1953,7 +1953,7 @@ class NumberExpertRuleTest {
         when(twoWindingsTransformer.getTerminal2()).thenReturn(terminal);
         // RatioTapChanger fields
         RatioTapChanger ratioTapChanger = mock(RatioTapChanger.class);
-        when(ratioTapChanger.getTargetV()).thenReturn(13.0);
+        when(ratioTapChanger.getRegulatingTargetV()).thenReturn(13.0);
         when(twoWindingsTransformer.getRatioTapChanger()).thenReturn(ratioTapChanger);
         // PhaseTapChanger fields
         PhaseTapChanger phaseTapChanger = mock(PhaseTapChanger.class);
@@ -1981,7 +1981,7 @@ class NumberExpertRuleTest {
 
         // RatioTapChanger fields
         RatioTapChanger ratioTapChanger1 = mock(RatioTapChanger.class);
-        when(ratioTapChanger1.getTargetV()).thenReturn(Double.NaN);
+        when(ratioTapChanger1.getRegulatingTargetV()).thenReturn(Double.NaN);
         when(twoWindingsTransformer1.getRatioTapChanger()).thenReturn(ratioTapChanger1);
 
         // null RatioTapChanger
@@ -2393,7 +2393,7 @@ class NumberExpertRuleTest {
         when(leg.getTerminal()).thenReturn(terminal);
         // RatioTapChanger fields
         RatioTapChanger ratioTapChanger = mock(RatioTapChanger.class);
-        when(ratioTapChanger.getTargetV()).thenReturn(13.0);
+        when(ratioTapChanger.getRegulatingTargetV()).thenReturn(13.0);
         when(leg.getRatioTapChanger()).thenReturn(ratioTapChanger);
         // PhaseTapChanger fields
         PhaseTapChanger phaseTapChanger = mock(PhaseTapChanger.class);
@@ -2425,7 +2425,7 @@ class NumberExpertRuleTest {
 
         // RatioTapChanger fields
         RatioTapChanger ratioTapChanger1 = mock(RatioTapChanger.class);
-        when(ratioTapChanger1.getTargetV()).thenReturn(Double.NaN);
+        when(ratioTapChanger1.getRegulatingTargetV()).thenReturn(Double.NaN);
         when(leg1.getRatioTapChanger()).thenReturn(ratioTapChanger1);
 
         // PhaseTapChanger fields
@@ -3178,8 +3178,8 @@ class NumberExpertRuleTest {
 
         when(svar.getBmin()).thenReturn(-1.0);
         when(svar.getBmax()).thenReturn(-2.0);
-        when(svar.getVoltageSetpoint()).thenReturn(1.0);
-        when(svar.getReactivePowerSetpoint()).thenReturn(2.0);
+        when(svar.getRegulatingTargetV()).thenReturn(1.0);
+        when(svar.getRegulatingTargetQ()).thenReturn(2.0);
 
         StandbyAutomaton standbyAutomaton = mock(StandbyAutomaton.class);
         when(standbyAutomaton.getLowVoltageSetpoint()).thenReturn(1.0);
@@ -3208,8 +3208,8 @@ class NumberExpertRuleTest {
 
         when(svar1.getBmin()).thenReturn(Double.NaN);
         when(svar1.getBmax()).thenReturn(Double.NaN);
-        when(svar1.getVoltageSetpoint()).thenReturn(Double.NaN);
-        when(svar1.getReactivePowerSetpoint()).thenReturn(Double.NaN);
+        when(svar1.getRegulatingTargetV()).thenReturn(Double.NaN);
+        when(svar1.getRegulatingTargetQ()).thenReturn(Double.NaN);
 
         StandbyAutomaton standbyAutomaton1 = mock(StandbyAutomaton.class);
         when(standbyAutomaton1.getLowVoltageSetpoint()).thenReturn(Double.NaN);

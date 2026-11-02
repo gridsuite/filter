@@ -10,6 +10,7 @@ package org.gridsuite.filter.wip;
 
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.impl.NetworkFactoryImpl;
+import com.powsybl.iidm.network.regulation.RegulationMode;
 import org.gridsuite.filter.utils.EquipmentType;
 
 import java.util.UUID;
@@ -108,9 +109,9 @@ public final class TestNetworkUtils {
                     .setNode(connect(vl1, nodeCounter1))
                     .setEnergySource(EnergySource.NUCLEAR)
                     .setMinP(0.0).setMaxP(1000.0)
-                    .setTargetP(100.0 * i).setTargetV(400.0)
-                    .setTargetQ(i == 3 ? 100.0 : Double.NaN)
-                    .setVoltageRegulatorOn(true).add();
+                    .setTargetP(100.0 * i).setLocalTargetV(400.0)
+                    .setLocalTargetQ(i == 3 ? 100.0 : Double.NaN)
+                    .newVoltageRegulation().withMode(RegulationMode.VOLTAGE).withRegulating(true).add().add();
         }
 
         // ===== Batteries (3) =====
@@ -119,7 +120,7 @@ public final class TestNetworkUtils {
                     .setId("BATTERY_" + i)
                     .setNode(connect(vl1, nodeCounter1))
                     .setMinP(-100.0).setMaxP(100.0)
-                    .setTargetP(10.0 * i).setTargetQ(5.0).add();
+                    .setTargetP(10.0 * i).setLocalTargetQ(5.0).add();
         }
 
         // ===== Shunt Compensators (3) =====
@@ -140,9 +141,8 @@ public final class TestNetworkUtils {
                     .setId("STATIC_VAR_COMPENSATOR_" + i)
                     .setNode(connect(vl1, nodeCounter1))
                     .setBmin(0.0002).setBmax(0.0008)
-                    .setRegulationMode(StaticVarCompensator.RegulationMode.VOLTAGE)
-                    .setRegulating(true)
-                    .setVoltageSetpoint(400.0).add();
+                    .setLocalTargetV(400.0)
+                    .newVoltageRegulation().withMode(RegulationMode.VOLTAGE).withRegulating(true).add().add();
         }
 
         // ===== LCC Converter Stations (3 + 3 partners for HVDC lines) =====
@@ -161,10 +161,10 @@ public final class TestNetworkUtils {
         for (int i = 1; i <= 3; i++) {
             vl1.newVscConverterStation()
                     .setId("VSC_CONVERTER_STATION_" + i)
-                    .setVoltageRegulatorOn(true)
                     .setNode(connect(vl1, nodeCounter1))
                     .setLossFactor(1.1f)
-                    .setVoltageSetpoint(400.0).add();
+                    .setLocalTargetV(400.0)
+                    .newVoltageRegulation().withMode(RegulationMode.VOLTAGE).withRegulating(true).add().add();
         }
 
         // ===== Two Windings Transformers (3) - in S1 between vl1 (400 kV) and vl2 (225 kV) =====
@@ -203,7 +203,6 @@ public final class TestNetworkUtils {
                     .add().add();
             network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_" + i).getLeg2()
                     .newRatioTapChanger()
-                    .setRegulationMode(RatioTapChanger.RegulationMode.REACTIVE_POWER)
                     .setTapPosition(0)
                     .setLoadTapChangingCapabilities(true)
                     .beginStep()
@@ -211,7 +210,6 @@ public final class TestNetworkUtils {
                     .endStep().add();
             network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_" + i).getLeg3().newRatioTapChanger()
                     .setTapPosition(0)
-                    .setRegulationMode(RatioTapChanger.RegulationMode.VOLTAGE)
                     .setLoadTapChangingCapabilities(true)
                     .beginStep()
                     .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
@@ -219,13 +217,17 @@ public final class TestNetworkUtils {
         }
         network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_2").getLeg1()
                 .newRatioTapChanger()
-                .setRegulationMode(RatioTapChanger.RegulationMode.VOLTAGE)
                 .setTapPosition(0)
                 .setLoadTapChangingCapabilities(true)
-                .setTargetV(400.0)
                 .beginStep()
                 .setR(1.0).setX(10.0).setG(0.0).setB(0.0).setRho(1.0)
-                .endStep().add();
+                .endStep()
+                .newVoltageRegulation()
+                .withMode(RegulationMode.VOLTAGE)
+                .withRegulating(false)
+                .withTerminal(network.getThreeWindingsTransformer("THREE_WINDINGS_TRANSFORMER_2").getLeg1().getTerminal())
+                .withTargetValue(400.0)
+                .add().add();
 
         // ===== Lines (3) - between voltage levels of nominal V = 400 kV =====
         network.newLine()

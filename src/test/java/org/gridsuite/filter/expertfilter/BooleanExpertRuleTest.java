@@ -47,7 +47,7 @@ class BooleanExpertRuleTest {
 
         Generator generator = mock(Generator.class);
         when(generator.getType()).thenReturn(IdentifiableType.GENERATOR);
-        when(generator.isVoltageRegulatorOn()).thenReturn(true);
+        when(generator.isRegulating()).thenReturn(true);
 
         Load load = mock(Load.class);
         when(load.getType()).thenReturn(IdentifiableType.LOAD);
@@ -119,7 +119,7 @@ class BooleanExpertRuleTest {
         Generator gen = mock(Generator.class);
         when(gen.getType()).thenReturn(IdentifiableType.GENERATOR);
         //Generator fields
-        when(gen.isVoltageRegulatorOn()).thenReturn(true);
+        when(gen.isRegulating()).thenReturn(true);
         // Terminal fields
         Terminal terminal = mock(Terminal.class);
         when(terminal.isConnected()).thenReturn(true);
