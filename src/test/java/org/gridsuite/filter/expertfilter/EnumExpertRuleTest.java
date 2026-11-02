@@ -872,7 +872,7 @@ class EnumExpertRuleTest {
             // --- NOT_IN --- //
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), threeWindingsTransformer, false),
-            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(gi.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
+            Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_1, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_2, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true),
             Arguments.of(NOT_IN, FieldType.RATIO_REGULATION_MODE_3, null, Set.of(RatioRegulationModeType.VOLTAGE_REGULATION.name()), threeWindingsTransformer, true)
         );
