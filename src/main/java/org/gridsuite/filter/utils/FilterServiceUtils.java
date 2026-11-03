@@ -42,13 +42,14 @@ public final class FilterServiceUtils {
         EquipmentType filterEquipmentType = filter.getEquipmentType();
         List<Identifiable<?>> identifiables = filter.toFilter(filterLoader).evaluate(network);
 
+        FilterEquipments filterEquipments = filter.toFilterEquipments(identifiables);
+        if (filterEquipments.getNotFoundEquipments() != null) {
+            filterEquipments.getNotFoundEquipments().forEach(id -> notFound.put(
+                    id,
+                    new IdentifiableAttributes(id, EquipmentTypeMapper.map(filter.getEquipmentType()), null)));
+        }
+
         if (filterEquipmentType != EquipmentType.SUBSTATION && filterEquipmentType != EquipmentType.VOLTAGE_LEVEL) {
-            FilterEquipments filterEquipments = filter.toFilterEquipments(identifiables);
-            if (filterEquipments.getNotFoundEquipments() != null) {
-                filterEquipments.getNotFoundEquipments().forEach(id -> notFound.put(
-                        id,
-                        new IdentifiableAttributes(id, EquipmentTypeMapper.map(filter.getEquipmentType()), null)));
-            }
             filterEquipments.getIdentifiableAttributes().forEach(id -> result.put(id.getId(), id));
             return;
         }
