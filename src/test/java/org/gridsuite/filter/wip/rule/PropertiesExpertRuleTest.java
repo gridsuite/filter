@@ -73,6 +73,9 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
+        "provideArgumentsForBatteryTest",
+        "provideArgumentsForVoltageLevelTest",
+        "provideArgumentsForHvdcConverterStationTest"
     })
     void testFilterRoundTripSerializationDeserialization(OperatorType operatorType, FieldType fieldType, String propertyName, List<String> propertyValues,
                                                          Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
@@ -132,6 +135,7 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
+        "provideArgumentsForNullSubstationTest",
     })
     void testEvaluateRule(OperatorType operatorType, FieldType fieldType, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         ExpertRule rule = PropertiesExpertRule.builder()

@@ -22,7 +22,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -131,7 +130,7 @@ class GlobalFilterUtilsTest implements WithAssertions {
                     ner -> assertThat(ner.getOperator()).as("operator").isEqualTo(OperatorType.BETWEEN)
                 ),
                 voltageRanges.stream().map(vr -> NumberExpertRule.builder().values(vr.stream().map(Integer::doubleValue).toList())
-                    .field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.BETWEEN).build()).collect(Collectors.toUnmodifiableList()));
+                    .field(FieldType.NOMINAL_VOLTAGE).operator(OperatorType.BETWEEN).build()).toList());
         }
 
         private static Stream<Arguments> expertRulesData() {

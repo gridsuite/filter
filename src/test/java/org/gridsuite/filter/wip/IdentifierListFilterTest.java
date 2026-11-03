@@ -328,17 +328,8 @@ class IdentifierListFilterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideFilterArguments")
+    @MethodSource({"provideFilterArguments", "provideTopologyDependedFilterArguments"})
     void testFilterEvaluationReturnsExpectedEquipments(Filter filter, Set<String> expectedEquipmentIds) {
-        List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network);
-
-        assertThat(filteredIdentifiableList).hasSize(expectedEquipmentIds.size());
-        assertThat(filteredIdentifiableList.stream().map(Identifiable::getId)).containsAll(expectedEquipmentIds);
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideTopologyDependedFilterArguments")
-    void testFilterEvaluationWithTopologyKindReturnsExpectedEquipments(Filter filter, Set<String> expectedEquipmentIds) {
         List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network);
 
         assertThat(filteredIdentifiableList).hasSize(expectedEquipmentIds.size());
