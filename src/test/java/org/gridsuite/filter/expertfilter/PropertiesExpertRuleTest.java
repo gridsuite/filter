@@ -101,6 +101,10 @@ class PropertiesExpertRuleTest {
         HvdcLine hvdcLine = mock(HvdcLine.class);
         when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+        when(switchEquipment.getVoltageLevel()).thenReturn(voltageLevel);
+
         return Stream.of(
                 // --- Test an unsupported field for some equipment --- //
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, voltageLevel, "region", List.of("east"), PowsyblException.class),
@@ -112,6 +116,7 @@ class PropertiesExpertRuleTest {
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, svar, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SERIE_REACTANCE, threeWindingsTransformer, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, hvdcLine, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES_1, switchEquipment, "region", List.of("east"), PowsyblException.class),
 
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, voltageLevel, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES_2, generator, "region", List.of("north"), PowsyblException.class),
@@ -122,6 +127,7 @@ class PropertiesExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, svar, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(NOT_IN, FieldType.SERIE_REACTANCE, threeWindingsTransformer, "region", List.of("east"), PowsyblException.class),
                 Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, hvdcLine, "region", List.of("east"), PowsyblException.class),
+                Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES_1, switchEquipment, "region", List.of("east"), PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.FREE_PROPERTIES, generator, "codeOI", List.of("33"), PowsyblException.class),
@@ -145,6 +151,7 @@ class PropertiesExpertRuleTest {
         "provideArgumentsForVoltageLevelTest",
         "provideArgumentsForHvdcConverterStationTest",
         "provideArgumentsForNullSubstationTest",
+        "provideArgumentsForSwitchTest"
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String propertyName, List<String> propertyValues, Identifiable<?> equipment, boolean expected) {
         PropertiesExpertRule rule = PropertiesExpertRule.builder().operator(operator).field(field).propertyName(propertyName).propertyValues(propertyValues).build();
@@ -937,4 +944,50 @@ class PropertiesExpertRuleTest {
         );
     }
 
+    private static Stream<Arguments> provideArgumentsForSwitchTest() {
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+        when(switchEquipment.getProperty("propertyNameSwitch")).thenReturn("PropertyValueSwitch");
+
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getProperty("CodeOI")).thenReturn("33");
+        when(voltageLevel.getNullableSubstation()).thenReturn(substation);
+        when(substation.getProperty("propertyNameSubstation")).thenReturn("PropertyValueSubstation");
+        when(switchEquipment.getVoltageLevel()).thenReturn(voltageLevel);
+
+        return Stream.of(
+            // --- IN --- //
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSwitch", List.of("propertyValueSwitch"), switchEquipment, true),
+            Arguments.of(IN, FieldType.FREE_PROPERTIES, "propertyNameSwitch", List.of("propertyValueSwitch2"), switchEquipment, false),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), switchEquipment, true),
+            Arguments.of(IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), switchEquipment, false),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), switchEquipment, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), switchEquipment, false),
+
+            // --- NOT_IN --- //
+            Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameSwitch", List.of("propertyValueSwitch"), switchEquipment, false),
+            Arguments.of(NOT_IN, FieldType.FREE_PROPERTIES, "propertyNameSwitch", List.of("propertyValueSwitch2"), switchEquipment, true),
+            Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation"), switchEquipment, false),
+            Arguments.of(NOT_IN, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", List.of("propertyValueSubstation1"), switchEquipment, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("33"), switchEquipment, false),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", List.of("22"), switchEquipment, true),
+
+            // --- EXISTS --- //
+            Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "propertyNameSwitch", null, switchEquipment, true),
+            Arguments.of(EXISTS, FieldType.FREE_PROPERTIES, "a", null, switchEquipment, false),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, switchEquipment, true),
+            Arguments.of(EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, switchEquipment, false),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, switchEquipment, true),
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "g", null, switchEquipment, false),
+
+            // --- NOT_EXISTS --- //
+            Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "propertyNameSwitch", null, switchEquipment, false),
+            Arguments.of(NOT_EXISTS, FieldType.FREE_PROPERTIES, "a", null, switchEquipment, true),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "propertyNameSubstation", null, switchEquipment, false),
+            Arguments.of(NOT_EXISTS, FieldType.SUBSTATION_PROPERTIES, "b", null, switchEquipment, true),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "CodeOI", null, switchEquipment, false),
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_PROPERTIES, "g", null, switchEquipment, true)
+        );
+    }
 }

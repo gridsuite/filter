@@ -76,6 +76,9 @@ class BooleanExpertRuleTest {
         HvdcLine hvdcLine = mock(HvdcLine.class);
         when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
+        Switch switchEqupment = mock(Switch.class);
+        when(switchEqupment.getType()).thenReturn(IdentifiableType.SWITCH);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
@@ -90,6 +93,7 @@ class BooleanExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, threeWindingsTransformer, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, bl, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, switchEqupment, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.VOLTAGE_REGULATOR_ON, generator, PowsyblException.class)
@@ -108,6 +112,7 @@ class BooleanExpertRuleTest {
         "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
+        "provideArgumentsForSwitchTest"
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Boolean value, Identifiable<?> equipment, boolean expected) {
         BooleanExpertRule rule = BooleanExpertRule.builder().operator(operator).field(field).value(value).build();
@@ -539,6 +544,22 @@ class BooleanExpertRuleTest {
             // Terminal fields
             Arguments.of(NOT_EQUALS, FieldType.CONNECTED, false, boundaryLine, true),
             Arguments.of(NOT_EQUALS, FieldType.CONNECTED, true, boundaryLine, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForSwitchTest() {
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+        when(switchEquipment.isFictitious()).thenReturn(true);
+
+        return Stream.of(
+            // --- EQUALS--- //
+            Arguments.of(EQUALS, FieldType.FICTITIOUS, true, switchEquipment, true),
+            Arguments.of(EQUALS, FieldType.FICTITIOUS, false, switchEquipment, false),
+
+            // --- NOT_EQUALS--- //
+            Arguments.of(NOT_EQUALS, FieldType.FICTITIOUS, false, switchEquipment, true),
+            Arguments.of(NOT_EQUALS, FieldType.FICTITIOUS, true, switchEquipment, false)
         );
     }
 }
