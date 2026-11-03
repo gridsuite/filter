@@ -16,6 +16,9 @@ import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.TopologyKind;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
+import org.gridsuite.filter.utils.expertfilter.FieldType;
+import org.gridsuite.filter.utils.expertfilter.OperatorType;
+import org.gridsuite.filter.wip.rule.StringExpertRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -72,8 +75,8 @@ class IdentifierListFilterTest {
                 Arguments.of(new IdentifierListFilter(EquipmentType.BUSBAR_SECTION, Set.of("BUSBAR_SECTION_3")), Set.of("BUSBAR_SECTION_3")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.BUSBAR_SECTION, Set.of("MISSING_BUSBAR_SECTION")), Collections.emptySet()),
                 // Buses
-                Arguments.of(new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S2", "BUS_S3")), Set.of("BUS_S2", "BUS_S3")),
-                Arguments.of(new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S3")), Set.of("BUS_S3")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.BUS, Set.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")), Set.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.BUS, Set.of("VOLTAGE_LEVEL_1_0")), Set.of("VOLTAGE_LEVEL_1_0")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.BUS, Set.of("MISSING_BUS")), Collections.emptySet()),
                 // Generators
                 Arguments.of(new IdentifierListFilter(EquipmentType.GENERATOR, Set.of("GENERATOR_1", "GENERATOR_2")), Set.of("GENERATOR_1", "GENERATOR_2")),
@@ -122,19 +125,66 @@ class IdentifierListFilterTest {
     private static Stream<Arguments> provideTopologyDependedFilterArguments() {
         return Stream.of(
                 // Buses - BUS_BREAKER
-                Arguments.of(TopologyKind.BUS_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S2", "BUS_S3")), Set.of("BUS_S2", "BUS_S3")),
-                Arguments.of(TopologyKind.BUS_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S3")), Set.of("BUS_S3")),
-                Arguments.of(TopologyKind.BUS_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("MISSING_BUS")), Collections.emptySet()),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("BUS_S2", "BUS_S3")).build())
+                                .topologyKind(TopologyKind.BUS_BREAKER)
+                                .build(),
+                        Set.of("BUS_S2", "BUS_S3")
+                ),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("BUS_S3")).build())
+                                .topologyKind(TopologyKind.BUS_BREAKER)
+                                .build(),
+                        Set.of("BUS_S3")),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("MISSING_BUS")).build())
+                                .topologyKind(TopologyKind.BUS_BREAKER)
+                                .build(),
+                        Collections.emptySet()),
                 // Buses - NODE_BREAKER
-                Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S2", "BUS_S3")), Collections.emptySet()),
-                Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("BUS_S2", "BUS_S3")).build())
+                                .topologyKind(TopologyKind.NODE_BREAKER)
+                                .build(),
+                        Collections.emptySet()),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")).build())
+                                .topologyKind(TopologyKind.NODE_BREAKER)
+                                .build(),
                         Set.of("VOLTAGE_LEVEL_1_0", "VOLTAGE_LEVEL_2_0")),
-                Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("VOLTAGE_LEVEL_3_0")), Set.of("VOLTAGE_LEVEL_3_0")),
-                Arguments.of(TopologyKind.NODE_BREAKER, new IdentifierListFilter(EquipmentType.BUS, Set.of("MISSING_BUS")), Collections.emptySet()),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("VOLTAGE_LEVEL_3_0")).build())
+                                .topologyKind(TopologyKind.NODE_BREAKER)
+                                .build(),
+                        Set.of("VOLTAGE_LEVEL_3_0")),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("MISSING_BUS")).build())
+                                .topologyKind(TopologyKind.NODE_BREAKER)
+                                .build(),
+                        Collections.emptySet()),
                 // Buses - No Topology provided
-                Arguments.of(null, new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S2", "BUS_S3")), Set.of("BUS_S2", "BUS_S3")),
-                Arguments.of(null, new IdentifierListFilter(EquipmentType.BUS, Set.of("BUS_S2", "BUS_S3", "VOLTAGE_LEVEL_1_0")), Set.of("BUS_S2", "BUS_S3", "VOLTAGE_LEVEL_1_0")),
-                Arguments.of(null, new IdentifierListFilter(EquipmentType.BUS, Set.of("MISSING_BUS")), Collections.emptySet())
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("BUS_S2", "BUS_S3")).build())
+                                .build(),
+                        Set.of("BUS_S2", "BUS_S3")),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("BUS_S2", "BUS_S3", "VOLTAGE_LEVEL_1_0")).build())
+                                .build(),
+                        Set.of("BUS_S2", "BUS_S3", "VOLTAGE_LEVEL_1_0")),
+                Arguments.of(
+                        ExpertFilter.builder().equipmentType(EquipmentType.BUS)
+                                .rule(StringExpertRule.builder().field(FieldType.ID).operator(OperatorType.IN).values(List.of("MISSING_BUS")).build())
+                                .build(),
+                        Collections.emptySet())
         );
     }
 
@@ -288,8 +338,8 @@ class IdentifierListFilterTest {
 
     @ParameterizedTest
     @MethodSource("provideTopologyDependedFilterArguments")
-    void testFilterEvaluationWithTopologyKindReturnsExpectedEquipments(TopologyKind topologyKind, Filter filter, Set<String> expectedEquipmentIds) {
-        List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network, topologyKind);
+    void testFilterEvaluationWithTopologyKindReturnsExpectedEquipments(Filter filter, Set<String> expectedEquipmentIds) {
+        List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network);
 
         assertThat(filteredIdentifiableList).hasSize(expectedEquipmentIds.size());
         assertThat(filteredIdentifiableList.stream().map(Identifiable::getId)).containsAll(expectedEquipmentIds);

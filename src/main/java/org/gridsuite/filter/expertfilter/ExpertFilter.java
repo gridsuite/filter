@@ -49,6 +49,7 @@ public class ExpertFilter extends AbstractFilter {
         return org.gridsuite.filter.wip.ExpertFilter.builder()
                 .equipmentType(getEquipmentType())
                 .rule(rules.toRule(filterLoader))
+                .topologyKind(topologyKind)
                 .build();
     }
 }
