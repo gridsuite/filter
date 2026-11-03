@@ -222,8 +222,8 @@ public final class GlobalFilterUtils {
                                                  @Nonnull final EquipmentType equipmentType,
                                                  @Nonnull final FilterLoader filterLoader) {
         final List<ExpertRule> andRules = new ArrayList<>();
-        List<Filter> genericFilters = filterLoader.getFilters(globalFilter.getGenericFilter()).stream().map(af -> af.toFilter(filterLoader)).toList();
-        List<Filter> substationOrVoltageLevelFilters = filterLoader.getFilters(globalFilter.getSubstationOrVoltageLevelFilter()).stream().map(af -> af.toFilter(filterLoader)).toList();
+        List<Filter> genericFilters = getFiltersNullSafe(globalFilter.getGenericFilter(), filterLoader);
+        List<Filter> substationOrVoltageLevelFilters = getFiltersNullSafe(globalFilter.getSubstationOrVoltageLevelFilter(), filterLoader);
 
         // Generic filter have a priority on other filter types
         if (!shouldProcessEquipmentType(equipmentType, genericFilters)) {
@@ -259,6 +259,16 @@ public final class GlobalFilterUtils {
         return ExpertFilterUtils.buildAndCombination(andRules)
                 .map(rule -> ExpertFilter.builder().equipmentType(equipmentType).rule(rule).build())
                 .orElse(null);
+    }
+
+    private static @Nonnull List<Filter> getFiltersNullSafe(@Nullable final List<UUID> filterUuids,
+                                                            @Nonnull final FilterLoader filterLoader) {
+        return Optional.ofNullable(filterUuids)
+                .map(filterLoader::getFilters)
+                .orElse(List.of())
+                .stream()
+                .map(af -> af.toFilter(filterLoader))
+                .toList();
     }
 
     /**
