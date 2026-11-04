@@ -70,13 +70,7 @@ public class IdentifierListFilter implements Filter {
     }
 
     @Override
-    public boolean evaluateFilterRule(Identifiable<?> identifiable) {
-        Objects.requireNonNull(identifiable);
-        return equipmentIds.contains(identifiable.getId());
-    }
-
-    @Override
-    public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
+    public List<Identifiable<?>> evaluate(Network network, ReportNode reportNode) {
         reportNode.newReportNode()
                 .withMessageTemplate("filter.evaluation.listFilter.evaluate")
                 .withUntypedValue(SEARCH_COUNT, equipmentIds.size())
@@ -84,8 +78,9 @@ public class IdentifierListFilter implements Filter {
                 .withSeverity(TypedValue.INFO_SEVERITY)
                 .add();
 
-        Map<String, Identifiable<?>> foundById = Filter.super.evaluate(network, topologyKind, reportNode)
-                .stream().collect(toMap(Identifiable::getId, Function.identity()));
+        Map<String, Identifiable<?>> foundById = NetworkUtils.getEquipmentStream(network, getEquipmentType(), TopologyKind.NODE_BREAKER)
+                .filter(identifiable -> equipmentIds.contains(identifiable.getId()))
+                .collect(toMap(Identifiable::getId, Function.identity()));
         List<Identifiable<?>> orderedResult = equipmentIds.stream()
                 .<Identifiable<?>>map(foundById::get)
                 .filter(Objects::nonNull)

@@ -31,19 +31,21 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpertFilter implements Filter {
 
+    private TopologyKind topologyKind;
     private EquipmentType equipmentType;
     private ExpertRule rule;
     private String name;
 
     public ExpertFilter(EquipmentType equipmentType, ExpertRule rule) {
-        this(equipmentType, rule, null);
+        this(equipmentType, rule, null, null);
     }
 
     @Builder
-    public ExpertFilter(EquipmentType equipmentType, ExpertRule rule, String name) {
+    public ExpertFilter(EquipmentType equipmentType, ExpertRule rule, String name, TopologyKind topologyKind) {
         this.equipmentType = Objects.requireNonNull(equipmentType);
         this.rule = Objects.requireNonNull(rule);
         this.name = name;
+        this.topologyKind = topologyKind;
     }
 
     @Override
@@ -63,21 +65,13 @@ public class ExpertFilter implements Filter {
     }
 
     @Override
-    public List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
-        List<Identifiable<?>> foundEquipments = Filter.super.evaluate(network, topologyKind, reportNode);
+    public List<Identifiable<?>> evaluate(Network network, ReportNode reportNode) {
+        rule.clearCache();
+
+        List<Identifiable<?>> foundEquipments = NetworkUtils.getEquipmentStream(network, getEquipmentType(), topologyKind)
+                .filter(rule::evaluateRule)
+                .toList();
         ReportUtils.reportMatchingEquipmentsCount(foundEquipments.size(), reportNode);
         return foundEquipments;
-    }
-
-    @Override
-    public boolean evaluateFilterRule(Identifiable<?> identifiable) {
-        Objects.requireNonNull(identifiable);
-
-        return rule.evaluateRule(identifiable);
-    }
-
-    @Override
-    public void clearEvaluationCache() {
-        rule.clearCache();
     }
 }
