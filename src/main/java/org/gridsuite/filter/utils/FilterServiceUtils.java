@@ -69,15 +69,14 @@ public final class FilterServiceUtils {
         List<String> filteredEquipmentIds = identifiables.stream().map(Identifiable::getId).toList();
 
         List<IdentifiableAttributes> identifiableAttributes = getIdentifiableAttributesWithEquipmentTypes(
-            filterEquipmentType, filteredEquipmentIds, selectedEquipmentTypes, network, filterLoader);
+            filterEquipmentType, filteredEquipmentIds, selectedEquipmentTypes, network);
         identifiableAttributes.forEach(element -> result.put(element.getId(), element));
     }
 
     private static List<IdentifiableAttributes> getIdentifiableAttributesWithEquipmentTypes(EquipmentType filterEquipmentType,
                                                                                              List<String> filteredEquipmentIds,
                                                                                              Set<IdentifiableType> selectedEquipmentTypes,
-                                                                                             Network network,
-                                                                                             FilterLoader filterLoader) {
+                                                                                             Network network) {
         List<IdentifiableAttributes> result = new ArrayList<>();
 
         selectedEquipmentTypes.forEach(selectedEquipmentType -> {
