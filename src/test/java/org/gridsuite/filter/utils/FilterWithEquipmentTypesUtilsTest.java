@@ -8,16 +8,15 @@
 package org.gridsuite.filter.utils;
 
 import com.powsybl.iidm.network.IdentifiableType;
-import org.gridsuite.filter.expertfilter.ExpertFilter;
-import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.StringExpertRule;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
+import org.gridsuite.filter.wip.ExpertFilter;
+import org.gridsuite.filter.wip.rule.CombinatorExpertRule;
+import org.gridsuite.filter.wip.rule.ExpertRule;
+import org.gridsuite.filter.wip.rule.StringExpertRule;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,8 +30,8 @@ class FilterWithEquipmentTypesUtilsTest {
 
     @Test
     void testCreateRuleWithOneField() {
-        Set<String> ids = new LinkedHashSet<>(Set.of("S1", "S2"));
-        AbstractExpertRule rule = FilterWithEquipmentTypesUtils.createRuleWithOneField(ids, FieldType.SUBSTATION_ID);
+        List<String> ids = List.of("S1", "S2");
+        ExpertRule rule = FilterWithEquipmentTypesUtils.createRuleWithOneField(ids, FieldType.SUBSTATION_ID);
         assertInstanceOf(StringExpertRule.class, rule);
         StringExpertRule stringRule = (StringExpertRule) rule;
         assertEquals(OperatorType.IN, stringRule.getOperator());
@@ -42,12 +41,12 @@ class FilterWithEquipmentTypesUtilsTest {
 
     @Test
     void testCreateRuleWithTwoFields() {
-        Set<String> ids = new LinkedHashSet<>(Set.of("S1"));
-        AbstractExpertRule rule = FilterWithEquipmentTypesUtils.createRuleWithTwoFields(ids, FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
+        List<String> ids = List.of("S1");
+        ExpertRule rule = FilterWithEquipmentTypesUtils.createRuleWithTwoFields(ids, FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
         assertInstanceOf(CombinatorExpertRule.class, rule);
         CombinatorExpertRule comb = (CombinatorExpertRule) rule;
         assertEquals(CombinatorType.OR, comb.getCombinator());
-        List<AbstractExpertRule> rules = comb.getRules();
+        List<ExpertRule> rules = comb.getRules();
         assertEquals(2, rules.size());
         assertInstanceOf(StringExpertRule.class, rules.get(0));
         assertInstanceOf(StringExpertRule.class, rules.get(1));
@@ -63,12 +62,12 @@ class FilterWithEquipmentTypesUtilsTest {
 
     @Test
     void testCreateRuleWithThreeFields() {
-        Set<String> ids = new LinkedHashSet<>(Set.of("VL1"));
-        AbstractExpertRule rule = FilterWithEquipmentTypesUtils.createRuleWithThreeFields(ids, FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2, FieldType.VOLTAGE_LEVEL_ID_3);
+        List<String> ids = List.of("VL1");
+        ExpertRule rule = FilterWithEquipmentTypesUtils.createRuleWithThreeFields(ids, FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2, FieldType.VOLTAGE_LEVEL_ID_3);
         assertInstanceOf(CombinatorExpertRule.class, rule);
         CombinatorExpertRule comb = (CombinatorExpertRule) rule;
         assertEquals(CombinatorType.OR, comb.getCombinator());
-        List<AbstractExpertRule> rules = comb.getRules();
+        List<ExpertRule> rules = comb.getRules();
         assertEquals(3, rules.size());
         StringExpertRule r1 = (StringExpertRule) rules.get(0);
         StringExpertRule r2 = (StringExpertRule) rules.get(1);
@@ -83,14 +82,14 @@ class FilterWithEquipmentTypesUtilsTest {
 
     @Test
     void testCreateSubstationRuleByEquipmentType() {
-        Set<String> subs = new LinkedHashSet<>(Set.of("S1"));
+        List<String> subs = List.of("S1");
         // LOAD -> one field (SUBSTATION_ID)
-        AbstractExpertRule loadRule = FilterWithEquipmentTypesUtils.createSubstationRuleByEquipmentType(IdentifiableType.LOAD, subs);
+        ExpertRule loadRule = FilterWithEquipmentTypesUtils.createSubstationRuleByEquipmentType(IdentifiableType.LOAD, subs);
         assertInstanceOf(StringExpertRule.class, loadRule);
-        assertEquals(FieldType.SUBSTATION_ID, loadRule.getField());
+        assertEquals(FieldType.SUBSTATION_ID, ((StringExpertRule) loadRule).getField());
         assertEquals(subs, ((StringExpertRule) loadRule).getValues());
         // LINE -> two fields (SUBSTATION_ID_1, _2)
-        AbstractExpertRule lineRule = FilterWithEquipmentTypesUtils.createSubstationRuleByEquipmentType(IdentifiableType.LINE, subs);
+        ExpertRule lineRule = FilterWithEquipmentTypesUtils.createSubstationRuleByEquipmentType(IdentifiableType.LINE, subs);
         assertInstanceOf(CombinatorExpertRule.class, lineRule);
         CombinatorExpertRule comb = (CombinatorExpertRule) lineRule;
         assertEquals(2, comb.getRules().size());
@@ -104,29 +103,29 @@ class FilterWithEquipmentTypesUtilsTest {
 
     @Test
     void testCreateVoltageLevelRuleByEquipmentType() {
-        Set<String> vls = new LinkedHashSet<>(Set.of("VL1", "VL2"));
+        List<String> vls = List.of("VL1", "VL2");
         // LOAD -> one field (VOLTAGE_LEVEL_ID)
-        AbstractExpertRule loadRule = FilterWithEquipmentTypesUtils.createVoltageLevelRuleByEquipmentType(IdentifiableType.LOAD, vls);
+        ExpertRule loadRule = FilterWithEquipmentTypesUtils.createVoltageLevelRuleByEquipmentType(IdentifiableType.LOAD, vls);
         assertInstanceOf(StringExpertRule.class, loadRule);
-        assertEquals(FieldType.VOLTAGE_LEVEL_ID, loadRule.getField());
+        assertEquals(FieldType.VOLTAGE_LEVEL_ID, ((StringExpertRule) loadRule).getField());
         assertEquals(vls, ((StringExpertRule) loadRule).getValues());
         // LINE -> two fields
-        AbstractExpertRule lineRule = FilterWithEquipmentTypesUtils.createVoltageLevelRuleByEquipmentType(IdentifiableType.LINE, vls);
+        ExpertRule lineRule = FilterWithEquipmentTypesUtils.createVoltageLevelRuleByEquipmentType(IdentifiableType.LINE, vls);
         assertInstanceOf(CombinatorExpertRule.class, lineRule);
         CombinatorExpertRule comb2 = (CombinatorExpertRule) lineRule;
         assertEquals(2, comb2.getRules().size());
-        assertEquals(FieldType.VOLTAGE_LEVEL_ID_1, comb2.getRules().get(0).getField());
-        assertEquals(FieldType.VOLTAGE_LEVEL_ID_2, comb2.getRules().get(1).getField());
+        assertEquals(FieldType.VOLTAGE_LEVEL_ID_1, ((StringExpertRule) comb2.getRules().get(0)).getField());
+        assertEquals(FieldType.VOLTAGE_LEVEL_ID_2, ((StringExpertRule) comb2.getRules().get(1)).getField());
         assertEquals(vls, ((StringExpertRule) comb2.getRules().get(0)).getValues());
         assertEquals(vls, ((StringExpertRule) comb2.getRules().get(1)).getValues());
         // THREE_WINDINGS_TRANSFORMER -> three fields
-        AbstractExpertRule twtRule = FilterWithEquipmentTypesUtils.createVoltageLevelRuleByEquipmentType(IdentifiableType.THREE_WINDINGS_TRANSFORMER, vls);
+        ExpertRule twtRule = FilterWithEquipmentTypesUtils.createVoltageLevelRuleByEquipmentType(IdentifiableType.THREE_WINDINGS_TRANSFORMER, vls);
         assertInstanceOf(CombinatorExpertRule.class, twtRule);
         CombinatorExpertRule comb3 = (CombinatorExpertRule) twtRule;
         assertEquals(3, comb3.getRules().size());
-        assertEquals(FieldType.VOLTAGE_LEVEL_ID_1, comb3.getRules().get(0).getField());
-        assertEquals(FieldType.VOLTAGE_LEVEL_ID_2, comb3.getRules().get(1).getField());
-        assertEquals(FieldType.VOLTAGE_LEVEL_ID_3, comb3.getRules().get(2).getField());
+        assertEquals(FieldType.VOLTAGE_LEVEL_ID_1, ((StringExpertRule) comb3.getRules().get(0)).getField());
+        assertEquals(FieldType.VOLTAGE_LEVEL_ID_2, ((StringExpertRule) comb3.getRules().get(1)).getField());
+        assertEquals(FieldType.VOLTAGE_LEVEL_ID_3, ((StringExpertRule) comb3.getRules().get(2)).getField());
         assertEquals(vls, ((StringExpertRule) comb3.getRules().get(0)).getValues());
         assertEquals(vls, ((StringExpertRule) comb3.getRules().get(1)).getValues());
         assertEquals(vls, ((StringExpertRule) comb3.getRules().get(2)).getValues());
@@ -134,18 +133,18 @@ class FilterWithEquipmentTypesUtilsTest {
 
     @Test
     void testCreateFiltersForSubEquipmentsFromSubstation() {
-        Set<String> parentIds = new LinkedHashSet<>(Set.of("S1", "S2"));
+        List<String> parentIds = List.of("S1", "S2");
         Set<IdentifiableType> subTypes = Set.of(IdentifiableType.LOAD, IdentifiableType.LINE);
         List<ExpertFilter> filters = FilterWithEquipmentTypesUtils.createFiltersForSubEquipments(EquipmentType.SUBSTATION, parentIds, subTypes);
         assertEquals(2, filters.size());
         for (ExpertFilter f : filters) {
             if (f.getEquipmentType() == EquipmentType.LOAD) {
-                assertInstanceOf(StringExpertRule.class, f.getRules());
-                assertEquals(FieldType.SUBSTATION_ID, ((StringExpertRule) f.getRules()).getField());
-                assertEquals(parentIds, ((StringExpertRule) f.getRules()).getValues());
+                assertInstanceOf(StringExpertRule.class, f.getRule());
+                assertEquals(FieldType.SUBSTATION_ID, ((StringExpertRule) f.getRule()).getField());
+                assertEquals(parentIds, ((StringExpertRule) f.getRule()).getValues());
             } else if (f.getEquipmentType() == EquipmentType.LINE) {
-                assertInstanceOf(CombinatorExpertRule.class, f.getRules());
-                CombinatorExpertRule comb = (CombinatorExpertRule) f.getRules();
+                assertInstanceOf(CombinatorExpertRule.class, f.getRule());
+                CombinatorExpertRule comb = (CombinatorExpertRule) f.getRule();
                 assertEquals(CombinatorType.OR, comb.getCombinator());
                 assertEquals(2, comb.getRules().size());
                 assertEquals(FieldType.SUBSTATION_ID_1, ((StringExpertRule) comb.getRules().get(0)).getField());
@@ -160,18 +159,18 @@ class FilterWithEquipmentTypesUtilsTest {
 
     @Test
     void testCreateFiltersForSubEquipmentsFromVoltageLevel() {
-        Set<String> parentIds = new LinkedHashSet<>(Set.of("VL1"));
+        List<String> parentIds = List.of("VL1");
         Set<IdentifiableType> subTypes = Set.of(IdentifiableType.GENERATOR, IdentifiableType.THREE_WINDINGS_TRANSFORMER);
         List<ExpertFilter> filters = FilterWithEquipmentTypesUtils.createFiltersForSubEquipments(EquipmentType.VOLTAGE_LEVEL, parentIds, subTypes);
         assertEquals(2, filters.size());
         for (ExpertFilter f : filters) {
             if (f.getEquipmentType() == EquipmentType.GENERATOR) {
-                assertInstanceOf(StringExpertRule.class, f.getRules());
-                assertEquals(FieldType.VOLTAGE_LEVEL_ID, ((StringExpertRule) f.getRules()).getField());
-                assertEquals(parentIds, ((StringExpertRule) f.getRules()).getValues());
+                assertInstanceOf(StringExpertRule.class, f.getRule());
+                assertEquals(FieldType.VOLTAGE_LEVEL_ID, ((StringExpertRule) f.getRule()).getField());
+                assertEquals(parentIds, ((StringExpertRule) f.getRule()).getValues());
             } else if (f.getEquipmentType() == EquipmentType.THREE_WINDINGS_TRANSFORMER) {
-                assertInstanceOf(CombinatorExpertRule.class, f.getRules());
-                CombinatorExpertRule comb = (CombinatorExpertRule) f.getRules();
+                assertInstanceOf(CombinatorExpertRule.class, f.getRule());
+                CombinatorExpertRule comb = (CombinatorExpertRule) f.getRule();
                 assertEquals(3, comb.getRules().size());
                 assertEquals(FieldType.VOLTAGE_LEVEL_ID_1, ((StringExpertRule) comb.getRules().get(0)).getField());
                 assertEquals(FieldType.VOLTAGE_LEVEL_ID_2, ((StringExpertRule) comb.getRules().get(1)).getField());
@@ -187,7 +186,7 @@ class FilterWithEquipmentTypesUtilsTest {
 
     @Test
     void testCreateFiltersForSubEquipmentsUnsupported() {
-        Set<String> filteredEquipmentIDs = Set.of("X");
+        List<String> filteredEquipmentIDs = List.of("X");
         Set<IdentifiableType> subEquipmentTypes = Set.of(IdentifiableType.LOAD);
 
         assertThrows(

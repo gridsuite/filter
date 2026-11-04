@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.powsybl.commons.report.ReportNode;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.TopologyKind;
 import jakarta.annotation.Nullable;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;
@@ -36,30 +35,10 @@ import java.util.List;
 public interface Filter {
 
     default List<Identifiable<?>> evaluate(Network network) {
-        return evaluate(network, TopologyKind.BUS_BREAKER, ReportNode.NO_OP);
+        return evaluate(network, ReportNode.NO_OP);
     }
 
-    default List<Identifiable<?>> evaluate(Network network, ReportNode reportNode) {
-        return evaluate(network, TopologyKind.BUS_BREAKER, reportNode);
-    }
-
-    default List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind) {
-        return evaluate(network, topologyKind, ReportNode.NO_OP);
-    }
-
-    default List<Identifiable<?>> evaluate(Network network, TopologyKind topologyKind, ReportNode reportNode) {
-        clearEvaluationCache();
-
-        return NetworkUtils.getEquipmentStream(network, getEquipmentType(), topologyKind)
-                .filter(this::evaluateFilterRule)
-                .toList();
-    }
-
-    default void clearEvaluationCache() {
-        // Do nothing by default
-    }
-
-    boolean evaluateFilterRule(Identifiable<?> identifiable);
+    List<Identifiable<?>> evaluate(Network network, ReportNode reportNode);
 
     EquipmentType getEquipmentType();
 
