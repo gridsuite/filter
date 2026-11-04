@@ -38,6 +38,7 @@ public final class TestNetworkUtils {
             case BOUNDARY_LINE -> NETWORK.getBoundaryLine(equipmentId);
             case THREE_WINDINGS_TRANSFORMER -> NETWORK.getThreeWindingsTransformer(equipmentId);
             case HVDC_LINE -> NETWORK.getHvdcLine(equipmentId);
+            case SWITCH -> NETWORK.getSwitch(equipmentId);
             default -> fail("Unsupported equipment type: " + equipmentType);
         };
     }

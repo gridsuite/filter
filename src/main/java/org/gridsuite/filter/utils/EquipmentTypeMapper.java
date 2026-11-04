@@ -36,6 +36,7 @@ public final class EquipmentTypeMapper {
             case HVDC_LINE -> IdentifiableType.HVDC_LINE;
             case SUBSTATION -> IdentifiableType.SUBSTATION;
             case VOLTAGE_LEVEL -> IdentifiableType.VOLTAGE_LEVEL;
+            case SWITCH -> IdentifiableType.SWITCH;
         };
     }
 }

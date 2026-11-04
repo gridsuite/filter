@@ -10,10 +10,12 @@ import com.powsybl.iidm.network.IdentifiableType;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.iidm.network.impl.NetworkFactoryImpl;
 import com.powsybl.iidm.network.test.EurostagTutorialExample1Factory;
+import com.powsybl.iidm.network.test.FourSubstationsNodeBreakerFactory;
 import org.gridsuite.filter.expertfilter.ExpertFilter;
 import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
 import org.gridsuite.filter.expertfilter.expertrule.EnumExpertRule;
+import org.gridsuite.filter.expertfilter.expertrule.StringExpertRule;
 import org.gridsuite.filter.identifierlistfilter.FilterAttributes;
 import org.gridsuite.filter.identifierlistfilter.FilteredIdentifiables;
 import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
@@ -87,6 +89,36 @@ class FilterServiceUtilsTest {
         // Generators in substation NGEN (GEN and GEN2 exist on initial variant)
         expected.add(new IdentifiableAttributes("GEN", IdentifiableType.GENERATOR, null));
         expected.add(new IdentifiableAttributes("GEN2", IdentifiableType.GENERATOR, null));
+
+        assertTrue(result.equipmentIds().containsAll(expected));
+    }
+
+    @Test
+    void testEvaluateFiltersWithCouplingSwitchesEquipmentTypes() {
+        UUID filterId = UUID.randomUUID();
+        FilterAttributes filterAttributes = new FilterAttributes();
+        filterAttributes.setId(filterId);
+
+        ArrayList<AbstractExpertRule> rules = new ArrayList<>();
+        StringExpertRule idFilter = StringExpertRule.builder()
+            .field(FieldType.ID)
+            .operator(OperatorType.IN)
+            .values(new TreeSet<>(Set.of("S1", "S2", "S3", "S4")))
+            .build();
+        rules.add(idFilter);
+        CombinatorExpertRule parentRule = CombinatorExpertRule.builder().combinator(CombinatorType.AND).rules(rules).build();
+
+        ExpertFilter substationFilter = new ExpertFilter(filterId, new Date(), EquipmentType.SUBSTATION, parentRule);
+
+        // Ask for sub-equipments: SWITCH for this filter
+        EquipmentTypesByFilterId equipmentTypesByFilterId = new EquipmentTypesByFilterId(filterId, Set.of(IdentifiableType.SWITCH));
+        FiltersWithEquipmentTypes filtersBody = new FiltersWithEquipmentTypes(List.of(filterAttributes), List.of(equipmentTypesByFilterId));
+        Network network = FourSubstationsNodeBreakerFactory.create(new NetworkFactoryImpl());
+        FilteredIdentifiables result = FilterServiceUtils.evaluateFiltersWithEquipmentTypes(filtersBody, network, uuids -> List.of(substationFilter));
+
+        List<IdentifiableAttributes> expected = new ArrayList<>();
+        // coupling switch found in voltage level S1VL2 in substation S1
+        expected.add(new IdentifiableAttributes("S1VL2_COUPLER", IdentifiableType.SWITCH, null));
 
         assertTrue(result.equipmentIds().containsAll(expected));
     }

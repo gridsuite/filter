@@ -34,7 +34,8 @@ class EquipmentTypeMapperTest {
             Map.entry(EquipmentType.THREE_WINDINGS_TRANSFORMER, IdentifiableType.THREE_WINDINGS_TRANSFORMER),
             Map.entry(EquipmentType.HVDC_LINE, IdentifiableType.HVDC_LINE),
             Map.entry(EquipmentType.SUBSTATION, IdentifiableType.SUBSTATION),
-            Map.entry(EquipmentType.VOLTAGE_LEVEL, IdentifiableType.VOLTAGE_LEVEL)
+            Map.entry(EquipmentType.VOLTAGE_LEVEL, IdentifiableType.VOLTAGE_LEVEL),
+            Map.entry(EquipmentType.SWITCH, IdentifiableType.SWITCH)
         );
 
         assertEquals(EquipmentType.values().length, expectedMappings.size());

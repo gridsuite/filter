@@ -63,6 +63,7 @@ class NetworkUtilsTest {
             case THREE_WINDINGS_TRANSFORMER -> network.getThreeWindingsTransformerStream().collect(Collectors.toUnmodifiableList());
             case LCC_CONVERTER_STATION -> network.getLccConverterStationStream().collect(Collectors.toUnmodifiableList());
             case VSC_CONVERTER_STATION -> network.getVscConverterStationStream().collect(Collectors.toUnmodifiableList());
+            case SWITCH -> network.getSwitchStream().collect(Collectors.toUnmodifiableList());
         };
     }
 

@@ -25,5 +25,6 @@ public enum EquipmentType {
     THREE_WINDINGS_TRANSFORMER,
     HVDC_LINE,
     SUBSTATION,
-    VOLTAGE_LEVEL
+    VOLTAGE_LEVEL,
+    SWITCH
 }

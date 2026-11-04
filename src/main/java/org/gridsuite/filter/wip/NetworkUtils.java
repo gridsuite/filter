@@ -42,6 +42,7 @@ final class NetworkUtils {
             case THREE_WINDINGS_TRANSFORMER -> network.getThreeWindingsTransformerStream().map(threeWindingsTransformer -> threeWindingsTransformer);
             case LCC_CONVERTER_STATION -> network.getLccConverterStationStream().map(lccConverterStation -> lccConverterStation);
             case VSC_CONVERTER_STATION -> network.getVscConverterStationStream().map(vscConverterStation -> vscConverterStation);
+            case SWITCH -> network.getSwitchStream().map(switchEquipment -> switchEquipment);
         };
     }
 
