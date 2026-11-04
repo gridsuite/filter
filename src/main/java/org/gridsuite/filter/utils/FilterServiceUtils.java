@@ -107,8 +107,11 @@ public final class FilterServiceUtils {
                     .flatMap(Substation::getVoltageLevelStream)
                     .map(VoltageLevel::getId)
                     .forEach(voltageLevelIds::add);
-        } else {
+        } else if (filterEquipmentType == EquipmentType.VOLTAGE_LEVEL) {
             voltageLevelIds = filteredEquipmentIds;
+        } else {
+            throw new UnsupportedOperationException("Unsupported filter equipment type " + filterEquipmentType
+                    + " : we can only get coupling switches from substation or voltage level filter");
         }
 
         voltageLevelIds.forEach(vlId -> {
