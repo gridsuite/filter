@@ -499,6 +499,51 @@ class FilterExpertRuleTest {
         );
     }
 
+    private static Stream<Arguments> provideArgumentsForSwitchTest() {
+        Network network = mock(Network.class);
+
+        Switch switch1 = mock(Switch.class);
+        when(switch1.getType()).thenReturn(IdentifiableType.SWITCH);
+        when(switch1.getNetwork()).thenReturn(network);
+        Switch switch2 = mock(Switch.class);
+        when(switch2.getType()).thenReturn(IdentifiableType.SWITCH);
+        when(switch2.getNetwork()).thenReturn(network);
+
+        // Common fields
+        when(switch1.getId()).thenReturn("ID1");
+        when(switch2.getId()).thenReturn("ID2");
+
+        // VoltageLevel fields
+        VoltageLevel voltageLevel1 = mock(VoltageLevel.class);
+        when(voltageLevel1.getId()).thenReturn("VL1");
+        when(switch1.getVoltageLevel()).thenReturn(voltageLevel1);
+
+        VoltageLevel voltageLevel2 = mock(VoltageLevel.class);
+        when(voltageLevel2.getId()).thenReturn("VL2");
+        when(switch2.getVoltageLevel()).thenReturn(voltageLevel2);
+
+        when(network.getSwitchStream()).thenAnswer(invocation -> Stream.of(switch1, switch2));
+        when(network.getVoltageLevelStream()).thenAnswer(invocation -> Stream.of(voltageLevel1, voltageLevel2));
+
+        return Stream.of(
+            // --- IS_PART_OF --- //
+            // Common fields
+            Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.SWITCH, Set.of("ID1"))), switch1, true),
+            Arguments.of(IS_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.SWITCH, Set.of("ID2"))), switch2, true),
+            // VoltageLevel fields
+            Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), switch1, true),
+            Arguments.of(IS_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), switch2, true),
+
+            // --- IS_NOT_PART_OF --- //
+            // Common fields
+            Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.SWITCH, Set.of("ID1"))), switch2, true),
+            Arguments.of(IS_NOT_PART_OF, FieldType.ID, List.of(new IdentifierListFilter(EquipmentType.SWITCH, Set.of("ID2"))), switch1, true),
+            // VoltageLevel fields
+            Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL2"))), switch1, true),
+            Arguments.of(IS_NOT_PART_OF, FieldType.VOLTAGE_LEVEL_ID, List.of(new IdentifierListFilter(EquipmentType.VOLTAGE_LEVEL, Set.of("VL1"))), switch2, true)
+        );
+    }
+
     private static Stream<Arguments> provideArgumentsForTestWithException() {
         VoltageLevel voltageLevel = mock(VoltageLevel.class);
         when(voltageLevel.getType()).thenReturn(IdentifiableType.VOLTAGE_LEVEL);
@@ -523,6 +568,9 @@ class FilterExpertRuleTest {
         BoundaryLine boundaryLine = mock(BoundaryLine.class);
         when(boundaryLine.getType()).thenReturn(IdentifiableType.BOUNDARY_LINE);
 
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(IS, FieldType.P0, generator, PowsyblException.class),
@@ -531,6 +579,7 @@ class FilterExpertRuleTest {
                 Arguments.of(IS, FieldType.HIGH_VOLTAGE_LIMIT, battery, PowsyblException.class),
                 Arguments.of(IS, FieldType.MARGINAL_COST, line, PowsyblException.class),
                 Arguments.of(IS, FieldType.MARGINAL_COST, boundaryLine, PowsyblException.class),
+                Arguments.of(IS, FieldType.RATED_S, switchEquipment, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(EQUALS, FieldType.ID, generator, PowsyblException.class),
@@ -604,6 +653,7 @@ class FilterExpertRuleTest {
         "provideArgumentsForBoundaryLinesTest",
         "provideArgumentsForLineTest",
         "provideArgumentsForHvdcTest",
+        "provideArgumentsForSwitchTest"
     })
     void testFilterRoundTripSerializationDeserialization(OperatorType operatorType, FieldType fieldType, List<Filter> filters,
                                                          Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
@@ -669,6 +719,7 @@ class FilterExpertRuleTest {
         "provideArgumentsForBoundaryLinesTest",
         "provideArgumentsForLineTest",
         "provideArgumentsForHvdcTest",
+        "provideArgumentsForSwitchTest"
     })
     void testEvaluateRule(OperatorType operatorType, FieldType fieldType, List<Filter> filters, Identifiable<?> equipment, boolean expected) {
         ExpertRule rule = FilterExpertRule.builder()
