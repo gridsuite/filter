@@ -73,6 +73,7 @@ class StringExpertRuleTest {
         "provideArgumentsForThreeWindingsTransformerTest",
         "provideArgumentsForHvdcLineTest",
         "provideArgumentsForHvdcConverterStationTest",
+        "provideArgumentsForSwitchTest"
     })
     void testFilterRoundTripSerializationDeserialization(OperatorType operatorType, FieldType fieldType, String value, Set<String> values,
                                                          Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
@@ -117,6 +118,7 @@ class StringExpertRuleTest {
         "provideArgumentsForThreeWindingsTransformerTest",
         "provideArgumentsForHvdcLineTest",
         "provideArgumentsForHvdcConverterStationTest",
+        "provideArgumentsForSwitchTest"
     })
     void testEvaluateRule(OperatorType operatorType, FieldType fieldType, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         List<String> valuesList = values != null ? List.copyOf(values) : null;
@@ -172,6 +174,9 @@ class StringExpertRuleTest {
         HvdcConverterStation hvdcConverterStation = mock(HvdcConverterStation.class);
         when(hvdcConverterStation.getType()).thenReturn(IdentifiableType.HVDC_CONVERTER_STATION);
 
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(IS, FieldType.RATED_S, network, PowsyblException.class),
@@ -187,6 +192,7 @@ class StringExpertRuleTest {
                 Arguments.of(IS, FieldType.P0, threeWindingsTransformer, PowsyblException.class),
                 Arguments.of(IS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
                 Arguments.of(IS, FieldType.RATED_S, hvdcConverterStation, PowsyblException.class),
+                Arguments.of(IS, FieldType.RATED_S, switchEquipment, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(EQUALS, FieldType.ID, generator, PowsyblException.class)
@@ -1942,6 +1948,86 @@ class StringExpertRuleTest {
                 // VoltageLevel fields
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), converterStation, true),
                 Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), converterStation, false)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForSwitchTest() {
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+
+        when(switchEquipment.getId()).thenReturn("ID");
+        when(switchEquipment.getOptionalName()).thenReturn(Optional.of("NAME"));
+
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(voltageLevel.getId()).thenReturn("VL");
+        when(switchEquipment.getVoltageLevel()).thenReturn(voltageLevel);
+
+        return Stream.of(
+            // --- IS --- //
+            Arguments.of(IS, FieldType.ID, "id", null, switchEquipment, true),
+            Arguments.of(IS, FieldType.ID, "id_1", null, switchEquipment, false),
+            Arguments.of(IS, FieldType.NAME, "name", null, switchEquipment, true),
+            Arguments.of(IS, FieldType.NAME, "name_1", null, switchEquipment, false),
+
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl", null, switchEquipment, true),
+            Arguments.of(IS, FieldType.VOLTAGE_LEVEL_ID, "vl_1", null, switchEquipment, false),
+
+            // --- CONTAINS --- //
+            Arguments.of(CONTAINS, FieldType.ID, "i", null, switchEquipment, true),
+            Arguments.of(CONTAINS, FieldType.ID, "ii", null, switchEquipment, false),
+            Arguments.of(CONTAINS, FieldType.NAME, "nam", null, switchEquipment, true),
+            Arguments.of(CONTAINS, FieldType.NAME, "namm", null, switchEquipment, false),
+
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "v", null, switchEquipment, true),
+            Arguments.of(CONTAINS, FieldType.VOLTAGE_LEVEL_ID, "vv", null, switchEquipment, false),
+
+            // --- BEGINS_WITH --- //
+            Arguments.of(BEGINS_WITH, FieldType.ID, "i", null, switchEquipment, true),
+            Arguments.of(BEGINS_WITH, FieldType.ID, "j", null, switchEquipment, false),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "n", null, switchEquipment, true),
+            Arguments.of(BEGINS_WITH, FieldType.NAME, "m", null, switchEquipment, false),
+
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "v", null, switchEquipment, true),
+            Arguments.of(BEGINS_WITH, FieldType.VOLTAGE_LEVEL_ID, "s", null, switchEquipment, false),
+
+            // --- ENDS_WITH --- //
+            Arguments.of(ENDS_WITH, FieldType.ID, "d", null, switchEquipment, true),
+            Arguments.of(ENDS_WITH, FieldType.ID, "e", null, switchEquipment, false),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "e", null, switchEquipment, true),
+            Arguments.of(ENDS_WITH, FieldType.NAME, "f", null, switchEquipment, false),
+
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "l", null, switchEquipment, true),
+            Arguments.of(ENDS_WITH, FieldType.VOLTAGE_LEVEL_ID, "m", null, switchEquipment, false),
+
+            // --- EXISTS --- //
+            Arguments.of(EXISTS, FieldType.ID, null, null, switchEquipment, true),
+            Arguments.of(EXISTS, FieldType.NAME, null, null, switchEquipment, true),
+
+            Arguments.of(EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, switchEquipment, true),
+
+            // --- NOT_EXISTS --- //
+            Arguments.of(NOT_EXISTS, FieldType.ID, null, null, switchEquipment, false),
+            Arguments.of(NOT_EXISTS, FieldType.NAME, null, null, switchEquipment, false),
+
+            Arguments.of(NOT_EXISTS, FieldType.VOLTAGE_LEVEL_ID, null, null, switchEquipment, false),
+
+            // --- IN --- //
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id", "ID_2"), switchEquipment, true),
+            Arguments.of(IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), switchEquipment, false),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), switchEquipment, true),
+            Arguments.of(IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), switchEquipment, false),
+
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), switchEquipment, true),
+            Arguments.of(IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), switchEquipment, false),
+
+            // --- NOT_IN --- //
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id_2", "ID_3"), switchEquipment, true),
+            Arguments.of(NOT_IN, FieldType.ID, null, Set.of("Id", "ID_2"), switchEquipment, false),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name_2", "NAME_3"), switchEquipment, true),
+            Arguments.of(NOT_IN, FieldType.NAME, null, Set.of("Name", "NAME_2"), switchEquipment, false),
+
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl_2", "VL_3"), switchEquipment, true),
+            Arguments.of(NOT_IN, FieldType.VOLTAGE_LEVEL_ID, null, Set.of("Vl", "VL_2"), switchEquipment, false)
         );
     }
 }

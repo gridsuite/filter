@@ -118,7 +118,11 @@ class IdentifierListFilterTest {
                 Arguments.of(new IdentifierListFilter(EquipmentType.VSC_CONVERTER_STATION, Set.of("VSC_CONVERTER_STATION_1", "VSC_CONVERTER_STATION_2")),
                         Set.of("VSC_CONVERTER_STATION_1", "VSC_CONVERTER_STATION_2")),
                 Arguments.of(new IdentifierListFilter(EquipmentType.VSC_CONVERTER_STATION, Set.of("VSC_CONVERTER_STATION_3")), Set.of("VSC_CONVERTER_STATION_3")),
-                Arguments.of(new IdentifierListFilter(EquipmentType.VSC_CONVERTER_STATION, Set.of("MISSING_VSC_CONVERTER_STATION")), Collections.emptySet())
+                Arguments.of(new IdentifierListFilter(EquipmentType.VSC_CONVERTER_STATION, Set.of("MISSING_VSC_CONVERTER_STATION")), Collections.emptySet()),
+                // Switches
+                Arguments.of(new IdentifierListFilter(EquipmentType.SWITCH, Set.of("DISC_VOLTAGE_LEVEL_1_1", "DISC_VOLTAGE_LEVEL_1_5")), Set.of("DISC_VOLTAGE_LEVEL_1_1", "DISC_VOLTAGE_LEVEL_1_5")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.SWITCH, Set.of("DISC_VOLTAGE_LEVEL_1_8")), Set.of("DISC_VOLTAGE_LEVEL_1_8")),
+                Arguments.of(new IdentifierListFilter(EquipmentType.SWITCH, Set.of("MISSING_SWITCH")), Collections.emptySet())
         );
     }
 

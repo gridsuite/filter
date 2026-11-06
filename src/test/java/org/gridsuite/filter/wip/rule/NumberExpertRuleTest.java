@@ -76,6 +76,7 @@ class NumberExpertRuleTest {
         "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
+        "provideArgumentsForSwitchTest"
     })
     void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, Double value, Set<Double> values,
                                                          Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
@@ -120,6 +121,7 @@ class NumberExpertRuleTest {
         "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLinesTest",
+        "provideArgumentsForSwitchTest"
     })
     void testEvaluateRule(OperatorType operator, FieldType field, Double value, Set<Double> values, Identifiable<?> equipment, boolean expected) {
         List<Double> valuesList = values != null ? List.copyOf(values) : null;
@@ -169,6 +171,9 @@ class NumberExpertRuleTest {
         HvdcLine hvdcLine = mock(HvdcLine.class);
         when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, PowsyblException.class),
@@ -182,6 +187,7 @@ class NumberExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.P0, threeWindingTransformer, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, switchEquipment, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.MIN_P, generator, PowsyblException.class)
@@ -4202,7 +4208,58 @@ class NumberExpertRuleTest {
             Arguments.of(NOT_IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(100.0, 200.0, 300.0), hvdcLine, true),
             Arguments.of(NOT_IN, FieldType.DC_NOMINAL_VOLTAGE, null, Set.of(400.0, 150.0), hvdcLine, false)
         );
-
     }
 
+    private static Stream<Arguments> provideArgumentsForSwitchTest() {
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+        when(switchEquipment.getVoltageLevel()).thenReturn(voltageLevel);
+        when(voltageLevel.getNominalV()).thenReturn(400.0);
+
+        return Stream.of(
+            // --- EQUALS --- //
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 400.0, null, switchEquipment, true),
+            Arguments.of(EQUALS, FieldType.NOMINAL_VOLTAGE, 225.0, null, switchEquipment, false),
+
+            // --- GREATER_OR_EQUALS --- //
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 400.0, null, switchEquipment, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 350.0, null, switchEquipment, true),
+            Arguments.of(GREATER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 500.0, null, switchEquipment, false),
+
+            // --- GREATER --- //
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 350.0, null, switchEquipment, true),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 400.0, null, switchEquipment, false),
+            Arguments.of(GREATER, FieldType.NOMINAL_VOLTAGE, 500.0, null, switchEquipment, false),
+
+            // --- LOWER_OR_EQUALS --- //
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 200.0, null, switchEquipment, false),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 500.0, null, switchEquipment, true),
+            Arguments.of(LOWER_OR_EQUALS, FieldType.NOMINAL_VOLTAGE, 400.0, null, switchEquipment, true),
+
+            // --- LOWER --- //
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 400.0, null, switchEquipment, false),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 300.0, null, switchEquipment, false),
+            Arguments.of(LOWER, FieldType.NOMINAL_VOLTAGE, 500.0, null, switchEquipment, true),
+
+            // --- BETWEEN --- //
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(300.0, 500.0), switchEquipment, true),
+            Arguments.of(BETWEEN, FieldType.NOMINAL_VOLTAGE, null, Set.of(450.0, 600.0), switchEquipment, false),
+
+            // --- EXISTS --- //
+            Arguments.of(EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, switchEquipment, true),
+
+            // --- NOT_EXISTS --- //
+            Arguments.of(NOT_EXISTS, FieldType.NOMINAL_VOLTAGE, null, null, switchEquipment, false),
+
+            // --- IN --- //
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(300.0, 400.0), switchEquipment, true),
+            Arguments.of(IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(420.0, 450.0), switchEquipment, false),
+
+            // --- NOT_IN --- //
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(300.0, 350.0), switchEquipment, true),
+            Arguments.of(NOT_IN, FieldType.NOMINAL_VOLTAGE, null, Set.of(400.0, 500.0), switchEquipment, false)
+        );
+    }
 }

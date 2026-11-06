@@ -70,13 +70,14 @@ public final class FilterServiceUtils {
 
         List<IdentifiableAttributes> identifiableAttributes = getIdentifiableAttributesWithEquipmentTypes(
             filterEquipmentType, filteredEquipmentIds, selectedEquipmentTypes, network);
+
         identifiableAttributes.forEach(element -> result.put(element.getId(), element));
     }
 
     private static List<IdentifiableAttributes> getIdentifiableAttributesWithEquipmentTypes(EquipmentType filterEquipmentType,
-                                                                                             List<String> filteredEquipmentIds,
-                                                                                             Set<IdentifiableType> selectedEquipmentTypes,
-                                                                                             Network network) {
+                                                                                            List<String> filteredEquipmentIds,
+                                                                                            Set<IdentifiableType> selectedEquipmentTypes,
+                                                                                            Network network) {
         List<IdentifiableAttributes> result = new ArrayList<>();
 
         selectedEquipmentTypes.forEach(selectedEquipmentType -> {
@@ -95,11 +96,12 @@ public final class FilterServiceUtils {
     }
 
     private static List<IdentifiableAttributes> getNonFictitiousSwitchesInCouplerCells(EquipmentType filterEquipmentType,
-                                                                                        List<String> filteredEquipmentIds,
-                                                                                        Network network) {
+                                                                                       List<String> filteredEquipmentIds,
+                                                                                       Network network) {
         List<IdentifiableAttributes> switches = new ArrayList<>();
 
         List<String> voltageLevelIds = new ArrayList<>();
+
         if (filterEquipmentType == EquipmentType.SUBSTATION) {
             // get all voltage levels ids of the substations in the list of filtered substations
             network.getSubstationStream()
@@ -107,6 +109,7 @@ public final class FilterServiceUtils {
                     .flatMap(Substation::getVoltageLevelStream)
                     .map(VoltageLevel::getId)
                     .forEach(voltageLevelIds::add);
+
         } else if (filterEquipmentType == EquipmentType.VOLTAGE_LEVEL) {
             voltageLevelIds = filteredEquipmentIds;
         } else {

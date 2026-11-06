@@ -74,6 +74,7 @@ class EnumExpertRuleTest {
         "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
+        "provideArgumentsForSwitchTest"
     })
     void testFilterRoundTripSerializationDeserialization(OperatorType operator, FieldType field, String value, Set<String> values,
                                                          Identifiable<?> equipment, boolean expected) throws JsonProcessingException {
@@ -124,6 +125,7 @@ class EnumExpertRuleTest {
         "provideArgumentsForBoundaryLineTest",
         "provideArgumentsForThreeWindingTransformerTest",
         "provideArgumentsForHvdcLineTest",
+        "provideArgumentsForSwitchTest"
     })
     void testEvaluateRule(OperatorType operator, FieldType field, String value, Set<String> values, Identifiable<?> equipment, boolean expected) {
         List<String> valuesList = values != null ? List.copyOf(values) : null;
@@ -184,6 +186,9 @@ class EnumExpertRuleTest {
         HvdcLine hvdcLine = mock(HvdcLine.class);
         when(hvdcLine.getType()).thenReturn(IdentifiableType.HVDC_LINE);
 
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+
         return Stream.of(
                 // --- Test an unsupported field for each equipment --- //
                 Arguments.of(EQUALS, FieldType.RATED_S, network, null, null, PowsyblException.class),
@@ -198,11 +203,13 @@ class EnumExpertRuleTest {
                 Arguments.of(EQUALS, FieldType.P0, twoWindingsTransformer, null, null, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, svar, null, null, PowsyblException.class),
                 Arguments.of(EQUALS, FieldType.RATED_S, hvdcLine, null, null, PowsyblException.class),
+                Arguments.of(EQUALS, FieldType.RATED_S, switchEquipment, null, null, PowsyblException.class),
 
                 // --- Test an unsupported operator for this rule type --- //
                 Arguments.of(IS, FieldType.ENERGY_SOURCE, generator, null, null, PowsyblException.class),
                 Arguments.of(IS, FieldType.RATIO_REGULATION_MODE, twoWindingsTransformer, null, null, PowsyblException.class),
                 Arguments.of(IS, FieldType.PHASE_REGULATION_MODE, twoWindingsTransformer, null, null, PowsyblException.class),
+                Arguments.of(IS, FieldType.SWITCH_KIND, switchEquipment, null, null, PowsyblException.class),
 
                 // --- Test an unsupported equipment type for field type RATIO_REGULATION_MODE --- //
                 Arguments.of(EQUALS, FieldType.RATIO_REGULATION_MODE, battery, null, null, PowsyblException.class),
@@ -1092,6 +1099,48 @@ class EnumExpertRuleTest {
                 Arguments.of(NOT_IN, FieldType.COUNTRY_2, null, Set.of(Country.SM.name(), Country.FO.name()), hvdcLine, false),
                 Arguments.of(NOT_IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_INVERTER_SIDE_2_RECTIFIER.name()), hvdcLine, false),
                 Arguments.of(NOT_IN, FieldType.CONVERTERS_MODE, null, Set.of(HvdcLine.ConvertersMode.SIDE_1_RECTIFIER_SIDE_2_INVERTER.name()), hvdcLine, true)
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForSwitchTest() {
+        Switch switchEquipment = mock(Switch.class);
+        when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
+
+        // VoltageLevel fields
+        Substation substation = mock(Substation.class);
+        VoltageLevel voltageLevel = mock(VoltageLevel.class);
+
+        when(voltageLevel.getSubstation()).thenReturn(Optional.of(substation));
+
+        when(substation.getCountry()).thenReturn(Optional.of(Country.FR));
+
+        when(switchEquipment.getKind()).thenReturn(SwitchKind.BREAKER);
+        when(switchEquipment.getVoltageLevel()).thenReturn(voltageLevel);
+
+        return Stream.of(
+            // --- EQUALS --- //
+            Arguments.of(EQUALS, FieldType.COUNTRY, Country.FR.name(), null, switchEquipment, true),
+            Arguments.of(EQUALS, FieldType.COUNTRY, Country.DE.name(), null, switchEquipment, false),
+            Arguments.of(EQUALS, FieldType.SWITCH_KIND, SwitchKind.BREAKER.name(), null, switchEquipment, true),
+            Arguments.of(EQUALS, FieldType.SWITCH_KIND, SwitchKind.LOAD_BREAK_SWITCH.name(), null, switchEquipment, false),
+
+            // --- NOT_EQUALS --- //
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.DE.name(), null, switchEquipment, true),
+            Arguments.of(NOT_EQUALS, FieldType.COUNTRY, Country.FR.name(), null, switchEquipment, false),
+            Arguments.of(NOT_EQUALS, FieldType.SWITCH_KIND, SwitchKind.BREAKER.name(), null, switchEquipment, false),
+            Arguments.of(NOT_EQUALS, FieldType.SWITCH_KIND, SwitchKind.DISCONNECTOR.name(), null, switchEquipment, true),
+
+            // --- IN --- //
+            Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), switchEquipment, true),
+            Arguments.of(IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), switchEquipment, false),
+            Arguments.of(IN, FieldType.SWITCH_KIND, null, Set.of(SwitchKind.BREAKER.name()), switchEquipment, true),
+            Arguments.of(IN, FieldType.SWITCH_KIND, null, Set.of(SwitchKind.DISCONNECTOR.name()), switchEquipment, false),
+
+            // --- NOT_IN --- //
+            Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.BE.name(), Country.DE.name()), switchEquipment, true),
+            Arguments.of(NOT_IN, FieldType.COUNTRY, null, Set.of(Country.FR.name(), Country.DE.name()), switchEquipment, false),
+            Arguments.of(NOT_IN, FieldType.SWITCH_KIND, null, Set.of(SwitchKind.BREAKER.name()), switchEquipment, false),
+            Arguments.of(NOT_IN, FieldType.SWITCH_KIND, null, Set.of(SwitchKind.DISCONNECTOR.name()), switchEquipment, true)
         );
     }
 }

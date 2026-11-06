@@ -56,6 +56,7 @@ public final class ExpertFilterUtils {
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
                 case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
                 case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, propertyName, (HvdcConverterStation<?>) identifiable);
+                case SWITCH -> getSwitchFieldValue(field, propertyName, (Switch) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
         };
@@ -642,6 +643,23 @@ public final class ExpertFilterUtils {
                 default -> String.valueOf(Double.NaN);
             };
         }
+    }
+
+    private static String getSwitchFieldValue(FieldType field, String propertyName, Switch switchEquipment) {
+        return switch (field) {
+            case SWITCH_KIND -> String.valueOf(switchEquipment.getKind());
+            case FICTITIOUS -> String.valueOf(switchEquipment.isFictitious());
+            case COUNTRY,
+                 NOMINAL_VOLTAGE,
+                 VOLTAGE_LEVEL_ID,
+                 SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, switchEquipment.getVoltageLevel());
+            case SUBSTATION_PROPERTIES -> {
+                Substation substation = switchEquipment.getVoltageLevel().getNullableSubstation();
+                yield substation != null ? substation.getProperty(propertyName) : null;
+            }
+            case VOLTAGE_LEVEL_PROPERTIES -> switchEquipment.getVoltageLevel().getProperty(propertyName);
+            default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + switchEquipment.getType() + "]");
+        };
     }
 
     /**
