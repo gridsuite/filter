@@ -6,21 +6,19 @@
  */
 package org.gridsuite.filter.utils;
 
-import com.powsybl.iidm.network.Identifiable;
-import com.powsybl.iidm.network.IdentifiableType;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.Substation;
-import com.powsybl.iidm.network.Switch;
-import com.powsybl.iidm.network.SwitchKind;
-import com.powsybl.iidm.network.VoltageLevel;
+import com.powsybl.iidm.network.*;
 import com.powsybl.sld.builders.NetworkGraphBuilder;
 import com.powsybl.sld.layout.ImplicitCellDetector;
 import com.powsybl.sld.layout.LayoutParameters;
 import com.powsybl.sld.model.graphs.VoltageLevelGraph;
 import com.powsybl.sld.model.nodes.Node;
-import org.gridsuite.filter.*;
-import org.gridsuite.filter.identifierlistfilter.*;
-import org.gridsuite.filter.wip.ExpertFilter;
+import org.gridsuite.filter.ExpertFilter;
+import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.dto.AbstractFilter;
+import org.gridsuite.filter.dto.identifierlistfilter.FilterAttributes;
+import org.gridsuite.filter.dto.identifierlistfilter.FilterEquipments;
+import org.gridsuite.filter.dto.identifierlistfilter.FilteredIdentifiables;
+import org.gridsuite.filter.dto.identifierlistfilter.IdentifiableAttributes;
 
 import java.util.*;
 

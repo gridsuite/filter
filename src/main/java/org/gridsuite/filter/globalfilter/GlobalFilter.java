@@ -17,11 +17,14 @@ import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.gridsuite.filter.ExpertFilter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.utils.EquipmentType;
-import org.gridsuite.filter.wip.ExpertFilter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.gridsuite.filter.globalfilter.GlobalFilterUtils.buildExpertFilter;
 

@@ -8,13 +8,13 @@
 package org.gridsuite.filter.utils;
 
 import com.powsybl.iidm.network.IdentifiableType;
+import org.gridsuite.filter.ExpertFilter;
+import org.gridsuite.filter.rule.CombinatorExpertRule;
+import org.gridsuite.filter.rule.ExpertRule;
+import org.gridsuite.filter.rule.StringExpertRule;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.ExpertFilter;
-import org.gridsuite.filter.wip.rule.CombinatorExpertRule;
-import org.gridsuite.filter.wip.rule.ExpertRule;
-import org.gridsuite.filter.wip.rule.StringExpertRule;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
