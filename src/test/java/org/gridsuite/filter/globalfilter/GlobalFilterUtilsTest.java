@@ -4,16 +4,16 @@ import com.powsybl.iidm.network.Country;
 import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import org.assertj.core.api.*;
-import org.gridsuite.filter.AbstractFilter;
+import org.gridsuite.filter.Filter;
 import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.IdentifierListFilter;
+import org.gridsuite.filter.TestNetworkUtils;
+import org.gridsuite.filter.dto.AbstractFilter;
+import org.gridsuite.filter.rule.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.Filter;
-import org.gridsuite.filter.wip.IdentifierListFilter;
-import org.gridsuite.filter.wip.TestNetworkUtils;
-import org.gridsuite.filter.wip.rule.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,8 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /* Methods dependencies:
  * applyGlobalFilterOnNetwork

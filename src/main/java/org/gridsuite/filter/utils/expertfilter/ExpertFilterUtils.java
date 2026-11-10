@@ -13,15 +13,17 @@ import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.gridsuite.filter.ExpertFilter;
+import org.gridsuite.filter.Filter;
+import org.gridsuite.filter.rule.CombinatorExpertRule;
+import org.gridsuite.filter.rule.ExpertRule;
+import org.gridsuite.filter.rule.FilterExpertRule;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.RegulationType;
-import org.gridsuite.filter.wip.ExpertFilter;
-import org.gridsuite.filter.wip.Filter;
-import org.gridsuite.filter.wip.rule.CombinatorExpertRule;
-import org.gridsuite.filter.wip.rule.ExpertRule;
-import org.gridsuite.filter.wip.rule.FilterExpertRule;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**

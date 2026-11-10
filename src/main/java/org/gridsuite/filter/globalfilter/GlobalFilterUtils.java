@@ -6,14 +6,14 @@ import com.powsybl.iidm.network.Identifiable;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.apache.commons.collections4.CollectionUtils;
+import org.gridsuite.filter.ExpertFilter;
+import org.gridsuite.filter.Filter;
 import org.gridsuite.filter.FilterLoader;
+import org.gridsuite.filter.rule.*;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
-import org.gridsuite.filter.wip.ExpertFilter;
-import org.gridsuite.filter.wip.Filter;
-import org.gridsuite.filter.wip.rule.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
