@@ -1,12 +1,12 @@
 package org.gridsuite.filter.globalfilter;
 
+import com.powsybl.iidm.network.Identifiable;
 import com.powsybl.iidm.network.Network;
 import lombok.NonNull;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.utils.EquipmentType;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public abstract class AbstractGlobalFilterService implements FilterLoader {
@@ -23,12 +23,6 @@ public abstract class AbstractGlobalFilterService implements FilterLoader {
     protected List<String> getFilteredIds(@NonNull final UUID networkUuid, @NonNull final String variantId,
                                           @NonNull final GlobalFilter globalFilter, @NonNull final List<EquipmentType> equipmentTypes) {
         final Network network = getNetwork(networkUuid, variantId);
-        return GlobalFilterUtils.applyGlobalFilterOnNetwork(network, globalFilter, equipmentTypes, this)
-            .values()
-            .stream()
-            .filter(Objects::nonNull)
-            // Combine all results into one list
-            .flatMap(List::stream)
-            .toList();
+        return globalFilter.evaluate(network, equipmentTypes, this).stream().map(Identifiable::getId).toList();
     }
 }

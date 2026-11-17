@@ -7,7 +7,7 @@
 
 package org.gridsuite.filter.utils;
 
-import org.gridsuite.filter.identifierlistfilter.FilterAttributes;
+import org.gridsuite.filter.dto.identifierlistfilter.FilterAttributes;
 
 import java.util.List;
 

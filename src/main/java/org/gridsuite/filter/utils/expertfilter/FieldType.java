@@ -152,4 +152,6 @@ public enum FieldType {
     SUBSTATION_ID,
     SUBSTATION_ID_1,
     SUBSTATION_ID_2,
+    SWITCH_KIND,
+    FICTITIOUS
 }

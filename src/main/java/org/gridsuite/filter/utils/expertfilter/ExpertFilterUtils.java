@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2023, RTE (http://www.rte-france.com)
+/*
+ * Copyright (c) 2026, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -13,18 +13,17 @@ import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import org.apache.commons.collections4.CollectionUtils;
-import org.gridsuite.filter.FilterLoader;
-import org.gridsuite.filter.expertfilter.ExpertFilter;
-import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.FilterUuidExpertRule;
-import org.gridsuite.filter.identifierlistfilter.FilterEquipments;
-import org.gridsuite.filter.identifierlistfilter.IdentifiableAttributes;
-import org.gridsuite.filter.utils.*;
+import org.gridsuite.filter.ExpertFilter;
+import org.gridsuite.filter.Filter;
+import org.gridsuite.filter.rule.CombinatorExpertRule;
+import org.gridsuite.filter.rule.ExpertRule;
+import org.gridsuite.filter.rule.FilterExpertRule;
+import org.gridsuite.filter.utils.EquipmentType;
+import org.gridsuite.filter.utils.RegulationType;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -59,6 +58,7 @@ public final class ExpertFilterUtils {
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
                 case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
                 case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, propertyName, (HvdcConverterStation<?>) identifiable);
+                case SWITCH -> getSwitchFieldValue(field, propertyName, (Switch) identifiable);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
         };
@@ -648,41 +648,32 @@ public final class ExpertFilterUtils {
         }
     }
 
-    public static List<FilterEquipments> getFilterEquipments(Network network, Set<String> uuids, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
-        List<FilterEquipments> res = new ArrayList<>();
-        uuids.stream().map(UUID::fromString).forEach(uuid -> {
-            if (cachedUuidFilters.containsKey(uuid)) {
-                if (cachedUuidFilters.get(uuid) != null) {
-                    res.add(cachedUuidFilters.get(uuid));
-                }
-            } else {
-                filterLoader.getFilters(List.of(uuid)).stream()
-                    .findFirst()
-                    .ifPresent(filter -> FilterCycleDetector.checkNoCycle(filter, filterLoader));
-
-                List<FilterEquipments> filterEquipments = FilterServiceUtils.getFilterEquipmentsFromUuid(network, uuid, filterLoader);
-                cachedUuidFilters.put(uuid, CollectionUtils.isNotEmpty(filterEquipments) ? filterEquipments.getFirst() : null);
-                res.addAll(filterEquipments);
+    private static String getSwitchFieldValue(FieldType field, String propertyName, Switch switchEquipment) {
+        return switch (field) {
+            case SWITCH_KIND -> String.valueOf(switchEquipment.getKind());
+            case FICTITIOUS -> String.valueOf(switchEquipment.isFictitious());
+            case COUNTRY,
+                 NOMINAL_VOLTAGE,
+                 VOLTAGE_LEVEL_ID,
+                 SUBSTATION_ID -> getVoltageLevelFieldValue(field, null, switchEquipment.getVoltageLevel());
+            case SUBSTATION_PROPERTIES -> {
+                Substation substation = switchEquipment.getVoltageLevel().getNullableSubstation();
+                yield substation != null ? substation.getProperty(propertyName) : null;
             }
-        });
-        return res;
-    }
-
-    public static boolean isPartOf(Network network, String value, Set<String> uuids, FilterLoader filterLoader, Map<UUID, FilterEquipments> cachedUuidFilters) {
-        List<FilterEquipments> equipments = getFilterEquipments(network, uuids, filterLoader, cachedUuidFilters);
-        return equipments.stream().flatMap(e -> e.getIdentifiableAttributes().stream()
-            .map(IdentifiableAttributes::getId)).collect(Collectors.toSet()).contains(value);
+            case VOLTAGE_LEVEL_PROPERTIES -> switchEquipment.getVoltageLevel().getProperty(propertyName);
+            default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + switchEquipment.getType() + "]");
+        };
     }
 
     /**
      * Build an {@code OR} rule from the rules passed.
      * @param rules the rule(s) to be applied
      * @return {@link Optional#empty() Empty} if no rule is passed,
-     *     the {@link AbstractExpertRule rule} if the list has only 1 rule inside,
+     *     the {@link ExpertRule rule} if the list has only 1 rule inside,
      *     otherwise an {@link CombinatorType#OR OR} {@link CombinatorExpertRule combinator} with the rules.
      */
     @Nonnull
-    public static Optional<AbstractExpertRule> buildOrCombination(@Nullable final List<AbstractExpertRule> rules) {
+    public static Optional<ExpertRule> buildOrCombination(@Nullable final List<ExpertRule> rules) {
         return buildCombination(rules, false);
     }
 
@@ -690,16 +681,16 @@ public final class ExpertFilterUtils {
      * Build an {@code AND} rule from the rules passed.
      * @param rules the rule(s) to be applied
      * @return {@link Optional#empty() Empty} if no rule is passed,
-     *     the {@link AbstractExpertRule rule} if the list has only 1 rule inside,
+     *     the {@link ExpertRule rule} if the list has only 1 rule inside,
      *     otherwise an {@link CombinatorType#AND AND} {@link CombinatorExpertRule combinator} with the rules.
      */
     @Nonnull
-    public static Optional<AbstractExpertRule> buildAndCombination(@Nullable final List<AbstractExpertRule> rules) {
+    public static Optional<ExpertRule> buildAndCombination(@Nullable final List<ExpertRule> rules) {
         return buildCombination(rules, true);
     }
 
     @Nonnull
-    private static Optional<AbstractExpertRule> buildCombination(@Nullable final List<AbstractExpertRule> rules, final boolean and) {
+    private static Optional<ExpertRule> buildCombination(@Nullable final List<ExpertRule> rules, final boolean and) {
         if (rules == null || rules.isEmpty()) {
             return Optional.empty();
         }
@@ -714,12 +705,17 @@ public final class ExpertFilterUtils {
      * Builds expert filter with {@link VoltageLevel voltage level} IDs criteria.
      */
     @Nonnull
-    public static ExpertFilter buildExpertFilterWithVoltageLevelIdsCriteria(@Nonnull final UUID filterUuid, @Nonnull final EquipmentType equipmentType) {
-        return new ExpertFilter(UuidUtils.generateUUID(), TimeUtils.nowAsDate(), equipmentType,
-            CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(
-                FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_1).values(Set.of(filterUuid.toString())).build(),
-                FilterUuidExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_2).values(Set.of(filterUuid.toString())).build()
-            )).build());
+    public static ExpertFilter buildExpertFilterWithVoltageLevelIdsCriteria(@Nonnull final Filter filter, @Nonnull final EquipmentType equipmentType) {
+        return ExpertFilter.builder()
+                .equipmentType(equipmentType)
+                .rule(
+                        CombinatorExpertRule.builder()
+                                .combinator(CombinatorType.OR)
+                                .rules(List.of(
+                                        FilterExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_1).filters(List.of(filter)).build(),
+                                        FilterExpertRule.builder().operator(OperatorType.IS_PART_OF).field(FieldType.VOLTAGE_LEVEL_ID_2).filters(List.of(filter)).build()))
+                                .build())
+                .build();
     }
 
     @Nonnull
@@ -731,7 +727,7 @@ public final class ExpertFilterUtils {
                 case SUBSTATION -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, VOLTAGE_LEVEL,
                      LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, TWO_WINDINGS_TRANSFORMER,
-                     THREE_WINDINGS_TRANSFORMER, BOUNDARY_LINE -> Stream.of(FieldType.SUBSTATION_ID);
+                     THREE_WINDINGS_TRANSFORMER, BOUNDARY_LINE, SWITCH -> Stream.of(FieldType.SUBSTATION_ID);
                 case LINE, HVDC_LINE
                         -> Stream.of(FieldType.SUBSTATION_ID_1, FieldType.SUBSTATION_ID_2);
             };
@@ -739,7 +735,7 @@ public final class ExpertFilterUtils {
             return switch (actualType) {
                 case VOLTAGE_LEVEL -> throw new AssertionError("This case can't happen");
                 case BATTERY, BUS, BUSBAR_SECTION, GENERATOR, LOAD, SHUNT_COMPENSATOR, SUBSTATION,
-                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, BOUNDARY_LINE -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
+                     LCC_CONVERTER_STATION, STATIC_VAR_COMPENSATOR, VSC_CONVERTER_STATION, BOUNDARY_LINE, SWITCH -> Stream.of(FieldType.VOLTAGE_LEVEL_ID);
                 case LINE, HVDC_LINE, TWO_WINDINGS_TRANSFORMER
                         -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2);
                 case THREE_WINDINGS_TRANSFORMER -> Stream.of(FieldType.VOLTAGE_LEVEL_ID_1, FieldType.VOLTAGE_LEVEL_ID_2, FieldType.VOLTAGE_LEVEL_ID_3);

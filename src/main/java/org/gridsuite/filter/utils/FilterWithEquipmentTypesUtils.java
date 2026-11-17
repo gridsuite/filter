@@ -7,11 +7,12 @@
 
 package org.gridsuite.filter.utils;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.powsybl.iidm.network.IdentifiableType;
-import org.gridsuite.filter.expertfilter.ExpertFilter;
-import org.gridsuite.filter.expertfilter.expertrule.AbstractExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.CombinatorExpertRule;
-import org.gridsuite.filter.expertfilter.expertrule.StringExpertRule;
+import org.gridsuite.filter.ExpertFilter;
+import org.gridsuite.filter.rule.CombinatorExpertRule;
+import org.gridsuite.filter.rule.ExpertRule;
+import org.gridsuite.filter.rule.StringExpertRule;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
@@ -44,50 +45,56 @@ public final class FilterWithEquipmentTypesUtils {
      * @param subEquipmentTypes the equipment types we want to collect from the original filter result (so the equipments related to filteredEquipmentIDs)
      * @return the list of filters
      */
-    public static List<ExpertFilter> createFiltersForSubEquipments(EquipmentType filterEquipmentType, Set<String> filteredEquipmentIDs, Set<IdentifiableType> subEquipmentTypes) {
+    public static List<ExpertFilter> createFiltersForSubEquipments(EquipmentType filterEquipmentType, List<String> filteredEquipmentIDs, Set<IdentifiableType> subEquipmentTypes) {
+        return subEquipmentTypes.stream()
+            .map(subEquipmentType -> createFilterForSubEquipment(filterEquipmentType, filteredEquipmentIDs, subEquipmentType))
+            .toList();
+    }
+
+    public static ExpertFilter createFilterForSubEquipment(EquipmentType filterEquipmentType, List<String> filteredEquipmentIDs, IdentifiableType subEquipmentType) {
         return switch (filterEquipmentType) {
-            case SUBSTATION -> subEquipmentTypes.stream().map(identifiableType -> new ExpertFilter(
-                null,
-                null,
-                EquipmentType.valueOf(identifiableType.name()),
-                createSubstationRuleByEquipmentType(identifiableType, filteredEquipmentIDs))).toList();
-            case VOLTAGE_LEVEL -> subEquipmentTypes.stream().map(identifiableType -> new ExpertFilter(
-                null,
-                null,
-                EquipmentType.valueOf(identifiableType.name()),
-                createVoltageLevelRuleByEquipmentType(identifiableType, filteredEquipmentIDs))).toList();
+            case SUBSTATION -> new ExpertFilter(
+                EquipmentType.valueOf(subEquipmentType.name()),
+                createSubstationRuleByEquipmentType(subEquipmentType, filteredEquipmentIDs));
+            case VOLTAGE_LEVEL -> new ExpertFilter(
+                EquipmentType.valueOf(subEquipmentType.name()),
+                createVoltageLevelRuleByEquipmentType(subEquipmentType, filteredEquipmentIDs));
             default ->
                 throw new UnsupportedOperationException("Unsupported filter equipment type " + filterEquipmentType
                     + " : we can only filter sub equipments from substation and voltage level");
         };
     }
 
-    public static AbstractExpertRule createSubstationRuleByEquipmentType(IdentifiableType equipmentType, Set<String> substationIds) {
+    @VisibleForTesting
+    static ExpertRule createSubstationRuleByEquipmentType(IdentifiableType equipmentType, List<String> substationIds) {
         return switch (equipmentType) {
             case LOAD, GENERATOR, SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, BUSBAR_SECTION, BATTERY,
-                 BOUNDARY_LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER -> createRuleWithOneField(substationIds, SUBSTATION_ID);
+                 BOUNDARY_LINE, TWO_WINDINGS_TRANSFORMER, THREE_WINDINGS_TRANSFORMER, SWITCH -> createRuleWithOneField(substationIds, SUBSTATION_ID);
             case LINE, HVDC_LINE -> createRuleWithTwoFields(substationIds, SUBSTATION_ID_1, SUBSTATION_ID_2);
             default -> throw new UnsupportedOperationException("Unsupported equipment type " + equipmentType);
         };
     }
 
-    public static AbstractExpertRule createVoltageLevelRuleByEquipmentType(IdentifiableType equipmentType, Set<String> voltageLevelIds) {
+    @VisibleForTesting
+    static ExpertRule createVoltageLevelRuleByEquipmentType(IdentifiableType equipmentType, List<String> voltageLevelIds) {
         return switch (equipmentType) {
             case LOAD, GENERATOR, SHUNT_COMPENSATOR, STATIC_VAR_COMPENSATOR, BUSBAR_SECTION, BATTERY,
-                 BOUNDARY_LINE -> createRuleWithOneField(voltageLevelIds, VOLTAGE_LEVEL_ID);
+                 BOUNDARY_LINE, SWITCH -> createRuleWithOneField(voltageLevelIds, VOLTAGE_LEVEL_ID);
             case LINE, HVDC_LINE, TWO_WINDINGS_TRANSFORMER -> createRuleWithTwoFields(voltageLevelIds, VOLTAGE_LEVEL_ID_1, VOLTAGE_LEVEL_ID_2);
             case THREE_WINDINGS_TRANSFORMER -> createRuleWithThreeFields(voltageLevelIds, VOLTAGE_LEVEL_ID_1, VOLTAGE_LEVEL_ID_2, VOLTAGE_LEVEL_ID_3);
             default -> throw new UnsupportedOperationException("Unsupported equipment type " + equipmentType);
         };
     }
 
-    public static AbstractExpertRule createRuleWithOneField(Set<String> equipmentIds, FieldType field) {
+    @VisibleForTesting
+    static ExpertRule createRuleWithOneField(List<String> equipmentIds, FieldType field) {
         return StringExpertRule.builder()
             .operator(OperatorType.IN).field(field)
             .values(equipmentIds).build();
     }
 
-    public static AbstractExpertRule createRuleWithTwoFields(Set<String> equipmentIds, FieldType field1, FieldType field2) {
+    @VisibleForTesting
+    static ExpertRule createRuleWithTwoFields(List<String> equipmentIds, FieldType field1, FieldType field2) {
         StringExpertRule rule1 = StringExpertRule.builder()
             .operator(OperatorType.IN).field(field1)
             .values(equipmentIds).build();
@@ -97,7 +104,8 @@ public final class FilterWithEquipmentTypesUtils {
         return CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(rule1, rule2)).build();
     }
 
-    public static AbstractExpertRule createRuleWithThreeFields(Set<String> equipmentIds, FieldType field1, FieldType field2, FieldType field3) {
+    @VisibleForTesting
+    static ExpertRule createRuleWithThreeFields(List<String> equipmentIds, FieldType field1, FieldType field2, FieldType field3) {
         StringExpertRule rule1 = StringExpertRule.builder()
             .operator(OperatorType.IN).field(field1)
             .values(equipmentIds).build();
@@ -110,4 +118,3 @@ public final class FilterWithEquipmentTypesUtils {
         return CombinatorExpertRule.builder().combinator(CombinatorType.OR).rules(List.of(rule1, rule2, rule3)).build();
     }
 }
-
