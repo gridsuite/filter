@@ -207,10 +207,10 @@ public final class ExpertFilterUtils {
             case ENERGY_SOURCE -> String.valueOf(generator.getEnergySource());
             case MIN_P -> String.valueOf(generator.getMinP());
             case MAX_P -> String.valueOf(generator.getMaxP());
-            case TARGET_V -> String.valueOf(generator.getTargetV());
+            case TARGET_V -> String.valueOf(generator.getRegulatingTargetV());
             case TARGET_P -> String.valueOf(generator.getTargetP());
-            case TARGET_Q -> String.valueOf(generator.getTargetQ());
-            case VOLTAGE_REGULATOR_ON -> String.valueOf(generator.isVoltageRegulatorOn());
+            case TARGET_Q -> String.valueOf(generator.getRegulatingTargetQ());
+            case VOLTAGE_REGULATOR_ON -> String.valueOf(generator.isRegulating());
             case PLANNED_ACTIVE_POWER_SET_POINT,
                 MARGINAL_COST,
                 PLANNED_OUTAGE_RATE,
@@ -322,7 +322,7 @@ public final class ExpertFilterUtils {
             case MIN_P -> String.valueOf(battery.getMinP());
             case MAX_P -> String.valueOf(battery.getMaxP());
             case TARGET_P -> String.valueOf(battery.getTargetP());
-            case TARGET_Q -> String.valueOf(battery.getTargetQ());
+            case TARGET_Q -> String.valueOf(battery.getRegulatingTargetQ());
             case SUBSTATION_PROPERTIES -> {
                 Substation substation = battery.getTerminal().getVoltageLevel().getNullableSubstation();
                 yield substation != null ? substation.getProperty(propertyName) : null;
@@ -370,7 +370,7 @@ public final class ExpertFilterUtils {
             case RATIO_TARGET_V,
                  RATIO_TARGET_V1,
                  RATIO_TARGET_V2,
-                 RATIO_TARGET_V3 -> String.valueOf(ratioTapChanger.getTargetV());
+                 RATIO_TARGET_V3 -> String.valueOf(ratioTapChanger.getRegulatingTargetV());
             case LOAD_TAP_CHANGING_CAPABILITIES,
                  LOAD_TAP_CHANGING_CAPABILITIES_1,
                  LOAD_TAP_CHANGING_CAPABILITIES_2,
@@ -598,9 +598,10 @@ public final class ExpertFilterUtils {
             );
             case MIN_SUSCEPTANCE -> String.valueOf(svar.getBmin());
             case MAX_SUSCEPTANCE -> String.valueOf(svar.getBmax());
-            case SVAR_REGULATION_MODE -> svar.getRegulationMode() != null ? svar.getRegulationMode().name() : null;
-            case VOLTAGE_SET_POINT -> String.valueOf(svar.getVoltageSetpoint());
-            case REACTIVE_POWER_SET_POINT -> String.valueOf(svar.getReactivePowerSetpoint());
+            case SVAR_REGULATION_MODE -> svar.getVoltageRegulation() != null && svar.getVoltageRegulation().getMode() != null
+                    ? svar.getVoltageRegulation().getMode().name() : null;
+            case VOLTAGE_SET_POINT -> String.valueOf(svar.getRegulatingTargetV());
+            case REACTIVE_POWER_SET_POINT -> String.valueOf(svar.getRegulatingTargetQ());
             default -> throw new PowsyblException(FIELD_AND_TYPE_NOT_IMPLEMENTED + " [" + field + "," + svar.getType() + "]");
         };
     }
