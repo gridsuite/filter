@@ -9,7 +9,6 @@ package org.gridsuite.filter.dto.expertfilter.expertrule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.rule.ExpertRule;
 import org.gridsuite.filter.utils.expertfilter.DataType;

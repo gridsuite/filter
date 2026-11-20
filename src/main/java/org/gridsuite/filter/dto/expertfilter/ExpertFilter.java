@@ -8,7 +8,6 @@ package org.gridsuite.filter.dto.expertfilter;
 
 import com.powsybl.iidm.network.TopologyKind;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.gridsuite.filter.Filter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.dto.AbstractFilter;

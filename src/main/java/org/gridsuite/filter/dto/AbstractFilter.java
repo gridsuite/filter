@@ -13,7 +13,7 @@ import com.powsybl.iidm.network.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.gridsuite.filter.Filter;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.dto.expertfilter.ExpertFilter;

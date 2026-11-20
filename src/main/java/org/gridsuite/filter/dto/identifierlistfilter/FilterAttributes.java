@@ -10,7 +10,7 @@ package org.gridsuite.filter.dto.identifierlistfilter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.gridsuite.filter.dto.IFilterAttributes;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.FilterType;

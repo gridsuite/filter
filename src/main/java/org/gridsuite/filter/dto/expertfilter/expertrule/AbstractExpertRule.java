@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.SuperBuilder;
 import org.gridsuite.filter.FilterLoader;
 import org.gridsuite.filter.rule.ExpertRule;
 import org.gridsuite.filter.utils.expertfilter.CombinatorType;
