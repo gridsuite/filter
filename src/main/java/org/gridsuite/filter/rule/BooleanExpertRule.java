@@ -8,14 +8,18 @@
 
 package org.gridsuite.filter.rule;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.powsybl.iidm.network.Identifiable;
+import com.powsybl.sld.model.graphs.VoltageLevelGraph;
 import lombok.*;
 import org.gridsuite.filter.data.DataType;
 import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -31,6 +35,10 @@ public final class BooleanExpertRule implements ExpertRule {
     private OperatorType operator;
     private Boolean value;
 
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    private final Map<String, VoltageLevelGraph> voltageLevelGraphs = new HashMap<>();
+
     @Builder
     public BooleanExpertRule(FieldType field, OperatorType operator, Boolean value) {
         this.field = Objects.requireNonNull(field);
@@ -39,8 +47,13 @@ public final class BooleanExpertRule implements ExpertRule {
     }
 
     @Override
+    public void clearCache() {
+        voltageLevelGraphs.clear();
+    }
+
+    @Override
     public boolean evaluateRule(Identifiable<?> identifiable) {
-        String fieldValue = ExpertFilterUtils.getFieldValue(field, null, identifiable);
+        String fieldValue = ExpertFilterUtils.getFieldValue(field, null, identifiable, voltageLevelGraphs);
         if (fieldValue == null) {
             return OperatorType.NOT_EXISTS.equals(operator);
         }

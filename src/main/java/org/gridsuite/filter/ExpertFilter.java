@@ -67,10 +67,9 @@ public class ExpertFilter implements Filter {
     @Override
     public List<Identifiable<?>> evaluate(Network network, ReportNode reportNode) {
         rule.clearCache();
-
         List<Identifiable<?>> foundEquipments = NetworkUtils.getEquipmentStream(network, getEquipmentType(), topologyKind)
-                .filter(rule::evaluateRule)
-                .toList();
+            .filter(identifiable -> rule.evaluateRule(identifiable))
+            .toList();
         ReportUtils.reportMatchingEquipmentsCount(foundEquipments.size(), reportNode);
         return foundEquipments;
     }

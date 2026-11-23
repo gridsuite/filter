@@ -166,6 +166,9 @@ class ExpertFilterTest {
                         Set.of("VL_S3")),
                 Arguments.of(buildStringExpertFilter(EquipmentType.LINE, FieldType.NAME, OperatorType.NOT_IN, null, List.of("gdfsfds", "gfjkdhgfjdk")),
                     Collections.emptySet()),
+                Arguments.of(buildBooleanExpertFilter(EquipmentType.SWITCH, FieldType.ONLY_COUPLING_SWITCH, OperatorType.EQUALS, true),
+                    Collections.emptySet()),
+
                 //Combinator Expert Filter
                 Arguments.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.OR,
                                 List.of(StringExpertRule.builder().field(FieldType.NAME).operator(OperatorType.NOT_IN)
@@ -284,6 +287,7 @@ class ExpertFilterTest {
         filter.evaluate(network);
 
         ArgumentCaptor<Identifiable<Line>> argumentCaptor = ArgumentCaptor.forClass(Identifiable.class);
+
         verify(mockRule, times(3)).evaluateRule(argumentCaptor.capture());
         List<Identifiable<Line>> capturedLines = argumentCaptor.getAllValues();
         assertThat(capturedLines).hasSize(3)
@@ -296,7 +300,7 @@ class ExpertFilterTest {
         Line expectedLine = network.getLine("LINE_1");
         ExpertRule mockRule = mock(ExpertRule.class);
         when(mockRule.evaluateRule(any())).thenReturn(false);
-        when(mockRule.evaluateRule(expectedLine)).thenReturn(true);
+        when(mockRule.evaluateRule(eq(expectedLine))).thenReturn(true);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
 
         List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network);
