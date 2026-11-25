@@ -287,7 +287,6 @@ class ExpertFilterTest {
         filter.evaluate(network);
 
         ArgumentCaptor<Identifiable<Line>> argumentCaptor = ArgumentCaptor.forClass(Identifiable.class);
-
         verify(mockRule, times(3)).evaluateRule(argumentCaptor.capture());
         List<Identifiable<Line>> capturedLines = argumentCaptor.getAllValues();
         assertThat(capturedLines).hasSize(3)
@@ -300,7 +299,7 @@ class ExpertFilterTest {
         Line expectedLine = network.getLine("LINE_1");
         ExpertRule mockRule = mock(ExpertRule.class);
         when(mockRule.evaluateRule(any())).thenReturn(false);
-        when(mockRule.evaluateRule(eq(expectedLine))).thenReturn(true);
+        when(mockRule.evaluateRule(expectedLine)).thenReturn(true);
         ExpertFilter filter = new ExpertFilter(EquipmentType.LINE, mockRule);
 
         List<Identifiable<?>> filteredIdentifiableList = filter.evaluate(network);
