@@ -166,6 +166,9 @@ class ExpertFilterTest {
                         Set.of("VL_S3")),
                 Arguments.of(buildStringExpertFilter(EquipmentType.LINE, FieldType.NAME, OperatorType.NOT_IN, null, List.of("gdfsfds", "gfjkdhgfjdk")),
                     Collections.emptySet()),
+                Arguments.of(buildBooleanExpertFilter(EquipmentType.SWITCH, FieldType.ONLY_COUPLING_SWITCH, OperatorType.EQUALS, true),
+                    Collections.emptySet()),
+
                 //Combinator Expert Filter
                 Arguments.of(buildCombinatorExpertFilter(EquipmentType.VOLTAGE_LEVEL, CombinatorType.OR,
                                 List.of(StringExpertRule.builder().field(FieldType.NAME).operator(OperatorType.NOT_IN)

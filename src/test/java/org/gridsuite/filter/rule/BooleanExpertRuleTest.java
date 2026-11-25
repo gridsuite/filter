@@ -14,13 +14,16 @@ import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
 import org.gridsuite.filter.data.DataType;
+import org.gridsuite.filter.utils.expertfilter.ExpertFilterUtils;
 import org.gridsuite.filter.utils.expertfilter.FieldType;
 import org.gridsuite.filter.utils.expertfilter.OperatorType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
 
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +31,7 @@ import static org.gridsuite.filter.utils.expertfilter.OperatorType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 /**
@@ -109,7 +113,15 @@ class BooleanExpertRuleTest {
                 .value(value)
                 .build();
 
-        assertEquals(expected, rule.evaluateRule(equipment));
+        if (field == FieldType.ONLY_COUPLING_SWITCH && equipment instanceof Switch switchEquipment) {
+            try (MockedStatic<ExpertFilterUtils> utils = mockStatic(ExpertFilterUtils.class)) {
+                utils.when(() -> ExpertFilterUtils.isCouplingSwitch(switchEquipment, new HashMap<>()))
+                    .thenReturn(value);
+                assertEquals(expected, rule.evaluateRule(equipment));
+            }
+        } else {
+            assertEquals(expected, rule.evaluateRule(equipment));
+        }
     }
 
     static Stream<Arguments> provideArgumentsForTestWithException() {
@@ -607,15 +619,23 @@ class BooleanExpertRuleTest {
         Switch switchEquipment = mock(Switch.class);
         when(switchEquipment.getType()).thenReturn(IdentifiableType.SWITCH);
         when(switchEquipment.isFictitious()).thenReturn(true);
+        when(switchEquipment.isOpen()).thenReturn(true);
+
+        Network network = mock(Network.class);
+        when(switchEquipment.getNetwork()).thenReturn(network);
 
         return Stream.of(
             // --- EQUALS--- //
             Arguments.of(EQUALS, FieldType.FICTITIOUS, true, switchEquipment, true),
             Arguments.of(EQUALS, FieldType.FICTITIOUS, false, switchEquipment, false),
+            Arguments.of(EQUALS, FieldType.ONLY_COUPLING_SWITCH, true, switchEquipment, false),
+            Arguments.of(EQUALS, FieldType.ONLY_COUPLING_SWITCH, false, switchEquipment, false),
 
             // --- NOT_EQUALS--- //
             Arguments.of(NOT_EQUALS, FieldType.FICTITIOUS, false, switchEquipment, true),
-            Arguments.of(NOT_EQUALS, FieldType.FICTITIOUS, true, switchEquipment, false)
+            Arguments.of(NOT_EQUALS, FieldType.FICTITIOUS, true, switchEquipment, false),
+            Arguments.of(NOT_EQUALS, FieldType.ONLY_COUPLING_SWITCH, false, switchEquipment, false),
+            Arguments.of(NOT_EQUALS, FieldType.ONLY_COUPLING_SWITCH, true, switchEquipment, false)
         );
     }
 }

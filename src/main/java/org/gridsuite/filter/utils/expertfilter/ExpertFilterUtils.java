@@ -11,6 +11,11 @@ import com.powsybl.iidm.network.*;
 import com.powsybl.iidm.network.extensions.GeneratorStartup;
 import com.powsybl.iidm.network.extensions.IdentifiableShortCircuit;
 import com.powsybl.iidm.network.extensions.StandbyAutomaton;
+import com.powsybl.sld.builders.NetworkGraphBuilder;
+import com.powsybl.sld.layout.ImplicitCellDetector;
+import com.powsybl.sld.layout.LayoutParameters;
+import com.powsybl.sld.model.graphs.VoltageLevelGraph;
+import com.powsybl.sld.model.nodes.Node;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.gridsuite.filter.ExpertFilter;
@@ -20,8 +25,10 @@ import org.gridsuite.filter.rule.ExpertRule;
 import org.gridsuite.filter.rule.FilterExpertRule;
 import org.gridsuite.filter.utils.EquipmentType;
 import org.gridsuite.filter.utils.RegulationType;
+import org.gridsuite.filter.utils.SwitchStateType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -37,7 +44,14 @@ public final class ExpertFilterUtils {
 
     private ExpertFilterUtils() { }
 
-    public static <I extends Identifiable<I>> String getFieldValue(FieldType field, String propertyName, Identifiable<I> identifiable) {
+    public static <I extends Identifiable<I>> String getFieldValue(FieldType field, String propertyName,
+                                                                   Identifiable<I> identifiable) {
+        return getFieldValue(field, propertyName, identifiable, null);
+    }
+
+    public static <I extends Identifiable<I>> String getFieldValue(FieldType field, String propertyName,
+                                                                   Identifiable<I> identifiable,
+                                                                   Map<String, VoltageLevelGraph> voltageLevelGraphs) {
         return switch (field) {
             case ID -> identifiable.getId();
             case NAME -> identifiable.getOptionalName().orElse(null);
@@ -58,7 +72,7 @@ public final class ExpertFilterUtils {
                 case THREE_WINDINGS_TRANSFORMER -> getThreeWindingsTransformerFieldValue(field, propertyName, (ThreeWindingsTransformer) identifiable);
                 case HVDC_LINE -> getHvdcLineFieldValue(field, propertyName, (HvdcLine) identifiable);
                 case HVDC_CONVERTER_STATION -> getHvdcConverterStationFieldValue(field, propertyName, (HvdcConverterStation<?>) identifiable);
-                case SWITCH -> getSwitchFieldValue(field, propertyName, (Switch) identifiable);
+                case SWITCH -> getSwitchFieldValue(field, propertyName, (Switch) identifiable, voltageLevelGraphs);
                 default -> throw new PowsyblException(TYPE_NOT_IMPLEMENTED + " [" + identifiable.getType() + "]");
             };
         };
@@ -647,10 +661,27 @@ public final class ExpertFilterUtils {
         }
     }
 
-    private static String getSwitchFieldValue(FieldType field, String propertyName, Switch switchEquipment) {
+    public static boolean isCouplingSwitch(Switch switchEquipment, Map<String, VoltageLevelGraph> voltageLevelGraphs) {
+        VoltageLevelGraph voltageLevelGraph = voltageLevelGraphs.computeIfAbsent(switchEquipment.getVoltageLevel().getId(), id -> {
+            VoltageLevelGraph graph = new NetworkGraphBuilder(switchEquipment.getNetwork(), new LayoutParameters()).buildVoltageLevelGraph(id);
+            new ImplicitCellDetector().detectCells(graph);
+            return graph;
+        });
+
+        return voltageLevelGraph.getInternCellStream()
+            .flatMap(cell -> cell.getNodes().stream())
+            .anyMatch(node -> node.getType() == Node.NodeType.SWITCH && node.getId().equals(switchEquipment.getId()));
+    }
+
+    private static String getSwitchFieldValue(FieldType field, String propertyName, Switch switchEquipment, Map<String, VoltageLevelGraph> voltageLevelGraphs) {
         return switch (field) {
             case SWITCH_KIND -> String.valueOf(switchEquipment.getKind());
             case FICTITIOUS -> String.valueOf(switchEquipment.isFictitious());
+            case SWITCH_STATE -> {
+                boolean opened = switchEquipment.isOpen();
+                yield opened ? SwitchStateType.OPENED.name() : SwitchStateType.CLOSED.name();
+            }
+            case ONLY_COUPLING_SWITCH -> String.valueOf(isCouplingSwitch(switchEquipment, voltageLevelGraphs));
             case COUNTRY,
                  NOMINAL_VOLTAGE,
                  VOLTAGE_LEVEL_ID,
